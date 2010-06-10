@@ -1,3 +1,4 @@
+# test commit
 # This makefile is constructed for GNU make - 4/00.
 # Meant for use with a project using modules (with module code in MODDIR)
 SRCDIR = ./src
