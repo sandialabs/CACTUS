@@ -1,0 +1,60 @@
+1
+                                        TURBINE CODE
+                                               EXECUTED ON 28-May-10, AT 18:16:07
+                         JOB: NREL UAE                                                                        
+ 
+   TURBINE PROJECTED AREA IS    1034.91 SQ FT
+0  OPTIONS IN EFFECT
+ 
+      FINITE CORE VORTEX WITH0.0394 CORE RADIUS-TO-MAX ROTOR RADIUS RATIO.
+      RECALCULATE WAKE VELOCITIES EVERY  4 TIME STEPS (16 THETA INCREMENTS PER REVOLUTION).
+0  BLADE SEGMENT SECTION PROFILES ARE
+      SEG 1-NACANACANACANACA  SEG 2-NACA
+   AIRFOIL STALL CHARACTERISTICS ARE (ANGLES IN DEGREES)
+
+                           NACANACA NAC NAC
+        10000.             1.0                -1.0
++                                                                         10000.             1.0                -1.0
+        20000.             2.0                -2.0
++                                                                         20000.             2.0                -2.0
+        40000.             4.0                -4.0
++                                                                         40000.             4.0                -4.0
+        80000.             5.0                -5.0
++                                                                         80000.             5.0                -5.0
+       160000.             5.0                -5.0
++                                                                        160000.             5.0                -5.0
+       360000.             6.0                -6.0
++                                                                        360000.             6.0                -6.0
+       700000.             6.0                -6.0
++                                                                        700000.             6.0                -6.0
+      1000000.             7.0                -7.0
++                                                                       1000000.             7.0                -7.0
+      2000000.             8.0                -8.0
++                                                                       2000000.             8.0                -8.0
+      5000000.             9.0                -9.0
++                                                                       5000000.             9.0                -9.0
+     10000000.            10.0               -10.0
++                                                                      10000000.            10.0               -10.0
+0 THICKNESS-TO-CHORD RATIO IS 0.150                                 THICKNESS-TO-CHORD RATIO IS 0.150
+  ZERO LIFT ANGLE IS  0.00 DEGREES.                                 ZERO LIFT ANGLE IS  0.00 DEGREES.
+0               ATMOSPHERIC MODEL DATA ARE
+                    AIR DENSITY=0.002378 SLUG/FT3
+                    ABS. VISCOSITY= 0.37390E-06 LBF-SEC/FT2
+                    SHEAR EXPONENT=0.00
+                    AMBIENT TEMPERATURE=  60. DEGREES F.
+                    GROUND CLEARANCE HT.= 40.0 FT.
+                    REFERENCE HT.= 56.6 FT.
+0               REV       CP             KP           DELTA CPU TIME    TOTAL CPU TIME     CPF            KPF
+ 
+                  1    0.23458E+00    0.36653E-02            0.00              0.00    0.00000E+00    0.00000E+00
+                  2    0.22634E+00    0.35366E-02            1.00              1.00    0.00000E+00    0.00000E+00
+                  3    0.22443E+00    0.35067E-02            0.00              1.00    0.21897E+00    0.34214E-02
+                  4    0.22376E+00    0.34963E-02            0.00              1.00    0.22106E+00    0.34541E-02
+                  5    0.22349E+00    0.34921E-02            0.00              1.00    0.22203E+00    0.34692E-02
+                  6    0.22342E+00    0.34910E-02            0.00              1.00    0.22270E+00    0.34797E-02
+                  7    0.22339E+00    0.34904E-02            1.00              2.00    0.22312E+00    0.34863E-02
+                  8    0.22340E+00    0.34907E-02            0.00              2.00    0.22332E+00    0.34894E-02
+0               TURBINE POWER IS   14. KW AT WIND VELOCITY OF  22.68 MPH.
+0     ***** ALREFM IS BAD FOR AT LEAST ONE BLADE SEGMENT. *****
+0
+0          THIS EXECUTION REQUIRED     2.00 SECONDS OF CPU TIME.
