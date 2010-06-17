@@ -16,7 +16,7 @@ INC = $(wildcard $(SRCDIR)/*.inc)
 #FLAGS = -g -C # for debugging, debug flag and detailed runtime error checking. 
 #FLAGS = -fast # standard compiler optimization
 # Not using compiler optimization for now, because it appears to do something weird with the logic in the dynamic stall model...
-FLAGS =  
+FLAGS =  -r8
 
 OPT = -I$(INCDIR) -I$(MODINCDIR) $(FLAGS) # includes in INCDIR, .mod files in MODDIR
 LINKOPT = $(FLAGS) 
