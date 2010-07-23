@@ -42,8 +42,8 @@ SUBROUTINE input(ErrFlag)
                 
 	! Namelist input file declaration
 	NAMELIST/ConfigInputs/RegTFlag,GeomFlag,GPFlag,rho,vis,tempr,hFSRef,slex,nr,convrg,nti,iut,ivtxcor,ifwg,ifc,convrgf,nric,ntif,iutf,ixterm,xstop
-	NAMELIST/VAWTInputs/jbtitle,Rmax,RPM,Ut,CrRef,ChR,hr,eta,nb,nbe,nSect,AFDPath,iSection,hAG
-	NAMELIST/HAWTInputs/jbtitle,R,HubR,RPM,Ut,Tilt,CrRef,ChR,bCone,bi,bTwist,eta,nb,nbe,nSect,AFDPath,iSection,hAG
+	NAMELIST/XFlowInputs/jbtitle,Rmax,RPM,Ut,CrRef,ChR,hr,eta,nb,nbe,nSect,AFDPath,iSection,hAG
+	NAMELIST/AxFlowInputs/jbtitle,R,HubR,RPM,Ut,Tilt,CrRef,ChR,bCone,bi,bTwist,eta,nb,nbe,nSect,AFDPath,iSection,hAG
 	
 	! Input Defaults
         RegTFlag = 0       
@@ -78,10 +78,10 @@ SUBROUTINE input(ErrFlag)
 	! If GeomFlag is 1, import VAWT data, otherwise import HAWT data...                                           
 	if (GeomFlag == 1) then
 		! VAWT Namelist input
-		read(4, nml=VAWTInputs)
+		read(4, nml=XFlowInputs)
 	else
 		! HAWT Namelist input
-		read(4, nml=HAWTInputs)
+		read(4, nml=AxFlowInputs)
 		Rmax=R
 	end if
 	

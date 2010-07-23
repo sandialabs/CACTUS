@@ -1,10 +1,10 @@
 &ConfigInputs
 
-!	Regression Testing
-!	RegTFlag (int) = Set to 1 to perfom a regression test (one iteration, generates RegTest.out output file), 0 for normal operation (default)
+!	Regression Testing:
+!	RegTFlag (int) = Set to 1 to perfom a regression test (two iterations, generates RegData.out output file), 0 for normal operation (default)
 
-!	VAWT or HAWT calculation:
-!	GeomFlag (int): Set to 1 for VAWT calculation, 0 for HAWT calculation (sets the appropriate namelist: VAWTInputs for VAWT or HAWTInputs for HAWT)
+!	Crossflow or axial turbine calculation:
+!	GeomFlag (int): Set to 1 for crossflow calculation, 0 for an axial turbine calculation (sets the appropriate namelist to read from below)
 
 !	Wall calculation:
 !	GPFlag (int): Set to 1 to use a ground plane, 0 otherwise
@@ -62,10 +62,10 @@
 	nric 	= 9
 	convrgf	= .0001
 
-/End (ConfigInputs)
+/End
 
 
-&VAWTInputs
+&XFlowInputs
 
 !	JCM: Below is a description of the input file parameters for a Darrieus type design. Also required as input are the airfoil data 
 !	table files pointed to in AFDPath below. See TODO for description of the data format for these tables.
@@ -73,7 +73,7 @@
 !	Title:
 ! 	jbtitle (string in single quotes): Job title  
 
-!	VAWT Geometry inputs (Note: elements spaced evenly in height dimension):
+!	Geometry inputs (Note: elements spaced evenly in height dimension):
 !	Rmax (real): Equitorial radius (ft)
 !	RPM (real): Rotor rotation rate (revs per minute)
 !	Ut (real): Equitorial tip speed ratio (Vt/Vinf)	
@@ -108,18 +108,18 @@
 	hAG 	= 15.0
 
 		
-/End (VAWTInputs)
+/End
 
 
-&HAWTInputs
+&AxFlowInputs
 
-!	JCM: Below is a description of the input file parameters for a HAWT design. Also required as input are the airfoil data 
+!	JCM: Below is a description of the input file parameters for an axial turbine design. Also required as input are the airfoil data 
 !	table files pointed to in AFDPath below. See TODO for description of the data format for these tables.
 
 !	Title:
 ! 	jbtitle (string in single quotes): Job title  
 
-!	HAWT Geometry inputs (Note: elements spaced evenly along span from HubR to R):
+!	Geometry inputs (Note: elements spaced evenly along span from HubR to R):
 !	R (real): Radius (ft)
 !	HubR (real): Hub Radius (ft)
 !	RPM (real): Rotor rotation rate (revs per minute)
@@ -161,4 +161,4 @@
 	iSection= 1, 1, 1, 1, 1, 1
 	hAG 	= 40.0
 		
-/End (HAWTInputs)
+/End

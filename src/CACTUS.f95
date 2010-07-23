@@ -210,7 +210,7 @@ PROGRAM CACTUS
 	romega=2.0*pi*Rmax*rpm/60.0                                       
 	uinf=romega/ut                                            
 	uMPH=uinf*3600./5280.                                              
-	rem=rho*uinf*CrRef*Rmax/vis                                          
+	rem=rho*uinf*Rmax/vis                                          
 	Minf=uinf/sqrt(1.4*1716.0*(tempr+459.6))                                                                         							          
 	areat=at*Rmax**2     				! frontal area (at is (frontal area) / Rmax^2 )                                            
 	trqcon=rho/2.0*areat*Rmax*uinf**2       	! torque coeff normalization                          

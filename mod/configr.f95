@@ -36,7 +36,7 @@ MODULE configr
 	real :: PowerC				! Output power normalization
 	real :: uMPH				! Uinf in mph
 	real :: Power				! Output power for the current revolution
-	real :: ReM				! Reynolds number based on blade chord
+	real :: ReM				! Machine Reynolds number based on Rmax
 
 	CONTAINS
 
