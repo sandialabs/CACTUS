@@ -2,6 +2,7 @@ subroutine UpdateWall(nt,ntTerm,nbe,nb,ne,iut,nsw)
 
       	use wakeloc
       	use wallsoln
+        use regtest 
       
         integer :: ygcErr, i
         real :: Point(3,1), dVel(3,1), NVelSum                                                               
@@ -32,6 +33,11 @@ subroutine UpdateWall(nt,ntTerm,nbe,nb,ne,iut,nsw)
   	
   	! Calc new wall panel source strengths
   	WSource=matmul(WSMatI,WRHS)
+        
+        ! Regression Test
+        if (RegTFlag == 1) then
+                Reg_MaxWS=maxval(abs(WSource))
+        end if 
 
 return
 end

@@ -3,9 +3,10 @@ SUBROUTINE bvort(nGeom,NLTol,iConv)
 	use gam
 	use test
 	use configr
+        use regtest       
 	
         integer IsBE, DynamicFlag
-        real alpha, Re, umach, ur, CN, CT, te, NLTol
+        real alpha, Re, umach, ur, CN, CT, te, NLTol, dgb
 	
 	! Calculates bound and new shed vorticity
 	iConv=0											                                           
@@ -29,9 +30,15 @@ SUBROUTINE bvort(nGeom,NLTol,iConv)
 			! If change outside tolerance for any element, set flag
 			if (dgb .gt. NLTol) iConv=1 
 			 
-			! JCM Test 
-			write(6,'3I3,3E13.5') nt, nej1, DynamicFlag, alpha*180.0/3.14159, GB(nej1), dgb 
-			 
+			! Regression test
+                        if (RegTFlag == 1) then
+                                Reg_ElemNum=nej1 
+                                Reg_DF=DynamicFlag
+                                Reg_ElemAOA=alpha*180.0/3.14159 
+                                Reg_ElemCirc=GB(nej1)
+                                Reg_dElemCirc=dgb   
+                                Call WriteRegTOutput(1)                  
+			end if 
 			
 			! Set the bound circulation as the current entry in the spanwise
 			! vorticity array for velocity calculation (and eventual wake convection)                                  

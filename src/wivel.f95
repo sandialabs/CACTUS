@@ -7,6 +7,7 @@ SUBROUTINE wivel(NT,ntTerm,NBE,NB,NE,IUT,NSW,NPW)
       	use test 
       	use freestream
       	use wallsoln
+        use regtest 
       
         integer :: ygcErr 
         real :: Point(3,1), IndVel(3,1)                                                                
@@ -61,7 +62,16 @@ SUBROUTINE wivel(NT,ntTerm,NBE,NB,NE,IUT,NSW,NPW)
 
 		end if
 
-	end if 
+	end if
+         
+        ! Regression test 
+        if (RegTFlag == 1) then
+                Reg_MaxWVM=0.0
+                ! Max wake velocity mag in first wake shed
+                do I=1,NE
+                        Reg_MaxWVM=max(Reg_MaxWVM,sqrt(U(1,I)**2+V(1,I)**2+W(1,I)**2))       
+                end do
+        end if
                                                      
 RETURN  
 607   FORMAT(1H ,5X,92H*** (Y+YGC) LESS THAN ZERO FOR AT LEAST ONE NODE. URS SET EQUAL TO ZERO FOR THOSE NODES. ***)                                                         

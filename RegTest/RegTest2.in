@@ -2,6 +2,7 @@
 
 !	VAWT or HAWT calculation:
 !	GeomFlag (int): Set to 1 for VAWT calculation, 0 for HAWT calculation (sets the appropriate namelist: VAWTInputs for VAWT or HAWTInputs for HAWT)
+!	RegTFlag (int) = Set to 1 to perfom a regression test (one iteration, generates RegTest.out output file), 0 for normal operation (default)
 
 !	Wall calculation:
 !	GPFlag (int): Set to 1 to use a ground plane, 0 otherwise
@@ -34,7 +35,9 @@
 ! 	ixterm (int): 1 to ignore wake points beyond x/Rmax = xstop, 0 to use all wake points (default)
 !		xstop (real): If ixterm = 1, xstop defines x/Rmax beyond which wake points are ignored (default: 5)
 
-	GeomFlag= 1
+	RegTFlag= 1
+	
+	GeomFlag= 0
 	GPFlag  = 1
 
 	rho 	= .002378  
@@ -98,7 +101,7 @@
 	nb 	= 2
 	nbe 	= 5
 	nSect 	= 2
-	AFDPath	= './Airfoil_Section_Data/NACA_0015.dat' , './Airfoil_Section_Data/NACA_0015.dat'
+	AFDPath	= './trunk/Airfoil_Section_Data/NACA_0015.dat' , './trunk/Airfoil_Section_Data/NACA_0015.dat'
 	iSection= 1, 1, 1, 1, 1, 1
 	hAG 	= 15.0
 
@@ -152,7 +155,7 @@
 	nb 	= 2
 	nbe 	= 5
 	nSect 	= 2
-	AFDPath	= './Airfoil_Section_Data/NACA_0015.dat' , './Airfoil_Section_Data/NACA_0015.dat'
+	AFDPath	= './trunk/Airfoil_Section_Data/NACA_0015.dat' , './trunk/Airfoil_Section_Data/NACA_0015.dat'
 	iSection= 1, 1, 1, 1, 1, 1
 	hAG 	= 40.0
 		

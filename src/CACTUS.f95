@@ -40,6 +40,7 @@ PROGRAM CACTUS
 	use freestream
 	use wallsoln
 	use f2kcli
+        use regtest       
 	
 	!IMPLICIT NONE !JCM: eventually...	
 	
@@ -57,7 +58,7 @@ PROGRAM CACTUS
 	real :: hmachl(2)
 	real :: hmachm(2)
                                                  
-        character(80) :: InputFN, OutputFN, DOutputFN, SOutputFN                                    
+        character(80) :: InputFN, OutputFN, DOutputFN, SOutputFN, ROutputFN, FNBase                                   
                                                  
 	! Pi definition
 	pi = 4.0*atan(1.0)
@@ -72,16 +73,14 @@ PROGRAM CACTUS
 	end if
 	Call get_command_argument(1,InputFN,FNLength,status)
 	back=.true.
-	DecInd=index(InputFN,'.',back)
-	if (DecInd > 1) then
-		OutputFN=InputFN(1:(DecInd-1))//'.out'
-		DOutputFN=InputFN(1:(DecInd-1))//'_Data.out'
-		SOutputFN=InputFN(1:(DecInd-1))//'_Short.out'
-	else
-		OutputFN=trim(InputFN)//'.out'
-		DOutputFN=trim(InputFN)//'_Data.out'
-		SOutputFN=trim(InputFN)//'_Short.out'
-	end if
+        FNBase=InputFN((index(InputFN,'/',back)+1):len(InputFN))
+	DecInd=index(FNBase,'.',back)     
+        if (DecInd > 1) then
+                FNBase=FNBase(1:(DecInd-1))       
+        end if       
+        OutputFN=trim(FNBase)//'.out'
+        DOutputFN=trim(FNBase)//'_Data.out'
+        SOutputFN=trim(FNBase)//'_Short.out'       
 	
 	! Namelist input file                                                       
 	OPEN(4, FILE= InputFN)                                     
@@ -89,7 +88,7 @@ PROGRAM CACTUS
 	! Output files                                                      
 	OPEN(6, FILE= OutputFN,  FORM= 'FORMATTED' )                                    
 	OPEN(9, FILE= DOutputFN,   FORM= 'FORMATTED' )                                         
-	OPEN(12, FILE= SOutputFN,  FORM= 'FORMATTED' )   
+	OPEN(12, FILE= SOutputFN,  FORM= 'FORMATTED' )
 	
 	! Read the Date and Time.
 	CALL dattim(DMY,HMS)
@@ -117,6 +116,13 @@ PROGRAM CACTUS
 		stop
 	end if
 	
+        ! Simple output for regression testing        
+        if (RegTFlag == 1) then      
+                 DOutputFN=trim(FNBase)//'_RegData.out'
+                 OPEN(7, FILE= DOutputFN,  FORM= 'FORMATTED' )  
+                 Call WriteRegTOutput(0)
+        end if
+        
                                                                             
 	! If wake update interval set to a negative number, set next wake update iteration to -1 (no wake velocity updates will be performed)
 	! Otherwise, make the first update on the second iteration (when the wake first appears)
@@ -276,8 +282,14 @@ PROGRAM CACTUS
 				! Increment iterations                                                
 				iter=iter+1                                                       
 				
+                                ! Regression test
+                                if (RegTFlag == 1) then
+                                        Reg_TS=nt
+                                        Reg_NLIter=iter
+                                end if
+                                
 				! Calculate blade loads and bound vorticity                                                           
-				CALL bvort(i,NLTol,iConv)                                                  
+				CALL bvort(i,NLTol,iConv,iter)                                                  
 	
 				iflg=1 
 				! Calculate wake induced velocity at the current blade locations   
@@ -291,10 +303,7 @@ PROGRAM CACTUS
 
 			if (iConv == 1) then                                      
 				! Non-linear iteration didn't converge. Write final output and exit.
-				WRITE(6,610)  
-				                                                    
-				CALL perf(i,cpl) !JCM Test                                                    
-				                                                    
+				WRITE(6,610)                                                  
 				CALL WriteFinalOutput()   
 				stop                                                       
                         end if                                 
@@ -335,7 +344,16 @@ PROGRAM CACTUS
 			CALL conlp(nt,ntTerm,ne,delt,ut)                                                                      
 			
 			! Shed new wake		    		
-			CALL shedvor(nt,nbe,nb)                                           
+			CALL shedvor(nt,nbe,nb)  
+                                                                 
+                        ! Regression test
+                        if (RegTFlag == 1) then
+                                Reg_CPOut=cpsum/nt
+                                CALL WriteRegTOutput(2)
+                                if (nt == 2) then
+                                        stop
+                                end if                        
+                        end if
 						
 		end do ! Time steps 
 		

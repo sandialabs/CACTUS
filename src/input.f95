@@ -22,7 +22,8 @@ SUBROUTINE input(ErrFlag)
 	use wakedata
 	use time
 	use freestream
-	use wallsoln
+	use wallsoln 
+        use regtest            
 	
 	integer, parameter :: InBufferNumSectionTables = 100
 	integer, parameter :: InBufferNumSegPerBlade = 100
@@ -40,11 +41,12 @@ SUBROUTINE input(ErrFlag)
 	
                 
 	! Namelist input file declaration
-	NAMELIST/ConfigInputs/GeomFlag,GPFlag,rho,vis,tempr,hFSRef,slex,nr,convrg,nti,iut,ivtxcor,ifwg,ifc,convrgf,nric,ntif,iutf,ixterm,xstop
+	NAMELIST/ConfigInputs/RegTFlag,GeomFlag,GPFlag,rho,vis,tempr,hFSRef,slex,nr,convrg,nti,iut,ivtxcor,ifwg,ifc,convrgf,nric,ntif,iutf,ixterm,xstop
 	NAMELIST/VAWTInputs/jbtitle,Rmax,RPM,Ut,CrRef,ChR,hr,eta,nb,nbe,nSect,AFDPath,iSection,hAG
 	NAMELIST/HAWTInputs/jbtitle,R,HubR,RPM,Ut,Tilt,CrRef,ChR,bCone,bi,bTwist,eta,nb,nbe,nSect,AFDPath,iSection,hAG
 	
 	! Input Defaults
+        RegTFlag = 0       
 	nb = 2
 	nbe = 5 
 	nSect = 1 

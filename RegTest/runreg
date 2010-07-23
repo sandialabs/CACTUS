@@ -1,0 +1,55 @@
+#!/bin/bash
+
+# This script runs a number of single iteration regression tests and diffs output with the expected output...
+# Note: if no differences exist, the regression test output file is deleted for convenience.
+
+
+# Run regression test 1
+
+echo "Running regression test 1"
+cactus "trunk/RegTest/RegTest1.in"
+
+# clean up standard output files which are meaningless for this calculation
+rm "RegTest1.out" "RegTest1_Short.out" "RegTest1_Data.out"
+
+if [[ -n `diff -q "RegTest1_RegData.out" "trunk/RegTest/RegTest1_RegData_Ex.out"` ]]; then
+	echo "Summary of differences between RegTest1_RegData.out and trunk/RegTest/RegTest1_RegData_Ex.out:"
+	diff "RegTest1_RegData.out" "trunk/RegTest/RegTest1_RegData_Ex.out"
+else
+	echo "No differences"
+	rm "RegTest1_RegData.out"
+fi
+
+# Run regression test 2
+
+echo
+echo "Running regression test 2"
+cactus "trunk/RegTest/RegTest2.in"
+
+# clean up standard output files which are meaningless for this calculation
+rm "RegTest2.out" "RegTest2_Short.out" "RegTest2_Data.out"
+
+if [[ -n `diff -q "RegTest2_RegData.out" "trunk/RegTest/RegTest2_RegData_Ex.out"` ]]; then
+	echo "Summary of differences between RegTest2_RegData.out and trunk/RegTest/RegTest2_RegData_Ex.out:"
+	diff "RegTest2_RegData.out" "trunk/RegTest/RegTest2_RegData_Ex.out"
+else
+	echo "No differences"
+	rm "RegTest2_RegData.out"
+fi
+
+# Run regression test 3
+
+echo
+echo "Running regression test 3"
+cactus "trunk/RegTest/RegTest3.in"
+
+# clean up standard output files which are meaningless for this calculation
+rm "RegTest3.out" "RegTest3_Short.out" "RegTest3_Data.out"
+
+if [[ -n `diff -q "RegTest3_RegData.out" "trunk/RegTest/RegTest3_RegData_Ex.out"` ]]; then
+	echo "Summary of differences between RegTest3_RegData.out and trunk/RegTest/RegTest3_RegData_Ex.out:"
+	diff "RegTest3_RegData.out" "trunk/RegTest/RegTest3_RegData_Ex.out"
+else
+	echo "No differences"
+	rm "RegTest3_RegData.out"
+fi

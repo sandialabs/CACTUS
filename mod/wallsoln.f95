@@ -17,7 +17,7 @@ MODULE wallsoln
 	integer :: NumWP			! Total number of wall panels
 	
 	real, allocatable :: WInCoeffN(:,:)	! Wall normal velocity self influence matrix
-	real, allocatable :: WSource(:,:)	! Wall source density values (column vector)
+	real, allocatable :: WSource(:,:)       ! Wall source density values (column vector)
 	real, allocatable :: WSMat(:,:) 	! Wall solution matrix
 	real, allocatable :: WSMatI(:,:) 	! Inverse of the wall solution matrix
 	real, allocatable :: WRHS(:,:) 		! Right hand side vector for the wall solution

@@ -1,7 +1,7 @@
 MODULE configr
 	
 	! Configuration data
-	
+	     
 	integer :: GeomFlag		! Set to 1 for VAWT calculation, 0 for HAWT calculation
 	integer :: nb			! Number of blades
 	integer :: nbe			! Number of blade segments/elements in a blade
