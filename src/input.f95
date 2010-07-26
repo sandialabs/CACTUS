@@ -8,7 +8,7 @@ SUBROUTINE input(ErrFlag)
 	use vel
 	use veo
 	use gam
-	use rvrr
+	use varscale
 	use cltab
 	use shear
 	use airfoil

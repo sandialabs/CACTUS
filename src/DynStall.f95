@@ -66,7 +66,7 @@ SUBROUTINE DynStall(alpha,adotnorm,sgn,Re,umach,SectInd,IsBE,IsZX,DynamicFlag,CL
 				
 				DynamicFlag=1     
 				                                         						
-				! If alref and alpha are different signs, set alref equal to the static stall limit                                               			
+				! If alref and alpha are different signs, set alref equal to the static stall limit                                			
 				if ((alref*alpha) <= 0.0) then                            
 					                                                      
 					if (alpha < 0.0) then

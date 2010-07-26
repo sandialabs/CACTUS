@@ -1,16 +1,16 @@
-SUBROUTINE conlp(NT,ntTerm,NE,DELT,UT)     
+SUBROUTINE conlp(NT,ntTerm,NE)     
 
 	use wakeloc
 	use vel
 	use veo
 	use freestream
+        use configr      
 	use ioption
 			
 	logical NotDone
       									
 	! Calculate the convection of shed vortex lattice points                    													
-		
-	DT=DELT/UT                                                        
+                                                       
 	NT1=NT-1                                                          
 	do I=1,NE                                                      
 		if (NT > 1) then                                           

@@ -19,6 +19,7 @@ MODULE configr
 	
 	real :: CrRef				! Reference chord to radius ratio
 	real :: ut				! Tip speed ratio
+        real :: dt                              ! Normalized timestep       
 	real :: wRotX				! Normalized machine angular velocity X
 	real :: wRotY				! Normalized machine angular velocity Y
 	real :: wRotZ				! Normalized machine angular velocity Z

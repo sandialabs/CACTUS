@@ -1,7 +1,7 @@
 SUBROUTINE LISTIT (IOPT,IDEV)     
 
       use dystl
-      use rvrr
+      use varscale
       use cltab
       use shear
       use airfoil

@@ -1,18 +1,14 @@
 SUBROUTINE perf(nGeom,cpl) 
 
-	use dystl
-	use wakeloc
 	use element
-	use vel
 	use gam
-	use shear
-	use pidef
 	use test
-	use rvrr
 	use configr
+        use dystl
+        use pidef       
 					
-	integer IsBE, DynamicFlag
-	real alpha, Re, umach, ur, CN, CT, te                         
+	integer IsBE, DynamicFlagL, DynamicFlagD
+	real alpha, Re, umach, ur, CN, CT, te, tr, cpl                        
 	real BladeTorque(3) ! Total torque on each blade calculated for output...                                              
 									
 	! Calculate the local lift on each blade segment and therefore get the bound vortex strengths 
@@ -39,11 +35,11 @@ SUBROUTINE perf(nGeom,cpl)
 				IsBE=1
 			end if
 			
-			CALL bsload(nej,nGeom,IsBE,DynamicFlag,alpha,Re,umach,ur,CN,CT,te)                                                                     
+			CALL bsload(nej,nGeom,IsBE,DynamicFlagL,DynamicFlagD,alpha,Re,umach,ur,CN,CT,te)                                                                     
 											
 			! Calculate the bound vortex strength and the turbine performance                                                      
 			alphaDeg=alpha*condeg                                                                                                           
-			write(9,904) DynamicFlag,alphaDeg,Re,umach,CN,CT,ur,te						
+			write(9,904) DynamicFlagL,DynamicFlagD,alphaDeg,Re,umach,CN,CT,ur,te						
 			alfold(nej1)=alpha                                                
 			GS(nt,nej1)=GB(nej1)                                              
 			BladeTorque(i)=BladeTorque(i)+te                                                
@@ -59,5 +55,5 @@ Return
 609 FORMAT(' ',10X,'ROTOR TORQUE COEFFICIENT=',E15.6,/,' ',10X,'ROTOR POWER COEFFICIENT=',E15.6)                                 
 901 FORMAT(2I5,F10.2)                                                 
 903 FORMAT(10E12.5)
-904 FORMAT(I3,7E12.5)                                                    
+904 FORMAT(2I3,7E12.5)                                                    
 End                                                               

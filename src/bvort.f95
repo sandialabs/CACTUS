@@ -5,7 +5,7 @@ SUBROUTINE bvort(nGeom,NLTol,iConv)
 	use configr
         use regtest       
 	
-        integer IsBE, DynamicFlag
+        integer IsBE, DynamicFlagL, DynamicFlagD
         real alpha, Re, umach, ur, CN, CT, te, NLTol, dgb
 	
 	! Calculates bound and new shed vorticity
@@ -22,7 +22,7 @@ SUBROUTINE bvort(nGeom,NLTol,iConv)
 			end if
 			                                                                                                                             
 			! Calculate the loads on the blade segment                                                                                              
-			CALL bsload(nej,nGeom,IsBE,DynamicFlag,alpha,Re,umach,ur,CN,CT,te) 
+			CALL bsload(nej,nGeom,IsBE,DynamicFlagL,DynamicFlagD,alpha,Re,umach,ur,CN,CT,te) 
 			                                                                                  
 			! Calculate the bound vortex strength change                                                                                                   
 			dgb=abs((GB(nej1)-GS(nt,nej1))/GB(nej1))                          
@@ -33,7 +33,8 @@ SUBROUTINE bvort(nGeom,NLTol,iConv)
 			! Regression test
                         if (RegTFlag == 1) then
                                 Reg_ElemNum=nej1 
-                                Reg_DF=DynamicFlag
+                                Reg_DFL=DynamicFlagL
+                                Reg_DFD=DynamicFlagD
                                 Reg_ElemAOA=alpha*180.0/3.14159 
                                 Reg_ElemCirc=GB(nej1)
                                 Reg_dElemCirc=dgb   
