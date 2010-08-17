@@ -38,11 +38,14 @@ $(OBJMOD) $(OBJ) : Makefile $(INC)
 # Further secondary goals for OBJ: If individual source files are changed, update the corresponding OBJ
 $(OBJMOD):$(OBJDIR)%.o : $(MODDIR)%.f95 
 	$(COMPILER) $(OPT) -c $<
+	mkdir -p $(OBJDIR)
+	mkdir -p $(MODINCDIR)
 	mv $(@F) ${OBJDIR}
 	mv *.mod ${MODINCDIR}
 
 $(OBJ):$(OBJDIR)%.o : $(SRCDIR)%.f95 
 	$(COMPILER) $(OPT) -c $<
+	mkdir -p $(OBJDIR)
 	mv $(@F) ${OBJDIR}
 
 
