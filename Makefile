@@ -1,16 +1,13 @@
 # This makefile is constructed for GNU make - 4/00.
 # Meant for use with a project using modules (with module code in MODDIR)
 SRCDIR = ./src
-INCDIR = ./src
-OBJDIR = ../obj
 MODDIR = ./mod
-MODINCDIR = ../modinc
 
 # split f95, and module lists... Modules need to be compiled first
 SRC = $(wildcard $(SRCDIR)/*.f95)
-OBJ = $(SRC:$(SRCDIR)%.f95=$(OBJDIR)%.o)
+OBJ = $(SRC:%.f95=%.o)
 SRCMOD = $(wildcard $(MODDIR)/*.f95)
-OBJMOD = $(SRCMOD:$(MODDIR)%.f95=$(OBJDIR)%.o)
+OBJMOD = $(SRCMOD:%.f95=%.o)
 INC = $(wildcard $(SRCDIR)/*.inc) 
 
 #FLAGS = -g -C -r8 # for debugging, debug flag and detailed runtime error checking. 
@@ -18,11 +15,13 @@ INC = $(wildcard $(SRCDIR)/*.inc)
 # Not using compiler optimization for now, because it appears to do something weird with the logic in the dynamic stall model...
 FLAGS = -r8
 
-OPT = -I$(INCDIR) -I$(MODINCDIR) $(FLAGS) # includes in INCDIR, .mod files in MODDIR
-LINKOPT = $(FLAGS) 
+# includes in SRCDIR, .mod files in MODDIR
+OPT = -I$(SRCDIR) -I$(MODDIR) $(FLAGS)
+LINKOPT = $(FLAGS)
 # Include default liblapack.a and libblas.a for LAPACK calculations
 LIBS = -llapack -lblas
 COMPILER = pgf95
+
 
 # Primary goal: create executable from object files if object files have changed. Depends on OBJMOD, OBJf, and OBJf95
 # Note: Generally, fortran  modules must come first in the compile list... Also, if a module depends on another module in fortran,
@@ -36,19 +35,17 @@ COMPILER = pgf95
 $(OBJMOD) $(OBJ) : Makefile $(INC)
 
 # Further secondary goals for OBJ: If individual source files are changed, update the corresponding OBJ
-$(OBJMOD):$(OBJDIR)%.o : $(MODDIR)%.f95 
+$(OBJMOD):$(MODDIR)%.o : $(MODDIR)%.f95 
 	$(COMPILER) $(OPT) -c $<
-	mkdir -p $(OBJDIR)
-	mkdir -p $(MODINCDIR)
-	mv $(@F) ${OBJDIR}
-	mv *.mod ${MODINCDIR}
+	mv $(@F) ${MODDIR}
+	mv *.mod ${MODDIR}
 
-$(OBJ):$(OBJDIR)%.o : $(SRCDIR)%.f95 
+$(OBJ):$(SRCDIR)%.o : $(SRCDIR)%.f95 
 	$(COMPILER) $(OPT) -c $<
-	mkdir -p $(OBJDIR)
-	mv $(@F) ${OBJDIR}
+	mv $(@F) ${SRCDIR}
 
 
 clean :
-	rm -f $(OBJDIR)/*.o
-	rm -f $(MODINCDIR)/*.mod
+	rm -f $(SRCDIR)/*.o
+	rm -f $(MODDIR)/*.o
+	rm -f $(MODDIR)/*.mod
