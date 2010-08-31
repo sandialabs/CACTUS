@@ -218,7 +218,7 @@ PROGRAM CACTUS
         powerc=rho/2.0*areat*romega**3*0.7457/550.      ! normalization for power coeff using tip speed (kp), with conversion from lb-ft/s to kW. (Used to write output)
         
         ! Dynamic stall setup                                                
-        k1pos = 1.0   ! effect magnitude for CL increasing                                                                                                                                                      
+        k1pos = 1.0   ! effect magnitude for CL increasing                      
         k1neg = 0.5   ! effect magnitude for CL decreasing                                      
         do i=1,nsect                                                   
                 diff=0.06-tc(i)                                                   

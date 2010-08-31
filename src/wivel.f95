@@ -10,7 +10,7 @@ SUBROUTINE wivel(NT,ntTerm,NBE,NB,NE,IUT,NSW,NPW)
         use regtest 
       
         integer :: ygcErr 
-        real :: Point(3,1), IndVel(3,1)                                                                
+        real :: Point(3), IndVel(3)                                                                
                                                                        
 	! Calculate the induced velocity at each lattice point in the wake from wake (including bound vorticity), wall, and freestream        
                                                                       
@@ -51,11 +51,11 @@ SUBROUTINE wivel(NT,ntTerm,NBE,NB,NE,IUT,NSW,NPW)
       				do J=ntTerm,NT1
 
 					! Calculate wall and wake induced velocities at wake locations
-					Point=reshape([X(J,I),Y(J,I),Z(J,I)],[3,1])
+					Point=[X(J,I),Y(J,I),Z(J,I)]
 					Call CalcIndVel(NT,ntTerm,NBE,NB,NE,Point,IndVel)
-					U(J,I)=IndVel(1,1)
-					V(J,I)=IndVel(2,1)
-					W(J,I)=IndVel(3,1)
+					U(J,I)=IndVel(1)
+					V(J,I)=IndVel(2)
+					W(J,I)=IndVel(3)
 					
       				end do
 			end do                                                                           

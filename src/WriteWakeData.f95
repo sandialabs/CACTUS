@@ -12,9 +12,9 @@ SUBROUTINE WriteWakeData(tind,DelT,WakeLineInd)
 	integer :: tCount, tCountMax, jCount, kCount, yGCErr, nCount
 	real :: DelT
 	real :: ThetaOut
-	real :: VelOut(3,1), IndVel(3,1)
+	real :: VelOut(3), IndVel(3)
 	real, allocatable :: NVelOut(:)
-	
+        
 	! allocate output
 	allocate(NVelOut(NumWP))
 	
@@ -81,14 +81,13 @@ SUBROUTINE WriteWakeData(tind,DelT,WakeLineInd)
 				do wCount=1,NumWP
 				
 					! Freestream
-					Call CalcFreestream(WCPoints(2,wCount),VelOut(1,1),VelOut(2,1),VelOut(3,1),ygcErr) 
+					Call CalcFreestream(WCPoints(wCount,2),VelOut(1),VelOut(2),VelOut(3),ygcErr) 
 					
-					! Calculate wall and wake induced velocities at wake locations
-					
-					Call CalcIndVel(nt,ntTerm,nbe,nb,ne,WCPoints(1:3,wCount),IndVel)
+					! Calculate wall and wake induced velocities at wake locations                                  
+					Call CalcIndVel(nt,ntTerm,nbe,nb,ne,WCPoints(wCount,1:3),IndVel)
 					VelOut=VelOut+IndVel
-					
-					NVelOut(wCount)=sum(WZVec(1:3,wCount)*VelOut(1:3,1))
+					                              
+					NVelOut(wCount)=sum(WZVec(wCount,1:3)*VelOut)
 	
 				end do
 	

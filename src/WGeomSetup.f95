@@ -3,7 +3,7 @@ subroutine WGeomSetup()
 	use wallsoln  
 	
 	real :: PlaneExtent
-	real :: P1(3,1), P2(3,1), P3(3,1), P4(3,1)
+	real :: P1(3), P2(3), P3(3), P4(3)
 	real, allocatable :: xPan(:), zPan(:), B(:)
 	integer :: Ind
 
@@ -35,19 +35,19 @@ subroutine WGeomSetup()
 	Ind=1
 	do i=1,NumWPx
 		do j=1,NumWPx
-			P1=reshape([xPan(j),yPan,zPan(i)],[3,1])   	! lower panel x, lower panel y corner point
-			P2=reshape([xPan(j+1),yPan,zPan(i)],[3,1]) 	! pos panel x neighbor point
-			P3=reshape([xPan(j),yPan,zPan(i+1)],[3,1]) 	! pos panel y neighbor point
-			P4=reshape([xPan(j+1),yPan,zPan(i+1)],[3,1])  	! pos panel x, pos panel y neighbor point
-			WCPoints(1:3,Ind)=0.25*(P1(1:3,1)+P2(1:3,1)+P3(1:3,1)+P4(1:3,1)) 	! panel center
-			WXVec(1:3,Ind)=P2(1:3,1)-P1(1:3,1)		! panel x tangential vector
-			WPL(Ind)=sqrt(sum(WXVec(1:3,Ind)**2))		! panel x length
-			WXVec(1:3,Ind)=WXVec(1:3,Ind)/WPL(Ind)		! normalize
-			WYVec(1:3,Ind)=P1(1:3,1)-P3(1:3,1)		! panel y tangential vector, set so that panel normal will be in the domain inward direction
-			WPW(Ind)=sqrt(sum(WYVec(1:3,Ind)**2))		! panel y length
-			WYVec(1:3,Ind)=WYVec(1:3,Ind)/WPW(Ind)		! normalize
-			Call cross(WXVec(1,Ind),WXVec(2,Ind),WXVec(3,Ind),WYVec(1,Ind),WYVec(2,Ind),WYVec(3,Ind),WZVec(1,Ind),WZVec(2,Ind),WZVec(3,Ind))	! panel normal vector	
-			WZVec(1:3,Ind)=WZVec(1:3,Ind)/sqrt(sum(WZVec(1:3,Ind)**2))		! normalize	
+			P1=[xPan(j),yPan,zPan(i)]   	! lower panel x, lower panel y corner point
+			P2=[xPan(j+1),yPan,zPan(i)] 	! pos panel x neighbor point
+			P3=[xPan(j),yPan,zPan(i+1)]	! pos panel y neighbor point
+			P4=[xPan(j+1),yPan,zPan(i+1)]  	! pos panel x, pos panel y neighbor point
+			WCPoints(Ind,1:3)=0.25*(P1+P2+P3+P4) 	! panel center
+			WXVec(Ind,1:3)=P2-P1		! panel x tangential vector
+			WPL(Ind)=sqrt(sum(WXVec(Ind,1:3)**2))		! panel x length
+			WXVec(Ind,1:3)=WXVec(Ind,1:3)/WPL(Ind)		! normalize
+			WYVec(Ind,1:3)=P1-P3		! panel y tangential vector, set so that panel normal will be in the domain inward direction
+			WPW(Ind)=sqrt(sum(WYVec(Ind,1:3)**2))		! panel y length
+			WYVec(Ind,1:3)=WYVec(Ind,1:3)/WPW(Ind)		! normalize
+			Call cross(WXVec(Ind,1),WXVec(Ind,2),WXVec(Ind,3),WYVec(Ind,1),WYVec(Ind,2),WYVec(Ind,3),WZVec(Ind,1),WZVec(Ind,2),WZVec(Ind,3))	! panel normal vector	
+			WZVec(Ind,1:3)=WZVec(Ind,1:3)/sqrt(sum(WZVec(Ind,1:3)**2))		! normalize	
 			Ind=Ind+1
 		end do
 	end do

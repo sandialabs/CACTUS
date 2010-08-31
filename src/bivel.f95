@@ -7,7 +7,7 @@ SUBROUTINE bivel(NT,ntTerm,NBE,NB,NE,IFLG)
       	use wallsoln  
 
         integer :: i,j,k,m,ygcErr 
-        real :: Point(3,1), dVel(3,1)                                                       
+        real :: Point(3), dVel(3)                                                       
                                                                  
     	! Calculate the velocity induced on the blades by wake, wall, and freestream
                                                                        
@@ -40,11 +40,11 @@ SUBROUTINE bivel(NT,ntTerm,NBE,NB,NE,IFLG)
       				Call pivel(NT,ntTerm,NBE,NB,NE,X(J,I),Y(J,I),Z(J,I),USUM,VSUM,WSUM,0)                                                  
   
 				! Calculate wall induced velocities at blade locations   
-				Point=reshape([X(J,I),Y(J,I),Z(J,I)],[3,1])
+				Point=[X(J,I),Y(J,I),Z(J,I)]
 				Call WallIndVel(Point,dVel)
-				USUM=USUM+dVel(1,1)
-				VSUM=VSUM+dVel(2,1)
-				WSUM=WSUM+dVel(3,1)
+				USUM=USUM+dVel(1)
+				VSUM=VSUM+dVel(2)
+				WSUM=WSUM+dVel(3)
 
       			end if
                                                          

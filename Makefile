@@ -10,10 +10,12 @@ SRCMOD = $(wildcard $(MODDIR)/*.f95)
 OBJMOD = $(SRCMOD:%.f95=%.o)
 INC = $(wildcard $(SRCDIR)/*.inc) 
 
-#FLAGS = -g -C -r8 # for debugging, debug flag and detailed runtime error checking. 
-#FLAGS = -fast -r8 # standard compiler optimization
+# for debugging, debug flag and detailed runtime error checking. 
+#FLAGS = -g -C -r8 
+# standard compiler optimization
+FLAGS = -fast -r8 
 # Not using compiler optimization for now, because it appears to do something weird with the logic in the dynamic stall model...
-FLAGS = -r8
+#FLAGS = -r8
 
 # includes in SRCDIR, .mod files in MODDIR
 OPT = -I$(SRCDIR) -I$(MODDIR) $(FLAGS)
