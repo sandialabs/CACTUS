@@ -1,11 +1,11 @@
-SUBROUTINE BGeomSetup_h(nti,nbe,nb,deltr,hubrr,delt,deltb,at) 
+SUBROUTINE BGeomSetup_h(deltr,hubrr,delt,deltb,at) 
 
 	use parameters
 	
+        use configr       
 	use element
 	use pidef
 	
-	integer :: nti, nbe, nb
 	real :: deltr, hubrr, delt, deltb, at 
 	
 	real BladeQC(MaxSegEndPerBlade,3), tB(MaxSegEndPerBlade,3), normB(MaxSegEndPerBlade,3)

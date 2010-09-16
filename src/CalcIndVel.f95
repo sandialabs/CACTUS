@@ -1,7 +1,7 @@
 subroutine CalcIndVel(NT,ntTerm,NBE,NB,NE,Point,Vel)
 
 	use wallsoln 
-	use wakeloc
+	use blade
 	
 	! Calculate wall and wake induced velocity (including bound vorticity component)
 	

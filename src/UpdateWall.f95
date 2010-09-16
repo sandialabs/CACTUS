@@ -1,6 +1,7 @@
-subroutine UpdateWall(nt,ntTerm,nbe,nb,ne,iut,nsw)
+subroutine UpdateWall()
 
-      	use wakeloc
+        use configr
+      	use blade
       	use wallsoln
         use regtest 
       

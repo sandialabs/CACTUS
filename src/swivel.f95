@@ -2,12 +2,10 @@ SUBROUTINE SWIVEL(NT,ntTerm,NBE,NB,NE,IUT,NSW,NPW)
 
       use parameters
       
+      use configr
       use xwake
       use uwake
-      use wakeloc
-      use vel
-      use veo
-      use gam
+      use blade
       use test
       use freestream
    
@@ -45,12 +43,7 @@ SUBROUTINE SWIVEL(NT,ntTerm,NBE,NB,NE,IUT,NSW,NPW)
 		do J=ntTerm,NT1
 			CALL CalcFreestream(Y(J,I),UFS(J,I),VFS(J,I),WFS(J,I),ygcErr) 	                                
 		end do
-	end do  
-	                                                        
-	if (ygcErr .ne. 0) then
-		ierr1=1
-		WRITE (6,607)  
-	end if                                                   
+	end do                                                  
                                                         
 !                                                                       
 !      IF VELOCITIES ARE NOT TO BE RECALCULATED, RETURN                 
@@ -134,7 +127,6 @@ SUBROUTINE SWIVEL(NT,ntTerm,NBE,NB,NE,IUT,NSW,NPW)
 75    CONTINUE                                                          
       NSW=NT+IUT                                                       
 RETURN                                                            
-605   FORMAT(1H ,14HBUMP IFW. IFW=,I3,6H, JFW=,I4,6H, KFW=,I4,9H, IFWMAX=,I4,11H, XFW(IFW)=,F6.2,5H, XV=,F8.3,4H, I=,I3,4H, J=,I3) 
-607   FORMAT(1H ,5X,92H*** (Y+YGC) LESS THAN ZERO FOR AT LEAST ONE NODE. URS SET EQUAL TO ZERO FOR THOSE NODES. ***)        
+605   FORMAT(1H ,14HBUMP IFW. IFW=,I3,6H, JFW=,I4,6H, KFW=,I4,9H, IFWMAX=,I4,11H, XFW(IFW)=,F6.2,5H, XV=,F8.3,4H, I=,I3,4H, J=,I3)       
 609   FORMAT(1H ,5HJNPT=,I4,7H, YMIN=,F6.3,7H, YMAX=,F6.3,7H, KNPT=,I3, 7H, ZMIN=,F6.3,7H, ZMAX=,F6.3,7H, XMAX=,F7.3)                     
 END                                                               

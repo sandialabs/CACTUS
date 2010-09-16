@@ -1,10 +1,8 @@
-SUBROUTINE conlp(NT,ntTerm,NE)     
-
-	use wakeloc
-	use vel
-	use veo
+SUBROUTINE conlp()     
+        
+        use configr
+	use blade
 	use freestream
-        use configr      
 	use ioption
 			
 	logical NotDone

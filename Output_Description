@@ -1,0 +1,61 @@
+Revolution Average Output (_RevData.csv):
+
+Rev:			Revolution number.	
+Power Coeff (-):	Revolution average machine power coefficient, Power / (1/2*rho*Uinf^3*Af), where rho is density, Uinf is freestream speed, Af is 
+			turbine frontal area.
+Tip Power Coeff (-):	Revolution average machine tip power coefficient, Power / (1/2*rho*Utip^3*Af), where rho is density, Utip is the blade speed at its 
+			largest perpendicular distance from the rotation axis (defined as reference radius in the input file), Af is turbine frontal area.	
+Power (kW):		Revolution average machine power.	
+Torque (ft-lbs):	Revolution average machine torque.	
+Delta CPU Time (s):	CPU time for each revolution.	
+Total CPU Time (s):	Total CPU time after each revolution.
+
+
+Timestep Output (_TimeData.csv):
+
+Normalized Time (-):	Normalized simulation time (t*Uinf/R), where Uinf is freestream speed, R is the largest perpendicular distance the blades achieve 
+			from the rotation axis (defined as reference radius in the input file).
+Rev:			Revolution number.
+Torque Coeff (-):	Torque coefficient, Torque / (1/2*rho*Uinf^2*Af*R), where rho is density, Uinf is freestream speed, Af is turbine frontal area, 
+			and R is the largest perpendicular distance the blades achieve from the rotation axis (defined as reference radius in the input file).
+Power Coeff (-):	Power coefficient, Power / (1/2*rho*Uinf^3*Af), where rho is density, Uinf is freestream speed, Af is turbine frontal area.	
+The following are replicated for each blade:
+Blade Fx Coeff (-):	Coefficient of force in the global x direction on blade, XForce / (1/2*rho*Uinf^2*Af), where rho is density, Uinf is freestream speed, 
+			Af is turbine frontal area.
+Blade Fy Coeff (-):	Coefficient of force in the global y direction on blade, YForce / (1/2*rho*Uinf^2*Af), where rho is density, Uinf is freestream speed, 
+			Af is turbine frontal area.	
+Blade Fz Coeff (-):	Coefficient of force in the global z direction on blade, ZForce / (1/2*rho*Uinf^2*Af), where rho is density, Uinf is freestream speed, 
+			Af is turbine frontal area.	
+Blade Torque Coeff (-):	Torque coefficient from the blade, Torque / (1/2*rho*Uinf^2*Af*R), where rho is density, Uinf is freestream speed, Af is turbine 
+			frontal area, and R is the largest perpendicular distance the blades achieve from the rotation axis (defined as reference radius in 
+			the input file).
+
+
+Element Output (_ElementData.csv):
+
+Normalized Time (-): 	Normalized simulation time (t*Uinf/R), where Uinf is freestream speed, R is the largest perpendicular distance the blades achieve 
+			from the rotation axis.
+Blade:			Blade number.	
+Element:		Element number.
+Rev:			Revolution number.	
+DynamicFlagL:		Flag indicating 1 when dynamic stall model is active on the lift coefficient table for this element, 0 otherwise	
+DynamicFlagD:		Flag indicating 1 when dynamic stall model is active on the drag coefficient table for this element, 0 otherwise	
+AOA (deg):		Element local flow angle of attack (deg).			
+Re (-):			Element Reynolds number based on element chord and local flow speed.	
+Mach (-):		Element Mach number based on local flow speed.	
+Ur (-):			Local flow speed ratio with freestream.	
+CN (-):			Element normal force coefficient (per span), NForce (per span) / (1/2*rho*Uloc^2*Chord), where rho is density, Uloc is local flow 
+			speed, Chord is element chord.	
+CT (-):			Element tangential force coefficient (per span), TForce (per span) / (1/2*rho*Uloc^2*Chord), where rho is density, Uloc is local 
+			flow speed, Chord is element chord.	
+Fx (-):			Coefficient of force in the global x direction on element, XForce / (1/2*rho*Uinf^2*Af), where rho is density, Uinf is freestream 
+			speed, Af is turbine frontal area.	
+Fy (-):			Coefficient of force in the global y direction on element, YForce / (1/2*rho*Uinf^2*Af), where rho is density, Uinf is freestream 
+			speed, Af is turbine frontal area.
+Fz (-):			Coefficient of force in the global z direction on element, ZForce / (1/2*rho*Uinf^2*Af), where rho is density, Uinf is freestream 
+			speed, Af is turbine frontal area.	
+te (-):			Torque coefficient from the element, Torque / (1/2*rho*Uinf^2*Af*R), where rho is density, Uinf is freestream speed, Af is turbine 
+			frontal area, and R is the largest perpendicular distance the blades achieve from the rotation axis (defined as reference radius 
+			in the input file).
+	
+

@@ -1,16 +1,15 @@
-SUBROUTINE bsload(nElem,nGeom,IsBE,DynamicFlagL,DynamicFlagD,alpha,Re,umach,ur,CN,CT,te) 
+SUBROUTINE bsload(nElem,nGeom,IsBE,DynamicFlagL,DynamicFlagD,alpha,Re,umach,ur,CN,CT,Fx,Fy,Fz,te) 
        
         use element
-        use vel
+        use blade
         use pidef       
         use configr
-        use test
-        use gam
         use airfoil
         use dystl
         use cltab
         use freestream
-                                                        
+        use test  
+                                                      
         integer SectInd, nElem, nGeom, IsBE, DynamicFlagL, DynamicFlagD
         real ElemSpanR, ElemChordR, xe, ye, ze, nxe, nye, nze, txe, tye, tze, alpha, alpdot, adotnorm, te
         real uAve, vAve, wAve, uBlade, vBlade, wBlade
@@ -94,8 +93,10 @@ SUBROUTINE bsload(nElem,nGeom,IsBE,DynamicFlagL,DynamicFlagD,alpha,Re,umach,ur,C
         ! Evaluate aero coefficients and dynamic stall effects as appropriate
         Call AeroCoeffs(alpha75,alpha5,Re75,Re5,Re,adotnorm,umach,SectInd,IsBE,CL,CD,CN,CT,DynamicFlagL,DynamicFlagD)
                 
-        ! Bound vortex strength from CL via Kutta-Joukowski analogy.                                                                                          
+        ! Bound vortex strength from CL via Kutta-Joukowski analogy. 
+        ! Save corresponding AOA as well                                                                                          
         GB(nElem1)=CL*ElemChordR*ur/2.0  
+        AOA(nElem1)=alpha
         
         ! Force coeff. from this blade element, re-referenced to full turbine scale (F/(1/2*rho*Uinf^2*At))                                         
         FN=CN*(ElemChordR*ElemSpanR/at)*ur**2                                                       

@@ -19,11 +19,8 @@ PROGRAM CACTUS
         
         use parameters
         use dystl
-        use wakeloc
+        use blade
         use element
-        use vel
-        use veo
-        use gam
         use varscale
         use cltab
         use shear
@@ -40,9 +37,12 @@ PROGRAM CACTUS
         use freestream
         use wallsoln
         use f2kcli
-        use regtest       
+        use regtest
+        use output       
         
         !IMPLICIT NONE !JCM: eventually...      
+    
+        include 'csvwrite.inc'
         
         integer :: ErrFlag, nargin, FNLength, status, DecInd
         logical :: FinalConv
@@ -52,13 +52,14 @@ PROGRAM CACTUS
         logical :: back
         integer :: iConv
         integer :: WakeLineInd(4)
-        real :: cpsum, NLTol
+        real :: NLTol
+        real :: cpave, cpave_last
         real :: delt, delty, deltb, deltr
         
         real :: hmachl(2)
         real :: hmachm(2)
                                                  
-        character(80) :: InputFN, OutputFN, DOutputFN, SOutputFN, ROutputFN, FNBase                                   
+        character(80) :: InputFN, SFOutputFN, RevOutputFN, TSOutputFN, ELOutputFN, RegOutputFN, FNBase                                   
                                                  
         ! Pi definition
         pi = 4.0*atan(1.0)
@@ -78,29 +79,27 @@ PROGRAM CACTUS
         if (DecInd > 1) then
                 FNBase=FNBase(1:(DecInd-1))       
         end if       
-        OutputFN=trim(FNBase)//'.out'
-        DOutputFN=trim(FNBase)//'_Data.out'
-        SOutputFN=trim(FNBase)//'_Short.out'       
+        SFOutputFN=trim(FNBase)//'_Param.csv'
+        RevOutputFN=trim(FNBase)//'_RevData.csv'
+        TSOutputFN=trim(FNBase)//'_TimeData.csv'
+        ELOutputFN=trim(FNBase)//'_ElementData.csv'        
         
         ! Namelist input file                                                       
         OPEN(4, FILE= InputFN)                                     
         
         ! Output files                                                      
-        OPEN(6, FILE= OutputFN,  FORM= 'FORMATTED' )                                    
-        OPEN(9, FILE= DOutputFN,   FORM= 'FORMATTED' )                                         
-        OPEN(12, FILE= SOutputFN,  FORM= 'FORMATTED' )
-        
-        ! Read the Date and Time.
-        CALL dattim(DMY,HMS)
-        
+        OPEN(8, FILE=SFOutputFN) 
+        OPEN(9, FILE=RevOutputFN)
+        OPEN(10, FILE=TSOutputFN)
+
         ! Initialize iteration parameters                                                       
         irev=0
         nt = 0
-        ntTerm=1                                                                                                                                                                         
-        cpsum = 0.0   
-        power = 0.0                                                    
+        ntTerm=1                                                                                                                                                       
         FitStartRev=1  
         NLTol=1.0e-04                                                      
+        cpave=0.0
+        cpave_last=0.0
         
         ! Error flags                                                                                                                                                                  
         ilxtp=0
@@ -118,11 +117,15 @@ PROGRAM CACTUS
         
         ! Simple output for regression testing        
         if (RegTFlag == 1) then      
-                 DOutputFN=trim(FNBase)//'_RegData.out'
-                 OPEN(7, FILE= DOutputFN,  FORM= 'FORMATTED' )  
+                 RegOutputFN=trim(FNBase)//'_RegData.out'
+                 OPEN(7, FILE= RegOutputFN,  FORM= 'FORMATTED' )  
                  Call WriteRegTOutput(0)
         end if
         
+        ! Optional element load output
+        if (Output_ELFlag == 1) then
+                OPEN(11, FILE=ELOutputFN)
+        end if
                                                                             
         ! If wake update interval set to a negative number, set next wake update iteration to -1 (no wake velocity updates will be performed)
         ! Otherwise, make the first update on the second iteration (when the wake first appears)
@@ -166,7 +169,7 @@ PROGRAM CACTUS
         if (GeomFlag == 1) then 
                 ! Create VAWT geometry                                                                                                                              
                 delty=hr/nbe                                                 
-                CALL BGeomSetup_v(nti,nbe,nb,delty,delt,deltb,at)
+                CALL BGeomSetup_v(delty,delt,deltb,at)
                 
                 ! VAWT axis and normalized rotation rate
                 RotX=0.0
@@ -181,7 +184,7 @@ PROGRAM CACTUS
         else
                 ! Create HAWT geometry                                                                                                                                   
                 deltr=(1.0-hubrr)/nbe                                                       
-                CALL BGeomSetup_h(nti,nbe,nb,deltr,hubrr,delt,deltb,at) 
+                CALL BGeomSetup_h(deltr,hubrr,delt,deltb,at) 
                 
                 ! HAWT axis and normalized rotation rate
                 RotX=1.0
@@ -209,13 +212,26 @@ PROGRAM CACTUS
         ! Normalization parameters for geometry and performance outputs
         romega=2.0*pi*Rmax*rpm/60.0                                       
         uinf=romega/ut 
-        DT=DelT/ut                                      ! normalized simulation timestep (dt*Uinf/Rmax)                                         
-        uMPH=uinf*3600./5280.                                              
+        DT=DelT/ut                                      ! normalized simulation timestep (dt*Uinf/Rmax)                                               
         rem=rho*uinf*Rmax/vis                                          
         Minf=uinf/sqrt(1.4*1716.0*(tempr+459.6))                                                                                                                                          
-        areat=at*Rmax**2                                ! frontal area (at is (frontal area) / Rmax^2 )                                            
-        trqcon=rho/2.0*areat*Rmax*uinf**2               ! torque coeff normalization                          
+        areat=at*Rmax**2                                ! frontal area (at is (frontal area) / Rmax^2 ) 
+        dynpress=rho/2.0*uinf**2                        ! dynamic pressure                  
+        torquec=dynpress*areat*Rmax                     ! torque coeff normalization                         
         powerc=rho/2.0*areat*romega**3*0.7457/550.      ! normalization for power coeff using tip speed (kp), with conversion from lb-ft/s to kW. (Used to write output)
+        
+        ! Write flow properties output
+        Output_SFData(1,1)=Rmax         ! length scale
+        Output_SFData(1,2)=areat        ! frontal area
+        Output_SFData(1,3)=rpm          ! turbine RPM
+        Output_SFData(1,4)=Uinf         ! freestream U
+        Output_SFData(1,5)=rho          ! density
+        Output_SFData(1,6)=tempr        ! temperature
+        Output_SFData(1,7)=vis          ! viscosity
+        Output_SFData(1,8)=dynpress     ! dynamic pressure
+        Output_SFData(1,9)=ut           ! tip speed ratio
+        Output_SFData(1,10)=rem          ! machine Reynolds number based on U and Rmax
+        Call csvwrite(8,Output_SFHead,Output_SFData,0)
         
         ! Dynamic stall setup                                                
         k1pos = 1.0   ! effect magnitude for CL increasing                      
@@ -230,21 +246,15 @@ PROGRAM CACTUS
                 hmachm(i)=0.7+2.5*diff                                            
                 gammaxm(i)=1.0-2.5*diff                                           
                 dgammam(i)=gammaxm(i)/(hmachm(i)-smachm(i))                       
-        end do                                                                                                            
-
-        ! Setup temp arrays                             
+        end do 
+                                                                                                                   
+        ! Initialize needed arrays                             
         do i=1,ne                                                      
                 gs(1,i)=0.0                                                       
-                ogb(i)=0.0                                                        
-                alfold(i)=0.0                                                                                                         
+                ogb(i)=0.0 
+                AOA(i)=0.0                                                                                                                                                             
         end do 
 
-        ! List input data
-        CALL listit(0,6)
-        ! Write header on data output file
-        write (9,901) jbtitle      
-        write (9,902) trqcon
-        
         ! CPU time markers
         t0 = secnds(0.0)                                                                                                           
         Time1 = secnds(t0)                                                                             
@@ -255,10 +265,7 @@ PROGRAM CACTUS
         do while (ContinueRevs)  
                 
                 ! Increment revolution counter
-                irev=irev+1
-                
-                ! Reset power coeff. sum
-                cpsum=0.0                                                                                                           
+                irev=irev+1                                                                                              
         
                 ! Do timesteps
                 do i=1,nti    
@@ -267,21 +274,33 @@ PROGRAM CACTUS
                         nt=nt+1  
                         
                         ! Get current geometry                                                                 
-                        CALL bgeom(i,nt,nbe,nb)        
-                        
-                        iflg=0                                         
-                        iter=0 
-                        ! Calculate wake and wall induced velocity at the current blade locations                                                    
-                        CALL bivel(nt,ntTerm,nbe,nb,ne,iflg)    
-                                             
+                        CALL bgeom(i)        
+                     
                         ! Fixed-point iteration to converge non-linear system consisting of 
                         ! blade element bound vorticity (potentially non linear with local AOA),
                         ! and its own effect on local AOA. Wake remains constant during this iteration...
+                        iflg=0
+                        iter=0 
                         ContinueNL=.TRUE.
                         do while (ContinueNL) 
                                 
                                 ! Increment iterations                                                
-                                iter=iter+1                                                       
+                                iter=iter+1 
+                                                                                      
+                                ! Initialize bound vorticity iteration:                                                      
+                                ! On first iteration, calc influence of all elements on blade AOA. On subsequent iterations of the bound vorticity, 
+                                ! only recalculate the bound vorticity component...
+                                ! Set dynamic stall alpha old to current blade AOA (old AOA left fixed during bound vorticity iteration)
+                                if (iflg == 0) then 
+                                        do k=1,ne                                                                                                             
+                                                alfold(k)=AOA(k)                                                         
+                                        end do  
+                                 
+                                        CALL bivel(iflg) 
+                                        iflg=1
+                                else
+                                        CALL bivel(iflg) 
+                                end if
                                 
                                 ! Regression test
                                 if (RegTFlag == 1) then
@@ -290,14 +309,10 @@ PROGRAM CACTUS
                                 end if
                                 
                                 ! Calculate blade loads and bound vorticity                                                           
-                                CALL bvort(i,NLTol,iConv,iter)                                                  
+                                CALL bvort(i,NLTol,iConv)                                                  
         
-                                iflg=1 
-                                ! Calculate wake induced velocity at the current blade locations   
-                                CALL bivel(nt,ntTerm,nbe,nb,ne,iflg)                      
-                        
                                 if ((iConv == 0) .OR. (iter == MaxNLIters)) then   
-                                        ContinueNL=.FALSE.
+                                        ContinueNL=.FALSE.      
                                 end if
                         
                         end do
@@ -307,22 +322,18 @@ PROGRAM CACTUS
                                 WRITE(6,610)                                                  
                                 CALL WriteFinalOutput()   
                                 stop                                                       
-                        end if                                 
-                        
-                        ! Calculate current performance parameters
-                        ! JCM: note that in addition to calculating performance, perf actually updates the bound vorticity strength once more, following the 
-                        ! last update of the blade velocities in bivel from the loop above... This should probably be reorganized somehow to avoid confusion... 
-                        ! Possibly, could include in bvort with an output flag to be set on the last iteration...
-                        CALL perf(i,cpl)                                          
-                        ! Update power coeff. sum
-                        cpsum=cpsum+cpl
-                             
+                        end if                                   
+                            
                         ! Update freestream, bound and wake vorticity influence on wall RHS and calc new wall panel strengths
                         if (GPFlag == 1) then
-                                Call UpdateWall(nt,ntTerm,nbe,nb,ne,iut,nsw) 
+                                Call UpdateWall() 
                         end if 
   
                         ! JCM: Write current wake data for viewing in Matlab
+                        ! JCM: Should change this to write all wake lines in a csv. 
+                        ! For each timestep: first col is blade, second is elem, then location, velocity. Each row is a wake line element...
+                        ! Similar function for wall elements...
+                        ! Make this output an option in the input file...
                         WakeOut=0
                         if (WakeOut == 1) then
                                 Call WriteWakeData(i,DelT,WakeLineInd)
@@ -331,9 +342,9 @@ PROGRAM CACTUS
                         ! Update current wake convection velocities (excluding wake to be shed from the current blade)                                                                    
                         nfpw=ifw*jfw*kfw  ! Number of fixed wake points                                                
                         if ((npw <= nfpw) .OR. (ifwg == 0)) then                     
-                                CALL wivel(nt,ntTerm,nbe,nb,ne,iut,nsw,npw)      ! Use all wake points to update the wake node velocities
+                                CALL wivel()      ! Use all wake points to update the wake node velocities
                         else                        
-                                CALL swivel(nt,ntTerm,nbe,nb,ne,iut,nsw,npw)     ! Use fixed wake grid to update the wake node velocities by interpolation                      
+                                CALL swivel()     ! Use fixed wake grid to update the wake node velocities by interpolation                      
                         end if  
                                                                                
                         ! If new wall and wake velocities were calculated on this timestep, set the next update timestep
@@ -342,14 +353,13 @@ PROGRAM CACTUS
                         end if                                                       
                                                                                
                         ! Convect the wake (including wake to be shed from the current blade location)
-                        CALL conlp(nt,ntTerm,ne,delt,ut)                                                                      
+                        CALL conlp()                                                                      
                         
                         ! Shed new wake                         
-                        CALL shedvor(nt,nbe,nb)  
+                        CALL shedvor()  
                                                                  
                         ! Regression test
                         if (RegTFlag == 1) then
-                                Reg_CPOut=cpsum/nt
                                 CALL WriteRegTOutput(2)
                                 if (nt == 2) then
                                         stop
@@ -358,8 +368,9 @@ PROGRAM CACTUS
                                                 
                 end do ! Time steps 
                 
-                ! Calculate revolution average performance                                                                                                                                
-                CALL endrev(cpsum)                                          
+                ! Calculate revolution average performance
+                cpave_last=cpave                                                                                                                                
+                CALL endrev(cpave)                                          
                                                            
                 ! If nr revs have been performed, then done. Otherwise, if initial convergence is hit, set final convergence params (if desired) and continue
                 if (irev == nr) then
@@ -368,7 +379,7 @@ PROGRAM CACTUS
                         
                         ! Define convergence as convergence of revolution average power coeff. Additionally, when using final convergence, the user can
                         ! specify an intermediate revolution number at which to switch to final convergence (if initial convergence level hasn't already been hit).
-                        if (abs((cp(irev)-cp(irev-1))/cp(irev)) < convrg) then
+                        if (abs((cpave-cpave_last)/cpave) < convrg) then
                                 ConvFlag=.TRUE.
                         else if (ifc == 1 .AND. .NOT. FinalConv .AND. irev == nric) then
                                 ConvFlag=.TRUE.
@@ -398,9 +409,9 @@ PROGRAM CACTUS
                                         DT=DelT/ut
                                         ! Recreate the geometry arrays with the new theta resolution (Note: VAWT/HAWT specific since we are recreating geometry)
                                         if (GeomFlag == 1) then                                                       
-                                                CALL BGeomSetup_v(nti,nbe,nb,delty,delt,deltb,at)
+                                                CALL BGeomSetup_v(delty,delt,deltb,at)
                                         else
-                                                CALL BGeomSetup_h(nti,nbe,nb,deltr,hubrr,delt,deltb,at) 
+                                                CALL BGeomSetup_h(deltr,hubrr,delt,deltb,at) 
                                         end if
                                         ! Reset CPF and KPF fit in endrev (output)
                                         FitStartRev=irev
@@ -413,7 +424,5 @@ PROGRAM CACTUS
         ! Write output
         CALL WriteFinalOutput()    
                                                         
-610  FORMAT('0','***** BIVEL/BVORT LOOP DID NOT CONVERGE IN 10 ITERATIONS. PROGRAM TERMINATED. *****')                                  
-901  FORMAT('RESULTS FOR JOB: ',A80)               
-902  FORMAT('TORQUE CONVERSION FACTOR=',F15.0)                       
+610  FORMAT('0','***** BIVEL/BVORT LOOP DID NOT CONVERGE IN 10 ITERATIONS. PROGRAM TERMINATED. *****')                                                       
 End                                                              

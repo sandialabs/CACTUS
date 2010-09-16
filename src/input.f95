@@ -3,11 +3,8 @@ SUBROUTINE input(ErrFlag)
 	use parameters
 	
 	use dystl
-	use wakeloc
 	use element
-	use vel
-	use veo
-	use gam
+	use blade
 	use varscale
 	use cltab
 	use shear
@@ -23,7 +20,8 @@ SUBROUTINE input(ErrFlag)
 	use time
 	use freestream
 	use wallsoln 
-        use regtest            
+        use regtest
+        use output            
 	
 	integer, parameter :: InBufferNumSectionTables = 100
 	integer, parameter :: InBufferNumSegPerBlade = 100
@@ -41,12 +39,13 @@ SUBROUTINE input(ErrFlag)
 	
                 
 	! Namelist input file declaration
-	NAMELIST/ConfigInputs/RegTFlag,GeomFlag,GPFlag,rho,vis,tempr,hFSRef,slex,nr,convrg,nti,iut,ivtxcor,ifwg,ifc,convrgf,nric,ntif,iutf,ixterm,xstop
+	NAMELIST/ConfigInputs/RegTFlag,GeomFlag,GPFlag,rho,vis,tempr,hFSRef,slex,nr,convrg,nti,iut,ivtxcor,ifwg,ifc,convrgf,nric,ntif,iutf,ixterm,xstop,Output_ELFlag
 	NAMELIST/XFlowInputs/jbtitle,Rmax,RPM,Ut,CrRef,ChR,hr,eta,nb,nbe,nSect,AFDPath,iSection,hAG
 	NAMELIST/AxFlowInputs/jbtitle,R,HubR,RPM,Ut,Tilt,CrRef,ChR,bCone,bi,bTwist,eta,nb,nbe,nSect,AFDPath,iSection,hAG
 	
 	! Input Defaults
-        RegTFlag = 0       
+        RegTFlag = 0 
+        Output_ELFlag=0      
 	nb = 2
 	nbe = 5 
 	nSect = 1 
@@ -87,17 +86,18 @@ SUBROUTINE input(ErrFlag)
 	
 	! Set array bounds based on inputs
 	! Geometry
-	MaxBlades = 3
-	MaxSegPerBlade = 10
+	MaxBlades = nb
+	MaxSegPerBlade = nbe
 	MaxSegEndPerBlade = MaxSegPerBlade+1
 	MaxSegEnds = MaxSegEndPerBlade*MaxBlades
+        MaxSeg = MaxSegPerBlade*MaxBlades       
 	! Airfoil Data
-	MaxAirfoilSect = 2
+	MaxAirfoilSect = nSect
 	MaxReVals = 15
 	MaxAOAVals = 400
 	! Wake advancement
-	MaxRevs = 40
-	MaxTimeStepPerRev = 32
+	MaxRevs = nr
+	MaxTimeStepPerRev = nti
 	MaxWakeNodes = MaxRevs * MaxTimeStepPerRev   
 	! Fixed wake grid 
 	MaxFixWakeX = 12
@@ -105,23 +105,21 @@ SUBROUTINE input(ErrFlag)
 	MaxFixWakeZ = 20
 	! Non-linear convergence iteration
 	MaxNLIters = 10
+        ! Outputs
+        MaxTimeSteps = MaxRevs * MaxTimeStepPerRev       
 	
 	! Array construction
-	CALL dystl_cns(MaxAirfoilSect,MaxReVals,MaxSegEnds)
-	CALL wakeloc_cns(MaxWakeNodes,MaxSegEnds)
-	CALL element_cns(MaxTimeStepPerRev,MaxSegEnds,MaxSegEndPerBlade)
-	CALL vel_cns(MaxWakeNodes,MaxSegEnds)
-	CALL veo_cns(MaxWakeNodes,MaxSegEnds)
-	CALL gam_cns(MaxWakeNodes,MaxSegEnds)
+        CALL blade_cns(MaxWakeNodes,MaxSegEnds)
+	CALL element_cns(MaxTimeStepPerRev,MaxSegEnds,MaxSegEndPerBlade)     
 	CALL cltab_cns(MaxAOAVals,MaxReVals,MaxAirfoilSect,MaxSegEnds)
 	CALL airfoil_cns(MaxAirfoilSect)
-	CALL configr_cns(MaxRevs)
 	CALL xwake_cns(MaxFixWakeX,MaxFixWakeY,MaxFixWakeZ)
 	CALL uwake_cns(MaxFixWakeX,MaxFixWakeY,MaxFixWakeZ)
 	CALL wakedata_cns(MaxFixWakeY,MaxFixWakeZ)
-	CALL time_cns(MaxRevs)
 	CALL freestream_cns(MaxWakeNodes,MaxSegEnds)
-	
+	CALL dystl_cns(MaxAirfoilSect,MaxReVals,MaxSegEnds)
+        CALL output_cns(MaxRevs, MaxTimeSteps, MaxSeg, MaxBlades)       
+        
 	! Write from buffer...
 	iSect(1:(nbe+1))=iSection(1:(nbe+1))
 	cr(1:(nbe+1))=ChR(1:(nbe+1))
@@ -174,7 +172,7 @@ SUBROUTINE input(ErrFlag)
 			end do
 		end do
 		
-		! Catch invalid iSect inputs and default them to use section 1, write warning to output file...
+		! Catch invalid iSect inputs and default them to use section 1, write warning to std out...
 		do i = 1, ne
 			if (iSect(i) < 1 .OR. iSect(i) > nsect) then 
 				iSect(i) = 1     

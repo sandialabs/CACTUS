@@ -1,47 +1,43 @@
-SUBROUTINE endrev(cpsum)    
+SUBROUTINE endrev(cpave)    
 
 	use configr
+        use output      
 	use time
 		
-	real cpsum
-	real nfptf
-	integer nfpt										
+        real cpave        
+	
+        real kpave, trave, dtime, etime										
 	
 	time2 = secnds(t0)                                                
 	
-	dtime(irev)=time2-time1                                           
-	etime(irev)=time2                                          
-	time1=time2                                                       
-	cp(irev)=cpsum/nti                                                
-	kp(irev)=cp(irev)/ut**3                                           
-	write (6,620) cp(irev),kp(irev),irev 
-	power=kp(irev)*powerc                                                                                   
-								
-	! Linear regression curve fit to cp as function of 1/rev     
-	! Use last 3 points for the fit...
-	nfpt=3
-	                                  
-	if (irev < (FitStartRev+nfpt-1)) then
-		cpf(irev)=0.0                                                     
-		kpf(irev)=0.0   
-	else                            
-		sumx=0.0                                                          
-		sumy=0.0                                                          
-		sumxy=0.0                                                         
-		sumx2=0.0                                                                                                
-		do i=(irev-nfpt+1),irev                                                
-			x=1.0/float(i)                                                    
-			sumx=sumx+x                                                       
-			sumy=sumy+cp(i)                                                   
-			sumxy=sumxy+cp(i)*x                                               
-			sumx2=sumx2+x*x                                                   
-		end do 
-		nfptf=float(nfpt)                                                         
-		b=(sumxy-sumx*sumy/nfptf)/(sumx2-sumx**2/nfptf)                       
-		cpf(irev)=sumy/nfptf-b*sumx/nfptf                                     
-		kpf(irev)=cpf(irev)/ut**3                                         
-	end if                                                     
-                                               
-Return 
-620 FORMAT(10X,'AVERAGE ROTOR CP =',E13.5,', KP =',E13.6,', FOR REVOLUTION NUMBER ',I2)                                                                
+	dtime=time2-time1                                           
+	etime=time2                                          
+	time1=time2  
+                                                                                                             
+        ! Calc average power over last revolution
+        cpave=0.0
+        trave=0.0
+        do i=(Output_TSRow-nti+1),Output_TSRow
+                ! Average torque and power coefficients based on freestream speed and Rmax
+                trave=trave+Output_TSData(i,3)/nti
+                cpave=cpave+Output_TSData(i,4)/nti        
+        end do
+        ! Torque in ft-lbs
+        torque=trave*torquec
+        ! Power coefficient based on tip speed
+        kpave=cpave/ut**3
+        ! Power in kW                                                      
+        power=kpave*powerc                                                      
+                                                             
+        ! Set revolution average output 
+        Output_RevRow=irev                                                    
+        Output_RevData(irev,1)=irev
+        Output_RevData(irev,2)=cpave
+        Output_RevData(irev,3)=kpave
+        Output_RevData(irev,4)=power
+        Output_RevData(irev,5)=torque
+        Output_RevData(irev,6)=dtime
+        Output_RevData(irev,7)=etime                                                   							
+                                          
+Return                                                              
 End                                                               

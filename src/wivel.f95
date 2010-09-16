@@ -1,14 +1,13 @@
-SUBROUTINE wivel(NT,ntTerm,NBE,NB,NE,IUT,NSW,NPW) 
-
-      	use xwake  
-      	use wakeloc
-      	use vel
-      	use veo
-      	use test 
+SUBROUTINE wivel() 
+        
+        use configr
+      	use blade
+      	use wallsoln 
       	use freestream
-      	use wallsoln
         use regtest 
-      
+        use xwake
+        use test
+        
         integer :: ygcErr 
         real :: Point(3), IndVel(3)                                                                
                                                                        
@@ -38,12 +37,7 @@ SUBROUTINE wivel(NT,ntTerm,NBE,NB,NE,IUT,NSW,NPW)
 				CALL CalcFreestream(Y(J,I),UFS(J,I),VFS(J,I),WFS(J,I),ygcErr) 	                                
 			end do
 		end do 
-			
-		if (ygcErr .ne. 0) then
-			ierr1=1
-			WRITE (6,607)  
-		end if                                                                                                                                                                    
-                                                                                                                                                                           
+			                                                                                                                                                           
 		! If this is proper time step, calculate wall and wake influence on wake velocities                                                             
       		if (NT .eq. NSW) then                                         
 
@@ -73,6 +67,5 @@ SUBROUTINE wivel(NT,ntTerm,NBE,NB,NE,IUT,NSW,NPW)
                 end do
         end if
                                                      
-RETURN  
-607   FORMAT(1H ,5X,92H*** (Y+YGC) LESS THAN ZERO FOR AT LEAST ONE NODE. URS SET EQUAL TO ZERO FOR THOSE NODES. ***)                                                         
+RETURN                                                           
 END                                                               

@@ -1,11 +1,11 @@
-SUBROUTINE BGeomSetup_v(nti,nbe,nb,delty,delt,deltb,at) 
+SUBROUTINE BGeomSetup_v(delty,delt,deltb,at) 
 
 	use parameters
-	
+        
+        use configr 	
 	use element
 	use pidef
 	
-	integer :: nti, nbe, nb
 	integer :: i, j, k, nei, nej, nej1
 	real :: delty, delt, deltb, deltac, at
 	real :: dx, dy, dz, NMag

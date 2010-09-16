@@ -1,7 +1,8 @@
-SUBROUTINE shedvor(NT,NBE,NB)   
-
-      	use gam
-                                                                                                     
+SUBROUTINE shedvor()   
+        
+        use configr
+      	use blade
+                                                                                          
     	! CALCULATE THE STRENGTHS OF THE VORTICIES TO BE SHED                
                                                                        
       	NTp1=NT+1                                                          

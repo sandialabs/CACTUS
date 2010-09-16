@@ -10,7 +10,7 @@ echo "Running regression test 1"
 cactus "trunk/RegTest/RegTest1.in"
 
 # clean up standard output files which are meaningless for this calculation
-rm "RegTest1.out" "RegTest1_Short.out" "RegTest1_Data.out"
+rm -f "RegTest1_Param.csv" "RegTest1_RevData.csv" "RegTest1_TimeData.csv" "RegTest1_ElementData.csv"
 
 if [[ -n `diff -q "RegTest1_RegData.out" "trunk/RegTest/RegTest1_RegData_Ex.out"` ]]; then
 	echo "Summary of differences between RegTest1_RegData.out and trunk/RegTest/RegTest1_RegData_Ex.out:"
@@ -27,7 +27,7 @@ echo "Running regression test 2"
 cactus "trunk/RegTest/RegTest2.in"
 
 # clean up standard output files which are meaningless for this calculation
-rm "RegTest2.out" "RegTest2_Short.out" "RegTest2_Data.out"
+rm -f "RegTest2_Param.csv" "RegTest2_RevData.csv" "RegTest2_TimeData.csv" "RegTest2_ElementData.csv"
 
 if [[ -n `diff -q "RegTest2_RegData.out" "trunk/RegTest/RegTest2_RegData_Ex.out"` ]]; then
 	echo "Summary of differences between RegTest2_RegData.out and trunk/RegTest/RegTest2_RegData_Ex.out:"
@@ -44,7 +44,7 @@ echo "Running regression test 3"
 cactus "trunk/RegTest/RegTest3.in"
 
 # clean up standard output files which are meaningless for this calculation
-rm "RegTest3.out" "RegTest3_Short.out" "RegTest3_Data.out"
+rm -f "RegTest3_Param.csv" "RegTest3_RevData.csv" "RegTest3_TimeData.csv" "RegTest3_ElementData.csv"
 
 if [[ -n `diff -q "RegTest3_RegData.out" "trunk/RegTest/RegTest3_RegData_Ex.out"` ]]; then
 	echo "Summary of differences between RegTest3_RegData.out and trunk/RegTest/RegTest3_RegData_Ex.out:"

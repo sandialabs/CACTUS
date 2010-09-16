@@ -1,7 +1,8 @@
-SUBROUTINE bgeom(nGeom,nt,nbe,nb) 
+SUBROUTINE bgeom(nGeom) 
 	
+        use configr       
 	use element
-	use wakeloc
+	use blade
 	
 	! JCM: Gets blade element geometry for each blade starting from the bottom of the first blade                                                         
 	                                                                                                    

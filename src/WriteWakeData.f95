@@ -3,10 +3,10 @@ SUBROUTINE WriteWakeData(tind,DelT,WakeLineInd)
 	! JCM: Print out wake data arrays for viewing in Matlab 
 
 	use wakedata
-	use wakeloc
-	use configr  
+	use blade
 	use wallsoln 
-	
+	use configr
+        
 	integer :: tind, WakeLineInd(4)
 	integer :: wCount
 	integer :: tCount, tCountMax, jCount, kCount, yGCErr, nCount
