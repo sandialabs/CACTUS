@@ -1,44 +1,6 @@
 &ConfigInputs
 
-!	Regression Testing:
-!	RegTFlag (int) = Set to 1 to perfom a regression test (two iterations, generates RegData.out output file), 0 for normal operation (default)
-
-!	VAWT or HAWT calculation:
-!	GeomFlag (int): Set to 1 for VAWT calculation, 0 for HAWT calculation (sets the appropriate namelist: VAWTInputs for VAWT or HAWTInputs for HAWT)
-
-!	Wall calculation:
-!	GPFlag (int): Set to 1 to use a ground plane, 0 otherwise
-
-!	Atmosphere inputs:
-!	rho (real): Density (slugs/ft^3)
-!	vis (real): Dynamic viscosity (as in Re = rho*V*L/vis, slugs/(ft*s))
-!	tempr (real): Temperature (degF)
-!	hFSRef (real): Height of the effective freestream (99% freestream maybe) to be used in ground shear layer lmodel (ft)
-!	slex (real): Exponent for ground shear layer model (Ex. 1/2 for parabolic laminar BL model, 1/7 turbulent approx., 0 for constant freestream)
-
-!	Calculation inputs:
-! 	nr (int): Number of revolutions to perform (default: 10).
-! 	nti (int): Number of time steps per revolution (default: 16). 
-!	convrg (real): Convergence level for the revolution average power coeff. (default: .0001). Iteration will finish before nr revs if this level is hit.
-! 	iut (int): Number of iterations between wake convection velocity updates (default: iut = floor(ut)). If iut is set to a negative number, wake 
-!   		convection velocities will be left at the values calculated at the time the wake element is created (no wake convection velocity updates).
-! 	ivtxcor (int): 0 to use finite vortex core with width equal to blade chord (default), 1 to not use core model
-
-! 	Wake convection speedup options:
-! 	ifwg (int): 1 to calc wake convection velocities using fixed grid points speedup, 0 to use all wake points (default)
-!       ifc (int): 1 to use final convergence step, 0 to not (default). 
-!		FC Step consists of changing the values below if convergence is reached before nr revolutions have been performed.
-!		nric (int): Revolution number after which to switch to FC, if initial convergence level has not yet been achieved (optional). 		
-!		ntif (int): Final number of time steps per revolution. This value will replace nti during FC step.
-!		convrgf (real): Final convergence level (default: .0001). This level will replace convrg during FC step.
-!		iutf (int): Final number of iterations between wake updates (default: iutf = floor(ut)). Used in place of iut for FC step. 
-!			If iutf is set to a negative number, wake convection velocities will be left at the values calculated at the time the wake element 
-!			is created (no wake convection velocity updates).
-! 	ixterm (int): 1 to ignore wake points beyond x/Rmax = xstop, 0 to use all wake points (default)
-!		xstop (real): If ixterm = 1, xstop defines x/Rmax beyond which wake points are ignored (default: 5)
-!
-!	Optional outputs:
-!	Output_ELFlag (int): 1 to output full detail element loads csv file, 0 to omit this output (default)
+!	Configuration input parameters. See documentation for input descriptions.
 	
 	RegTFlag= 1
 	
@@ -70,29 +32,7 @@
 
 &XFlowInputs
 
-!	JCM: Below is a description of the input file parameters for a Darrieus type design. Also required as input are the airfoil data 
-!	table files pointed to in AFDPath below. See TODO for description of the data format for these tables.
-
-!	Title:
-! 	jbtitle (string in single quotes): Job title  
-
-!	VAWT Geometry inputs (Note: elements spaced evenly in height dimension):
-!	Rmax (real): Equitorial radius (ft)
-!	RPM (real): Rotor rotation rate (revs per minute)
-!	Ut (real): Equitorial tip speed ratio (Vt/Vinf)	
-!	hr (real): Height to radius ratio 
-! 	eta (real): Blade mount point ratio ((distance behind leading edge of the blade mount point) / (chord))
-!	CrRef (real): Reference chord to radius ratio (default: root chord)
-!	ChR (real): Array (comma separated) of chord to radius ratio at each element end (elements ordered root to tip). If a single value is input,
-!		that value will be applied to the entire blade.
-!	nb (int): Number of blades (default: 2)
-!	nbe (int): Number of blade elements per blade (default: 5)
-!	nSect (int): Number of airfoil section data tables to use (default: 1)
-!	AFDPath (string in single quotes): Array (comma separated) of section data file path strings (size=nsect)
-!	iSection (int): Array of indicies (comma separated) corresponding to which airfoil data table should be applied to each blade element end
-!		in first blade (mirrored for each subsequent blade, size = nbe + 1, default: all set to 1)
-!	hAG (real): Height above ground at base of blades (ft) 
-	
+!	Input parameters for a Darrieus type design. See documentation for input descriptions.
 
 	jbtitle = 'FloWind 19m VAWT Base Case'  
 	                                        
@@ -116,33 +56,7 @@
 
 &AxFlowInputs
 
-!	JCM: Below is a description of the input file parameters for an axial turbine design. Also required as input are the airfoil data 
-!	table files pointed to in AFDPath below. See TODO for description of the data format for these tables.
-
-!	Title:
-! 	jbtitle (string in single quotes): Job title  
-
-!	HAWT Geometry inputs (Note: elements spaced evenly along span from HubR to R):
-!	R (real): Radius (ft)
-!	HubR (real): Hub Radius (ft)
-!	RPM (real): Rotor rotation rate (revs per minute)
-!	Ut (real): Tip speed ratio (Vt/Vinf)
-!	Tilt (real): Rotor tilt angle (deg, positive windward axis tilted up)
-! 	eta (real): Blade mount point ratio ((distance behind leading edge of the blade mount point) / (root chord))
-!	CrRef (real): Reference chord to radius ratio (default: root chord)
-!	ChR (real): Array (comma separated) of chord to radius ratio at each element end (elements ordered root to tip). If a single value is input,
-!		that value will be applied to the entire blade. 
-!	bCone (real): Blade coning angle (deg, positive tip into the wind (-x))
-!	bi (real): Blade incidence (deg, w.r.t. rotor disk plane, positive LE into the wind (-x))
-!	bTwist (real): Array (comma separated) of blade twist at each element end (deg, w.r.t root, size = nbe + 1, default: all set to 0,
-!		same sign as bi, elements ordered root to tip)	
-!	nb (int): Number of blades (default: 2)
-!	nbe (int): Number of blade elements per blade (default: 5)
-!	nSect (int): Number of airfoil section data tables to use (default: 1)
-!	AFDPath (string in single quotes): Array (comma separated) of section data file path strings (size=nsect)
-!	iSection (int): Array of indicies (comma separated) corresponding to which airfoil data table should be applied to each blade element end
-!		in first blade (mirrored for each subsequent blade, size = nbe + 1, default: all set to 1, elements ordered root to tip)
-!	hAG (real): Height above ground at turbine axis (ft)	
+!	Input parameters for a axial turbine design. See documentation for input descriptions.
 
 	jbtitle = 'NREL UAE'  
 	                                        
