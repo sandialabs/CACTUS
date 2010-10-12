@@ -7,6 +7,7 @@
 	GeomFlag= 0
 	GPFlag  = 1
 
+	Incompr = 0
 	rho 	= .002378  
 	vis 	= .3739E-6                                   
         tempr 	= 60.0 

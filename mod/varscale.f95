@@ -6,5 +6,6 @@ MODULE varscale
         real :: vis             ! viscosity
         real :: rpm             ! turbine rotation rate
         real :: Rmax            ! radius              
+	integer :: Incompr	! Incompressibility flag, =1 (incompressible), =0 (compressible)
 
 End

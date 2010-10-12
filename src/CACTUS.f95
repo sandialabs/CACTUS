@@ -214,7 +214,13 @@ PROGRAM CACTUS
         uinf=romega/ut 
         DT=DelT/ut                                      ! normalized simulation timestep (dt*Uinf/Rmax)                                               
         rem=rho*uinf*Rmax/vis                                          
-        Minf=uinf/sqrt(1.4*1716.0*(tempr+459.6))                                                                                                                                          
+	
+	if (Incompr .eq. 1) then			! incompressible/compressible flow switch (used by dynamic stall model)
+		Minf = 0.0
+	else
+	        Minf=uinf/sqrt(1.4*1716.0*(tempr+459.6))
+	end if
+
         areat=at*Rmax**2                                ! frontal area (at is (frontal area) / Rmax^2 ) 
         dynpress=rho/2.0*uinf**2                        ! dynamic pressure                  
         torquec=dynpress*areat*Rmax                     ! torque coeff normalization                         
