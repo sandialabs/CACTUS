@@ -16,6 +16,7 @@ MODULE configr
 	integer :: FitStartRev		! Initialization rev for the cpf fit
 	integer :: npw			! Number of points in the wake
 	integer :: nsw			! Next iteration at which wake velocities will be calculated
+	integer :: Istraight		! Set to 1 for straight-bladed VAWT, 0 for parabolic blade shape
 	
 	real :: CrRef				! Reference chord to radius ratio
 	real :: ut				! Tip speed ratio

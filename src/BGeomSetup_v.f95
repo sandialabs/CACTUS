@@ -15,13 +15,21 @@ SUBROUTINE BGeomSetup_v(delty,delt,deltb,at)
 	! Sets up blade geometry arrays for each blade at each theta position in one revolution, starting from the bottom of the first blade, and continuing for each blade.        
 	                                           
 	
-	! Evaluate the VAWT radius ratio function of height ratio for a parabolic blade shape at blade segment ends.
+	! Evaluate the VAWT radius ratio function of height ratio for a parabolic or straight blade shape at blade segment ends.
 	! JCM: Note that this could be input from a file if an arbitrary blade shape is desired...      
 	deltac=(eta-.25)*cr(1)    ! define mount point w.r.t. root quarter chord point                          
-	do j=1,(nbe+1)  
-		yB(j)=(j-1)*delty 
-		rr(j)=1.0-4.0*(real(j-1)/nbe-0.5)**2                                                                        
-	end do 
+
+	If (Istraight .EQ. 1) Then	! Straight blades
+		do j=1,(nbe+1)  
+			yB(j)=(j-1)*delty 
+			rr(j)=1.0
+		end do 		
+	Else				! Parabolic blades
+		do j=1,(nbe+1)  
+			yB(j)=(j-1)*delty 
+			rr(j)=1.0-4.0*(real(j-1)/nbe-0.5)**2                                                                        
+		end do 
+	End If
 	
 	! Frontal area normalized by Rmax^2 
 	at=0.0                                                                                                                                                                          
