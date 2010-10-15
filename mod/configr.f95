@@ -17,6 +17,8 @@ MODULE configr
 	integer :: npw			! Number of points in the wake
 	integer :: nsw			! Next iteration at which wake velocities will be calculated
 	integer :: Istraight		! Set to 1 for straight-bladed VAWT, 0 for parabolic blade shape
+	integer :: Istrut 		! Set to 1 for equatorial ! cross-flow turbine blade struts, 0 for no struts
+        real :: sthick
 	
 	real :: CrRef				! Reference chord to radius ratio
 	real :: ut				! Tip speed ratio

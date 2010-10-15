@@ -11,6 +11,7 @@ SUBROUTINE BGeomSetup_v(delty,delt,deltb,at)
 	real :: dx, dy, dz, NMag
 	real :: rr(MaxSegEndPerBlade)     ! Blade r/R at segment ends 
 	real :: yB(MaxSegEndPerBlade)     ! Blade y/R at segment ends
+	real :: rSE
 	
 	! Sets up blade geometry arrays for each blade at each theta position in one revolution, starting from the bottom of the first blade, and continuing for each blade.        
 	                                           
@@ -71,8 +72,17 @@ SUBROUTINE BGeomSetup_v(delty,delt,deltb,at)
 				yBE(k,nej)=yB(j+1)                                                    
 				xBE(k,nej)=-rr(j+1)*sint-deltac*cost                                            
 				zBE(k,nej)=-rr(j+1)*cost+deltac*sint    
-			end do                                         
-                          
+			end do
+                        If (Istrut.EQ.1) Then
+                           ! Blade strut element end locations (MFB)
+                           Do j=0,nbe
+                              nej=nei+j ! element index
+                              rSE = rr(j+1) * REAL(j) / REAL(nbe)
+                              ySE(k,nej)= 0.5 * hr ! struts are located at blade mid-span location
+                              xSE(k,nej) = -rSE*sint
+                              zSE(k,nej) = -rSE*cost
+                           End Do
+                        End If
 			        
 			! JCM: currently, although these values are for each element, they are held in arrays sized for element ends, where the first value for each blade
 			! is simply ignored in bsload (where these values are used). This is kind of stupid and should be changed...            

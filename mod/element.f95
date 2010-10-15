@@ -5,7 +5,11 @@ MODULE element
 	real, allocatable :: xBE(:,:)		! X location for each blade segment end (quarter chord) at each theta in a revolution	
 	real, allocatable :: yBE(:,:)		! Y location for each blade segment end (quarter chord) at each theta in a revolution		
 	real, allocatable :: zBE(:,:)		! Z location for each blade segment end (quarter chord) at each theta in a revolution	
-	
+
+	real, allocatable :: xSE(:,:)		! X location for each strut segment end
+	real, allocatable :: ySE(:,:)		! Y location for each strut segment end
+	real, allocatable :: zSE(:,:)		! Z location for each strut segment end	
+
 	real :: hr				! Height to radius ratio. (VAWT only)
 	real :: hubrr				! Hub radius ratio (Currently only used for HAWT calculation)
 	real :: bi				! Blade incidence (Currently only used for HAWT calculation)
@@ -36,6 +40,9 @@ MODULE element
 		allocate(xBE(MaxTimeStepPerRev,MaxSegEnds))
 		allocate(yBE(MaxTimeStepPerRev,MaxSegEnds))
 		allocate(zBE(MaxTimeStepPerRev,MaxSegEnds))
+		allocate(xSE(MaxTimeStepPerRev,MaxSegEnds))
+		allocate(ySE(MaxTimeStepPerRev,MaxSegEnds))
+		allocate(zSE(MaxTimeStepPerRev,MaxSegEnds))
 		allocate(btw(MaxSegEndPerBlade))
 		allocate(cr(MaxSegEndPerBlade))
 		allocate(nx(MaxTimeStepPerRev,MaxSegEnds))		

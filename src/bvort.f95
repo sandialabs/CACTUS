@@ -7,12 +7,24 @@ SUBROUTINE bvort(nGeom,NLTol,iConv)
 	use configr
         use regtest
         use output       
+        use element
+        use airfoil
+        use cltab
+
+        Implicit None
 	
-        integer IsBE, DynamicFlagL, DynamicFlagD, offset
-        real alpha, Re, umach, ur, CN, CT, te, NLTol, dgb, cpl, Fx, Fy, Fz
+        integer nGeom, iConv
+        integer i, j, nei, nej, nej1, IsBE, DynamicFlagL, DynamicFlagD, offset
+        real alpha, Re, umach, ur, CN, CT, te, NLTol, dgb, Fx, Fy, Fz
         real BladeLoad(MaxBlades,3), BladeTorque(MaxBlades)
 	real cp, ctr
         
+	real xe,ye,ze,rade,dr,uFSs,vFSs,wFSs,uBlade,vBlade,wBlade,us,vs,ws
+	real uTot,vTot,wTot,Delem,Dtorq,Cd0,Cdj,t_ave,Djunc,restrut,cflam,cfturb
+        real cdlam,cdturb,fblend
+        real, parameter :: recrit=3.0e5
+        integer ygcerr
+
         cp=0.0
         ctr=0.0
         BladeLoad(:,:)=0.0
@@ -76,7 +88,8 @@ SUBROUTINE bvort(nGeom,NLTol,iConv)
                         BladeLoad(i,1)=BladeLoad(i,1)+Fx        ! Force coeff along global x on this blade, based on freestream flow and turbine area
                         BladeLoad(i,2)=BladeLoad(i,2)+Fy        ! Force coeff along global y on this blade, based on freestream flow and turbine area
                         BladeLoad(i,3)=BladeLoad(i,3)+Fz        ! Force coeff along global z on this blade, based on freestream flow and turbine area     
-                                                
+                                         
+                          
                         ! Regression test
                         if (RegTFlag == 1) then
                                 Reg_ElemNum=nej1 
@@ -88,7 +101,63 @@ SUBROUTINE bvort(nGeom,NLTol,iConv)
                                 Call WriteRegTOutput(1)                  
                         end if                                                
                                                                   
-		end do 
+		end do
+
+                ! Calculate torque and power loss due to strut drag
+                If (Istrut == 1) Then 
+                  Do j=1,nbe
+                     nej=nei+j
+				
+                     ! Strut element center location
+                     xe=0.5*(xSe(nGeom,nej)+xSe(nGeom,nej-1))
+                     ye=0.5*(ySe(nGeom,nej)+ySe(nGeom,nej-1))
+                     ze=0.5*(zSe(nGeom,nej)+zSe(nGeom,nej-1))
+
+                     rade = 0.5*(real(j)/real(nbe) + real(j-1)/real(nbe)) ! element radius 
+                     dr = 1.0 / real(nbe) ! element width
+
+                     ! Freestream velocity at strut location
+                     Call CalcFreestream(ySe(nGeom,nej),uFSs,vFSs,wFSs,ygcerr)
+
+                     ! Blade velocity due to rotation                                                      
+                     CALL CalcBladeVel(wRotX,wRotY,wRotZ,xe,ye,ze,uBlade,vBlade,wBlade)
+
+                     ! Induced velocity at strut element
+                     Call pivel(NT,ntTerm,NBE,NB,NE,xe,ye,ze,us,vs,ws,1)
+
+                     ! Calculate relative velocity magnitude at strut element
+                     uTot = us+uFSs-uBlade
+                     vTot = vs+vFSs-vBlade
+                     wTot = ws+wFSs-wBlade
+                     ur = sqrt(uTot*uTot + vTot*vTot + wTot*wTot)
+
+                     ! Calculate strut element profile drag
+                     Restrut = ReM*ur*eChord(nej)  ! Strut chord Reynolds number
+                     Cflam = 2.66 / SQRT(Restrut)  ! Laminar friction drag coefficient
+                     Cdlam = 2.0 * Cflam * (1 + sthick) + sthick*sthick ! Laminar drag coefficient
+                     Cfturb = 0.044 / Restrut**(1.0/6.0) ! Turbulent friction drag coefficient
+                     Cdturb = 2.0 * Cfturb * (1.0 + 2.0*sthick + 60*sthick*sthick*sthick*sthick) ! Turbulent drag coefficient
+                     Fblend = 0.5 * (1.0 + TANH((LOG10(Restrut)-LOG10(Recrit))/0.2)) ! Blending function for transition between laminar and turbulent drag 
+                     Cd0 = (1.0-Fblend) * Cdlam + Fblend * Cdturb ! Profile drag coefficient
+
+                     Delem = Cd0 * dr * eChord(nej) / at * ur*ur
+                     Dtorq = Delem * rade
+                     BladeTorque(i)=BladeTorque(i)-Dtorq
+                     ctr = ctr - Dtorq
+                     cp  = cp - Dtorq*ut
+                  End Do
+
+                  ! Blade/strut junction interference drag
+                  t_ave = 0.5 * (sthick + tc(iSect(nbe/2)))
+                  Cdj = t_ave*t_ave * (17.0 * t_ave*t_ave - 0.05)
+                  !Cdj = 0.0112  ! t/c_avg = 0.165
+                  !Cdj = 0.0535  ! t/c_avg = 0.24
+                  Djunc = Cdj * eChord(nbe/2) * eChord(nbe/2) / at * ur*ur
+                  Dtorq = Delem ! (* 1.0) junction drag acts at r=1
+                  BladeTorque(i)=BladeTorque(i)-Dtorq
+                  ctr = ctr - Dtorq
+                  cp  = cp - Dtorq*ut
+               End If
 	end do
                                                                  
         ! Machine level output

@@ -40,7 +40,7 @@ SUBROUTINE input(ErrFlag)
                 
 	! Namelist input file declaration
 	NAMELIST/ConfigInputs/RegTFlag,GeomFlag,GPFlag,rho,vis,tempr,hFSRef,slex,nr,convrg,nti,iut,ivtxcor,ifwg,ifc,convrgf,nric,ntif,iutf,ixterm,xstop,Output_ELFlag,Incompr
-	NAMELIST/XFlowInputs/jbtitle,Rmax,RPM,Ut,CrRef,ChR,hr,eta,nb,nbe,nSect,AFDPath,iSection,hAG,Istraight
+	NAMELIST/XFlowInputs/jbtitle,Rmax,RPM,Ut,CrRef,ChR,hr,eta,nb,nbe,nSect,AFDPath,iSection,hAG,Istraight,Istrut,sThick
 	NAMELIST/AxFlowInputs/jbtitle,R,HubR,RPM,Ut,Tilt,CrRef,ChR,bCone,bi,bTwist,eta,nb,nbe,nSect,AFDPath,iSection,hAG
 	
 	! Input Defaults
@@ -70,7 +70,9 @@ SUBROUTINE input(ErrFlag)
 	Tilt=0.0
 	bCone=0.0 
 	HubR=0.0                                                    
-	Incompr=0                         
+	Incompr=0
+	Istrut=0
+	sThick=0.0                         
 	                                                                              
 	! Config Namelist input
 	read(4, nml=ConfigInputs)                                                                              
