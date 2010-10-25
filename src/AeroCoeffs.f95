@@ -37,6 +37,7 @@ SUBROUTINE AeroCoeffs(alphaL,alphaD,ReL,ReD,Re,adotnorm,umach,SectInd,IsBE,CL,CD
         
         ! If blade end segment, force into static mode, else test dynamic stall     
         isgn=sign(1.0,adotnorm)                                                        
+        !IsBE = 0
         if (IsBE == 0) then
         
                 ! Modified Boeing-Vertol approach

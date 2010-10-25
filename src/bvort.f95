@@ -153,7 +153,8 @@ SUBROUTINE bvort(nGeom,NLTol,iConv)
                   !Cdj = 0.0112  ! t/c_avg = 0.165
                   !Cdj = 0.0535  ! t/c_avg = 0.24
                   Djunc = Cdj * eChord(nbe/2) * eChord(nbe/2) / at * ur*ur
-                  Dtorq = Djunc ! (* 1.0) junction drag acts at r=1
+                  ! Junction torque penalty (2 junctions per blade)
+                  Dtorq = 2.0 * Djunc ! (* 1.0) junction drag acts at r=1
                   BladeTorque(i)=BladeTorque(i)-Dtorq
                   ctr = ctr - Dtorq
                   cp  = cp - Dtorq*ut
