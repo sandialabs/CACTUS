@@ -18,7 +18,8 @@ MODULE configr
 	integer :: nsw			! Next iteration at which wake velocities will be calculated
 	integer :: Istraight		! Set to 1 for straight-bladed VAWT, 0 for parabolic blade shape
 	integer :: Istrut 		! Set to 1 for equatorial ! cross-flow turbine blade struts, 0 for no struts
-        real :: sthick
+        real :: sthick                  ! Strut sectional thickness-to-chord ratio
+        real :: Cdpar                   ! Additional parasitic drag coefficient based on equatorial blade "chord area" (chord squared)
 	
 	real :: CrRef				! Reference chord to radius ratio
 	real :: ut				! Tip speed ratio

@@ -132,7 +132,7 @@ SUBROUTINE bvort(nGeom,NLTol,iConv)
                      ur = sqrt(uTot*uTot + vTot*vTot + wTot*wTot)
 
                      ! Calculate strut element profile drag
-                     Restrut = ReM*ur*eChord(nej)  ! Strut chord Reynolds number
+                     Restrut = ReM*ur*eChord(nbe/2)  ! Strut chord Reynolds number
                      Cflam = 2.66 / SQRT(Restrut)  ! Laminar friction drag coefficient
                      Cdlam = 2.0 * Cflam * (1 + sthick) + sthick*sthick ! Laminar drag coefficient
                      Cfturb = 0.044 / Restrut**(1.0/6.0) ! Turbulent friction drag coefficient
@@ -140,7 +140,7 @@ SUBROUTINE bvort(nGeom,NLTol,iConv)
                      Fblend = 0.5 * (1.0 + TANH((LOG10(Restrut)-LOG10(Recrit))/0.2)) ! Blending function for transition between laminar and turbulent drag 
                      Cd0 = (1.0-Fblend) * Cdlam + Fblend * Cdturb ! Profile drag coefficient
 
-                     Delem = Cd0 * dr * eChord(nej) / at * ur*ur
+                     Delem = Cd0 * dr * eChord(nbe/2) / at * ur*ur
                      Dtorq = Delem * rade
                      BladeTorque(i)=BladeTorque(i)-Dtorq
                      ctr = ctr - Dtorq
@@ -152,9 +152,9 @@ SUBROUTINE bvort(nGeom,NLTol,iConv)
                   Cdj = t_ave*t_ave * (17.0 * t_ave*t_ave - 0.05)
                   !Cdj = 0.0112  ! t/c_avg = 0.165
                   !Cdj = 0.0535  ! t/c_avg = 0.24
+                  Cdj = Cdj + Cdpar  ! Additional user-specified parasitic drag
                   Djunc = Cdj * eChord(nbe/2) * eChord(nbe/2) / at * ur*ur
-                  ! Junction torque penalty (2 junctions per blade)
-                  Dtorq = 2.0 * Djunc ! (* 1.0) junction drag acts at r=1
+                  Dtorq = Djunc ! (* 1.0) junction drag acts at r=1
                   BladeTorque(i)=BladeTorque(i)-Dtorq
                   ctr = ctr - Dtorq
                   cp  = cp - Dtorq*ut
