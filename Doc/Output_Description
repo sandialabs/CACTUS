@@ -57,5 +57,17 @@ Fz (-):			Coefficient of force in the global z direction on element, ZForce / (1
 te (-):			Torque coefficient from the element, Torque / (1/2*rho*Uinf^2*Af*R), where rho is density, Uinf is freestream speed, Af is turbine 
 			frontal area, and R is the largest perpendicular distance the blades achieve from the rotation axis (defined as reference radius 
 			in the input file).
-	
 
+Wake Data Output (_WakeData.csv):
+	
+Timestep:		Timestep counter.
+Element:		Element number.
+X/R:			X location of the wake node normalized by turbine radius, R, which is the largest perpendicular distance the blades achieve 
+			from the rotation axis.
+Y/R:			Y location of the wake node normalized by turbine radius, R, which is the largest perpendicular distance the blades achieve 
+			from the rotation axis.
+Z/R:			Z location of the wake node normalized by turbine radius, R, which is the largest perpendicular distance the blades achieve 
+			from the rotation axis.
+U/Uinf:			X velocity of the wake node normalized by freestream speed, Uinf.
+V/Uinf:			Y velocity of the wake node normalized by freestream speed, Uinf.
+W/Uinf:			Z velocity of the wake node normalized by freestream speed, Uinf.

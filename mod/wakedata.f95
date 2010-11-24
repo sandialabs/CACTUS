@@ -2,18 +2,20 @@ MODULE wakedata
 
 	! Wake visualization data for WriteWakeData
 	
+        integer :: WakeOutFlag
 	real, allocatable :: WakeDefAve(:,:)
-	integer :: WakeOut
+        integer, allocatable :: WakeLineInd(:) 
+        integer :: NWakeInd     
+        character(1000) :: WakeOutHead = 'Timestep,Element,X/R,Y/R,Z/R,U/Uinf,V/Uinf,W/Uinf'
+                 
 	
 	CONTAINS
 
-	SUBROUTINE wakedata_cns(MaxFixWakeY,MaxFixWakeZ)
+	SUBROUTINE wakedata_cns()
 
 		! Constructor for the arrays in this module
 
-		integer :: MaxFixWakeY,MaxFixWakeZ
-		
-		allocate(WakeDefAve(MaxFixWakeY,MaxFixWakeZ))
+                allocate(WakeLineInd(NWakeInd))              
 		
 	End SUBROUTINE
 	

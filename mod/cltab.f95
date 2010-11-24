@@ -8,6 +8,7 @@ MODULE cltab
 	real, allocatable :: TCD(:,:,:)		! Table CD values
 	real, allocatable :: TRE(:,:)		! Table Re values
 	integer, allocatable :: nTBL(:,:)	! Number of AOA values for each Re number, in each section data table
+        integer, allocatable :: nRET(:)         ! Number of Re number values in each section data table       
 	integer, allocatable :: iSect(:)	! Array of indicies of the section table to apply to each blade element
 	
 
@@ -24,7 +25,8 @@ MODULE cltab
 		allocate(TCL(MaxAOAVals,MaxReVals,MaxAirfoilSect))
 		allocate(TCD(MaxAOAVals,MaxReVals,MaxAirfoilSect))
 		allocate(TRE(MaxReVals,MaxAirfoilSect))		
-		allocate(nTBL(MaxReVals,MaxAirfoilSect))		
+		allocate(nTBL(MaxReVals,MaxAirfoilSect))
+                allocate(nRET(MaxAirfoilSect))              		
 		allocate(iSect(MaxSegEnds))		
 		
 	End SUBROUTINE

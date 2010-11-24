@@ -25,9 +25,10 @@ SUBROUTINE input(ErrFlag)
 	
 	integer, parameter :: InBufferNumSectionTables = 100
 	integer, parameter :: InBufferNumSegPerBlade = 100
-	
+	integer, parameter :: InBufferNumSeg = 100
+        
 	integer i
-	integer iend
+	integer iend, countre
 	integer ErrFlag
 	
 	! Temp buffers for airfoil section data inputs. If more sections or segments become necessary, its probably time to 
@@ -36,16 +37,18 @@ SUBROUTINE input(ErrFlag)
 	integer :: iSection(InBufferNumSegPerBlade)	! section index for each element
 	real :: ChR(InBufferNumSegPerBlade)	! chord ratio for each element
 	real :: bTwist(InBufferNumSegPerBlade)	! twist for each element (currently only used for HAWT geometry)
-	
+	integer :: WLI(InBufferNumSeg)     ! wake line index buffer
                 
 	! Namelist input file declaration
-	NAMELIST/ConfigInputs/RegTFlag,GeomFlag,GPFlag,rho,vis,tempr,hFSRef,slex,nr,convrg,nti,iut,ivtxcor,ifwg,ifc,convrgf,nric,ntif,iutf,ixterm,xstop,Output_ELFlag,Incompr
-	NAMELIST/XFlowInputs/jbtitle,Rmax,RPM,Ut,CrRef,ChR,hr,eta,nb,nbe,nSect,AFDPath,iSection,hAG,Istraight,Istrut,sThick,Cdpar
-	NAMELIST/AxFlowInputs/jbtitle,R,HubR,RPM,Ut,Tilt,CrRef,ChR,bCone,bi,bTwist,eta,nb,nbe,nSect,AFDPath,iSection,hAG
+	NAMELIST/ConfigInputs/RegTFlag,DiagOutFlag,GeomFlag,GPFlag,rho,vis,tempr,hFSRef,slex,nr,convrg,nti,iut,ivtxcor,ifwg,ifc,convrgf,nric,ntif,iutf,ixterm,xstop,Output_ELFlag,Incompr,k1pos,k1neg
+	NAMELIST/XFlowInputs/jbtitle,Rmax,RPM,Ut,CrRef,ChR,hr,eta,nb,nbe,nSect,AFDPath,iSection,hAG,Istraight,Istrut,sThick,Cdpar,CTExcrM,WakeOutFlag,WLI
+	NAMELIST/AxFlowInputs/jbtitle,R,HubR,RPM,Ut,Tilt,CrRef,ChR,bCone,bi,bTwist,eta,nb,nbe,nSect,AFDPath,iSection,hAG,CTExcrM,WakeOutFlag,WLI
 	
 	! Input Defaults
         RegTFlag = 0 
-        Output_ELFlag=0      
+        DiagOutFlag = 0
+        Output_ELFlag = 0 
+        WakeOutFlag = 0     
 	nb = 2
 	nbe = 5 
 	nSect = 1 
@@ -66,6 +69,7 @@ SUBROUTINE input(ErrFlag)
 	iSection(:)=1 ! all set to 1 
 	bTwist(:)=0.0 ! all set to 0
 	ChR(:)=0.0 ! all set to 0
+        WLI(:)=0 ! all set to 0      
 	hAG=0.0
 	Tilt=0.0
 	bCone=0.0 
@@ -74,6 +78,9 @@ SUBROUTINE input(ErrFlag)
 	Istrut=0
 	sThick=0.0                         
         Cdpar=0.0
+        CTExcrM=0.0
+        k1pos = 1.0                      
+        k1neg = 0.5    
 	                                                                              
 	! Config Namelist input
 	read(4, nml=ConfigInputs)                                                                              
@@ -111,7 +118,19 @@ SUBROUTINE input(ErrFlag)
 	MaxNLIters = 10
         ! Outputs
         MaxTimeSteps = MaxRevs * MaxTimeStepPerRev       
-	
+	! Wake outputs
+        NWakeInd=0       
+        NotDone=.TRUE.
+        i=1
+        do while (NotDone .AND. i<=MaxSeg)   
+                if (WLI(i) > 0) then
+                       NWakeInd=NWakeInd+1
+                else
+                       NotDone=.FALSE. 
+                end if
+                i=i+1
+        end do
+        
 	! Array construction
         CALL blade_cns(MaxWakeNodes,MaxSegEnds)
 	CALL element_cns(MaxTimeStepPerRev,MaxSegEnds,MaxSegEndPerBlade)     
@@ -119,7 +138,7 @@ SUBROUTINE input(ErrFlag)
 	CALL airfoil_cns(MaxAirfoilSect)
 	CALL xwake_cns(MaxFixWakeX,MaxFixWakeY,MaxFixWakeZ)
 	CALL uwake_cns(MaxFixWakeX,MaxFixWakeY,MaxFixWakeZ)
-	CALL wakedata_cns(MaxFixWakeY,MaxFixWakeZ)
+	CALL wakedata_cns()
 	CALL freestream_cns(MaxWakeNodes,MaxSegEnds)
 	CALL dystl_cns(MaxAirfoilSect,MaxReVals,MaxSegEnds)
         CALL output_cns(MaxRevs, MaxTimeSteps, MaxSeg, MaxBlades)       
@@ -127,7 +146,8 @@ SUBROUTINE input(ErrFlag)
 	! Write from buffer...
 	iSect(1:(nbe+1))=iSection(1:(nbe+1))
 	cr(1:(nbe+1))=ChR(1:(nbe+1))
-	btw(1:(nbe+1))=bTwist(1:(nbe+1))
+	btw(1:(nbe+1))=bTwist(1:(nbe+1))     
+        WakeLineInd(1:NWakeInd)=WLI(1:NWakeInd)       
 	
 	! Set hub radius ratio
 	hubrr=HubR/Rmax
@@ -250,7 +270,11 @@ SUBROUTINE input(ErrFlag)
 		! Read in section lift and drag data for up to 15 Re numbers
 		iend=0
 		i=1
+                countre=0              
 		do while ((iend < 2) .AND. (i <= MaxReVals))
+                        
+                        countre=countre+1
+                        
 			! Read Re value if it hasn't already been read (if not the first Re block of airfoil)
 			if (i > 1) then                                           
 				read(15,*) tre(i,kk)
@@ -321,6 +345,8 @@ SUBROUTINE input(ErrFlag)
 			i=i+1
 
 		end do
+                
+                nret(kk)=countre
 
 		! Close input file for this section
 		close(15)

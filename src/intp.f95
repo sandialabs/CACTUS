@@ -32,10 +32,9 @@ SUBROUTINE intp(RE,ALPHA,CY,CZ,KK)
 					XRE=(RE-TRE(iLB,KK))/(TRE(iUB,KK)-TRE(iLB,KK))
 				end if
 			else
-				if (iUB == MaxReVals) then	
+				if (iUB == nRET(KK)) then	
 					! warning: no upper bound in table, take last point and set warning...
-					NotDone=.false.
-					iUB=iUB-1                                                         
+					NotDone=.false.                                                       
 					iLB=iUB                                                           
 					XRE=0.0                                                           
 					IUXTP=1

@@ -51,15 +51,11 @@ PROGRAM CACTUS
         logical :: ContinueNL
         logical :: back
         integer :: iConv
-        integer :: WakeLineInd(4)
         real :: NLTol
         real :: cpave, cpave_last
         real :: delt, delty, deltb, deltr
-        
-        real :: hmachl(2)
-        real :: hmachm(2)
-                                                 
-        character(80) :: InputFN, SFOutputFN, RevOutputFN, TSOutputFN, ELOutputFN, RegOutputFN, FNBase                                   
+                                                      
+        character(80) :: InputFN, SFOutputFN, RevOutputFN, TSOutputFN, ELOutputFN, RegOutputFN, WakeOutputFN, FNBase                                   
                                                  
         ! Pi definition
         pi = 4.0*atan(1.0)
@@ -127,6 +123,12 @@ PROGRAM CACTUS
                 OPEN(11, FILE=ELOutputFN)
         end if
                                                                             
+        ! Optional wake line data output
+        if (WakeOutFlag == 1) then
+                WakeOutputFN=trim(FNBase)//'_WakeData.csv'
+                OPEN(12, FILE=WakeOutputFN)
+        end if                                                                    
+                                                                            
         ! If wake update interval set to a negative number, set next wake update iteration to -1 (no wake velocity updates will be performed)
         ! Otherwise, make the first update on the second iteration (when the wake first appears)
         if (iut < 0) then
@@ -178,9 +180,7 @@ PROGRAM CACTUS
                 wRotX=0.0
                 wRotY=ut  
                 wRotZ=0.0
-                
-                ! Wakelines to output for VAWT (in WriteWakeData)
-                WakeLineInd=[2,4,8,10]  
+                 
         else
                 ! Create HAWT geometry                                                                                                                                   
                 deltr=(1.0-hubrr)/nbe                                                       
@@ -194,8 +194,6 @@ PROGRAM CACTUS
                 wRotY=0.0  
                 wRotZ=0.0
                 
-                ! Wakelines to output for HAWT (in WriteWakeData)
-                WakeLineInd=[3,6,9,12]
         end if
         
 !---------- VAWT/HAWT specific geometry creation code above here -----------
@@ -239,9 +237,7 @@ PROGRAM CACTUS
         Output_SFData(1,10)=rem          ! machine Reynolds number based on U and Rmax
         Call csvwrite(8,Output_SFHead,Output_SFData,0)
         
-        ! Dynamic stall setup                                                
-        k1pos = 1.0   ! effect magnitude for CL increasing                      
-        k1neg = 0.5   ! effect magnitude for CL decreasing                                      
+        ! Dynamic stall setup                                                                                     
         do i=1,nsect                                                   
                 diff=0.06-tc(i)                                                   
                 smachl(i)=0.4+5.0*diff                                            
@@ -278,6 +274,11 @@ PROGRAM CACTUS
                          
                         ! Increment nt (total time step counter)
                         nt=nt+1  
+                        
+                        ! Write diagnostic info to stdout if requested
+                        if (DiagOutFlag == 1) then
+                                write(6,*) 'Timestep: ', nt
+                        end if
                         
                         ! Get current geometry                                                                 
                         CALL bgeom(i)        
@@ -330,19 +331,21 @@ PROGRAM CACTUS
                                 stop                                                       
                         end if                                   
                             
+                        ! Write diagnostic info to stdout if requested
+                        if (DiagOutFlag == 1) then
+                                ! Use machine level time step output (norm. time, revolution, torque coeff., power coeff.)
+                                write(6,*) 'Norm. Time, Revolution, Torque Coeff., Power Coeff.'
+                                write(6,'E13.5,F8.0,2E13.5') Output_TSData(nt,1),Output_TSData(nt,2),Output_TSData(nt,3),Output_TSData(nt,4)
+                        end if    
+                            
                         ! Update freestream, bound and wake vorticity influence on wall RHS and calc new wall panel strengths
                         if (GPFlag == 1) then
                                 Call UpdateWall() 
                         end if 
   
-                        ! JCM: Write current wake data for viewing in Matlab
-                        ! JCM: Should change this to write all wake lines in a csv. 
-                        ! For each timestep: first col is blade, second is elem, then location, velocity. Each row is a wake line element...
-                        ! Similar function for wall elements...
-                        ! Make this output an option in the input file...
-                        WakeOut=0
-                        if (WakeOut == 1) then
-                                Call WriteWakeData(i,DelT,WakeLineInd)
+                        ! Write current wake data for viewing in Matlab
+                        if (WakeOutFlag == 1) then
+                                Call WriteWakeData()
                         end if  
   
                         ! Update current wake convection velocities (excluding wake to be shed from the current blade)                                                                    
@@ -377,6 +380,13 @@ PROGRAM CACTUS
                 ! Calculate revolution average performance
                 cpave_last=cpave                                                                                                                                
                 CALL endrev(cpave)                                          
+                                                           
+                ! Write diagnostic info to stdout if requested
+                if (DiagOutFlag == 1) then
+                        ! Write rev average power
+                        write(6,*) 'Revolution Average Power Coeff.: ', cpave
+                        write(6,*) ' '
+                end if                                           
                                                            
                 ! If nr revs have been performed, then done. Otherwise, if initial convergence is hit, set final convergence params (if desired) and continue
                 if (irev == nr) then
@@ -430,5 +440,5 @@ PROGRAM CACTUS
         ! Write output
         CALL WriteFinalOutput()    
                                                         
-610  FORMAT('0','***** BIVEL/BVORT LOOP DID NOT CONVERGE IN 10 ITERATIONS. PROGRAM TERMINATED. *****')                                                       
+610  FORMAT('0','***** BIVEL/BVORT LOOP DID NOT CONVERGE IN 10 ITERATIONS. PROGRAM TERMINATED. *****')                                                    
 End                                                              

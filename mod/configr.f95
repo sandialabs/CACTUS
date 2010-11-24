@@ -2,6 +2,7 @@ MODULE configr
 	
 	! Configuration data
 	     
+        integer :: DiagOutFlag          ! Set to 1 to print iteration info to stdout      
 	integer :: GeomFlag		! Set to 1 for VAWT calculation, 0 for HAWT calculation
 	integer :: nb			! Number of blades
 	integer :: nbe			! Number of blade segments/elements in a blade
@@ -19,7 +20,8 @@ MODULE configr
 	integer :: Istraight		! Set to 1 for straight-bladed VAWT, 0 for parabolic blade shape
 	integer :: Istrut 		! Set to 1 for equatorial ! cross-flow turbine blade struts, 0 for no struts
         real :: sthick                  ! Strut sectional thickness-to-chord ratio
-        real :: Cdpar                   ! Additional parasitic drag coefficient based on equatorial blade "chord area" (chord squared)
+        real :: Cdpar                   ! Additional strut parasitic drag coefficient based on equatorial blade "chord area" (chord squared)
+        real :: CTExcrM                 ! Additional machine level excrescence torque based on tip speed and Rmax
 	
 	real :: CrRef				! Reference chord to radius ratio
 	real :: ut				! Tip speed ratio

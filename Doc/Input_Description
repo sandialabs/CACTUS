@@ -39,6 +39,7 @@ ixterm (int): 1 to ignore wake points beyond x/Rmax = xstop, 0 to use all wake p
 
 Optional outputs:
 Output_ELFlag (int): 1 to output full detail element loads csv file, 0 to omit this output (default)
+DiagOutFlag (int): 1 to output diagnostic info to stdout each iteration, 0 to omit this output (default)
 
 
 Crossflow turbine geometry inputs (&XFlowInputs namelist):
@@ -65,7 +66,12 @@ AFDPath (string in single quotes): Array (comma separated) of section data file 
 iSection (int): Array of indicies (comma separated) corresponding to which airfoil data table should be applied to each blade element end
 	in first blade (mirrored for each subsequent blade, size = nbe + 1, default: all set to 1)
 hAG (real): Height above ground at base of blades (ft) 
-	
+CTExcrM (real): Additional machine level excrescence torque based on tip speed and Rmax, CTExcrM = TorqueExcr / (1/2*rho*Utip^2*Rmax^3) (default: 0)
+
+Optional outputs:
+WakeOutFlag (int): 1 to write wakeline outputs for the element indicies noted below, 0 otherwise (default).
+	WLI (int): Array (comma separated) of element end indicies for which to write wake line data. 	
+
 
 Axial turbine geometry inputs (&AxFlowInputs namelist):
 
@@ -95,6 +101,10 @@ nSect (int): Number of airfoil section data tables to use (default: 1)
 AFDPath (string in single quotes): Array (comma separated) of section data file path strings (size=nsect)
 iSection (int): Array of indicies (comma separated) corresponding to which airfoil data table should be applied to each blade element end
 	in first blade (mirrored for each subsequent blade, size = nbe + 1, default: all set to 1, elements ordered root to tip)
-hAG (real): Height above ground at turbine axis (ft)	
+hAG (real): Height above ground at turbine axis (ft)	CTExcrM (real): Additional machine level excrescence torque based on tip speed and Rmax, CTExcrM = TorqueExcr / (1/2*rho*Utip^2*Rmax^3) (default: 0)
+
+Optional outputs:
+WakeOutFlag (int): 1 to write wakeline outputs for the element indicies noted below, 0 otherwise (default).
+	WLI (int): Array (comma separated) of element end indicies for which to write wake line data. 
 
 

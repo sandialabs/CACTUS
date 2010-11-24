@@ -17,6 +17,7 @@ SUBROUTINE bvort(nGeom,NLTol,iConv)
         integer i, j, nei, nej, nej1, IsBE, DynamicFlagL, DynamicFlagD, offset
         real alpha, Re, umach, ur, CN, CT, te, NLTol, dgb, Fx, Fy, Fz
         real BladeLoad(MaxBlades,3), BladeTorque(MaxBlades)
+        real CTExcr
 	real cp, ctr
         
 	real xe,ye,ze,rade,dr,uFSs,vFSs,wFSs,uBlade,vBlade,wBlade,us,vs,ws
@@ -160,6 +161,11 @@ SUBROUTINE bvort(nGeom,NLTol,iConv)
                   cp  = cp - Dtorq*ut
                End If
 	end do
+                                                                 
+        ! Apply any user specified machine level excrescence torque. CTExcrM = TorqueExcr / (1/2*rho*Utip^2*Rmax^3)
+        CTExcr = CTExcrM*ut**2/at 
+        ctr = ctr - CTExcr 
+        cp  = cp - CTExcr*ut                                                     
                                                                  
         ! Machine level output
         Output_TSRow=nt                  
