@@ -67,7 +67,7 @@ SUBROUTINE intp(RE,ALPHA,CY,CZ,KK)
 		! DO INTERVAL HALVING LOOK UP                                      
 																
 		U1=NTB                                                                                              
-		L1=0                                                              
+		L1=1                                                              
 		X1=NTB/2 
 		NotDone=.true. 
 		do while (NotDone)                                                        
@@ -85,7 +85,7 @@ SUBROUTINE intp(RE,ALPHA,CY,CZ,KK)
 		end do                                         
                                                                       
 		! DO STRAIGHT LINE INTERPOLATION ON ALPHA                          
-                                                                     
+                                                                    
 		XA=(ALPHA-TA(L1,J,KK))/(TA(U1,J,KK)-TA(L1,J,KK))                  
 		CYA(I)=TCL(L1,J,KK)+XA*(TCL(U1,J,KK)-TCL(L1,J,KK))                
 		CZA(I)=TCD(L1,J,KK)+XA*(TCD(U1,J,KK)-TCD(L1,J,KK))     

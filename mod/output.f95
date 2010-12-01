@@ -23,8 +23,8 @@ MODULE output
         real, allocatable :: Output_TSData(:,:)                 ! Timestep data for each timestep
         
         ! Element loads data
-        character(1000) :: Output_ELHead = 'Normalized Time (-),Blade,Element,Rev,DynamicFlagL,DynamicFlagD,AOA (deg),Re (-),Mach (-),Ur (-),CN (-),CT (-),Fx (-),Fy (-),Fz (-),te (-)'
-        integer :: Output_NELOut =16                            ! Number of element loads outputs
+        character(1000) :: Output_ELHead = 'Normalized Time (-),Blade,Element,Rev,AOA (deg),Re (-),Mach (-),Ur (-),CN (-),CT (-),Fx (-),Fy (-),Fz (-),te (-),L1,L2,L3,L4,L5,L6,L7,L8,L9,L10,L11,L12'
+        integer :: Output_NELOut = 26                           ! Number of element loads outputs
         integer :: Output_ELRow                                 ! Rows of element row output
         real, allocatable :: Output_ELData(:,:)                 ! Element loads data for each timestep
         

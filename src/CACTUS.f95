@@ -236,26 +236,20 @@ PROGRAM CACTUS
         Output_SFData(1,9)=ut           ! tip speed ratio
         Output_SFData(1,10)=rem          ! machine Reynolds number based on U and Rmax
         Call csvwrite(8,Output_SFHead,Output_SFData,0)
-        
-        ! Dynamic stall setup                                                                                     
-        do i=1,nsect                                                   
-                diff=0.06-tc(i)                                                   
-                smachl(i)=0.4+5.0*diff                                            
-                hmachl(i)=0.9+2.5*diff                                            
-                gammaxl(i)=1.4-6.0*diff                                           
-                dgammal(i)=gammaxl(i)/(hmachl(i)-smachl(i))                       
-                smachm(i)=0.2                                                     
-                hmachm(i)=0.7+2.5*diff                                            
-                gammaxm(i)=1.0-2.5*diff                                           
-                dgammam(i)=gammaxm(i)/(hmachm(i)-smachm(i))                       
-        end do 
-                                                                                                                   
+                                                                                                                 
         ! Initialize needed arrays                             
         do i=1,ne                                                      
                 gs(1,i)=0.0                                                       
                 ogb(i)=0.0 
                 AOA(i)=0.0                                                                                                                                                             
         end do 
+
+        ! Initialize dynamic stall model
+        if (DSFlag==1) then
+                Call dystl_init_BV(nsect,tc,MaxAirfoilSect)
+        else if (DSFlag==2) then
+                Call dystl_init_LB()
+        end if
 
         ! CPU time markers
         t0 = secnds(0.0)                                                                                                           
@@ -297,12 +291,7 @@ PROGRAM CACTUS
                                 ! Initialize bound vorticity iteration:                                                      
                                 ! On first iteration, calc influence of all elements on blade AOA. On subsequent iterations of the bound vorticity, 
                                 ! only recalculate the bound vorticity component...
-                                ! Set dynamic stall alpha old to current blade AOA (old AOA left fixed during bound vorticity iteration)
                                 if (iflg == 0) then 
-                                        do k=1,ne                                                                                                             
-                                                alfold(k)=AOA(k)                                                         
-                                        end do  
-                                 
                                         CALL bivel(iflg) 
                                         iflg=1
                                 else
@@ -361,11 +350,21 @@ PROGRAM CACTUS
                                 nsw=nt+iut 
                         end if                                                       
                                                                                
+                        ! State Updates ----
+                                                                                                                                     
                         ! Convect the wake (including wake to be shed from the current blade location)
                         CALL conlp()                                                                      
                         
                         ! Shed new wake                         
                         CALL shedvor()  
+                                                                 
+                        ! Update states for the LB dynamic stall model, if used   
+                        if (DSFlag == 2) then                                 
+                                Call LB_UpdateStates(nb,nbe)   
+                        end if    
+                                                           
+                        ! Update last AOA values
+                        Call UpdateAOALast(ne)                                   
                                                                  
                         ! Regression test
                         if (RegTFlag == 1) then

@@ -1,4 +1,4 @@
-SUBROUTINE bsload(nElem,nGeom,IsBE,DynamicFlagL,DynamicFlagD,alpha,Re,umach,ur,CN,CT,Fx,Fy,Fz,te) 
+SUBROUTINE bsload(nElem,nGeom,IsBE,alpha,Re,umach,ur,CN,CT,Fx,Fy,Fz,te) 
        
         use element
         use blade
@@ -10,7 +10,7 @@ SUBROUTINE bsload(nElem,nGeom,IsBE,DynamicFlagL,DynamicFlagD,alpha,Re,umach,ur,C
         use freestream
         use test  
                                                       
-        integer SectInd, nElem, nGeom, IsBE, DynamicFlagL, DynamicFlagD
+        integer SectInd, nElem, nGeom, IsBE
         real ElemSpanR, ElemChordR, xe, ye, ze, nxe, nye, nze, txe, tye, tze, alpha, alpdot, adotnorm, te
         real uAve, vAve, wAve, uBlade, vBlade, wBlade
         
@@ -62,16 +62,15 @@ SUBROUTINE bsload(nElem,nGeom,IsBE,DynamicFlagL,DynamicFlagD,alpha,Re,umach,ur,C
 
         ur=sqrt(urdn**2+urdc**2)                                          
         alpha=atan2(urdn,urdc) 
-        dal=alpha-alfold(nelem1)                                                                                       
+        dal=alpha-AOA_Last(nelem1)                                                                                       
         adotnorm=dal/DT*ElemChordR/(2.0*ur)  ! adot*c/(2*U)
-                                        
+                                     
         Re=ReM*ElemChordR*ur                                                         
         umach=ur*Minf                                                 
         
         !---------
-        ! JCM: These .5c and .75c locations are used to approx. CLq and CDq effects in the 
-        ! static coeff. calculation. Hopefully this can be eliminated by using tables 
-        ! for CLq and CDq vs. angle of attack (as defined at the quarter chord).
+        ! JCM: These .5c and .75c locations are used to approx. pitch rate and alphadot effects in the 
+        ! static coeff. calculation. Could be exchanged for tables...
         xe5=xe+0.25*ElemChordR*txe
         ye5=ye+0.25*ElemChordR*tye
         ze5=ze+0.25*ElemChordR*tze
@@ -91,12 +90,14 @@ SUBROUTINE bsload(nElem,nGeom,IsBE,DynamicFlagL,DynamicFlagD,alpha,Re,umach,ur,C
         !--------
         
         ! Evaluate aero coefficients and dynamic stall effects as appropriate
-        Call AeroCoeffs(alpha75,alpha5,Re75,Re5,Re,adotnorm,umach,SectInd,IsBE,CL,CD,CN,CT,DynamicFlagL,DynamicFlagD)
+        Call AeroCoeffs(nElem,alpha75,alpha5,Re75,Re5,Re,adotnorm,umach,SectInd,IsBE,CL,CD,CN,CT)
                 
         ! Bound vortex strength from CL via Kutta-Joukowski analogy. 
         ! Save corresponding AOA as well                                                                                          
         GB(nElem1)=CL*ElemChordR*ur/2.0  
         AOA(nElem1)=alpha
+        ! normalized time step used to update states in the LB model
+        ds(nElem)=2.0*ur*DT/ElemChordR
         
         ! Force coeff. from this blade element, re-referenced to full turbine scale (F/(1/2*rho*Uinf^2*At))                                         
         FN=CN*(ElemChordR*ElemSpanR/at)*ur**2                                                       

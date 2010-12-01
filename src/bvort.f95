@@ -10,11 +10,12 @@ SUBROUTINE bvort(nGeom,NLTol,iConv)
         use element
         use airfoil
         use cltab
+        use dystl
 
         Implicit None
 	
         integer nGeom, iConv
-        integer i, j, nei, nej, nej1, IsBE, DynamicFlagL, DynamicFlagD, offset
+        integer i, j, nei, nej, nej1, IsBE, offset, Loop, LBCheck
         real alpha, Re, umach, ur, CN, CT, te, NLTol, dgb, Fx, Fy, Fz
         real BladeLoad(MaxBlades,3), BladeTorque(MaxBlades)
         real CTExcr
@@ -45,7 +46,7 @@ SUBROUTINE bvort(nGeom,NLTol,iConv)
 			end if
 			                                                                                                                             
 			! Calculate the loads on the blade segment                                                                                              
-			CALL bsload(nej,nGeom,IsBE,DynamicFlagL,DynamicFlagD,alpha,Re,umach,ur,CN,CT,Fx,Fy,Fz,te) 
+			CALL bsload(nej,nGeom,IsBE,alpha,Re,umach,ur,CN,CT,Fx,Fy,Fz,te) 
 			                                                                                  
 			! Calculate the bound vortex strength change                                                                                                   
 			dgb=abs((GB(nej1)-GS(nt,nej1))/GB(nej1))                          
@@ -59,6 +60,9 @@ SUBROUTINE bvort(nGeom,NLTol,iConv)
                          
                         
                         ! Update output data 
+                        
+                        ! Calc LB dynamic stall model logic checksum
+                        Call LB_LogicChecksum(nej,LBCheck)                          
                                                    
                         ! Element loads output                                                     
                         if (Output_ELFlag == 1) then
@@ -67,18 +71,27 @@ SUBROUTINE bvort(nGeom,NLTol,iConv)
                                 Output_ELData(Output_ELRow,2)=i      
                                 Output_ELData(Output_ELRow,3)=j 
                                 Output_ELData(Output_ELRow,4)=irev
-                                Output_ELData(Output_ELRow,5)=DynamicFlagL      ! Dynamic stall flag for lift coefficient
-                                Output_ELData(Output_ELRow,6)=DynamicFlagD      ! Dynamic stall flag for drag coefficient 
-                                Output_ELData(Output_ELRow,7)=alpha*condeg      ! Element angle of attack
-                                Output_ELData(Output_ELRow,8)=Re                ! Element Reynolds number based on local chord and flow velocity
-                                Output_ELData(Output_ELRow,9)=umach             ! Element Mach number based on local flow velocity
-                                Output_ELData(Output_ELRow,10)=ur               ! Element velocity ratio with freestream
-                                Output_ELData(Output_ELRow,11)=CN               ! Element normal force coefficient (per span) based on local chord and flow velocity
-                                Output_ELData(Output_ELRow,12)=CT               ! Element tangential force coefficient (per span) based on local chord and flow velocity
-                                Output_ELData(Output_ELRow,13)=Fx               ! Element global x force coefficient based on freestream flow and turbine area
-                                Output_ELData(Output_ELRow,14)=Fy               ! Element global y force coefficient based on freestream flow and turbine area
-                                Output_ELData(Output_ELRow,15)=Fz               ! Element global z force coefficient based on freestream flow and turbine area
-                                Output_ELData(Output_ELRow,16)=te               ! Element torque coefficient contribution based on freestream flow, turbine area, and Rmax              
+                                Output_ELData(Output_ELRow,5)=alpha*condeg              ! Element angle of attack
+                                Output_ELData(Output_ELRow,6)=Re                        ! Element Reynolds number based on local chord and flow velocity
+                                Output_ELData(Output_ELRow,7)=umach                     ! Element Mach number based on local flow velocity
+                                Output_ELData(Output_ELRow,8)=ur                        ! Element velocity ratio with freestream
+                                Output_ELData(Output_ELRow,9)=CN                        ! Element normal force coefficient (per span) based on local chord and flow velocity
+                                Output_ELData(Output_ELRow,10)=CT                       ! Element tangential force coefficient (per span) based on local chord and flow velocity
+                                Output_ELData(Output_ELRow,11)=Fx                       ! Element global x force coefficient based on freestream flow and turbine area
+                                Output_ELData(Output_ELRow,12)=Fy                       ! Element global y force coefficient based on freestream flow and turbine area
+                                Output_ELData(Output_ELRow,13)=Fz                       ! Element global z force coefficient based on freestream flow and turbine area
+                                Output_ELData(Output_ELRow,14)=te                       ! Element torque coefficient contribution based on freestream flow, turbine area, and Rmax       
+                                
+                                ! BV Logic
+                                Output_ELData(Output_ELRow,15)=BVLogicOutputs(1)          ! BV Dynamic stall flag for lift coefficient
+                                Output_ELData(Output_ELRow,16)=BVLogicOutputs(2)          ! BV Dynamic stall flag for drag coefficient
+                                
+                                ! LB Logic 
+                                do Loop=1,9
+                                        Output_ELData(Output_ELRow,16+Loop)=LBLogicOutputs(nej,Loop)   
+                                end do
+                                Output_ELData(Output_ELRow,26)=LBCheck           
+                                
                         end if
 
                         ! Machine level output
@@ -94,8 +107,8 @@ SUBROUTINE bvort(nGeom,NLTol,iConv)
                         ! Regression test
                         if (RegTFlag == 1) then
                                 Reg_ElemNum=nej1 
-                                Reg_DFL=DynamicFlagL
-                                Reg_DFD=DynamicFlagD
+                                Reg_DFL=BVLogicOutputs(1)
+                                Reg_LBC=LBCheck
                                 Reg_ElemAOA=alpha*180.0/3.14159 
                                 Reg_ElemCirc=GB(nej1)
                                 Reg_dElemCirc=dgb   

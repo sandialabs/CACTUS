@@ -6,6 +6,7 @@ MODULE blade
         real, allocatable :: GB(:)              ! Bound vorticity
         real, allocatable :: OGB(:)             ! Old bound vorticity (previous time step)
         real, allocatable :: AOA(:)             ! AOA on blade elements    
+        real, allocatable :: AOA_Last(:)        ! Last value of AOA on blade elements
          
         real, allocatable :: UIWake(:)          ! Velocity induced at blade from wake
         real, allocatable :: VIWake(:)          ! Velocity induced at blade from wake
@@ -40,12 +41,13 @@ MODULE blade
         
                 allocate(GB(MaxSegEnds))            
                 allocate(OGB(MaxSegEnds))
-                allocate(AOA(MaxSegEnds))     
+                allocate(AOA(MaxSegEnds))   
+                allocate(AOA_Last(MaxSegEnds))   
                 allocate(UIWake(MaxSegEnds))
                 allocate(VIWake(MaxSegEnds))
                 allocate(WIWake(MaxSegEnds))
                 allocate(GT(MaxWakeNodes,MaxSegEnds))
-                allocate(GS(MaxWakeNodes,MaxSegEnds))
+                allocate(GS(MaxWakeNodes+1,MaxSegEnds))         ! needs extra spanwise station for shedvor
                 allocate(X(MaxWakeNodes,MaxSegEnds))
                 allocate(Y(MaxWakeNodes,MaxSegEnds))
                 allocate(Z(MaxWakeNodes,MaxSegEnds))
@@ -56,6 +58,19 @@ MODULE blade
                 allocate(VO(MaxWakeNodes,MaxSegEnds))
                 allocate(WO(MaxWakeNodes,MaxSegEnds))               
                 
+        End SUBROUTINE
+        
+        SUBROUTINE UpdateAOALast(ne)
+        
+                integer :: ne
+                integer :: k
+        
+                ! Save last AOA values for each element
+        
+                do k=1,ne                                                                                                             
+                        AOA_Last(k)=AOA(k)                                                         
+                end do 
+        
         End SUBROUTINE
 
 End

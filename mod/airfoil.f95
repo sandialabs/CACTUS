@@ -5,7 +5,7 @@ MODULE airfoil
 	character*80, allocatable :: aftitle(:)  	! Title for each airfoil section
 	character*4, allocatable ::  camber(:)		! Camber designation string ('IN','OUT', or 'NONE') for each section
 	integer, allocatable :: camb(:)			! Camber flag (derived from camber string) for each section
-	real, allocatable :: tc(:)			! Thickness to chord ratio for each section
+	real, allocatable :: tc(:)			! Thickness to chord ratio for each section      
 	
 
 	CONTAINS

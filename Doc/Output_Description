@@ -37,9 +37,7 @@ Normalized Time (-): 	Normalized simulation time (t*Uinf/R), where Uinf is frees
 			from the rotation axis.
 Blade:			Blade number.	
 Element:		Element number.
-Rev:			Revolution number.	
-DynamicFlagL:		Flag indicating 1 when dynamic stall model is active on the lift coefficient table for this element, 0 otherwise	
-DynamicFlagD:		Flag indicating 1 when dynamic stall model is active on the drag coefficient table for this element, 0 otherwise	
+Rev:			Revolution number.		
 AOA (deg):		Element local flow angle of attack (deg).			
 Re (-):			Element Reynolds number based on element chord and local flow speed.	
 Mach (-):		Element Mach number based on local flow speed.	
@@ -57,6 +55,7 @@ Fz (-):			Coefficient of force in the global z direction on element, ZForce / (1
 te (-):			Torque coefficient from the element, Torque / (1/2*rho*Uinf^2*Af*R), where rho is density, Uinf is freestream speed, Af is turbine 
 			frontal area, and R is the largest perpendicular distance the blades achieve from the rotation axis (defined as reference radius 
 			in the input file).
+LogicFlags:		Twelve logic flags related to the dynamic stall models for model testing... (see BVLogicOutputs and LBLogicOutputs in the code)
 
 Wake Data Output (_WakeData.csv):
 	

@@ -37,6 +37,9 @@ ifc (int): 1 to use final convergence step, 0 to not (default).
 ixterm (int): 1 to ignore wake points beyond x/Rmax = xstop, 0 to use all wake points (default)
 	xstop (real): If ixterm = 1, xstop defines x/Rmax beyond which wake points are ignored (default: 5)
 
+Dynamic stall:
+DSFlag (int): 0 for no dynamic stall, 1 for Modified Boeing-Vertol model (default), 2 for Leishman-Beddoes model
+
 Optional outputs:
 Output_ELFlag (int): 1 to output full detail element loads csv file, 0 to omit this output (default)
 DiagOutFlag (int): 1 to output diagnostic info to stdout each iteration, 0 to omit this output (default)

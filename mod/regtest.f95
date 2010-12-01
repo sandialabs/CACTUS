@@ -6,8 +6,8 @@ MODULE regtest
         integer :: Reg_TS               ! timestep number
 	integer :: Reg_NLIter	        ! non linear convergence loop iteration
         integer :: Reg_ElemNum          ! element number
-        integer :: Reg_DFL              ! lift dynamic stall flag
-        integer :: Reg_DFD              ! drag dynamic stall flag
+        integer :: Reg_DFL              ! BV lift dynamic stall flag
+        integer :: Reg_LBC              ! LB dynamic stall model logic checksum
   
         real :: Reg_CPOut               ! cp after one time step
         real :: Reg_ElemAOA             ! AOA on each element
