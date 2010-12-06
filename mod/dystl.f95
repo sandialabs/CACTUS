@@ -242,7 +242,7 @@ MODULE dystl
                 Tp=1.7                  ! time constant on LE pressure response to change in CL
                 TfRef=3.0               ! time constant on TE separation point travel
                 TvRef=6.0               ! time constant on LE vortex lift indicial function
-                TvL=5.25                ! Characteristic LE vortex travel time
+                TvL=11.0                ! Characteristic LE vortex travel time
                                        
                 ! Update states for each blade element
                 do i=1,nb                                                                                                     
@@ -285,14 +285,15 @@ MODULE dystl
                                         if (LESepState(nElem)==1) then
                                                 if (sLEv(nElem)<TvL) then
                                                         if (CLRateFlag(nElem)>0) then
-                                                                Tf=3*TfRef
+                                                                !Tf=3.0*TfRef ! original
+                                                                Tf=4.0*TfRef
                                                                 Tv=TvRef
                                                                 
                                                                 ! Set logic state flags (for model diagnosis output)
                                                                 LBLogicOutputs(nElem,8)=1
                                                         else
-                                                                Tf=1/2*TfRef
-                                                                Tv=1/2*TvRef
+                                                                Tf=1.0/2.0*TfRef
+                                                                Tv=1.0/2.0*TvRef
                                                                 
                                                                 ! Set logic state flags (for model diagnosis output)
                                                                 LBLogicOutputs(nElem,8)=2
@@ -300,16 +301,19 @@ MODULE dystl
                                                         
                                                         ! Set logic state flags (for model diagnosis output)
                                                         LBLogicOutputs(nElem,7)=1
-                                                else if (sLEv(nElem)<2*TvL) then
+                                                else if (sLEv(nElem)<2.0*TvL) then
                                                         if (CLRateFlag(nElem)>0) then
-                                                                Tf=1/3*TfRef
-                                                                Tv=1/4*TvRef
+                                                                ! orig 
+                                                                !Tf=1.0/3.0*TfRef
+                                                                !Tv=1.0/4.0*TvRef
+                                                                Tf=2.0*TfRef
+                                                                Tv=TvRef
                                                                 
                                                                 ! Set logic state flags (for model diagnosis output)
                                                                 LBLogicOutputs(nElem,8)=3
                                                         else
-                                                                Tf=1/2*TfRef
-                                                                Tv=1/2*TvRef
+                                                                Tf=1.0/2.0*TfRef
+                                                                Tv=1.0/2.0*TvRef
                                                                 
                                                                 ! Set logic state flags (for model diagnosis output)
                                                                 LBLogicOutputs(nElem,8)=4                                                        
@@ -318,8 +322,11 @@ MODULE dystl
                                                         ! Set logic state flags (for model diagnosis output)
                                                         LBLogicOutputs(nElem,7)=2                                                
                                                 else
-                                                        Tf=4*TfRef
-                                                        Tv=0.9*TvRef
+                                                        ! orig
+                                                        !Tf=4.0*TfRef
+                                                        !Tv=0.9*TvRef
+                                                        Tf=TfRef
+                                                        Tv=TvRef
                                                         
                                                         ! Set logic state flags (for model diagnosis output)
                                                         LBLogicOutputs(nElem,7)=3

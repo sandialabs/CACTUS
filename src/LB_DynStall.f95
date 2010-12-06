@@ -18,7 +18,7 @@ SUBROUTINE LB_DynStall(nElem,CLstat,CDstat,alphaL,alpha5,umach,Re,SectInd,CL,CD)
         CLa = 2*pi
         
         ! Model constants
-        KD=.08                  ! TE separation drag factor
+        KD=.1                  ! TE separation drag factor
         
         ! Evaluate ideal CL curve at current AOA
         Call LB_EvalIdealCL(alphaL,AOA0,CLa,1,CLRef(nElem))
