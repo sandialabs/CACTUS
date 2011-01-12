@@ -72,7 +72,8 @@ hAG (real): Height above ground at base of blades (ft)
 CTExcrM (real): Additional machine level excrescence torque based on tip speed and Rmax, CTExcrM = TorqueExcr / (1/2*rho*Utip^2*Rmax^3) (default: 0)
 
 Optional outputs:
-WakeOutFlag (int): 1 to write wakeline outputs for the element indicies noted below, 0 otherwise (default).
+WakeOutFlag (int): 1 to write wakeline outputs for the element indicies noted below, 2 to include average wake velocity deficit (on a plane with 
+	definition that's currently hardcoded in wakedata module), 0 otherwise (default).
 	WLI (int): Array (comma separated) of element end indicies for which to write wake line data. 	
 
 

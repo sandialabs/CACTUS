@@ -57,6 +57,7 @@ te (-):			Torque coefficient from the element, Torque / (1/2*rho*Uinf^2*Af*R), w
 			in the input file).
 LogicFlags:		Twelve logic flags related to the dynamic stall models for model testing... (see BVLogicOutputs and LBLogicOutputs in the code)
 
+
 Wake Data Output (_WakeData.csv):
 	
 Timestep:		Timestep counter.
@@ -70,3 +71,9 @@ Z/R:			Z location of the wake node normalized by turbine radius, R, which is the
 U/Uinf:			X velocity of the wake node normalized by freestream speed, Uinf.
 V/Uinf:			Y velocity of the wake node normalized by freestream speed, Uinf.
 W/Uinf:			Z velocity of the wake node normalized by freestream speed, Uinf.
+
+
+Streamwise Wake Deficit Data Output (_WakeDefData.csv):
+	
+2D array of streamwise wake deficit normalized by freestream speed. X (streamwise direction) varies down a column, Z varies across a row.
+

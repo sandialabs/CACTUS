@@ -55,7 +55,7 @@ PROGRAM CACTUS
         real :: cpave, cpave_last
         real :: delt, delty, deltb, deltr
                                                       
-        character(80) :: InputFN, SFOutputFN, RevOutputFN, TSOutputFN, ELOutputFN, RegOutputFN, WakeOutputFN, FNBase                                   
+        character(80) :: InputFN, SFOutputFN, RevOutputFN, TSOutputFN, ELOutputFN, RegOutputFN, WakeOutputFN, WakeDefOutputFN, FNBase                                   
                                                  
         ! Pi definition
         pi = 4.0*atan(1.0)
@@ -124,9 +124,15 @@ PROGRAM CACTUS
         end if
                                                                             
         ! Optional wake line data output
-        if (WakeOutFlag == 1) then
+        if (WakeOutFlag > 0) then
                 WakeOutputFN=trim(FNBase)//'_WakeData.csv'
                 OPEN(12, FILE=WakeOutputFN)
+                
+                if (WakeOutFlag > 1) then
+                        ! wake deficit surface output
+                        WakeDefOutputFN=trim(FNBase)//'_WakeDefData.csv'
+                        OPEN(13, FILE=WakeDefOutputFN)
+                end if
         end if                                                                    
                                                                             
         ! If wake update interval set to a negative number, set next wake update iteration to -1 (no wake velocity updates will be performed)
@@ -333,7 +339,7 @@ PROGRAM CACTUS
                         end if 
   
                         ! Write current wake data for viewing in Matlab
-                        if (WakeOutFlag == 1) then
+                        if (WakeOutFlag > 0) then
                                 Call WriteWakeData()
                         end if  
   
