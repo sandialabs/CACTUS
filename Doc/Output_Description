@@ -45,7 +45,7 @@ Ur (-):			Local flow speed ratio with freestream.
 CN (-):			Element normal force coefficient (per span), NForce (per span) / (1/2*rho*Uloc^2*Chord), where rho is density, Uloc is local flow 
 			speed, Chord is element chord.	
 CT (-):			Element tangential force coefficient (per span), TForce (per span) / (1/2*rho*Uloc^2*Chord), where rho is density, Uloc is local 
-			flow speed, Chord is element chord.	
+			flow speed, Chord is element chord.	Note tangetial direction is rearward chord line.
 Fx (-):			Coefficient of force in the global x direction on element, XForce / (1/2*rho*Uinf^2*Af), where rho is density, Uinf is freestream 
 			speed, Af is turbine frontal area.	
 Fy (-):			Coefficient of force in the global y direction on element, YForce / (1/2*rho*Uinf^2*Af), where rho is density, Uinf is freestream 

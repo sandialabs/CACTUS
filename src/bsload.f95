@@ -71,22 +71,29 @@ SUBROUTINE bsload(nElem,nGeom,IsBE,alpha,Re,umach,ur,CN,CT,Fx,Fy,Fz,te)
         !---------
         ! JCM: These .5c and .75c locations are used to approx. pitch rate and alphadot effects in the 
         ! static coeff. calculation. Could be exchanged for tables...
-        xe5=xe+0.25*ElemChordR*txe
-        ye5=ye+0.25*ElemChordR*tye
-        ze5=ze+0.25*ElemChordR*tze
-        xe75=xe+0.5*ElemChordR*txe
-        ye75=ye+0.5*ElemChordR*tye
-        ze75=ze+0.5*ElemChordR*tze
-        CALL CalcBladeVel(wRotX,wRotY,wRotZ,xe5,ye5,ze5,uBlade5,vBlade5,wBlade5)
-        CALL CalcBladeVel(wRotX,wRotY,wRotZ,xe75,ye75,ze75,uBlade75,vBlade75,wBlade75)
-        urdn5 = (nxe*(uAve+uFSAve-uBlade5)+nye*(vAve+vFSAve-vBlade5)+nze*(wAve+wFSAve-wBlade5)) 
-        ur5=sqrt(urdn5**2+urdc**2)                                        
-        Re5=ReM*ElemChordR*ur5                                                       
-        alpha5=atan2(urdn5,urdc) 
-        urdn75 = (nxe*(uAve+uFSAve-uBlade75)+nye*(vAve+vFSAve-vBlade75)+nze*(wAve+wFSAve-wBlade75))     
-        ur75=sqrt(urdn75**2+urdc**2)                                        
-        Re75=ReM*ElemChordR*ur75                                                       
-        alpha75=atan2(urdn75,urdc)
+        if (PRFlag/=0) then
+            xe5=xe+0.25*ElemChordR*txe
+            ye5=ye+0.25*ElemChordR*tye
+            ze5=ze+0.25*ElemChordR*tze
+            xe75=xe+0.5*ElemChordR*txe
+            ye75=ye+0.5*ElemChordR*tye
+            ze75=ze+0.5*ElemChordR*tze
+            CALL CalcBladeVel(wRotX,wRotY,wRotZ,xe5,ye5,ze5,uBlade5,vBlade5,wBlade5)
+            CALL CalcBladeVel(wRotX,wRotY,wRotZ,xe75,ye75,ze75,uBlade75,vBlade75,wBlade75)
+            urdn5 = (nxe*(uAve+uFSAve-uBlade5)+nye*(vAve+vFSAve-vBlade5)+nze*(wAve+wFSAve-wBlade5)) 
+            ur5=sqrt(urdn5**2+urdc**2)                                        
+            Re5=ReM*ElemChordR*ur5                                                       
+            alpha5=atan2(urdn5,urdc) 
+            urdn75 = (nxe*(uAve+uFSAve-uBlade75)+nye*(vAve+vFSAve-vBlade75)+nze*(wAve+wFSAve-wBlade75))     
+            ur75=sqrt(urdn75**2+urdc**2)                                        
+            Re75=ReM*ElemChordR*ur75                                                       
+            alpha75=atan2(urdn75,urdc)
+        else
+            alpha5=alpha
+            alpha75=alpha
+            Re5=Re
+            Re75=Re
+        end if
         !--------
         
         ! Evaluate aero coefficients and dynamic stall effects as appropriate

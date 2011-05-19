@@ -40,7 +40,7 @@ SUBROUTINE input(ErrFlag)
 	integer :: WLI(InBufferNumSeg)     ! wake line index buffer
                 
 	! Namelist input file declaration
-	NAMELIST/ConfigInputs/RegTFlag,DiagOutFlag,GeomFlag,GPFlag,rho,vis,tempr,hFSRef,slex,nr,convrg,nti,iut,ivtxcor,ifwg,ifc,convrgf,nric,ntif,iutf,ixterm,xstop,Output_ELFlag,Incompr,DSFlag,k1pos,k1neg
+	NAMELIST/ConfigInputs/RegTFlag,DiagOutFlag,GeomFlag,GPFlag,rho,vis,tempr,hFSRef,slex,nr,convrg,nti,iut,ivtxcor,ifwg,ifc,convrgf,nric,ntif,iutf,ixterm,xstop,Output_ELFlag,Incompr,DSFlag,PRFlag,k1pos,k1neg
 	NAMELIST/XFlowInputs/jbtitle,Rmax,RPM,Ut,CrRef,ChR,hr,eta,nb,nbe,nSect,AFDPath,iSection,hAG,Istraight,Istrut,sThick,Cdpar,CTExcrM,WakeOutFlag,WLI
 	NAMELIST/AxFlowInputs/jbtitle,R,HubR,RPM,Ut,Tilt,CrRef,ChR,bCone,bi,bTwist,eta,nb,nbe,nSect,AFDPath,iSection,hAG,CTExcrM,WakeOutFlag,WLI
 	
@@ -55,7 +55,7 @@ SUBROUTINE input(ErrFlag)
 	ifwg = 0 
 	ifc = 0   
 	nr = 10
-	convrg = .0001
+	convrg = -1
 	convrgf = .0001
 	nti = 16
 	ntif = 16
@@ -80,6 +80,7 @@ SUBROUTINE input(ErrFlag)
         Cdpar=0.0
         CTExcrM=0.0
         DSFlag=1
+        PRFlag=1
         k1pos = 1.0                      
         k1neg = 0.5    
 	                                                                              

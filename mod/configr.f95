@@ -22,6 +22,7 @@ MODULE configr
         real :: sthick                  ! Strut sectional thickness-to-chord ratio
         real :: Cdpar                   ! Additional strut parasitic drag coefficient based on equatorial blade "chord area" (chord squared)
         real :: CTExcrM                 ! Additional machine level excrescence torque based on tip speed and Rmax
+        integer :: PRFlag               ! 0 for no pitch rate aero effects, 1 to include these effects
 	
 	real :: CrRef				! Reference chord to radius ratio
 	real :: ut				! Tip speed ratio

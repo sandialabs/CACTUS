@@ -396,7 +396,7 @@ PROGRAM CACTUS
                 ! If nr revs have been performed, then done. Otherwise, if initial convergence is hit, set final convergence params (if desired) and continue
                 if (irev == nr) then
                         ContinueRevs = .FALSE.
-                else if (irev > 1) then
+                else if (irev > 1 .AND. convrg > 0.0) then
                         
                         ! Define convergence as convergence of revolution average power coeff. Additionally, when using final convergence, the user can
                         ! specify an intermediate revolution number at which to switch to final convergence (if initial convergence level hasn't already been hit).

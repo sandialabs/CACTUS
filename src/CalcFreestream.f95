@@ -11,13 +11,16 @@ SUBROUTINE CalcFreestream(yElem,u,v,w,ygcErr)
 	! slex = 0 : Constant freestream
 	! slex = 1/2 : Laminar shear layer (approx)
 	! slex = 1/7 : Turbulent shear layer (approx)   
-	if ((yElem+ygc) <= 0.0) then                                        
+	if ((yElem+ygc) <= 0.0) then
+                ! reflect across zero...                                               
 		ygcErr=1                                                           
-		u=0.0
+		u=(-(yElem+ygc)/yref)**slex
+                u=max(u,.01)  ! limit to some non zero value...              
 		v=0.0
 		w=0.0   
 	else
-		u=((yElem+ygc)/yref)**slex 
+		u=((yElem+ygc)/yref)**slex
+                u=max(u,.01)  ! limit to some non zero value...               
 		v=0.0
 		w=0.0                                                        
 	end if                         

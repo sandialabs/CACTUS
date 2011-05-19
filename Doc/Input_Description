@@ -19,7 +19,7 @@ slex (real): Exponent for ground shear layer model (Ex. 1/2 for parabolic lamina
 Calculation inputs:
 nr (int): Number of revolutions to perform (default: 10).
 nti (int): Number of time steps per revolution (default: 16). 
-convrg (real): Convergence level for the revolution average power coeff. (default: .0001). Iteration will finish before nr revs if this level is hit.
+convrg (real): Convergence level for the revolution average power coeff. (default: no convergence check). Iteration will finish before nr revs if this level is hit.
 iut (int): Number of iterations between wake convection velocity updates (default: iut = floor(ut)). If iut is set to a negative number, wake 
    	convection velocities will be left at the values calculated at the time the wake element is created (no wake convection velocity updates).
 ivtxcor (int): 0 to use finite vortex core with width equal to blade chord (default), 1 to not use core model
@@ -37,8 +37,9 @@ ifc (int): 1 to use final convergence step, 0 to not (default).
 ixterm (int): 1 to ignore wake points beyond x/Rmax = xstop, 0 to use all wake points (default)
 	xstop (real): If ixterm = 1, xstop defines x/Rmax beyond which wake points are ignored (default: 5)
 
-Dynamic stall:
+Dynamic aero effects:
 DSFlag (int): 0 for no dynamic stall, 1 for Modified Boeing-Vertol model (default), 2 for Leishman-Beddoes model
+PRFlag (int): 0 for no pitch rate aero effects, 1 to include these effects (default)
 
 Optional outputs:
 Output_ELFlag (int): 1 to output full detail element loads csv file, 0 to omit this output (default)
