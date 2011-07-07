@@ -1,4 +1,4 @@
-SUBROUTINE BGeomSetup_h(deltr,hubrr,delt,deltb,at) 
+SUBROUTINE BGeomSetup_h(deltr,delt,deltb) 
 
 	use parameters
 	
@@ -6,7 +6,7 @@ SUBROUTINE BGeomSetup_h(deltr,hubrr,delt,deltb,at)
 	use element
 	use pidef
 	
-	real :: deltr, hubrr, delt, deltb, at 
+	real :: deltr, delt, deltb
 	
 	real BladeQC(MaxSegEndPerBlade,3), tB(MaxSegEndPerBlade,3), normB(MaxSegEndPerBlade,3)
 	real rB, cSweep, sSweep, dy, dz, deltac

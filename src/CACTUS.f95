@@ -177,7 +177,7 @@ PROGRAM CACTUS
         if (GeomFlag == 1) then 
                 ! Create VAWT geometry                                                                                                                              
                 delty=hr/nbe                                                 
-                CALL BGeomSetup_v(delty,delt,deltb,at)
+                CALL BGeomSetup_v(delty,delt,deltb)
                 
                 ! VAWT axis and normalized rotation rate
                 RotX=0.0
@@ -190,7 +190,7 @@ PROGRAM CACTUS
         else
                 ! Create HAWT geometry                                                                                                                                   
                 deltr=(1.0-hubrr)/nbe                                                       
-                CALL BGeomSetup_h(deltr,hubrr,delt,deltb,at) 
+                CALL BGeomSetup_h(deltr,delt,deltb) 
                 
                 ! HAWT axis and normalized rotation rate
                 RotX=1.0
@@ -430,9 +430,9 @@ PROGRAM CACTUS
                                         DT=DelT/ut
                                         ! Recreate the geometry arrays with the new theta resolution (Note: VAWT/HAWT specific since we are recreating geometry)
                                         if (GeomFlag == 1) then                                                       
-                                                CALL BGeomSetup_v(delty,delt,deltb,at)
+                                                CALL BGeomSetup_v(delty,delt,deltb)
                                         else
-                                                CALL BGeomSetup_h(deltr,hubrr,delt,deltb,at) 
+                                                CALL BGeomSetup_h(deltr,delt,deltb) 
                                         end if
                                         ! Reset CPF and KPF fit in endrev (output)
                                         FitStartRev=irev

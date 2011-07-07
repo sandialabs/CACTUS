@@ -1,4 +1,4 @@
-SUBROUTINE BGeomSetup_v(delty,delt,deltb,at) 
+SUBROUTINE BGeomSetup_v(delty,delt,deltb) 
 
 	use parameters
         
@@ -7,7 +7,7 @@ SUBROUTINE BGeomSetup_v(delty,delt,deltb,at)
 	use pidef
 	
 	integer :: i, j, k, nei, nej, nej1
-	real :: delty, delt, deltb, deltac, at
+	real :: delty, delt, deltb, deltac
 	real :: dx, dy, dz, NMag
 	real :: rr(MaxSegEndPerBlade)     ! Blade r/R at segment ends 
 	real :: yB(MaxSegEndPerBlade)     ! Blade y/R at segment ends
