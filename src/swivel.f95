@@ -1,4 +1,4 @@
-SUBROUTINE SWIVEL(NT,ntTerm,NBE,NB,NE,IUT,NSW,NPW)    
+SUBROUTINE SWIVEL()    
 
       use parameters
       

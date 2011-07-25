@@ -330,7 +330,7 @@ PROGRAM CACTUS
                         if (DiagOutFlag == 1) then
                                 ! Use machine level time step output (norm. time, revolution, torque coeff., power coeff.)
                                 write(6,*) 'Norm. Time, Revolution, Torque Coeff., Power Coeff.'
-                                write(6,'E13.5,F8.0,2E13.5') Output_TSData(nt,1),Output_TSData(nt,2),Output_TSData(nt,3),Output_TSData(nt,4)
+                                write(6,'(E13.5,F8.0,2E13.5)') Output_TSData(nt,1),Output_TSData(nt,2),Output_TSData(nt,3),Output_TSData(nt,4)
                         end if    
                             
                         ! Update freestream, bound and wake vorticity influence on wall RHS and calc new wall panel strengths

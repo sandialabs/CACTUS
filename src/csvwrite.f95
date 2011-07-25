@@ -24,7 +24,7 @@ SUBROUTINE csvwrite(FID,Header,Data,NRows)
                         if (j<nCol) then
                                 write(FID,10) Data(i,j)
                         else
-                                write(FID,'E13.7') Data(i,j)
+                                write(FID,'(E13.7)') Data(i,j)
                         end if          
                 end do
         end do
