@@ -16,18 +16,18 @@ OBJMODf95 = $(SRCMODf95:%.f95=%.o)
 INC = $(wildcard $(SRCDIR)/*.inc) 
 
 # for debugging, debug flag and detailed runtime error checking. 
-#FLAGS = -g -C -r8 
+#FLAGS = -g -fbounds-check -fdefault-real-8 -ffree-line-length-0
 # standard compiler optimization
-FLAGS = -fast -r8 
+FLAGS = -O2 -fdefault-real-8 -ffree-line-length-0
 # No compiler optimization
-#FLAGS = -r8
+#FLAGS = -fdefault-real-8 -ffree-line-length-0
 
 # includes in SRCDIR, .mod files in MODDIR
 OPT = -I$(SRCDIR) -I$(MODDIR) $(FLAGS)
 LINKOPT = $(FLAGS)
 # Include default liblapack.a and libblas.a for LAPACK calculations
 LIBS = -llapack -lblas
-COMPILER = pgf95
+COMPILER = gfortran
 
 
 # Primary goal: create executable from object files if object files have changed. Depends on OBJMOD, OBJf, and OBJf95
@@ -43,7 +43,7 @@ $(OBJMODF95) $(OBJMODf95) $(OBJF95) $(OBJf95) : Makefile $(INC)
 
 # Further secondary goals for OBJ: If individual source files are changed, update the corresponding OBJ
 $(OBJMODF95):$(MODDIR)%.o : $(MODDIR)%.F95 
-	$(COMPILER) $(OPT) -c $<
+	$(COMPILER) $(OPT) -D_GF_FLAG_ -c $<
 	mv $(@F) ${MODDIR}
 	mv *.mod ${MODDIR}
 
@@ -53,7 +53,7 @@ $(OBJMODf95):$(MODDIR)%.o : $(MODDIR)%.f95
 	mv *.mod ${MODDIR}
 
 $(OBJF95):$(SRCDIR)%.o : $(SRCDIR)%.F95 
-	$(COMPILER) $(OPT) -c $<
+	$(COMPILER) $(OPT) -D_GF_FLAG_ -c $<
 	mv $(@F) ${SRCDIR}
 
 $(OBJf95):$(SRCDIR)%.o : $(SRCDIR)%.f95 

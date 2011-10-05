@@ -8,11 +8,11 @@ SUBROUTINE endrev(cpave)
 	
         real kpave, trave, dtime, etime										
 	
-	time2 = secnds(t0)                                                
-	
+	Call cpu_time(time2)                                                	
+        
 	dtime=time2-time1                                           
-	etime=time2                                          
-	time1=time2  
+	etime=time2-t0                                         
+	time1=etime 
                                                                                                              
         ! Calc average power over last revolution
         cpave=0.0

@@ -36,7 +36,6 @@ PROGRAM CACTUS
         use time
         use freestream
         use wallsoln
-        use f2kcli
         use regtest
         use output       
         
@@ -258,8 +257,8 @@ PROGRAM CACTUS
         end if
 
         ! CPU time markers
-        t0 = secnds(0.0)                                                                                                           
-        Time1 = secnds(t0)                                                                             
+        Call cpu_time(t0)                                                                                                           
+        Time1=t0                                                                             
            
         ! Do revolutions until convergence or MaxRevs    
         ContinueRevs = .TRUE.   

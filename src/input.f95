@@ -30,6 +30,7 @@ SUBROUTINE input(ErrFlag)
 	integer i
 	integer iend, countre
 	integer ErrFlag
+	logical NotDone
 	
 	! Temp buffers for airfoil section data inputs. If more sections or segments become necessary, its probably time to 
 	! create a more generic geometry file with all the relevant geometry for one blade defined, and read this file in (using a loop).
