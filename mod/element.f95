@@ -17,6 +17,8 @@ MODULE element
 	real :: Tilt				! Rotor Tilt angle (Currently only use for HAWT calculation)
 	real :: eta				! Blade mount point ratio (distance behind leading edge of the blade mount point / root chord)
       	real, allocatable :: btw(:)		! Blade twist for each element end in a blade (root to tip). (Currently only used for HAWT calculation)	
+	real, allocatable :: rr(:)              ! Blade r/R at segment ends 
+	real, allocatable :: yB(:)              ! Blade y/R at segment ends
       	real, allocatable :: cr(:)		! Chord to radius ratio for each element end in a blade (root to tip)	
 	real, allocatable :: nx(:,:)		! Normal X for each blade segment at each theta in a revolution	
 	real, allocatable :: ny(:,:)		! Normal Y for each blade segment at each theta in a revolution	
@@ -44,6 +46,8 @@ MODULE element
 		allocate(ySE(MaxTimeStepPerRev,MaxSegEnds))
 		allocate(zSE(MaxTimeStepPerRev,MaxSegEnds))
 		allocate(btw(MaxSegEndPerBlade))
+                allocate(rr(MaxSegEndPerBlade))
+                allocate(yB(MaxSegEndPerBlade))
 		allocate(cr(MaxSegEndPerBlade))
 		allocate(nx(MaxTimeStepPerRev,MaxSegEnds))		
 		allocate(ny(MaxTimeStepPerRev,MaxSegEnds))		

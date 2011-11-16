@@ -63,6 +63,7 @@ eta (real): Blade mount point ratio ((distance behind leading edge of the blade 
 CrRef (real): Reference chord to radius ratio (default: root chord)
 ChR (real): Array (comma separated) of chord to radius ratio at each element end (elements ordered by increasing height). If a single value is input,
 	that value will be applied to the entire blade.
+BladeFileFlag (int): 0 for no blade geometry file, 1 to read blade geometry file ('blade.inp') for blade coordinates and chord
 nb (int): Number of blades (default: 2)
 nbe (int): Number of blade elements per blade (default: 5)
 nSect (int): Number of airfoil section data tables to use (default: 1)

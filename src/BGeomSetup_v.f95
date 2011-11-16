@@ -5,12 +5,13 @@ SUBROUTINE BGeomSetup_v(delty,delt,deltb)
         use configr 	
 	use element
 	use pidef
+        use ioption
 	
 	integer :: i, j, k, nei, nej, nej1
 	real :: delty, delt, deltb, deltac
 	real :: dx, dy, dz, NMag
-	real :: rr(MaxSegEndPerBlade)     ! Blade r/R at segment ends 
-	real :: yB(MaxSegEndPerBlade)     ! Blade y/R at segment ends
+	!real :: rr(MaxSegEndPerBlade)     ! Blade r/R at segment ends 
+	!real :: yB(MaxSegEndPerBlade)     ! Blade y/R at segment ends
 	real :: rSE
 	
 	! Sets up blade geometry arrays for each blade at each theta position in one revolution, starting from the bottom of the first blade, and continuing for each blade.        
@@ -20,17 +21,19 @@ SUBROUTINE BGeomSetup_v(delty,delt,deltb)
 	! JCM: Note that this could be input from a file if an arbitrary blade shape is desired...      
 	deltac=(eta-.25)*cr(1)    ! define mount point w.r.t. root quarter chord point                          
 
-	If (Istraight .EQ. 1) Then	! Straight blades
-		do j=1,(nbe+1)  
-			yB(j)=(j-1)*delty 
-			rr(j)=1.0
-		end do 		
-	Else				! Parabolic blades
-		do j=1,(nbe+1)  
-			yB(j)=(j-1)*delty 
-			rr(j)=1.0-4.0*(real(j-1)/nbe-0.5)**2                                                                        
-		end do 
-	End If
+        If (.NOT.BladeFileFlag) Then
+           If (Istraight .EQ. 1) Then	! Straight blades
+              do j=1,(nbe+1)  
+                 yB(j)=(j-1)*delty 
+                 rr(j)=1.0
+              end do
+           Else				! Parabolic blades
+              do j=1,(nbe+1)  
+                 yB(j)=(j-1)*delty 
+                 rr(j)=1.0-4.0*(real(j-1)/nbe-0.5)**2                                                                        
+              end do
+           End If
+        End If
 	
 	! Frontal area normalized by Rmax^2 
 	at=0.0                                                                                                                                                                          

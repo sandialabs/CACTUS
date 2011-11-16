@@ -10,7 +10,8 @@ MODULE ioption
 	integer :: iutf		! final number of time steps between updating the wake velocities (used instead of iut during final convergence step)
 	integer :: iXTerm	! Flag to ignore wake points beyond xstop
 	integer :: XStop	! see above
+        integer :: BladeFileFlag ! Flag to read blade geometry from file 'blade.inp'
 	
 	character*80 :: jbtitle  ! job title
-	
+	character*80 :: BladeFileName = 'blade.inp'  ! Blade geometry file name
 End

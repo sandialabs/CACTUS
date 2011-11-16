@@ -42,7 +42,7 @@ SUBROUTINE input(ErrFlag)
                 
 	! Namelist input file declaration
 	NAMELIST/ConfigInputs/RegTFlag,DiagOutFlag,GeomFlag,GPFlag,rho,vis,tempr,hFSRef,slex,nr,convrg,nti,iut,ivtxcor,ifwg,ifc,convrgf,nric,ntif,iutf,ixterm,xstop,Output_ELFlag,Incompr,DSFlag,PRFlag,k1pos,k1neg
-	NAMELIST/XFlowInputs/jbtitle,Rmax,RPM,Ut,CrRef,ChR,hr,eta,nb,nbe,nSect,AFDPath,iSection,hAG,Istraight,Istrut,sThick,Cdpar,CTExcrM,WakeOutFlag,WLI
+	NAMELIST/XFlowInputs/jbtitle,Rmax,RPM,Ut,CrRef,ChR,hr,eta,nb,nbe,nSect,AFDPath,iSection,hAG,Istraight,Istrut,sThick,Cdpar,CTExcrM,WakeOutFlag,WLI,BladeFileFlag
 	NAMELIST/AxFlowInputs/jbtitle,R,HubR,RPM,Ut,Tilt,CrRef,ChR,bCone,bi,bTwist,eta,nb,nbe,nSect,AFDPath,iSection,hAG,CTExcrM,WakeOutFlag,WLI
 	
 	! Input Defaults
@@ -83,7 +83,8 @@ SUBROUTINE input(ErrFlag)
         DSFlag=1
         PRFlag=1
         k1pos = 1.0                      
-        k1neg = 0.5    
+        k1neg = 0.5
+        BladeFileFlag = 0
 	                                                                              
 	! Config Namelist input
 	read(4, nml=ConfigInputs)                                                                              
@@ -148,7 +149,11 @@ SUBROUTINE input(ErrFlag)
         
 	! Write from buffer...
 	iSect(1:(nbe+1))=iSection(1:(nbe+1))
-	cr(1:(nbe+1))=ChR(1:(nbe+1))
+        If (BladeFileFlag) Then
+           Call ReadBladeFile(MaxSegEndPerBlade,yB,rr,cr)
+        Else
+           cr(1:(nbe+1))=ChR(1:(nbe+1))
+        End If
 	btw(1:(nbe+1))=bTwist(1:(nbe+1))     
         WakeLineInd(1:NWakeInd)=WLI(1:NWakeInd)       
 	
@@ -361,4 +366,32 @@ Return
 601  format(' ','***airfoil section specified for blade segment ',i2,' is illegal. set to airfoil section 1***') 
 1001 format(e10.1,a64)                       
 End 
-							
+	
+
+! Subroutine: ReadBladeFile
+! Reads in a blade geometry file containing radius and chord as a function of vertical position						
+Subroutine ReadBladeFile(Nsegends,y,r,chord)
+
+  Use ioption
+
+  Implicit None
+
+  Integer :: Nsegends, N, I
+  Real, Dimension(Nsegends) :: y, r, chord
+  Integer, Parameter :: inunit=10
+
+  Open(unit=inunit,file=BladeFileName,form='formatted',status='unknown')
+  Read(inunit,*) N
+  If (N .NE. Nsegends) Then
+     Write(6,'(''Number of blade coordinates in blade file does not match the input file.'')')
+     STOP
+  End If
+  Read(inunit,*) (y(I), r(I), chord(I), I=1,N)
+  Close(inunit)
+
+  Write(*,*) (y(I), r(I), chord(I), I=1,N)
+  Return
+
+End Subroutine ReadBladeFile
+
+
