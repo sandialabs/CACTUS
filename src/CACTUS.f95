@@ -6,10 +6,6 @@ PROGRAM CACTUS
         !               as the acronym was deemed less comical...
         ! -----------
         ! Notes: 
-        !       J. Murray, 3/10/10: Uses f2kcli to add F2003-like command line interface.
-        !               F2KCLI: Fortran 200x Command Line Interface
-        !                       copyright Interactive Software Services Ltd. 2001
-        !                       http://www.winteracter.com/f2kcli
         !               Command line inputs:
         !                       FILENAME: Full name of the input namelist file, if located in the calling directory. Full path otherwise.                       
         
@@ -248,6 +244,7 @@ PROGRAM CACTUS
                 ogb(i)=0.0 
                 AOA(i)=0.0                                                                                                                                                             
         end do 
+        Call UpdateAOALast(ne)
 
         ! Initialize dynamic stall model
         if (DSFlag==1) then

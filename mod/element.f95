@@ -26,6 +26,9 @@ MODULE element
 	real, allocatable :: tx(:,:)		! Tangential X for each blade segment at each theta in a revolution	
 	real, allocatable :: ty(:,:)		! Tangential Y for each blade segment at each theta in a revolution	
 	real, allocatable :: tz(:,:)		! Tangential Z for each blade segment at each theta in a revolution	
+    real, allocatable :: sx(:,:)		! Spanwise X for each blade segment at each theta in a revolution	
+	real, allocatable :: sy(:,:)		! Spanwise Y for each blade segment at each theta in a revolution	
+	real, allocatable :: sz(:,:)		! Spanwise Z for each blade segment at each theta in a revolution	
 	real, allocatable :: eSpan(:)		! Element span to equitorial radius ratio for each element
 	real, allocatable :: eChord(:)		! Element chord to equitorial radius ratio for each element
 	real, allocatable :: Theta(:)		! Theta at each point in a revolution (for the first blade)
@@ -55,6 +58,9 @@ MODULE element
 		allocate(tx(MaxTimeStepPerRev,MaxSegEnds))		
 		allocate(ty(MaxTimeStepPerRev,MaxSegEnds))		
 		allocate(tz(MaxTimeStepPerRev,MaxSegEnds))		
+		allocate(sx(MaxTimeStepPerRev,MaxSegEnds))		
+		allocate(sy(MaxTimeStepPerRev,MaxSegEnds))		
+		allocate(sz(MaxTimeStepPerRev,MaxSegEnds))	        
 		allocate(eSpan(MaxSegEnds))	
 		allocate(eChord(MaxSegEnds))			
 		allocate(Theta(MaxTimeStepPerRev))

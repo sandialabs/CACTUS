@@ -9,10 +9,19 @@ SUBROUTINE bsload(nElem,nGeom,IsBE,alpha,Re,umach,ur,CN,CT,Fx,Fy,Fz,te)
         use cltab
         use freestream
         use test  
+        
+        implicit none
                                                       
-        integer SectInd, nElem, nGeom, IsBE
-        real ElemSpanR, ElemChordR, xe, ye, ze, nxe, nye, nze, txe, tye, tze, alpha, alpdot, adotnorm, te
-        real uAve, vAve, wAve, uBlade, vBlade, wBlade
+        integer nElem, nGeom, IsBE
+        real alpha, Re, umach, ur, CN, CT, Fx, Fy, Fz, te
+        
+        integer SectInd, nElem1
+        real ElemSpanR, ElemChordR, xe, ye, ze, nxe, nye, nze, txe, tye, tze, sxe, sye, sze
+        real adotnorm, dal, wP, wPNorm
+        real uAve, vAve, wAve, uFSAve, vFSAve, wFSAve, uBlade, vBlade, wBlade, urdn, urdc
+        real xe5, ye5, ze5, xe75, ye75, ze75, uBlade5, vBlade5, wBlade5, uBlade75, vBlade75, wBlade75
+        real urdn5, ur5, alpha5, Re5, urdn75, ur75, alpha75, Re75     
+        real CL, CD, CM25, FN, FT, MS, TRx, TRy, TRz, CLCirc   
         
         
         ! Calculates aero loads on a blade element. Static and dynamic airfoil characteristics calculated here...
@@ -31,13 +40,16 @@ SUBROUTINE bsload(nElem,nGeom,IsBE,alpha,Re,umach,ur,CN,CT,Fx,Fy,Fz,te)
         ye=0.5*(yBE(nGeom,nElem)+yBE(nGeom,nElem1))
         ze=0.5*(zBE(nGeom,nElem)+zBE(nGeom,nElem1))
         
-        ! Element normal and tangential vectors
+        ! Element normal, tangential, and spanwise vectors
         nxe=nx(nGeom,nElem)                                                  
         nye=ny(nGeom,nElem)                                                  
         nze=nz(nGeom,nElem)
         txe=tx(nGeom,nElem)                                                  
         tye=ty(nGeom,nElem)                                                  
         tze=tz(nGeom,nElem)
+        sxe=sx(nGeom,nElem)                                                  
+        sye=sy(nGeom,nElem)                                                  
+        sze=sz(nGeom,nElem)
         
         ! Airfoil section                                                 
         SectInd=isect(nElem)                                                     
@@ -56,14 +68,16 @@ SUBROUTINE bsload(nElem,nGeom,IsBE,alpha,Re,umach,ur,CN,CT,Fx,Fy,Fz,te)
         ! Blade velocity due to rotation                                                      
         CALL CalcBladeVel(wRotX,wRotY,wRotZ,xe,ye,ze,uBlade,vBlade,wBlade)
         
-        ! Calc element normal and tangential velocity components
+        ! Calc element normal and tangential velocity components. Calc element pitch rate.
         urdn = (nxe*(uAve+uFSAve-uBlade)+nye*(vAve+vFSAve-vBlade)+nze*(wAve+wFSAve-wBlade))     ! Normal
         urdc = (txe*(uAve+uFSAve-uBlade)+tye*(vAve+vFSAve-vBlade)+tze*(wAve+wFSAve-wBlade))     ! Tangential
+        wP = sxe*wRotX+sye*wRotY+sze*wRotZ
 
         ur=sqrt(urdn**2+urdc**2)                                          
         alpha=atan2(urdn,urdc) 
         dal=alpha-AOA_Last(nelem1)                                                                                       
-        adotnorm=dal/DT*ElemChordR/(2.0*ur)  ! adot*c/(2*U)
+        adotnorm=dal/DT*ElemChordR/(2.0*max(ur,0.001))  ! adot*c/(2*U)
+        wPNorm=wP*ElemChordR/(2.0*max(ur,0.001))        ! wP*c/(2*U)
                                      
         Re=ReM*ElemChordR*ur                                                         
         umach=ur*Minf                                                 
@@ -97,24 +111,26 @@ SUBROUTINE bsload(nElem,nGeom,IsBE,alpha,Re,umach,ur,CN,CT,Fx,Fy,Fz,te)
         !--------
         
         ! Evaluate aero coefficients and dynamic stall effects as appropriate
-        Call AeroCoeffs(nElem,alpha75,alpha5,Re75,Re5,Re,adotnorm,umach,SectInd,IsBE,CL,CD,CN,CT)
+        Call AeroCoeffs(nElem,alpha75,alpha5,alpha,Re75,Re5,Re,wPNorm,adotnorm,umach,SectInd,IsBE,CL,CD,CN,CT,CLCirc,CM25)
                 
         ! Bound vortex strength from CL via Kutta-Joukowski analogy. 
         ! Save corresponding AOA as well                                                                                          
-        GB(nElem1)=CL*ElemChordR*ur/2.0  
+        GB(nElem1)=CLCirc*ElemChordR*ur/2.0  
         AOA(nElem1)=alpha
         ! normalized time step used to update states in the LB model
         ds(nElem)=2.0*ur*DT/ElemChordR
         
-        ! Force coeff. from this blade element, re-referenced to full turbine scale (F/(1/2*rho*Uinf^2*At))                                         
+        ! Force and moment coeff. from this blade element, re-referenced to full turbine scale 
+        ! (F/(1/2*rho*Uinf^2*At) and M/(1/2*rho*Uinf^2*At*R)                                         
         FN=CN*(ElemChordR*ElemSpanR/at)*ur**2                                                       
-        FT=CT*(ElemChordR*ElemSpanR/at)*ur**2         
+        FT=CT*(ElemChordR*ElemSpanR/at)*ur**2   
+        MS=CM25*ElemChordR*(ElemChordR*ElemSpanR/at)*ur**2      
         ! Corresponding torque coeff. (T/(1/2*rho*Uinf^2*At*R))                                              
         Fx=FN*nxe+FT*txe
         Fy=FN*nye+FT*tye
         Fz=FN*nze+FT*tze
         CALL cross(xe,ye,ze,Fx,Fy,Fz,TRx,TRy,TRz)
-        te=TRx*RotX+TRy*RotY+TRz*RotZ                             
+        te=(TRx*RotX+TRy*RotY+TRz*RotZ)+MS*(sxe*RotX+sye*RotY+sze*RotZ)                           
       
 Return                                                                                                                                                           
 End                                                               

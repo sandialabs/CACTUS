@@ -90,13 +90,16 @@ SUBROUTINE BGeomSetup_v(delty,delt,deltb)
 			! JCM: currently, although these values are for each element, they are held in arrays sized for element ends, where the first value for each blade
 			! is simply ignored in bsload (where these values are used). This is kind of stupid and should be changed...            
 			
-			! JCM: These zeros are ignored..l.
+			! JCM: These zeros are ignored...
 			nx(k,nei)=0.0                                                 
 			ny(k,nei)=0.0                                                 
 			nz(k,nei)=0.0    
 			tx(k,nei)=0.0                                                 
 			ty(k,nei)=0.0                                                 
-			tz(k,nei)=0.0                                              
+			tz(k,nei)=0.0
+            sx(k,nei)=0.0                                                 
+			sy(k,nei)=0.0                                                 
+			sz(k,nei)=0.0                                               
 			! Calculate the normal (machine inward) and tangential vectors (rearward chord line) for each element. nx(MaxTimeStepPerRev,MaxSegEnd)                      
 			do j=1,nbe                                                     
 				nej=nei+j                                                         
@@ -108,11 +111,17 @@ SUBROUTINE BGeomSetup_v(delty,delt,deltb)
 				dy=(yBE(k,nej)-yBE(k,nej1))/eSpan(nej)                                                                              
 				dz=(zBE(k,nej)-zBE(k,nej1))/eSpan(nej) 
 				CALL cross(tx(k,nej),ty(k,nej),tz(k,nej),dx,dy,dz,nx(k,nej),ny(k,nej),nz(k,nej))     
-				! Force normalize the normal vector (in case t and dChord aren't perp.)
-				NMag=sqrt(nx(k,nej)**2+ny(k,nej)**2+nz(k,nej)**2) 
-				nx(k,nej)=nx(k,nej)/NMag 
-				ny(k,nej)=ny(k,nej)/NMag    
-				nz(k,nej)=nz(k,nej)/NMag                           
+				! Force normalize the normal vector (in case dx and dChord aren't perp.)
+				VMag=sqrt(nx(k,nej)**2+ny(k,nej)**2+nz(k,nej)**2) 
+				nx(k,nej)=nx(k,nej)/VMag 
+				ny(k,nej)=ny(k,nej)/VMag    
+				nz(k,nej)=nz(k,nej)/VMag
+                CALL cross(tx(k,nej),ty(k,nej),tz(k,nej),nx(k,nej),ny(k,nej),nz(k,nej),sx(k,nej),sy(k,nej),sz(k,nej))     
+				! Force normalize
+				VMag=sqrt(sx(k,nej)**2+sy(k,nej)**2+sz(k,nej)**2) 
+				sx(k,nej)=sx(k,nej)/VMag 
+				sy(k,nej)=sy(k,nej)/VMag    
+				sz(k,nej)=sz(k,nej)/VMag                            
 			end do 
 			
 		end do 

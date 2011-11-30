@@ -9,7 +9,7 @@ SUBROUTINE BGeomSetup_h(deltr,delt,deltb)
 	real :: deltr, delt, deltb
 	
 	real BladeQC(MaxSegEndPerBlade,3), tB(MaxSegEndPerBlade,3), normB(MaxSegEndPerBlade,3)
-	real rB, cSweep, sSweep, dy, dz, deltac
+	real rB, cSweep, sSweep, dy, dz, deltac, VMag
 	real RGRo(3,3), RRoP(3,3), RPC(3,3), RCB(3,3), RGB(3,3)	! Rotation matricies
 	real BladeQCG(3,1), tG(3,1), nG(3,1)
 
@@ -118,9 +118,13 @@ SUBROUTINE BGeomSetup_h(deltr,delt,deltb)
 			nz(k,nei)=0.0   
 			tx(k,nei)=0.0                                                 
 			ty(k,nei)=0.0                                                 
-			tz(k,nei)=0.0                                              
+			tz(k,nei)=0.0
+            sx(k,nei)=0.0                                                 
+			sy(k,nei)=0.0                                                 
+			sz(k,nei)=0.0                                                          
 			! Calculate the normal (machine rearward) vectors for each element. nx(MaxTimeStepPerRev,MaxSegEnd)  
-			! Calculate the tangential vectors (rearward chord line) for each element. tx(MaxTimeStepPerRev,MaxSegEnd)                      
+			! Calculate the tangential vectors (rearward chord line) for each element. tx(MaxTimeStepPerRev,MaxSegEnd) 
+            ! Calculate spanwise vector (s = t x n)                     
 			do j=1,nbe                                                     
 				nej=nei+j                                                         
 
@@ -137,6 +141,14 @@ SUBROUTINE BGeomSetup_h(deltr,delt,deltb)
 				nx(k,nej)=nG(1,1)
 				ny(k,nej)=nG(2,1)                                                                             
 				nz(k,nej)=nG(3,1) 
+                
+                ! Spanwise vector
+                CALL cross(tx(k,nej),ty(k,nej),tz(k,nej),nx(k,nej),ny(k,nej),nz(k,nej),sx(k,nej),sy(k,nej),sz(k,nej))     
+				! Force normalize
+				VMag=sqrt(sx(k,nej)**2+sy(k,nej)**2+sz(k,nej)**2) 
+				sx(k,nej)=sx(k,nej)/VMag 
+				sy(k,nej)=sy(k,nej)/VMag    
+				sz(k,nej)=sz(k,nej)/VMag 
  
 			end do 
 			
