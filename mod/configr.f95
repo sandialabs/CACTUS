@@ -22,9 +22,11 @@ MODULE configr
         real :: sthick                  ! Strut sectional thickness-to-chord ratio
         real :: Cdpar                   ! Additional strut parasitic drag coefficient based on equatorial blade "chord area" (chord squared)
         real :: CTExcrM                 ! Additional machine level excrescence torque based on tip speed and Rmax
+        real :: VCRFB                   ! Vortex core radius factor (on max blade chord) for bound vortex
+        real :: VCRFT                   ! Vortex core radius factor (on blade discretization level) for trailing wake vorticies
+        real :: VCRFS                   ! Vortex core radius factor (on temporal discretization level) for spanwise wake vorticies
         integer :: PRFlag               ! 0 for no pitch rate aero effects, 1 to include these effects
 	
-	real :: CrRef				! Reference chord to radius ratio
 	real :: ut				! Tip speed ratio
         real :: dt                              ! Normalized timestep       
 	real :: wRotX				! Normalized machine angular velocity X

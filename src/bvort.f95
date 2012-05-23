@@ -48,8 +48,8 @@ SUBROUTINE bvort(nGeom,NLTol,iConv)
 			! Calculate the loads on the blade segment                                                                                              
 			CALL bsload(nej,nGeom,IsBE,alpha,Re,umach,ur,CN,CT,Fx,Fy,Fz,te) 
 			                                                                                  
-			! Calculate the bound vortex strength change                                                                                                   
-			dgb=abs((GB(nej1)-GS(nt,nej1))/GB(nej1))                          
+			! Calculate the bound vortex strength change (w.r.t reference circulation)                                                                                                   
+			dgb=abs((GB(nej1)-GS(nt,nej1))/(CrRef*ut))                          
 			
 			! If change outside tolerance for any element, set flag
 			if (dgb .gt. NLTol) iConv=1 

@@ -22,7 +22,10 @@ nti (int): Number of time steps per revolution (default: 16).
 convrg (real): Convergence level for the revolution average power coeff. (default: no convergence check). Iteration will finish before nr revs if this level is hit.
 iut (int): Number of iterations between wake convection velocity updates (default: iut = floor(ut)). If iut is set to a negative number, wake 
    	convection velocities will be left at the values calculated at the time the wake element is created (no wake convection velocity updates).
-ivtxcor (int): 0 to use finite vortex core with width equal to blade chord (default), 1 to not use core model
+ivtxcor (int): 0 to use finite vortex core with width equal to reference blade chord (default), 1 to not use core model
+vcrfb (real): factor on default bound vortex core radius (default: 1)
+vcrft (real): factor on default trailing wake vortex core radius (default: 1)
+vcrfs (real): factor on default spanwise wake vortex core radius (default: 1)
 
 Wake convection speedup options:
 ifwg (int): 1 to calc wake convection velocities using fixed grid points speedup, 0 to use all wake points (default)
@@ -60,7 +63,6 @@ RPM (real): Rotor rotation rate (revs per minute)
 Ut (real): Equitorial tip speed ratio (Vt/Vinf)	
 hr (real): Height to radius ratio 
 eta (real): Blade mount point ratio ((distance behind leading edge of the blade mount point) / (chord))
-CrRef (real): Reference chord to radius ratio (default: root chord)
 ChR (real): Array (comma separated) of chord to radius ratio at each element end (elements ordered by increasing height). If a single value is input,
 	that value will be applied to the entire blade.
 BladeFileFlag (int): 0 for no blade geometry file, 1 to read blade geometry file ('blade.inp') for blade coordinates and chord
@@ -94,12 +96,11 @@ RPM (real): Rotor rotation rate (revs per minute)
 Ut (real): Tip speed ratio (Vt/Vinf)
 Tilt (real): Rotor tilt angle (deg, positive windward axis tilted up)
 eta (real): Blade mount point ratio ((distance behind leading edge of the blade mount point) / (root chord))
-CrRef (real): Reference chord to radius ratio (default: root chord)
 ChR (real): Array (comma separated) of chord to radius ratio at each element end (elements ordered root to tip). If a single value is input,
 	that value will be applied to the entire blade. 
 bCone (real): Blade coning angle (deg, positive tip into the wind (-x))
-bi (real): Blade incidence (deg, w.r.t. rotor disk plane, positive LE into the wind (-x))
-bTwist (real): Array (comma separated) of blade twist at each element end (deg, w.r.t root, size = nbe + 1, default: all set to 0,
+bi (real): Blade planform incidence (deg, w.r.t. rotor disk plane, positive LE into the wind (-x))
+bTwist (real): Array (comma separated) of blade planform twist at each element end (size = nbe + 1, default: all set to 0,
 	same sign as bi, elements ordered root to tip)	
 nb (int): Number of blades (default: 2)
 nbe (int): Number of blade elements per blade (default: 5)

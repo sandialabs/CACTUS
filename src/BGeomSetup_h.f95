@@ -30,6 +30,15 @@ SUBROUTINE BGeomSetup_h(deltr,delt,deltb)
 		BladeQC(j,1:3)=[0.0,rB,deltac] ! blade quarter chord locations at segment ends w.r.t. blade mount point in blade (planform) axes
 	end do
 	
+        ! Set reference cr
+        CrRef=0.0
+        do j=1,(nbe+1) 
+            CrRef=max(CrRef,cr(j))
+        end do        
+        
+        ! Set representative geometry discretization level (for vortex core calculation)
+        dSGeom=deltr
+        
 	! Define chord vector (rearward, toward TE) from sweep and twist (around quarter chord line) in blade axes
 	! Define normal vector (machine rearward at zero incidence) in blade axes 
 	! Sweep used for root section is the same as the first outboard section
@@ -64,7 +73,7 @@ SUBROUTINE BGeomSetup_h(deltr,delt,deltb)
 	
 	sini=sin(bi*conrad)    
 	cosi=cos(bi*conrad)
-	RCB=reshape([cosi,0.0,sini,0.0,1.0,0.0,-sini,0.0,cosi],[3,3])	! to Case to Blade (incidence rotation)
+	RCB=reshape([cosi,0.0,sini,0.0,1.0,0.0,-sini,0.0,cosi],[3,3])	! to Case from Blade (incidence rotation)
 	     
 	! Create the turbine blade geometry for each blade                                                             
 	do i=1,nb                                                      

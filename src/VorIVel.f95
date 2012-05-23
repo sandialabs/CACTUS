@@ -1,7 +1,9 @@
-subroutine VorIVel(G,X1,Y1,Z1,X2,Y2,Z2,XP,YP,ZP,UP,VP,WP)      
+subroutine VorIVel(VFlag,G,X1,Y1,Z1,X2,Y2,Z2,XP,YP,ZP,UP,VP,WP)      
 
 	use vortex
 			
+        integer :: VFlag       ! 0 for bound vortex element, 1 for trailing wake element, 2 for spanwise wake element (sets core radius)
+                        
 	AX = X2-X1 
 	AY = Y2-Y1 
 	AZ = Z2-Z1
@@ -32,6 +34,16 @@ subroutine VorIVel(G,X1,Y1,Z1,X2,Y2,Z2,XP,YP,ZP,UP,VP,WP)
 	CCAZ = CX*AY - AX*CY                                              
 														
 	CCAV = CCAX**2 + CCAY**2 + CCAZ**2                                
+        
+        ! Select the vortex core radius for bound vortex, trailing
+        ! or spanwise wake elements
+        if (VFlag == 1) then
+            VRAD2=VRAD2_T
+        else if (VFlag == 2) then
+            VRAD2=VRAD2_S
+        else
+            VRAD2=VRAD2_B
+        end if
 
 	if (CCAV >= 1.0E-07) then
 		if (CCAV < A2*VRAD2) then

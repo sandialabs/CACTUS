@@ -41,9 +41,9 @@ SUBROUTINE input(ErrFlag)
 	integer :: WLI(InBufferNumSeg)     ! wake line index buffer
                 
 	! Namelist input file declaration
-	NAMELIST/ConfigInputs/RegTFlag,DiagOutFlag,GeomFlag,GPFlag,rho,vis,tempr,hFSRef,slex,nr,convrg,nti,iut,ivtxcor,ifwg,ifc,convrgf,nric,ntif,iutf,ixterm,xstop,Output_ELFlag,Incompr,DSFlag,PRFlag,k1pos,k1neg
-	NAMELIST/XFlowInputs/jbtitle,Rmax,RPM,Ut,CrRef,ChR,hr,eta,nb,nbe,nSect,AFDPath,iSection,hAG,Istraight,Istrut,sThick,Cdpar,CTExcrM,WakeOutFlag,WLI,BladeFileFlag
-	NAMELIST/AxFlowInputs/jbtitle,R,HubR,RPM,Ut,Tilt,CrRef,ChR,bCone,bi,bTwist,eta,nb,nbe,nSect,AFDPath,iSection,hAG,CTExcrM,WakeOutFlag,WLI
+	NAMELIST/ConfigInputs/RegTFlag,DiagOutFlag,GeomFlag,GPFlag,rho,vis,tempr,hFSRef,slex,nr,convrg,nti,iut,ivtxcor,VCRFB,VCRFT,VCRFS,ifwg,ifc,convrgf,nric,ntif,iutf,ixterm,xstop,Output_ELFlag,Incompr,DSFlag,PRFlag,k1pos,k1neg
+	NAMELIST/XFlowInputs/jbtitle,Rmax,RPM,Ut,ChR,hr,eta,nb,nbe,nSect,AFDPath,iSection,hAG,Istraight,Istrut,sThick,Cdpar,CTExcrM,WakeOutFlag,WLI,BladeFileFlag
+	NAMELIST/AxFlowInputs/jbtitle,R,HubR,RPM,Ut,Tilt,ChR,bCone,bi,bTwist,eta,nb,nbe,nSect,AFDPath,iSection,hAG,CTExcrM,WakeOutFlag,WLI
 	
 	! Input Defaults
         RegTFlag = 0 
@@ -66,7 +66,9 @@ SUBROUTINE input(ErrFlag)
 	iut = 0
 	iutf = 0 
 	nric=-1
-	CrRef=0
+        VCRFB=1.0       
+	VCRFT=1.0
+        VCRFS=1.0       
 	iSection(:)=1 ! all set to 1 
 	bTwist(:)=0.0 ! all set to 0
 	ChR(:)=0.0 ! all set to 0
@@ -173,19 +175,11 @@ SUBROUTINE input(ErrFlag)
 	if (iut == 0) iut = ut  !? integer = real ?
 	
 	! Check chord to radius ratio. If a scalar has been input for cr, replicate for the entire blade.
-	if (CrRef == 0) CrRef=cr(1)
 	if (cr(2) == 0) then
 		do i = 1,(nbe+1)
 			cr(i)=cr(1)
 		end do 
 	end if
-	
-	if (ivtxcor == 0) then
-		vrad = cr(1)       
-	else
-		vrad = 0.0  
-	end if                                    
-	vrad2 = vrad*vrad
 	                  				
 	ne = (nbe+1)*nb ! Total number of blade segment ends (over all blades)
 	

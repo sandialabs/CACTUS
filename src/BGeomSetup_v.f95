@@ -10,8 +10,6 @@ SUBROUTINE BGeomSetup_v(delty,delt,deltb)
 	integer :: i, j, k, nei, nej, nej1
 	real :: delty, delt, deltb, deltac
 	real :: dx, dy, dz, NMag
-	!real :: rr(MaxSegEndPerBlade)     ! Blade r/R at segment ends 
-	!real :: yB(MaxSegEndPerBlade)     ! Blade y/R at segment ends
 	real :: rSE
 	
 	! Sets up blade geometry arrays for each blade at each theta position in one revolution, starting from the bottom of the first blade, and continuing for each blade.        
@@ -34,6 +32,19 @@ SUBROUTINE BGeomSetup_v(delty,delt,deltb)
               end do
            End If
         End If
+        
+        ! Set reference cr
+        CrRef=0.0
+        do j=1,(nbe+1) 
+            CrRef=max(CrRef,cr(j))
+        end do
+        
+        ! Set representative geometry discretization level (for vortex core calculation)
+        dSGeom=0.0
+        do j=2,(nbe+1) 
+            dS=sqrt((rr(j)-rr(j-1))**2+(yB(j)-yB(j-1))**2)
+            dSGeom=max(dSGeom,dS)
+        end do
 	
 	! Frontal area normalized by Rmax^2 
 	at=0.0                                                                                                                                                                          
@@ -97,7 +108,7 @@ SUBROUTINE BGeomSetup_v(delty,delt,deltb)
 			tx(k,nei)=0.0                                                 
 			ty(k,nei)=0.0                                                 
 			tz(k,nei)=0.0
-            sx(k,nei)=0.0                                                 
+                        sx(k,nei)=0.0                                                 
 			sy(k,nei)=0.0                                                 
 			sz(k,nei)=0.0                                               
 			! Calculate the normal (machine inward) and tangential vectors (rearward chord line) for each element. nx(MaxTimeStepPerRev,MaxSegEnd)                      
@@ -116,7 +127,7 @@ SUBROUTINE BGeomSetup_v(delty,delt,deltb)
 				nx(k,nej)=nx(k,nej)/VMag 
 				ny(k,nej)=ny(k,nej)/VMag    
 				nz(k,nej)=nz(k,nej)/VMag
-                CALL cross(tx(k,nej),ty(k,nej),tz(k,nej),nx(k,nej),ny(k,nej),nz(k,nej),sx(k,nej),sy(k,nej),sz(k,nej))     
+                                CALL cross(tx(k,nej),ty(k,nej),tz(k,nej),nx(k,nej),ny(k,nej),nz(k,nej),sx(k,nej),sy(k,nej),sz(k,nej))     
 				! Force normalize
 				VMag=sqrt(sx(k,nej)**2+sy(k,nej)**2+sz(k,nej)**2) 
 				sx(k,nej)=sx(k,nej)/VMag 

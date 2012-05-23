@@ -16,7 +16,9 @@ MODULE element
 	real :: bCone				! Blade coning angle (Currently only use for HAWT calculation)
 	real :: Tilt				! Rotor Tilt angle (Currently only use for HAWT calculation)
 	real :: eta				! Blade mount point ratio (distance behind leading edge of the blade mount point / root chord)
-      	real, allocatable :: btw(:)		! Blade twist for each element end in a blade (root to tip). (Currently only used for HAWT calculation)	
+      	real :: dSGeom                          ! Geometry discretization level used in vortex core calculation
+        real :: CrRef                           ! Ref chord to radius ratio 
+        real, allocatable :: btw(:)		! Blade twist for each element end in a blade (root to tip). (Currently only used for HAWT calculation)	
 	real, allocatable :: rr(:)              ! Blade r/R at segment ends 
 	real, allocatable :: yB(:)              ! Blade y/R at segment ends
       	real, allocatable :: cr(:)		! Chord to radius ratio for each element end in a blade (root to tip)	
@@ -26,7 +28,7 @@ MODULE element
 	real, allocatable :: tx(:,:)		! Tangential X for each blade segment at each theta in a revolution	
 	real, allocatable :: ty(:,:)		! Tangential Y for each blade segment at each theta in a revolution	
 	real, allocatable :: tz(:,:)		! Tangential Z for each blade segment at each theta in a revolution	
-    real, allocatable :: sx(:,:)		! Spanwise X for each blade segment at each theta in a revolution	
+        real, allocatable :: sx(:,:)		! Spanwise X for each blade segment at each theta in a revolution	
 	real, allocatable :: sy(:,:)		! Spanwise Y for each blade segment at each theta in a revolution	
 	real, allocatable :: sz(:,:)		! Spanwise Z for each blade segment at each theta in a revolution	
 	real, allocatable :: eSpan(:)		! Element span to equitorial radius ratio for each element

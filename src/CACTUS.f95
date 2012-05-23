@@ -220,6 +220,22 @@ PROGRAM CACTUS
 	        Minf=uinf/sqrt(1.4*1716.0*(tempr+459.6))
 	end if
 
+        ! Setup vortex core radius for bound vorticity based on max chord, and for trailing and spanwise wake based on 
+        ! temporal and spatial discretization levels, respectively.
+        if (ivtxcor == 0) then
+                vRad_B = CrRef*VCRFB
+                vRad_T = dSGeom*VCRFT
+                dSWake = delt*(1.0+1.0/max(ut,1.0))   ! representative wake discretization size (wake line at Rmax in Uinf freestream)
+                vRad_S = dSWake*VCRFS       
+        else
+                vRad_B = 0.0         
+                vRad_T = 0.0  
+                vRad_S = 0.0
+        end if       
+        vRad2_B = vRad_B*vRad_B                             
+        vRad2_T = vRad_T*vRad_T
+        vRad2_S = vRad_S*vRad_S
+
         areat=at*Rmax**2                                ! frontal area (at is (frontal area) / Rmax^2 ) 
         dynpress=rho/2.0*uinf**2                        ! dynamic pressure                  
         torquec=dynpress*areat*Rmax                     ! torque coeff normalization                         
