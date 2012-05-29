@@ -15,7 +15,6 @@ MODULE configr
 	integer :: ntTerm		! Time step level beyond which wake is ignored (if iXTerm = 1)
 	integer :: nSect		! Number of airfoil section data tables used
 	integer :: FitStartRev		! Initialization rev for the cpf fit
-	integer :: npw			! Number of points in the wake
 	integer :: nsw			! Next iteration at which wake velocities will be calculated
 	integer :: Istraight		! Set to 1 for straight-bladed VAWT, 0 for parabolic blade shape
 	integer :: Istrut 		! Set to 1 for equatorial ! cross-flow turbine blade struts, 0 for no struts
@@ -27,7 +26,7 @@ MODULE configr
         real :: VCRFS                   ! Vortex core radius factor (on temporal discretization level) for spanwise wake vorticies
         integer :: PRFlag               ! 0 for no pitch rate aero effects, 1 to include these effects
 	
-	real :: ut				! Tip speed ratio
+	real :: ut				! Tip speed ratio       
         real :: dt                              ! Normalized timestep       
 	real :: wRotX				! Normalized machine angular velocity X
 	real :: wRotY				! Normalized machine angular velocity Y
@@ -44,5 +43,6 @@ MODULE configr
 	real :: PowerC				! Output power normalization
 	real :: Power				! Output power for the current revolution
 	real :: ReM				! Machine Reynolds number based on Rmax
+        real :: MInf                                    ! Freestream mach number       
 	
 End

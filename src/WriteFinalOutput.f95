@@ -1,8 +1,8 @@
 SUBROUTINE WriteFinalOutput()
         
 	use time
-        use output       
-	use test
+        use output    
+        use airfoil, only : ilxtp, iuxtp   
         
         implicit none
         

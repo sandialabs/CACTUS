@@ -6,9 +6,7 @@ SUBROUTINE bsload(nElem,nGeom,IsBE,alpha,Re,umach,ur,CN,CT,Fx,Fy,Fz,te)
         use configr
         use airfoil
         use dystl
-        use cltab
-        use freestream
-        use test  
+        use freestream 
         
         implicit none
                                                       
@@ -83,8 +81,7 @@ SUBROUTINE bsload(nElem,nGeom,IsBE,alpha,Re,umach,ur,CN,CT,Fx,Fy,Fz,te)
         umach=ur*Minf                                                 
         
         !---------
-        ! JCM: These .5c and .75c locations are used to approx. pitch rate and alphadot effects in the 
-        ! static coeff. calculation. Could be exchanged for tables...
+        ! JCM: These .5c and .75c locations are used to approx. pitch rate effects
         if (PRFlag/=0) then
             xe5=xe+0.25*ElemChordR*txe
             ye5=ye+0.25*ElemChordR*tye
@@ -107,6 +104,7 @@ SUBROUTINE bsload(nElem,nGeom,IsBE,alpha,Re,umach,ur,CN,CT,Fx,Fy,Fz,te)
             alpha75=alpha
             Re5=Re
             Re75=Re
+            wPNorm=0.0
         end if
         !--------
         

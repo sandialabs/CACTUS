@@ -3,13 +3,11 @@ SUBROUTINE bvort(nGeom,NLTol,iConv)
         use parameters
         use pidef
 	use blade            
-	use test
 	use configr
         use regtest
         use output       
         use element
         use airfoil
-        use cltab
         use dystl
 
         Implicit None

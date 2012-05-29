@@ -5,15 +5,12 @@ SUBROUTINE wivel()
       	use wallsoln 
       	use freestream
         use regtest 
-        use xwake
-        use test
         
         integer :: ygcErr 
         real :: Point(3), IndVel(3)                                                                
                                                                        
 	! Calculate the induced velocity at each lattice point in the wake from wake (including bound vorticity), wall, and freestream        
-                                                                      
-      	NPW=0                                                             
+                                                                                                                                  
       	if (NT .ge. 1) then                                           
       	
 		NT1=NT-1                                                          
@@ -24,9 +21,6 @@ SUBROUTINE wivel()
       				UO(J,I)=U(J,I)+UFS(J,I)                                                  
       				VO(J,I)=V(J,I)+VFS(J,I)                                                    
       				WO(J,I)=W(J,I)+WFS(J,I)                                                    
-      				if (X(J,I) .ge. XFW(1)) then
-					NPW=NPW+1 
-				end if
 			end do                                
 		end do                                                         
                                                                                                                                                                                           

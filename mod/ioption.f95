@@ -2,7 +2,6 @@ MODULE ioption
 
 	! Input options
 	
-	integer :: iFWG		! Use fixed wake flag
 	integer :: ivtxcor	! switches whether to use finite vortex core model...
 	integer :: ifc		! Flag to use final convergence step
 	integer :: nric		! Intermediate rev at which to switch to final convergence (optional)

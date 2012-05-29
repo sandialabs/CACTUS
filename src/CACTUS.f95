@@ -2,8 +2,6 @@ PROGRAM CACTUS
 
         ! Development code for wind/water turbine performance calculation based on VDART3.
         !       J. Murray, 3/2010
-        !       J. Murray, 3/2010: Name changed from PoTHyDyn (Potential flow Turbine HydroDynamics) to CACTUS (Code for Axial and Crossflow Turbine Simulation) 
-        !               as the acronym was deemed less comical...
         ! -----------
         ! Notes: 
         !               Command line inputs:
@@ -18,16 +16,12 @@ PROGRAM CACTUS
         use blade
         use element
         use varscale
-        use cltab
         use shear
         use airfoil
         use configr
-        use xwake
         use pidef
-        use test
         use ioption
         use vortex
-        use uwake
         use wakedata
         use time
         use freestream
@@ -95,8 +89,6 @@ PROGRAM CACTUS
         ! Error flags                                                                                                                                                                  
         ilxtp=0
         iuxtp=0
-        ierr0=0                                                           
-        ierr1=0
         
         ! Read inputs    
         ErrFlag = 0
@@ -136,35 +128,7 @@ PROGRAM CACTUS
                 nsw=-1
         else
                 nsw=2
-        end if 
-        
-        ! Initialize fixed wake grid data with arbitrary x station intervals, y and z calculated with constant intervals...
-        npw=0 ! Number of points in the fixed wake is used to determine whether to use the fixed wake calculation, initialized to zero and incremented in swivel as necessary
-        ifw=1 ! Initial value of ifw set to 1. Will be modified in swivel when free wake x exceeds xfw(ifw)
-        xfw=[1.01,1.5,2.0,3.0,5.0,7.0,10.0,15.0,20.0,25.0,35.0,50.0]                        
-        jfw=5 ! Desired number of fixed wake points in the y direction (constant)
-        kfw=5 ! Desired number of fixed wake points in the z direction (constant)
-        
-        if (GeomFlag == 1) then
-                yfw(1)=-0.5 
-                yfw(jfw)=hr+0.5
-        else
-                yfw(1)=-1.5 
-                yfw(jfw)=1.5
-        end if
-        jfwm1=(jfw-1) 
-        dyfw=(yfw(jfw)-yfw(1))/jfwm1
-        do i = 2, jfwm1    
-                yfw(i) = yfw(i-1)+dyfw    
-        end do    
-        
-        zfw(1)=-1.5 
-        zfw(kfw)=1.5
-        kfwm1=(kfw-1) 
-        dzfw=(zfw(kfw)-zfw(1))/kfwm1
-        do i = 2, kfwm1    
-                zfw(i) = zfw(i-1)+dzfw    
-        end do         
+        end if        
         
         ! Blade Geometry setup  
         delt=2.0*pi/nti 
@@ -264,7 +228,7 @@ PROGRAM CACTUS
 
         ! Initialize dynamic stall model
         if (DSFlag==1) then
-                Call dystl_init_BV(nsect,tc,MaxAirfoilSect)
+                Call dystl_init_BV()
         else if (DSFlag==2) then
                 Call dystl_init_LB()
         end if
@@ -356,12 +320,7 @@ PROGRAM CACTUS
                         end if  
   
                         ! Update current wake convection velocities (excluding wake to be shed from the current blade)                                                                    
-                        nfpw=ifw*jfw*kfw  ! Number of fixed wake points                                                
-                        if ((npw <= nfpw) .OR. (ifwg == 0)) then                     
-                                CALL wivel()      ! Use all wake points to update the wake node velocities
-                        else                        
-                                CALL swivel()     ! Use fixed wake grid to update the wake node velocities by interpolation                      
-                        end if  
+                        CALL wivel()      ! Use all wake points to update the wake node velocities
                                                                                
                         ! If new wall and wake velocities were calculated on this timestep, set the next update timestep
                         if (nt .eq. nsw) then                                         

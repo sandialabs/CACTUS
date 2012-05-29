@@ -1,5 +1,6 @@
 SUBROUTINE BV_DynStall(CLstat,CDstat,alphaL,alphaD,adotnorm,umach,ReL,ReD,Re,SectInd,CL,CD)
 
+        use airfoil
         use dystl
         use pidef 
 
@@ -8,27 +9,28 @@ SUBROUTINE BV_DynStall(CLstat,CDstat,alphaL,alphaD,adotnorm,umach,ReL,ReD,Re,Sec
         real :: CLstat, CDstat, CL, CD, alphaL, alphaD, adotnorm, umach, ReL, ReD, Re
         integer :: SectInd
 
-        integer :: k, BoundInd, isgn, DynamicFlagL, DynamicFlagD
-        real :: dalphaRefMax, TransA, dalphaLRef, dalphaDRef, gammal, gammam, dalphaL, dalphaD
-        real :: alssn, alssp, alrefL, alLagD, alrefD, delN, delP, C
+        integer :: isgn, DynamicFlagL, DynamicFlagD
+        real :: dalphaRefMax, TransA, dalphaLRef, dalphaDRef, dalphaL, dalphaD
+        real :: diff, smachl, hmachl, gammaxl, dgammal, smachm, hmachm, gammaxm, dgammam, gammal, gammam
+        real :: alssn, alssp, alrefL, alLagD, alrefD, delN, delP, C, C1, AOA0
         
-        ! Calculate the static stall enevelope limits                                                                                       
-        k=1                                                               
-        BoundInd=0
-        do while ((k < nstl(SectInd)) .AND. BoundInd==0)
-                if (restl(k+1,SectInd) >= Re) then
-                        BoundInd=1
-                else
-                        k=k+1
-                end if
-        end do                                                               
-        alssp=alstlp(k,SectInd)+dapdre(k,SectInd)*(Re-restl(k,SectInd))            
-        alssn=alstln(k,SectInd)+dandre(k,SectInd)*(Re-restl(k,SectInd))
+        ! Calculate the static stall envelope limits and other params 
+        CALL CalcBVStallAOALim(Re,SectInd,alssp,alssn)                                                                                     
+        AOA0=alzer(SectInd)
+        diff=0.06-tc(SectInd)                                                   
+        smachl=0.4+5.0*diff                                            
+        hmachl=0.9+2.5*diff                                            
+        gammaxl=1.4-6.0*diff                                           
+        dgammal=gammaxl/(hmachl-smachl)                       
+        smachm=0.2                                                     
+        hmachm=0.7+2.5*diff                                            
+        gammaxm=1.0-2.5*diff                                           
+        dgammam=gammaxm/(hmachm-smachm)          
                 
         ! Limit reference dalpha to a maximum to keep sign of CL the same for
         ! alpha and lagged alpha (considered a reasonable lag...). Note:
         ! magnitude increasing and decreasing effect ratios are maintained.
-        dalphaRefMax=min(abs(alssp-alzer(SectInd)),abs(alssn-alzer(SectInd)))/max(k1pos,k1neg)
+        dalphaRefMax=min(abs(alssp-AOA0),abs(alssn-AOA0))/max(k1pos,k1neg)
         TransA=.5*dalphaRefMax ! transition region for fairing lagged AOA in pure lag model
         
         ! Dynamic flags
@@ -40,11 +42,11 @@ SUBROUTINE BV_DynStall(CLstat,CDstat,alphaL,alphaD,adotnorm,umach,ReL,ReD,Re,Sec
         ! Modified Boeing-Vertol approach
         
         ! Lift                                                                                                            
-        gammal=gammaxl(SectInd)-(umach-smachl(SectInd))*dgammal(SectInd)                 
+        gammal=gammaxl-(umach-smachl)*dgammal               
         dalphaLRef=gammal*sqrt(abs(adotnorm))                              
         dalphaLRef=min(dalphaLRef,dalphaRefMax)
         
-        if ((adotnorm*(alphaL-alzer(SectInd))) < 0.0) then     
+        if ((adotnorm*(alphaL-AOA0)) < 0.0) then     
                 ! Magnitude of CL decreasing                                     
                 dalphaL=k1neg*dalphaLRef                                                     
                 alrefL=alphaL-dalphaL*isgn                                           
@@ -66,14 +68,14 @@ SUBROUTINE BV_DynStall(CLstat,CDstat,alphaL,alphaD,adotnorm,umach,ReL,ReD,Re,Sec
         end if 
         
         ! Drag                                                                                                       
-        gammam=gammaxm(SectInd)-(umach-smachm(SectInd))*dgammam(SectInd)               
-        if (umach < smachm(SectInd)) then
-                gammam=gammaxm(SectInd)  
+        gammam=gammaxm-(umach-smachm)*dgammam              
+        if (umach < smachm) then
+                gammam=gammaxm  
         end if
         dalphaDRef=gammam*sqrt(abs(adotnorm))                              
         dalphaDRef=min(dalphaDRef,dalphaRefMax)
         
-        if ((adotnorm*(alphaD-alzer(SectInd))) < 0.0) then     
+        if ((adotnorm*(alphaD-AOA0)) < 0.0) then     
                 ! Magnitude of CL decreasing                                                                                   
                 dalphaD=k1neg*dalphaDRef                                                 
                 alLagD=alphaD-dalphaD*isgn
@@ -108,8 +110,8 @@ SUBROUTINE BV_DynStall(CLstat,CDstat,alphaL,alphaD,adotnorm,umach,ReL,ReD,Re,Sec
         if (DynamicFlagL == 1) then
                 ! Dynamic stall characteristics                                 
                 ! Linear expansion model for linear region coeffs  
-                CALL intp(ReL,alrefL*condeg,CL,C,SectInd)                                                                                      
-                CL=CL/(alrefL-alzer(SectInd))*(alphaL-alzer(SectInd)) 
+                CALL intp(ReL,alrefL*condeg,CL,C,C1,SectInd)                                                                                      
+                CL=CL/(alrefL-AOA0)*(alphaL-AOA0) 
         else        
                 ! Static characteristics  
                 CL=CLstat                                      
@@ -118,7 +120,7 @@ SUBROUTINE BV_DynStall(CLstat,CDstat,alphaL,alphaD,adotnorm,umach,ReL,ReD,Re,Sec
         if (DynamicFlagD == 1) then
                 ! Dynamic characteristics                                
                 ! Pure lag model for drag        
-                CALL intp(ReD,alrefD*condeg,C,CD,SectInd)                                                                                    
+                CALL intp(ReD,alrefD*condeg,C,CD,C1,SectInd)                                                                                    
         else    
                 ! Static characteristics    
                 CD=CDstat                                                                              

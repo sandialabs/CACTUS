@@ -34,7 +34,7 @@ MODULE element
 	real, allocatable :: eSpan(:)		! Element span to equitorial radius ratio for each element
 	real, allocatable :: eChord(:)		! Element chord to equitorial radius ratio for each element
 	real, allocatable :: Theta(:)		! Theta at each point in a revolution (for the first blade)
-	
+        integer, allocatable :: iSect(:)        ! Array of indicies of the section table to apply to each blade element
 
 	CONTAINS
 
@@ -66,6 +66,7 @@ MODULE element
 		allocate(eSpan(MaxSegEnds))	
 		allocate(eChord(MaxSegEnds))			
 		allocate(Theta(MaxTimeStepPerRev))
+                allocate(iSect(MaxSegEnds))              
 		
 	End SUBROUTINE
 	

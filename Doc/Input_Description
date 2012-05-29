@@ -28,7 +28,6 @@ vcrft (real): factor on default trailing wake vortex core radius (default: 1)
 vcrfs (real): factor on default spanwise wake vortex core radius (default: 1)
 
 Wake convection speedup options:
-ifwg (int): 1 to calc wake convection velocities using fixed grid points speedup, 0 to use all wake points (default)
 ifc (int): 1 to use final convergence step, 0 to not (default). 
 	FC Step consists of changing the values below if convergence is reached before nr revolutions have been performed.
 	nric (int): Revolution number after which to switch to FC, if initial convergence level has not yet been achieved (optional). 		

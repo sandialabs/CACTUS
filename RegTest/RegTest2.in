@@ -19,7 +19,6 @@
 	convrg	= .0001
 	iut	= 0
 	
-	ifwg 	= 0
 	ifc	= 0
 	ixterm 	= 0
 

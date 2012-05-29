@@ -6,16 +6,12 @@ SUBROUTINE input(ErrFlag)
 	use element
 	use blade
 	use varscale
-	use cltab
 	use shear
 	use airfoil
 	use configr
-	use xwake
 	use pidef
-	use test
 	use ioption
 	use vortex
-	use uwake
 	use wakedata
 	use time
 	use freestream
@@ -26,22 +22,27 @@ SUBROUTINE input(ErrFlag)
 	integer, parameter :: InBufferNumSectionTables = 100
 	integer, parameter :: InBufferNumSegPerBlade = 100
 	integer, parameter :: InBufferNumSeg = 100
+        integer, parameter :: MaxReadLine = 1000    
+        integer, parameter :: MaxTempAOA = 1000   
         
-	integer i
-	integer iend, countre
+	integer i, ii, jj, kk
 	integer ErrFlag
 	logical NotDone
-	
+        character(MaxReadLine) :: ReadLine
+        integer :: CI, EOF
+        real :: temp, temp1(MaxTempAOA,4)
+               
+	       
 	! Temp buffers for airfoil section data inputs. If more sections or segments become necessary, its probably time to 
 	! create a more generic geometry file with all the relevant geometry for one blade defined, and read this file in (using a loop).
-	character*80 :: AFDPath(InBufferNumSectionTables)	! Airfoil section data path
+	character(MaxReadLine) :: AFDPath(InBufferNumSectionTables)	! Airfoil section data path
 	integer :: iSection(InBufferNumSegPerBlade)	! section index for each element
 	real :: ChR(InBufferNumSegPerBlade)	! chord ratio for each element
 	real :: bTwist(InBufferNumSegPerBlade)	! twist for each element (currently only used for HAWT geometry)
 	integer :: WLI(InBufferNumSeg)     ! wake line index buffer
                 
 	! Namelist input file declaration
-	NAMELIST/ConfigInputs/RegTFlag,DiagOutFlag,GeomFlag,GPFlag,rho,vis,tempr,hFSRef,slex,nr,convrg,nti,iut,ivtxcor,VCRFB,VCRFT,VCRFS,ifwg,ifc,convrgf,nric,ntif,iutf,ixterm,xstop,Output_ELFlag,Incompr,DSFlag,PRFlag,k1pos,k1neg
+	NAMELIST/ConfigInputs/RegTFlag,DiagOutFlag,GeomFlag,GPFlag,rho,vis,tempr,hFSRef,slex,nr,convrg,nti,iut,ivtxcor,VCRFB,VCRFT,VCRFS,ifc,convrgf,nric,ntif,iutf,ixterm,xstop,Output_ELFlag,Incompr,DSFlag,PRFlag,k1pos,k1neg
 	NAMELIST/XFlowInputs/jbtitle,Rmax,RPM,Ut,ChR,hr,eta,nb,nbe,nSect,AFDPath,iSection,hAG,Istraight,Istrut,sThick,Cdpar,CTExcrM,WakeOutFlag,WLI,BladeFileFlag
 	NAMELIST/AxFlowInputs/jbtitle,R,HubR,RPM,Ut,Tilt,ChR,bCone,bi,bTwist,eta,nb,nbe,nSect,AFDPath,iSection,hAG,CTExcrM,WakeOutFlag,WLI
 	
@@ -52,8 +53,7 @@ SUBROUTINE input(ErrFlag)
         WakeOutFlag = 0     
 	nb = 2
 	nbe = 5 
-	nSect = 1 
-	ifwg = 0 
+	nSect = 1  
 	ifc = 0   
 	nr = 10
 	convrg = -1
@@ -110,16 +110,12 @@ SUBROUTINE input(ErrFlag)
         MaxSeg = MaxSegPerBlade*MaxBlades       
 	! Airfoil Data
 	MaxAirfoilSect = nSect
-	MaxReVals = 15
-	MaxAOAVals = 400
+	MaxReVals = 20
+	MaxAOAVals = 1000
 	! Wake advancement
 	MaxRevs = nr
 	MaxTimeStepPerRev = nti
 	MaxWakeNodes = MaxRevs * MaxTimeStepPerRev   
-	! Fixed wake grid 
-	MaxFixWakeX = 12
-	MaxFixWakeY = 20
-	MaxFixWakeZ = 20
 	! Non-linear convergence iteration
 	MaxNLIters = 10
         ! Outputs
@@ -140,10 +136,7 @@ SUBROUTINE input(ErrFlag)
 	! Array construction
         CALL blade_cns(MaxWakeNodes,MaxSegEnds)
 	CALL element_cns(MaxTimeStepPerRev,MaxSegEnds,MaxSegEndPerBlade)     
-	CALL cltab_cns(MaxAOAVals,MaxReVals,MaxAirfoilSect,MaxSegEnds)
-	CALL airfoil_cns(MaxAirfoilSect)
-	CALL xwake_cns(MaxFixWakeX,MaxFixWakeY,MaxFixWakeZ)
-	CALL uwake_cns(MaxFixWakeX,MaxFixWakeY,MaxFixWakeZ)
+	CALL airfoil_cns(MaxAOAVals,MaxReVals,MaxAirfoilSect)
 	CALL wakedata_cns()
 	CALL freestream_cns(MaxWakeNodes,MaxSegEnds)
 	CALL dystl_cns(MaxAirfoilSect,MaxReVals,MaxSegEnds)
@@ -212,153 +205,177 @@ SUBROUTINE input(ErrFlag)
 	end if
 
 	
-        ! Airfoil Stall Data Tables                         
-
-	! Read stall angle data, and section CL and CD data from section data file 
-	do kk = 1, nsect 
-	
-		! Open input file for this section
-		open(15, file=AFDPath(kk))
-	
-		! Read in title on first line of stall data block and (char,real,real) data on second line
-		read(15,420) aftitle(kk)                                  
-		read(15,*) camber(kk),tc(kk),alzer(kk)
-		
-		! Create numerical flag for camber in (1), out (-1), or none (0) from text flag
-		if ((camber(kk)(1:2) == 'in') .OR. (camber(kk)(1:2) == 'IN')) then
-			camb(kk) = 1 
-		else if ((camber(kk)(1:3) == 'out') .OR. (camber(kk)(1:3) == 'OUT')) then
-			camb(kk) = -1         
-		else
-			camb(kk) = 0
-		end if	
-		
-		! Read in stall angles (positive and negative) at up to MaxReVals Re values, starting on line 3 of stall data block
-		nstl(kk)=0  ! number of stall angle data points 
-		iend=0
-		i=1
-		do while ((iend /= 1) .AND. (i <= MaxReVals)) 
-			read(15,*) iend,restl(i,kk),alstlp(i,kk),alstln(i,kk)
-			nstl(kk) = i  
-			i=i+1   
-		end do                                                  
-
-	        ! If airfoil is cambered out, transfer stall information 
-	        ! to proper sign. Calculate slopes for interpolation.     
-		alzer(kk) = alzer(kk)*conrad
-		if (camb(kk) == -1) alzer(kk) = -alzer(kk) 
-		
-		istp = nstl(kk) 
-		do i = 1, istp  
-			if(camb(kk) == -1) then
-				temp = alstlp(i,kk)
-				alstlp(i,kk) = -alstln(i,kk)
-				alstln(i,kk) = -temp   
-			end if                                             
-			alstlp(i,kk) = alstlp(i,kk)*conrad 
-			alstln(i,kk) = alstln(i,kk)*conrad 
-			if (i > 1) then
-				dapdre(i-1,kk) = (alstlp(i,kk)-alstlp(i-1,kk))/(restl(i,kk)-restl(i-1,kk))         
-				dandre(i-1,kk) = (alstln(i,kk)-alstln(i-1,kk))/(restl(i,kk)-restl(i-1,kk))  
-			end if   
-		end do 
-
-		
-		! Read CL and CD data for this airfoil as a func. of Re
-		
-		! Read section title and first Re number for this airfoil section. 
-		read(15,1001) tre(1,kk), dftitle(kk)
-	
-		! Read in section lift and drag data for up to 15 Re numbers
-		iend=0
-		i=1
-                countre=0              
-		do while ((iend < 2) .AND. (i <= MaxReVals))
-                        
-                        countre=countre+1
-                        
-			! Read Re value if it hasn't already been read (if not the first Re block of airfoil)
-			if (i > 1) then                                           
-				read(15,*) tre(i,kk)
-			end if
-			
-			! Read up to MaxAOAVals lift and drag values as a function of AOA for this Re number
-			ii=1
-			ntb=0  
-			iend=0 
-			do while ((iend == 0) .AND. (ii <= MaxAOAVals))
-				ntb = ntb+1  
-				! if iend flag is 1, then done with this Re number
-				! if iend flag is 2, done with entire section table 
-				read(15,*) iend, ta(ii,i,kk), tcl(ii,i,kk),tcd(ii,i,kk) 
-				ii=ii+1
-			end do                
-	                                                                       
-			! Adjust the airfoil data so alpha goes from -180 to 180             
-			! and the cambered data is of the proper sign for this rotor blade   					
-			if(camb(kk) == -1) then
-				
-				npt = ntb/2 
-				do ii = 1, npt  
-					jj    = ntb-(ii-1)
-					temp1 = ta(ii,i,kk) 
-					temp2 = tcl(ii,i,kk)
-					temp3 = tcd(ii,i,kk)
-					ta(ii,i,kk)  = -ta(jj,i,kk)
-					tcl(ii,i,kk) = -tcl(jj,i,kk)
-					tcd(ii,i,kk) =  tcd(jj,i,kk) 
-					ta(jj,i,kk)  = -temp1 
-					tcl(jj,i,kk) = -temp2
-					tcd(jj,i,kk) =  temp3
-				end do  
-				
-				if ((npt*2) /= ntb) then
-					ii            = npt+1    
-					ta(ii,i,kk)  = -ta(ii,i,kk)
-					tcl(ii,i,kk) = -tcl(ii,i,kk)
-				end if
-				
-			else if(camb(kk) == 0) then
-				
-				npt = ntb*2-1 
-				do ii = 1, ntb  
-					jj = npt-(ii-1)
-					k1 = ntb-(ii-1) 
-					ta(jj,i,kk)  = ta(k1,i,kk)
-					tcl(jj,i,kk) = tcl(k1,i,kk) 
-					tcd(jj,i,kk) = tcd(k1,i,kk)
-				end do  
-				     
-				npts = ntb-1  
-				do ii = 1, npts 
-					jj = ntb+ii   
-					k1 = npts-(ii-1)
-					ta(k1,i,kk)  = -ta(jj,i,kk)  
-					tcl(k1,i,kk) = -tcl(jj,i,kk)  
-					tcd(k1,i,kk) =  tcd(jj,i,kk)
-				end do   
-				     
-				ntb = npt 
-				  
-			end if  
-			 
-			ntbl(i,kk) = ntb  
-		
-			i=i+1
-
-		end do
+        ! Airfoil Data Tables: Read CL, CD, CM vs AOA from data files
+        ! Format Example:
+        ! Title: AFTitle
+        ! Thickness to chord ratio: 0.2
+        ! Zero Lift AOA (deg): 0.0
+        ! Reverse camber direction: 0
+        !
+        ! Reynolds Number: 1e6
+        ! BV Dyn. Stall Model - Positive stall AOA (deg): 10
+        ! BV Dyn. Stall Model - Negative stall AOA (deg): -10
+        ! LB Dyn. Stall Model - Lift Coeff. Slope at Zero Lift AOA (per radian): 6.28
+        ! LB Dyn. Stall Model - Positive Critical Lift Coeff.: 1.3
+        ! LB Dyn. Stall Model - Negative Critical Lift Coeff.: -1.3
+        ! AOA (deg) CL CD Cm
+        ! ... ... ... ...
+        ! 
+        ! Reynolds Number: 5e6
+        ! ...                 
+        do kk = 1, nsect
+        
+                ! Open input file for this section
+                open(15, file=AFDPath(kk))
+                EOF=0
                 
-                nret(kk)=countre
+                ! Find title block 
+                NotDone=.TRUE.
+                do while (NotDone)
+                    read(15,'(A)') ReadLine
+                    CI=index(ReadLine,':')
+                    if (CI>0) then
+                        NotDone=.FALSE.
+                    end if
+                end do
+                
+                ! Read title and airfoil thickness
+                if (len_trim(ReadLine)>CI) then
+                    aftitle(kk) = ReadLine(CI+1:len_trim(ReadLine))
+                else
+                    aftitle(kk) = 'No Title'
+                end if
+                read(15,'(A)') ReadLine
+                read(ReadLine(index(ReadLine,':')+1:),*) tc(kk) 
+                read(15,'(A)') ReadLine
+                read(ReadLine(index(ReadLine,':')+1:),*) alzer(kk)
+                alzer(kk)=alzer(kk)*conrad
+                read(15,'(A)') ReadLine
+                read(ReadLine(index(ReadLine,':')+1:),*) camb(kk)                            
+                
+                ! Reverse camber direction if desired                                  
+                if (camb(kk) == 1) then
+                    alzer(kk) = -alzer(kk)
+                end if                                  
+                                                  
+                ! Find first Re block
+                NotDone=.TRUE.
+                do while (NotDone)
+                    read(15,'(A)',IOSTAT=EOF) ReadLine
+                    CI=index(ReadLine,':')
+                    if (CI>0 .OR. EOF<0) then
+                        NotDone=.FALSE.
+                    end if
+                end do                                                  
+                                                  
+                ! Read data for each Re value 
+                i=0                                                                
+                do while (EOF >= 0  .AND. (i < MaxReVals)) 
+                    
+                    i=i+1
+                    ! Read Re and dyn. stall data                                
+                    read(ReadLine(index(ReadLine,':')+1:),*) TRE(i,kk)
+                    read(15,'(A)') ReadLine                          
+                    read(ReadLine(index(ReadLine,':')+1:),*) alstlp(i,kk)
+                    alstlp(i,kk)=alstlp(i,kk)*conrad
+                    read(15,'(A)') ReadLine                          
+                    read(ReadLine(index(ReadLine,':')+1:),*) alstln(i,kk)
+                    alstln(i,kk)=alstln(i,kk)*conrad
+                    read(15,'(A)') ReadLine                          
+                    read(ReadLine(index(ReadLine,':')+1:),*) CLaData(i,kk)
+                    read(15,'(A)') ReadLine                          
+                    read(ReadLine(index(ReadLine,':')+1:),*) CLCritPData(i,kk)
+                    read(15,'(A)') ReadLine                          
+                    read(ReadLine(index(ReadLine,':')+1:),*) CLCritNData(i,kk)
+                    
+                    ! Reverse camber direction if desired
+                    if (camb(kk) == 1) then
+                        temp = alstlp(i,kk)
+                        alstlp(i,kk) = -alstln(i,kk)
+                        alstln(i,kk) = -temp   
+                        temp = CLCritPData(i,kk)
+                        CLCritPData(i,kk) = -CLCritNData(i,kk)
+                        CLCritNData(i,kk) = -temp 
+                    end if
+                    
+                    ! Read AOA data
+                    read(15,'(A)') ReadLine
+                    NotDone=.TRUE.
+                    ii=0
+                    do while (NotDone)
+                        read(15,'(A)',IOSTAT=EOF) ReadLine
+                        if (EOF>=0 .AND. len_trim(ReadLine)>0) then
+                            if (ii == MaxAOAVals) then
+                                write(6,*) 'Max. allowed AOA values exceeded in airfoil data file: ', aftitle(kk)
+                                ErrFlag=1
+                                NotDone=.FALSE.
+                            else
+                                ii=ii+1                        
+                                read(ReadLine,*) ta(ii,i,kk),tcl(ii,i,kk),tcd(ii,i,kk),tcm(ii,i,kk) 
+                            end if
+                        else
+                            NotDone=.FALSE.
+                        end if
+                    end do
+                    ntbl(i,kk)=ii
+                    
+                    ! Check AOA limits
+                    if (ta(1,i,kk) > -180.0 .OR. ta(ntbl(i,kk),i,kk) < 180.0) then
+                        write(6,*) 'AOA data needs to be +/-180 deg in airfoil data file: ', aftitle(kk)
+                        ErrFlag=1
+                    end if
+                    
+                    ! Reverse camber direction if desired
+                    if(camb(kk) == 1) then       
+                        do ii = 1, ntbl(i,kk)
+                                temp1(ii,1) = ta(ii,i,kk) 
+                                temp1(ii,2) = tcl(ii,i,kk)
+                                temp1(ii,3) = tcd(ii,i,kk)
+                                temp1(ii,4) = tcm(ii,i,kk)
+                        end do  
+                        
+                        do ii = 1, ntbl(i,kk)
+                                jj = ntbl(i,kk)-(ii-1)
+                                ta(ii,i,kk) = -temp1(jj,1)
+                                tcl(ii,i,kk) = -temp1(jj,2)
+                                tcd(ii,i,kk) = temp1(jj,3)
+                                tcm(ii,i,kk) = -temp1(jj,4)
+                        end do  
+                    end if
+                    
+                    ! Find next Re block
+                    NotDone=.TRUE.
+                    if (EOF<0) then
+                        NotDone=.FALSE.
+                    end if
+                    do while (NotDone)
+                        read(15,'(A)',IOSTAT=EOF) ReadLine
+                        CI=index(ReadLine,':')
+                        if (CI>0 .OR. EOF<0) then
+                            NotDone=.FALSE.
+                        end if
+                    end do 
+                                        
+                end do
+                ! Set number of Re vals for this section
+                nRET(kk)=i
 
-		! Close input file for this section
-		close(15)
-
-	end do
+                ! Close input file for this section
+                close(15)
+                
+                ! Check data
+                if (i == 0) then
+                    write(6,*) 'Error reading airfoil data file: ', aftitle(kk)
+                    ErrFlag=1
+                end if
+                if (EOF > 0) then
+                    write(6,*) 'Warning: Max. allowed Re values exceeded in airfoil data file: ', aftitle(kk)
+                end if
+                      
+        end do
 									
-Return  	
-420  format(a80)  								                                        
-601  format(' ','***airfoil section specified for blade segment ',i2,' is illegal. set to airfoil section 1***') 
-1001 format(e10.1,a64)                       
+Return  									                                        
+601  format(' ','***airfoil section specified for blade segment ',i2,' is illegal. set to airfoil section 1***')                        
 End 
 	
 

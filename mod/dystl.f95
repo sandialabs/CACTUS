@@ -12,32 +12,15 @@ MODULE dystl
         
         integer :: DSFlag                               ! 0 for no dynamic stall, 1 for BV model, 2 for LB model
 
-        real, allocatable :: alzer(:)                   ! Zero lift AOA for each section
-        
-        ! Modified Boeing-Vertol (Gormont) model 
-	real, allocatable :: GammaXL(:)			! Variables apparently related to the transonic effect of 
-	real, allocatable :: GammaXM(:)			! section thickness/chord on the dynamic stall behaviour with AOA...
-	real, allocatable :: dGammaL(:)			! Need description of Boeing-Vertol dynamic stall model...
-	real, allocatable :: dGammaM(:)			! (do these tip speeds get that fast?)...
-	real, allocatable :: SMachL(:)			! ...
-	real, allocatable :: SMachM(:)			! ...
-        real, allocatable :: HMachL(:)                  ! ...
-        real, allocatable :: HMachM(:)                  ! ...       
+
+        ! Modified Boeing-Vertol (Gormont) model      
 	real :: K1Pos					! lagged AOA magnitude tweak for CL increasing
 	real :: K1Neg					! lagged AOA magnitude tweak for CL decreasing
-		
-	integer, allocatable :: nstl(:)                 ! Number of Re num values in the stall AOA table for each section
-        real, allocatable :: restl(:,:)			! Re numbers in the stall AOA table for each section
-	real, allocatable :: alstlp(:,:)		! Stall AOA (positive) at all Re numbers for each section
-	real, allocatable :: alstln(:,:)		! Stall AOA (negative) at all Re numbers for each section
-	real, allocatable :: dapdre(:,:)		! (Delta positive stall angle) / (Delta Re number)
-	real, allocatable :: dandre(:,:)		! (Delta negative stall angle) / (Delta Re number)
-        real :: MInf                                    ! Freestream mach number
 
         ! Logic outputs
         integer :: BVLogicOutputs(2)
         
-        
+
         ! Leishman-Beddoes model
         
         ! Time step normalized as ds = 2*U*dt/c where U is the relative velocity and c is the chord (note: at the same t, s is different on each element)
@@ -53,6 +36,8 @@ MODULE dystl
         ! Other states needed at the program level and discrete lagged values used in the state update process (held for each element)
         real, allocatable :: CLRef(:) 
         real, allocatable :: CLRefLE(:) 
+        real, allocatable :: CLCritP(:)
+        real, allocatable :: CLCritN(:)
         integer, allocatable :: CLRateFlag(:)
         real, allocatable :: Fstat(:)
         real, allocatable :: F(:)
@@ -62,9 +47,6 @@ MODULE dystl
         real, allocatable :: CLRefLE_Last(:) 
         real, allocatable :: Fstat_Last(:)
         real, allocatable :: cv_Last(:)
-        
-        ! Static or externally determined parameters
-        real :: CLCrit 
         
         ! Logic outptus
         integer, parameter :: NLBL = 9
@@ -83,26 +65,7 @@ MODULE dystl
                 ! Pi definition
                 pi = 4.0*atan(1.0)
                 conrad = pi/180.0                                                  
-                condeg = 180.0/pi
-                
-                ! Modified Boeing-Vertol              
-		allocate(GammaXL(MaxAirfoilSect))
-		allocate(GammaXM(MaxAirfoilSect))
-		allocate(dGammaL(MaxAirfoilSect))
-		allocate(dGammaM(MaxAirfoilSect))
-		allocate(SMachL(MaxAirfoilSect))
-		allocate(SMachM(MaxAirfoilSect))
-                allocate(HMachL(MaxAirfoilSect))
-                allocate(HMachM(MaxAirfoilSect))              
-		
-		allocate(alzer(MaxAirfoilSect))
-		allocate(restl(MaxReVals,MaxAirfoilSect))
-		allocate(alstlp(MaxReVals,MaxAirfoilSect))
-		allocate(alstln(MaxReVals,MaxAirfoilSect))
-		allocate(dapdre(MaxReVals,MaxAirfoilSect))
-		allocate(dandre(MaxReVals,MaxAirfoilSect))
-		
-		allocate(nstl(MaxAirfoilSect))
+                condeg = 180.0/pi         
                 
                 ! Leishman-Beddoes
                 allocate(ds(MaxSegEnds))
@@ -114,6 +77,8 @@ MODULE dystl
                 
                 allocate(CLRef(MaxSegEnds))
                 allocate(CLRefLE(MaxSegEnds))
+                allocate(CLCritP(MaxSegEnds))
+                allocate(CLCritN(MaxSegEnds))
                 allocate(CLRateFlag(MaxSegEnds))
                 allocate(Fstat(MaxSegEnds))
                 allocate(F(MaxSegEnds))
@@ -141,32 +106,12 @@ MODULE dystl
                 Fstat_Last = 1.0
                 cv_Last = 0.0
                 
-                ! JCM: This should eventually be read for each section with the airfoil data
-                CLCrit = 1.3
-                
                 LBLogicOutputs(:,:)=0
                 
         End SUBROUTINE   
                 
-        SUBROUTINE dystl_init_BV(nsect,tc,MaxAirfoilSect)
-                
-                integer :: nsect
-                real :: tc(MaxAirfoilSect)
-                real :: diff
-                
-                ! BV setup                                                                                     
-                do i=1,nsect                                                   
-                        diff=0.06-tc(i)                                                   
-                        smachl(i)=0.4+5.0*diff                                            
-                        hmachl(i)=0.9+2.5*diff                                            
-                        gammaxl(i)=1.4-6.0*diff                                           
-                        dgammal(i)=gammaxl(i)/(hmachl(i)-smachl(i))                       
-                        smachm(i)=0.2                                                     
-                        hmachm(i)=0.7+2.5*diff                                            
-                        gammaxm(i)=1.0-2.5*diff                                           
-                        dgammam(i)=gammaxm(i)/(hmachm(i)-smachm(i))                       
-                end do 
-                
+        SUBROUTINE dystl_init_BV()
+
                 BVLogicOutputs(:)=0
                 
         End SUBROUTINE 
@@ -264,14 +209,14 @@ MODULE dystl
                                         ! Note: CLCrit is critical (ideal) CL value for LE separation. This is
                                         ! approximately equal to the CL that would exist at the angle of attack at
                                         ! max CL if the CL curve had remained linear
-                                        if (LESepState(nElem)==0 .AND. abs(CLRefLE(nElem))>CLCrit) then
+                                        if (LESepState(nElem)==0 .AND. (CLRefLE(nElem)>CLCritP(nElem) .OR. CLRefLE(nElem)<CLCritN(nElem))) then
                                                 ! In LE separation state
                                                 LESepState(nElem)=1
                                                 sLEv(nElem)=0 ! reset leading edge vortex time counter
                                                 
                                                 ! Set logic state flags (for model diagnosis output)
                                                 LBLogicOutputs(nElem,5)=1
-                                        else if (LESepState(nElem)==1 .AND. abs(CLRefLE(nElem))<CLCrit) then
+                                        else if (LESepState(nElem)==1 .AND. (CLRefLE(nElem)<CLCritP(nElem) .AND. CLRefLE(nElem)>CLCritN(nElem))) then
                                                 ! Out of LE separation state
                                                 LESepState(nElem)=0
                                                 sLEv(nElem)=0 ! reset leading edge vortex time counter

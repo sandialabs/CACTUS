@@ -1,5 +1,6 @@
 SUBROUTINE LB_DynStall(nElem,CLstat,CDstat,alphaL,alpha5,umach,Re,SectInd,CL,CD)
 
+        use airfoil
         use dystl
         use pidef
         
@@ -8,14 +9,13 @@ SUBROUTINE LB_DynStall(nElem,CLstat,CDstat,alphaL,alpha5,umach,Re,SectInd,CL,CD)
         real :: CLstat, CDstat, alphaL, alpha5, umach, Re, CL, CD
         integer :: SectInd, nElem
         
-        real :: AOA0, CLID, Trans, dCLRefLE, dAOARefLE, AOARefLE, CLstatF, C, CLIDF, CLRatio, CLsep, CLF, dCDF, KD, CLa, NOF, dCLv, dCDv, acut
+        real :: AOA0, CLID, Trans, dCLRefLE, dAOARefLE, AOARefLE, CLstatF, C, C1, CLIDF, CLRatio, CLsep, CLF, dCDF, KD, CLa, NOF, dCLv, dCDv, acut
         
         ! Leishman-Beddoes dynamic stall model (incompressible reduction).
          
         ! Airfoil data
         AOA0=alzer(SectInd)
-        ! JCM: should eventually take in CLa here too (maybe interpolated vs. Re)
-        CLa = 2*pi
+        Call CalcLBStallAOALim(Re,SectInd,CLa,CLCritP(nElem),CLCritN(nElem))
         
         ! Model constants
         KD=.1                  ! TE separation drag factor
@@ -40,7 +40,7 @@ SUBROUTINE LB_DynStall(nElem,CLstat,CDstat,alphaL,alpha5,umach,Re,SectInd,CL,CD)
         Call Force180(AOARefLE)
         
         ! calc effective static TE separation point using effective LE AOA
-        Call intp(Re,AOARefLE*condeg,CLstatF,C,SectInd)
+        Call intp(Re,AOARefLE*condeg,CLstatF,C,C1,SectInd)
         Call LB_EvalIdealCL(AOARefLE,AOA0,CLa,0,CLIDF)
         if (abs(CLIDF)<0.001) then
                 CLRatio=999
