@@ -27,7 +27,7 @@ SUBROUTINE input(ErrFlag)
         
 	integer i, ii, jj, kk
 	integer ErrFlag
-	logical NotDone
+	logical NotDone, NotBlank
         character(MaxReadLine) :: ReadLine
         integer :: CI, EOF
         real :: temp, temp1(MaxTempAOA,4)
@@ -304,7 +304,16 @@ SUBROUTINE input(ErrFlag)
                     ii=0
                     do while (NotDone)
                         read(15,'(A)',IOSTAT=EOF) ReadLine
-                        if (EOF>=0 .AND. len_trim(ReadLine)>0) then
+                        ! Check for carriage return (len_trim doesn't consider this a blank)
+                        NotBlank=.TRUE.
+                        if (len_trim(ReadLine)==0) then
+                            NotBlank=.FALSE.
+                        else if (len_trim(ReadLine)==1) then
+                            if (ichar(ReadLine(len_trim(ReadLine):len_trim(ReadLine))) == 13) then
+                                NotBlank=.FALSE.
+                            end if
+                        end if
+                        if (EOF>=0 .AND. NotBlank) then
                             if (ii == MaxAOAVals) then
                                 write(6,*) 'Max. allowed AOA values exceeded in airfoil data file: ', aftitle(kk)
                                 ErrFlag=1
