@@ -16,7 +16,7 @@ OBJMODf95 = $(SRCMODf95:%.f95=%.o)
 INC = $(wildcard $(SRCDIR)/*.inc) 
 
 # for debugging, debug flag and detailed runtime error checking. 
-#FLAGS = -g -C -r8 
+#FLAGS = -g -C -r8 -Mbounds
 # standard compiler optimization
 FLAGS = -fast -r8
 # No compiler optimization

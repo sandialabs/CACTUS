@@ -44,7 +44,7 @@ PROGRAM CACTUS
         real :: cpave, cpave_last
         real :: delt, delty, deltb, deltr
                                                       
-        character(80) :: InputFN, SFOutputFN, RevOutputFN, TSOutputFN, ELOutputFN, RegOutputFN, WakeOutputFN, WakeDefOutputFN, FNBase                                   
+        character(80) :: InputFN, SFOutputFN, RevOutputFN, TSOutputFN, ELOutputFN, RegOutputFN, WakeOutputFN, WakeDefOutputFN, GPOutputFN, FSOutputFN, FNBase                                   
                                                  
         ! Pi definition
         pi = 4.0*atan(1.0)
@@ -122,6 +122,19 @@ PROGRAM CACTUS
                 end if
         end if                                                                    
                                                                             
+        ! Optional wall model output
+        if (WallOutFlag > 0) then
+                if (GPFlag == 1) then
+                    GPOutputFN=trim(FNBase)//'_GPData.csv'
+                    OPEN(14, FILE=GPOutputFN)
+                end if
+                
+                if (FSFlag == 1) then
+                    FSOutputFN=trim(FNBase)//'_FSData.csv'
+                    OPEN(15, FILE=FSOutputFN)
+                end if
+        end if                                                                             
+                                                                            
         ! If wake update interval set to a negative number, set next wake update iteration to -1 (no wake velocity updates will be performed)
         ! Otherwise, make the first update on the second iteration (when the wake first appears)
         if (iut < 0) then
@@ -130,7 +143,14 @@ PROGRAM CACTUS
                 nsw=2
         end if        
         
-        ! Blade Geometry setup  
+        ! Set first wall update timestep
+        if (GPFlag == 1 .OR. FSFlag == 1) then
+                nsWall=1
+        end if
+        
+        ! Blade Geometry setup. 
+        ! Global axes: x is oriented with the nominal freestream flow direction, y is in the vertically upward direction (opposite gravity),
+        ! z direction from RHR (to the right when looking in the streamwise direction).
         delt=2.0*pi/nti 
         deltb=2.0*pi/nb
         if (GeomFlag == 1) then 
@@ -164,7 +184,7 @@ PROGRAM CACTUS
 !---------- VAWT/HAWT specific geometry creation code above here -----------
         
         ! Setup wall geometry and solution if necessary
-        if (GPFlag == 1) then
+        if (GPFlag == 1 .OR. FSFlag == 1) then
                 ! Wall Geometry setup
                 Call WGeomSetup()
                 
@@ -178,11 +198,11 @@ PROGRAM CACTUS
         DT=DelT/ut                                      ! normalized simulation timestep (dt*Uinf/Rmax)                                               
         rem=rho*uinf*Rmax/vis                                          
 	
-	if (Incompr .eq. 1) then			! incompressible/compressible flow switch (used by dynamic stall model)
-		Minf = 0.0
-	else
-	        Minf=uinf/sqrt(1.4*1716.0*(tempr+459.6))
-	end if
+        if (Incompr .eq. 1) then			! incompressible/compressible flow switch (used by dynamic stall model)
+            Minf = 0.0
+        else
+                Minf=uinf/sqrt(1.4*1716.0*(tempr+459.6))
+        end if
 
         ! Setup vortex core radius for bound vorticity based on max chord, and for trailing and spanwise wake based on 
         ! temporal and spatial discretization levels, respectively.
@@ -215,7 +235,8 @@ PROGRAM CACTUS
         Output_SFData(1,7)=vis          ! viscosity
         Output_SFData(1,8)=dynpress     ! dynamic pressure
         Output_SFData(1,9)=ut           ! tip speed ratio
-        Output_SFData(1,10)=rem          ! machine Reynolds number based on U and Rmax
+        Output_SFData(1,10)=rem         ! machine Reynolds number based on U and Rmax
+        Output_SFData(1,11)=FnR         ! Froude number based on radius 
         Call csvwrite(8,Output_SFHead,Output_SFData,0)
                                                                                                                  
         ! Initialize needed arrays                             
@@ -274,10 +295,10 @@ PROGRAM CACTUS
                                 ! On first iteration, calc influence of all elements on blade AOA. On subsequent iterations of the bound vorticity, 
                                 ! only recalculate the bound vorticity component...
                                 if (iflg == 0) then 
-                                        CALL bivel(iflg) 
+                                        CALL UpdateBladeVel(iflg) 
                                         iflg=1
                                 else
-                                        CALL bivel(iflg) 
+                                        CALL UpdateBladeVel(iflg) 
                                 end if
                                 
                                 ! Regression test
@@ -287,7 +308,7 @@ PROGRAM CACTUS
                                 end if
                                 
                                 ! Calculate blade loads and bound vorticity                                                           
-                                CALL bvort(i,NLTol,iConv)                                                  
+                                CALL BladeLoads(i,NLTol,iConv)                                                  
         
                                 if ((iConv == 0) .OR. (iter == MaxNLIters)) then   
                                         ContinueNL=.FALSE.      
@@ -309,8 +330,8 @@ PROGRAM CACTUS
                                 write(6,'(E13.5,F8.0,2E13.5)') Output_TSData(nt,1),Output_TSData(nt,2),Output_TSData(nt,3),Output_TSData(nt,4)
                         end if    
                             
-                        ! Update freestream, bound and wake vorticity influence on wall RHS and calc new wall panel strengths
-                        if (GPFlag == 1) then
+                        ! Update influence on wall RHS and calc new wall panel strengths
+                        if (GPFlag == 1 .OR. FSFlag == 1) then
                                 Call UpdateWall() 
                         end if 
   
@@ -319,30 +340,30 @@ PROGRAM CACTUS
                                 Call WriteWakeData()
                         end if  
   
+                        ! Write current wall data for viewing in Matlab
+                        if (WallOutFlag > 0) then
+                                Call WriteWallData()
+                        end if    
+  
                         ! Update current wake convection velocities (excluding wake to be shed from the current blade)                                                                    
-                        CALL wivel()      ! Use all wake points to update the wake node velocities
-                                                                               
-                        ! If new wall and wake velocities were calculated on this timestep, set the next update timestep
-                        if (nt .eq. nsw) then                                         
-                                nsw=nt+iut 
-                        end if                                                       
-                                                                               
+                        CALL UpdateWakeVel()      ! Use all wake points to update the wake node velocities
+
                         ! State Updates ----
-                                                                                                                                     
+
                         ! Convect the wake (including wake to be shed from the current blade location)
                         CALL conlp()                                                                      
                         
                         ! Shed new wake                         
                         CALL shedvor()  
-                                                                 
+
                         ! Update states for the LB dynamic stall model, if used   
                         if (DSFlag == 2) then                                 
                                 Call LB_UpdateStates(nb,nbe)   
                         end if    
-                                                           
+
                         ! Update last AOA values
                         Call UpdateAOALast(ne)                                   
-                                                                 
+
                         ! Regression test
                         if (RegTFlag == 1) then
                                 CALL WriteRegTOutput(2)
@@ -350,13 +371,13 @@ PROGRAM CACTUS
                                         stop
                                 end if                        
                         end if
-                                                
+ 
                 end do ! Time steps 
                 
                 ! Calculate revolution average performance
                 cpave_last=cpave                                                                                                                                
                 CALL endrev(cpave)                                          
-                                                           
+
                 ! Write diagnostic info to stdout if requested
                 if (DiagOutFlag == 1) then
                         ! Write rev average power
@@ -416,5 +437,5 @@ PROGRAM CACTUS
         ! Write output
         CALL WriteFinalOutput()    
                                                         
-610  FORMAT('0','***** BIVEL/BVORT LOOP DID NOT CONVERGE IN 10 ITERATIONS. PROGRAM TERMINATED. *****')                                                    
+610  FORMAT('0','***** NON-LINEAR ITERATION LOOP DID NOT CONVERGE IN 10 ITERATIONS. PROGRAM TERMINATED. *****')                                                    
 End                                                              

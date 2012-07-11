@@ -42,15 +42,19 @@ SUBROUTINE input(ErrFlag)
 	integer :: WLI(InBufferNumSeg)     ! wake line index buffer
                 
 	! Namelist input file declaration
-	NAMELIST/ConfigInputs/RegTFlag,DiagOutFlag,GeomFlag,GPFlag,rho,vis,tempr,hFSRef,slex,nr,convrg,nti,iut,ivtxcor,VCRFB,VCRFT,VCRFS,ifc,convrgf,nric,ntif,iutf,ixterm,xstop,Output_ELFlag,Incompr,DSFlag,PRFlag,k1pos,k1neg
-	NAMELIST/XFlowInputs/jbtitle,Rmax,RPM,Ut,ChR,hr,eta,nb,nbe,nSect,AFDPath,iSection,hAG,Istraight,Istrut,sThick,Cdpar,CTExcrM,WakeOutFlag,WLI,BladeFileFlag
-	NAMELIST/AxFlowInputs/jbtitle,R,HubR,RPM,Ut,Tilt,ChR,bCone,bi,bTwist,eta,nb,nbe,nSect,AFDPath,iSection,hAG,CTExcrM,WakeOutFlag,WLI
+	NAMELIST/ConfigInputs/RegTFlag,DiagOutFlag,GeomFlag,GPFlag,FSFlag,rho,vis,tempr,hBLRef,slex,nr,convrg,nti,iut,iWall,ivtxcor,VCRFB,VCRFT,VCRFS,ifc,convrgf,nric,ntif,iutf,ixterm,xstop, &
+                              Output_ELFlag,WallOutFlag,Incompr,DSFlag,PRFlag,k1pos,k1neg,GPGridSF,FSGridSF
+	NAMELIST/XFlowInputs/jbtitle,Rmax,RPM,Ut,ChR,hr,eta,nb,nbe,nSect,AFDPath,iSection,hAG,dFS,Istraight,Istrut,sThick,Cdpar,CTExcrM,WakeOutFlag,WLI,BladeFileFlag
+	NAMELIST/AxFlowInputs/jbtitle,R,HubR,RPM,Ut,Tilt,ChR,bCone,bi,bTwist,eta,nb,nbe,nSect,AFDPath,iSection,hAG,dFS,CTExcrM,WakeOutFlag,WLI
 	
 	! Input Defaults
         RegTFlag = 0 
         DiagOutFlag = 0
         Output_ELFlag = 0 
-        WakeOutFlag = 0     
+        WakeOutFlag = 0 
+        WallOutFlag = 0
+        GPFlag=0
+        FSFlag=0    
 	nb = 2
 	nbe = 5 
 	nSect = 1  
@@ -64,6 +68,7 @@ SUBROUTINE input(ErrFlag)
 	ixterm = 0
 	xstop = 5.0
 	iut = 0
+        iWall = 0       
 	iutf = 0 
 	nric=-1
         VCRFB=1.0       
@@ -74,6 +79,7 @@ SUBROUTINE input(ErrFlag)
 	ChR(:)=0.0 ! all set to 0
         WLI(:)=0 ! all set to 0      
 	hAG=0.0
+        dFS=0.0       
 	Tilt=0.0
 	bCone=0.0 
 	HubR=0.0                                                    
@@ -87,6 +93,8 @@ SUBROUTINE input(ErrFlag)
         k1pos = 1.0                      
         k1neg = 0.5
         BladeFileFlag = 0
+        GPGridSF = 1.0
+        FSGridSF = 1.0
 	                                                                              
 	! Config Namelist input
 	read(4, nml=ConfigInputs)                                                                              
@@ -157,16 +165,26 @@ SUBROUTINE input(ErrFlag)
 	
 	! Set ground plane location for wall solution
 	GPy=-hAG/Rmax
-	
+        
+        ! Set depth and Froude number for free surface solution
+        FSy=dFS/Rmax
+        g=32.174  ! gravity, ft/s^2
+        A=Rmax*(2.0*pi*rpm/60.0)**2/g   ! Accel ratio: w^2*R/g
+        FnR=sqrt(A/ut**2)   ! Froude number based on turbine radius  FnR=Uinf/sqrt(g*R)	
+        
 	! Normalize ground shear inputs
-	yref = hFSRef/Rmax  ! location of freestream (99% maybe) normalized to radius... 
+	yref = hBLRef/Rmax  ! location of boundary layer edge (U/Uinf = 99% maybe) normalized to radius... 
 	ygc  = hAG/Rmax   ! Ground clearance normalized to radius  
 	
-	! JCM: Doing this real to int business floors the real tip speed ratio (ut) to the next lowest int
-	! and uses this as the default wake velocity update interval... Probably OK...
-	if (iutf == 0) iutf = ut  !? integer = real ?
-	if (iut == 0) iut = ut  !? integer = real ?
+	! JCM: Floors the real tip speed ratio (ut) to the next lowest int
+	! and uses this as the default update interval... 
+	if (iutf == 0) iutf = ut  
+	if (iut == 0) iut = ut 
+        if (iWall == 0) iWall = ut
 	
+        ! Set number of RHS evaluations to average for the free surface calculation (should cover approx 1 revolution)
+        NFSRHSAve=nti/iWall
+        
 	! Check chord to radius ratio. If a scalar has been input for cr, replicate for the entire blade.
 	if (cr(2) == 0) then
 		do i = 1,(nbe+1)

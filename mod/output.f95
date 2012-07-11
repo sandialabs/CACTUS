@@ -6,8 +6,8 @@ MODULE output
         integer :: Output_ELFlag                ! Set to 1 to output loads data at each timestep for each element, 0 to omit this output
         
         ! Scale parameters and flow properties
-        character(1000) :: Output_SFHead = 'R (ft),Frontal Area (ft^2),RPM,U (ft/s),rho (slugs/ft^3),tempr (degF),vis (slugs/(ft*s)),q (lb/ft^2),TSR (-),ReM (-)'
-        real :: Output_SFData(1,10)                             ! Data
+        character(1000) :: Output_SFHead = 'R (ft),Frontal Area (ft^2),RPM,U (ft/s),rho (slugs/ft^3),tempr (degF),vis (slugs/(ft*s)),q (lb/ft^2),TSR (-),ReM (-),FnR (-)'
+        real :: Output_SFData(1,11)                             ! Data
         
         ! Revolution average data
         character(1000) :: Output_RevHead = 'Rev,Power Coeff. (-),Tip Power Coeff. (-),Power (kW),Torque (ft-lbs),Delta CPU Time (s),Total CPU Time (s)'

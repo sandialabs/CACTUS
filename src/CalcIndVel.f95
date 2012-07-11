@@ -1,19 +1,24 @@
-subroutine CalcIndVel(NT,ntTerm,NBE,NB,NE,Point,Vel)
+subroutine CalcIndVel(NT,ntTerm,NBE,NB,NE,Px,Py,Pz,Vx,Vy,Vz)
 
 	use wallsoln 
 	use blade
 	
 	! Calculate wall and wake induced velocity (including bound vorticity component)
 	
-        real :: Point(3), dVel(3), Vel(3)
+        real :: Px, Py, Pz, Vx, Vy, Vz, dUdX
         integer :: nt, ntTerm, nbe, nb, ne
+        
+        real :: Point(3), dVel(3), Vel(3)
 	
 	! Calc wake induced velocity at wake locations                                                  
-	CALL PIVEL(NT,ntTerm,NBE,NB,NE,Point(1),Point(2),Point(3),Vel(1),Vel(2),Vel(3),1)  
+	CALL BladeIndVel(NT,ntTerm,NBE,NB,NE,Px,Py,Pz,Vx,Vy,Vz,dUdX,0,0)  
 
 	! Calculate wall induced velocities at wake locations  
+        Point=[Px,Py,Pz]       
 	Call WallIndVel(Point,dVel)
-	Vel=Vel+dVel
+	Vx=Vx+dVel(1)
+        Vy=Vy+dVel(2)
+        Vz=Vz+dVel(3)
 
 return
 end

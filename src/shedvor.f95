@@ -24,7 +24,7 @@ SUBROUTINE shedvor()
 		end do                                                        
                 
 		! Note that the trailing vorticity exists only in the wake (behind the blade) at any given time step. 
-		! While bivel/bvort is iterating the non linear system for the bound vorticity, this trailing
+		! While iterating the non linear system for the bound vorticity, this trailing
 		! vorticity (as well as the spanwise shed vorticity) is left constant...
 		! Here we set the strength for the new trailing vorticity, originating at the current
 		! bound vorticity location, to be included in the velocity calculations in the next time step.

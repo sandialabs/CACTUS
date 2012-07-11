@@ -9,24 +9,48 @@ SUBROUTINE WriteWakeData()
         
         implicit none
         
-	integer :: tCount, tCountMax, wcount
+	integer :: tCount, tCountMax, wcount, xcount, ycount, zcount
+        real :: dxgrid, dygrid, dzgrid       
+        real :: vx, vy, vz       
 
         ! Write header
         if (NT==1) then
                 write(12,*) trim(WakeOutHead)
                 
-                ! JCM test: wake deficit setup
+                ! Wake deficit setup
                 ntcount=0
                 
-                dxgrid=(xgridU-xgridL)/(nxgrid-1)
-                dzgrid=(zgridU-zgridL)/(nzgrid-1)
-                do xcount=1,nxgrid                                                    
-                        do zcount=1,nzgrid
-                                XGrid(xcount,zcount)=xgridL+(xcount-1)*dxgrid
-                                ZGrid(xcount,zcount)=zgridL+(zcount-1)*dzgrid
-                                SVDef(xcount,zcount)=0.0
+                if (WakeOutFlag==2) then
+                        write(13,*) trim(HGridVelOutHead)
+                
+                        ! Setup horizontal grid
+                        dxgrid=(xhgridU-xhgridL)/(nxhgrid-1)
+                        dzgrid=(zhgridU-zhgridL)/(nzhgrid-1)
+                        do xcount=1,nxhgrid                                                    
+                                do zcount=1,nzhgrid
+                                        XHGrid(xcount,zcount)=xhgridL+(xcount-1)*dxgrid
+                                        ZHGrid(xcount,zcount)=zhgridL+(zcount-1)*dzgrid
+                                        VXIndH(xcount,zcount)=0.0
+                                        VYIndH(xcount,zcount)=0.0
+                                        VZIndH(xcount,zcount)=0.0
+                                end do
                         end do
-                end do
+                else if (WakeOutFlag==3) then
+                        write(13,*) trim(VGridVelOutHead)
+                
+                        ! Setup vertical grid
+                        dxgrid=(xvgridU-xvgridL)/(nxvgrid-1)
+                        dygrid=(yvgridU-yvgridL)/(nyvgrid-1)
+                        do xcount=1,nxvgrid                                                    
+                                do ycount=1,nyvgrid
+                                        XVGrid(xcount,ycount)=xvgridL+(xcount-1)*dxgrid
+                                        YVGrid(xcount,ycount)=yvgridL+(ycount-1)*dygrid
+                                        VXIndV(xcount,ycount)=0.0
+                                        VYIndV(xcount,ycount)=0.0
+                                        VZIndV(xcount,ycount)=0.0
+                                end do
+                        end do                
+                end if
         end if
 
 	! Write wake positions and velocity for each wake line on last rev
@@ -47,18 +71,19 @@ SUBROUTINE WriteWakeData()
                 end do 
                  
                 
-                if (WakeOutFlag > 1) then
+                if (WakeOutFlag == 2) then
                 
                         ! Output blade, wake, and wall induced streamwise velocity deficit on a plane.
                         
                         ! Averaged over last revolution
-                        do xcount=1,nxgrid                                                    
-                                do zcount=1,nzgrid
+                        do xcount=1,nxhgrid                                                    
+                                do zcount=1,nzhgrid
         
                                         ! Calculate wall and wake induced velocities at grid
-                                        PointGrid=[XGrid(xcount,zcount),ygrid,ZGrid(xcount,zcount)]
-                                        Call CalcIndVel(NT,ntTerm,NBE,NB,NE,PointGrid,IndVelGrid)
-                                        SVDef(xcount,zcount)=SVDef(xcount,zcount)+IndVelGrid(1)/nti
+                                        Call CalcIndVel(NT,ntTerm,NBE,NB,NE,XHGrid(xcount,zcount),yhgrid,ZHGrid(xcount,zcount),vx,vy,vz)
+                                        VXIndH(xcount,zcount)=VXIndH(xcount,zcount)+vx/nti
+                                        VYIndH(xcount,zcount)=VYIndH(xcount,zcount)+vy/nti
+                                        VZIndH(xcount,zcount)=VZIndH(xcount,zcount)+vz/nti
                                         
                                 end do
                         end do
@@ -66,17 +91,49 @@ SUBROUTINE WriteWakeData()
                         
                         ! Write on last iter
                         if (ntcount == nti) then
-                        do xcount=1,nxgrid        
-                                        do zcount=1,nzgrid  
-                                                if (zcount < nzgrid) then
-                                                        write(13,'(E13.7,",",$)') SVDef(xcount,zcount)
-                                                else 
-                                                        ! Dont suppress carriage return on last column
-                                                        write(13,'(E13.7)') SVDef(xcount,zcount)
-                                                end if
-                                        end do
-                                end do 
+                            do xcount=1,nxhgrid        
+                                do zcount=1,nzhgrid  
+                                    write(13,'(E13.7,",",$)') XHGrid(xcount,zcount) 
+                                    write(13,'(E13.7,",",$)') ZHGrid(xcount,zcount) 
+                                    write(13,'(E13.7,",",$)') VXIndH(xcount,zcount)
+                                    write(13,'(E13.7,",",$)') VYIndH(xcount,zcount)  
+                                    ! Dont suppress carriage return on last column
+                                    write(13,'(E13.7)') VZIndH(xcount,zcount)
+                                end do
+                            end do 
                         end if
+                        
+                else if (WakeOutFlag == 3) then
+                
+                        ! Output blade, wake, and wall induced streamwise velocity deficit on a plane.
+                        
+                        ! Averaged over last revolution
+                        do xcount=1,nxvgrid                                                    
+                                do ycount=1,nyvgrid
+        
+                                        ! Calculate wall and wake induced velocities at grid
+                                        Call CalcIndVel(NT,ntTerm,NBE,NB,NE,XVGrid(xcount,ycount),YVGrid(xcount,ycount),zvgrid,vx,vy,vz)
+                                        VXIndV(xcount,ycount)=VXIndV(xcount,ycount)+vx/nti
+                                        VYIndV(xcount,ycount)=VYIndV(xcount,ycount)+vy/nti
+                                        VZIndV(xcount,ycount)=VZIndV(xcount,ycount)+vz/nti
+                                        
+                                end do
+                        end do
+                        ntcount=ntcount+1
+                        
+                        ! Write on last iter
+                        if (ntcount == nti) then
+                            do xcount=1,nxvgrid        
+                                do ycount=1,nyvgrid  
+                                    write(13,'(E13.7,",",$)') XVGrid(xcount,ycount) 
+                                    write(13,'(E13.7,",",$)') YVGrid(xcount,ycount) 
+                                    write(13,'(E13.7,",",$)') VXIndV(xcount,ycount)
+                                    write(13,'(E13.7,",",$)') VYIndV(xcount,ycount)  
+                                    ! Dont suppress carriage return on last column
+                                    write(13,'(E13.7)') VZIndV(xcount,ycount)
+                                end do
+                            end do 
+                        end if                
                 
                 end if
                  

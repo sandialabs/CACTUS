@@ -11,7 +11,7 @@
 	rho 	= .002378  
 	vis 	= .3739E-6                                   
         tempr 	= 60.0 
-	hFSRef 	= 56.57
+	hBLRef 	= 56.57
 	slex 	= 0.0
 	
 	nr 	= 10

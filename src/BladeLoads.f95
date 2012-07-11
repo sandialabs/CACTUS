@@ -1,4 +1,4 @@
-SUBROUTINE bvort(nGeom,NLTol,iConv)  
+SUBROUTINE BladeLoads(nGeom,NLTol,iConv)  
 
         use parameters
         use pidef
@@ -23,8 +23,8 @@ SUBROUTINE bvort(nGeom,NLTol,iConv)
 	real uTot,vTot,wTot,Delem,Dtorq,Cd0,Cdj,t_ave,Djunc,restrut,cflam,cfturb
         real cdlam,cdturb,fblend
         real, parameter :: recrit=3.0e5
-        integer ygcerr
-
+        integer ygcerr 
+        
         cp=0.0
         ctr=0.0
         BladeLoad(:,:)=0.0
@@ -135,7 +135,7 @@ SUBROUTINE bvort(nGeom,NLTol,iConv)
                      CALL CalcBladeVel(wRotX,wRotY,wRotZ,xe,ye,ze,uBlade,vBlade,wBlade)
 
                      ! Induced velocity at strut element
-                     Call pivel(NT,ntTerm,NBE,NB,NE,xe,ye,ze,us,vs,ws,1)
+                     Call CalcIndVel(NT,ntTerm,NBE,NB,NE,xe,ye,ze,us,vs,ws)
 
                      ! Calculate relative velocity magnitude at strut element
                      uTot = us+uFSs-uBlade

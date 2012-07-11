@@ -3,8 +3,8 @@ Revolution Average Output (_RevData.csv):
 Rev:			Revolution number.	
 Power Coeff (-):	Revolution average machine power coefficient, Power / (1/2*rho*Uinf^3*Af), where rho is density, Uinf is freestream speed, Af is 
 			turbine frontal area.
-Tip Power Coeff (-):	Revolution average machine tip power coefficient, Power / (1/2*rho*Utip^3*Af), where rho is density, Utip is the blade speed at its 
-			largest perpendicular distance from the rotation axis (defined as reference radius in the input file), Af is turbine frontal area.	
+Tip Power Coeff (-):	Revolution average machine tip power coefficient, Power / (1/2*rho*Utip^3*Af), where rho is density, Utip is the blade speed at the 
+                        turbine radius (R in the input file), Af is turbine frontal area.	
 Power (kW):		Revolution average machine power.	
 Torque (ft-lbs):	Revolution average machine torque.	
 Delta CPU Time (s):	CPU time for each revolution.	
@@ -13,11 +13,10 @@ Total CPU Time (s):	Total CPU time after each revolution.
 
 Timestep Output (_TimeData.csv):
 
-Normalized Time (-):	Normalized simulation time (t*Uinf/R), where Uinf is freestream speed, R is the largest perpendicular distance the blades achieve 
-			from the rotation axis (defined as reference radius in the input file).
+Normalized Time (-):	Normalized simulation time (t*Uinf/R), where Uinf is freestream speed, R is the turbine radius (defined in the input file).
 Rev:			Revolution number.
 Torque Coeff (-):	Torque coefficient, Torque / (1/2*rho*Uinf^2*Af*R), where rho is density, Uinf is freestream speed, Af is turbine frontal area, 
-			and R is the largest perpendicular distance the blades achieve from the rotation axis (defined as reference radius in the input file).
+			and R is the turbine radius.
 Power Coeff (-):	Power coefficient, Power / (1/2*rho*Uinf^3*Af), where rho is density, Uinf is freestream speed, Af is turbine frontal area.	
 The following are replicated for each blade:
 Blade Fx Coeff (-):	Coefficient of force in the global x direction on blade, XForce / (1/2*rho*Uinf^2*Af), where rho is density, Uinf is freestream speed, 
@@ -27,14 +26,12 @@ Blade Fy Coeff (-):	Coefficient of force in the global y direction on blade, YFo
 Blade Fz Coeff (-):	Coefficient of force in the global z direction on blade, ZForce / (1/2*rho*Uinf^2*Af), where rho is density, Uinf is freestream speed, 
 			Af is turbine frontal area.	
 Blade Torque Coeff (-):	Torque coefficient from the blade, Torque / (1/2*rho*Uinf^2*Af*R), where rho is density, Uinf is freestream speed, Af is turbine 
-			frontal area, and R is the largest perpendicular distance the blades achieve from the rotation axis (defined as reference radius in 
-			the input file).
+			frontal area, and R is the turbine radius.
 
 
 Element Output (_ElementData.csv):
 
-Normalized Time (-): 	Normalized simulation time (t*Uinf/R), where Uinf is freestream speed, R is the largest perpendicular distance the blades achieve 
-			from the rotation axis.
+Normalized Time (-): 	Normalized simulation time (t*Uinf/R), where Uinf is freestream speed, R is the turbine radius.
 Blade:			Blade number.	
 Element:		Element number.
 Rev:			Revolution number.		
@@ -53,8 +50,7 @@ Fy (-):			Coefficient of force in the global y direction on element, YForce / (1
 Fz (-):			Coefficient of force in the global z direction on element, ZForce / (1/2*rho*Uinf^2*Af), where rho is density, Uinf is freestream 
 			speed, Af is turbine frontal area.	
 te (-):			Torque coefficient from the element, Torque / (1/2*rho*Uinf^2*Af*R), where rho is density, Uinf is freestream speed, Af is turbine 
-			frontal area, and R is the largest perpendicular distance the blades achieve from the rotation axis (defined as reference radius 
-			in the input file).
+			frontal area, and R is the turbine radius.
 LogicFlags:		Twelve logic flags related to the dynamic stall models for model testing... (see BVLogicOutputs and LBLogicOutputs in the code)
 
 
@@ -62,18 +58,34 @@ Wake Data Output (_WakeData.csv):
 	
 Timestep:		Timestep counter.
 Element:		Element number.
-X/R:			X location of the wake node normalized by turbine radius, R, which is the largest perpendicular distance the blades achieve 
-			from the rotation axis.
-Y/R:			Y location of the wake node normalized by turbine radius, R, which is the largest perpendicular distance the blades achieve 
-			from the rotation axis.
-Z/R:			Z location of the wake node normalized by turbine radius, R, which is the largest perpendicular distance the blades achieve 
-			from the rotation axis.
+X/R:			X location of the wake node normalized by turbine radius, R.
+Y/R:			Y location of the wake node normalized by turbine radius, R.
+Z/R:			Z location of the wake node normalized by turbine radius, R.
 U/Uinf:			X velocity of the wake node normalized by freestream speed, Uinf.
 V/Uinf:			Y velocity of the wake node normalized by freestream speed, Uinf.
 W/Uinf:			Z velocity of the wake node normalized by freestream speed, Uinf.
 
 
-Streamwise Wake Deficit Data Output (_WakeDefData.csv):
+Wall and Wake Induced Velocity Data Output (_WakeDefData.csv):
 	
-2D array of streamwise wake deficit normalized by freestream speed. X (streamwise direction) varies down a column, Z varies across a row.
+X/R:                    X/R location of the measurement point.
+Y/R or Z/R:             Y/R or Z/R location of the measurement point, depending on whether a horizontal or vertical plane was specified.
+U/Uinf:                 Wall and wake induced velocity (no freestream) in the X direction, normalized by freestream speed (averaged over the last revolution).
+V/Uinf:                 Wall and wake induced velocity (no freestream) in the Y direction, normalized by freestream speed (averaged over the last revolution).
+W/Uinf:                 Wall and wake induced velocity (no freestream) in the Z direction, normalized by freestream speed (averaged over the last revolution).
 
+
+Ground Plane Data Output (_GPData.csv):
+	
+X/R (-):		X location of the panel center normalized by turbine radius, R.
+Y/R (-):		Y location of the panel center normalized by turbine radius, R.
+Z/R (-):		Z location of the panel center normalized by turbine radius, R.
+SourceDens/Uinf (-):	Source density on the panel normalized by freestream speed, Uinf.
+
+
+Free Surface Data Output (_FSData.csv):
+        
+X/R (-):                X location of the panel center normalized by turbine radius, R.
+Y/R (-):                Y location of the panel center normalized by turbine radius, R.
+Z/R (-):                Z location of the panel center normalized by turbine radius, R.
+SourceDens/Uinf (-):    Source density on the panel normalized by freestream speed, Uinf.
