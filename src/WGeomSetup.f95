@@ -13,7 +13,7 @@ subroutine WGeomSetup()
         ! Plane extent (over radius). To be applied in every direction around the turbine location...
         PlaneExtent=10.0 
         
-        ! Min and max panel size limits
+        ! Min and max panel size limits (Note: user can override these with scale factor input...)
         dsMinFS=.25 ! min grid size for free surface grid (to keep problem from getting too large)
         dsMaxFS=1.0 ! max free surface grid size allowed
         dsMinW=.05  ! min grid size for wall grid (to keep problem from getting too large)
@@ -26,11 +26,13 @@ subroutine WGeomSetup()
             ! Set near-field grid scale (panel dimension over radius in the center). If h>R use h, else use R. User can modify 
             ! the default scale level with the GPGridSF parameter.
             if (abs(GPy)<1) then
-                dsN=.1*GPGridSF      
+                dsN=.1      
             else
-                dsN=.1*abs(GPy)*GPGridSF   
+                dsN=.1*abs(GPy) 
             end if  
-            dsC=max(dsMinW,min(dsMaxW,dsN)) 
+            dsC=max(dsMinW,min(dsMaxW,dsN))
+            ! Apply user specified grid scale factor
+            dsC=dsC*GPGridSF
             
             RC=30.0 ! Clustering ratio, must be >= 1 (Ex: 10 for 10x density at center of plane)
             C1=1.0/(1.0+3.0/RC)
@@ -91,11 +93,13 @@ subroutine WGeomSetup()
             ! Set near-field grid scale (panel dimension over radius in the center). If d>R use d, else use R. User can modify 
             ! the default scale level with the FSGridSF parameter.
             if (abs(FSy)<1) then
-                dsN=.1*FSGridSF      
+                dsN=.1    
             else
-                dsN=.1*abs(FSy)*FSGridSF   
+                dsN=.1*abs(FSy)  
             end if 
             dsC=max(dsMinFS,min(dsMaxFS,dsN))
+            ! Apply user specified grid scale factor
+            dsC=dsC*FSGridSF 
             
             ! Calc far field length scale (scaled by deep water transverse wavelength)
             GCS=1.0/6.0
@@ -216,7 +220,7 @@ subroutine WGeomSetup()
                 dB=2.0/real(NW)
                 do i=1,NW+1
                         B=-1.0+dB*(i-1)
-                        zPanFS(i)=PlaneExtent*(C1D*B**3+C2D*B)
+                        zPanFS(i)=PlaneExtent*(C1W*B**3+C2W*B)
                 end do
                 
                 yPanFS=FSy
