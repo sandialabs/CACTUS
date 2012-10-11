@@ -1,18 +1,8 @@
 &ConfigInputs
-
-!	Configuration input parameters. See documentation for input descriptions.
 	
 	RegTFlag= 1
 	
-	GeomFlag= 1
 	GPFlag  = 0
-
-	Incompr = 0
-	rho 	= .002378  
-	vis 	= .3739E-6                                   
-        tempr 	= 60.0 
-	hBLRef 	= 56.57
-	slex 	= 0.0
 	
 	nr 	= 10
 	nti 	= 16
@@ -30,50 +20,26 @@
 /End
 
 
-&XFlowInputs
+&CaseInputs
 
-!	Input parameters for a Darrieus type design. See documentation for input descriptions.
+	jbtitle = 'Test VAWT'  
 
-	jbtitle = 'FloWind 19m VAWT Base Case'  
+	rho 	= .002378  
+	vis 	= .3739E-6                                   
+    tempr 	= 60.0 
+	hBLRef 	= 56.57
+	slex 	= 0.0
+	hAG 	= 15.0
 	                                        
-	Rmax 	= 31.5
 	RPM 	= 52.0
 	Ut 	= 5.0	
-	hr 	= 2.64
-	eta 	= .42	
-	ChR 	= 0.07408
-	nb 	= 2
-	nbe 	= 5
-	nSect 	= 2
-	AFDPath	= './trunk/Airfoil_Section_Data/NACA_0015.dat' , './trunk/Airfoil_Section_Data/NACA_0015.dat'
-	iSection= 1, 1, 1, 1, 1, 1
-	hAG 	= 15.0
 
+	! Turbine geometry
+	GeomFilePath='./trunk/RegTest/TestVAWT.geom'
+
+	! Airfoil section data
+	nSect 	= 1
+	AFDPath	= './trunk/Airfoil_Section_Data/NACA_0015.dat' 
 		
 /End
 
-
-&AxFlowInputs
-
-!	Input parameters for a axial turbine design. See documentation for input descriptions.
-
-	jbtitle = 'NREL UAE'  
-	                                        
-	R 	= 18.15
-	HubR	= 0.607
-	RPM 	= 70
-	Ut 	= 4
-	Tilt	= 0
-	eta	= .3
-	ChR 	= 0.0394,0.1332,0.1133,0.0926,0.0759,0.0551
-	bCone	= 0
-	bi	= 8.5
-	bTwist	= 0,20,4.715,0.494,-0.92,-2.5
-	nb 	= 2
-	nbe 	= 5
-	nSect 	= 2
-	AFDPath	= './trunk/Airfoil_Section_Data/NACA_0015.dat' , './trunk/Airfoil_Section_Data/NACA_0015.dat'
-	iSection= 1, 1, 1, 1, 1, 1
-	hAG 	= 40.0
-		
-/End

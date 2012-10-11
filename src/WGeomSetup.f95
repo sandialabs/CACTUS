@@ -1,7 +1,8 @@
 subroutine WGeomSetup() 
 
         use wallsoln 
-        use pidef        
+        use pidef      
+        use util  
         
         real :: PlaneExtent, dsMinFS, dsMaxFS, dsMinW, dsMaxW, dsC, dsOut, GCS, yPanFS, yPan
         real :: RC, C1, C2, dB, RU, C1U, C2U, dBU, RD, C1D, C2D, dBD, RW, C1W, C2W, dBW, B

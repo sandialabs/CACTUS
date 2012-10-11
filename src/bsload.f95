@@ -1,4 +1,4 @@
-SUBROUTINE bsload(nElem,nGeom,IsBE,alpha,Re,umach,ur,CN,CT,Fx,Fy,Fz,te) 
+SUBROUTINE bsload(nElem,IsBE,alpha,Re,umach,ur,CN,CT,Fx,Fy,Fz,te) 
        
         use element
         use blade
@@ -7,14 +7,15 @@ SUBROUTINE bsload(nElem,nGeom,IsBE,alpha,Re,umach,ur,CN,CT,Fx,Fy,Fz,te)
         use airfoil
         use dystl
         use freestream 
+        use util
         
         implicit none
                                                       
-        integer nElem, nGeom, IsBE
+        integer nElem, IsBE
         real alpha, Re, umach, ur, CN, CT, Fx, Fy, Fz, te
         
         integer SectInd, nElem1
-        real ElemSpanR, ElemChordR, xe, ye, ze, nxe, nye, nze, txe, tye, tze, sxe, sye, sze
+        real ElemAreaR, ElemChordR, xe, ye, ze, nxe, nye, nze, txe, tye, tze, sxe, sye, sze
         real adotnorm, dal, wP, wPNorm
         real uAve, vAve, wAve, uFSAve, vFSAve, wFSAve, uBlade, vBlade, wBlade, urdn, urdc
         real xe5, ye5, ze5, xe75, ye75, ze75, uBlade5, vBlade5, wBlade5, uBlade75, vBlade75, wBlade75
@@ -30,24 +31,24 @@ SUBROUTINE bsload(nElem,nGeom,IsBE,alpha,Re,umach,ur,CN,CT,Fx,Fy,Fz,te)
         ! Retrieve the blade segment geometric information                  
                                                                         
         ! Element span                                                      
-        ElemSpanR=eSpan(nElem)  
+        ElemAreaR=eArea(nElem)  
         ElemChordR=eChord(nElem)                                                    
         
         ! Quarter chord location
-        xe=0.5*(xBE(nGeom,nElem)+xBE(nGeom,nElem1))
-        ye=0.5*(yBE(nGeom,nElem)+yBE(nGeom,nElem1))
-        ze=0.5*(zBE(nGeom,nElem)+zBE(nGeom,nElem1))
+        xe=xBC(nElem)
+        ye=yBC(nElem)
+        ze=zBC(nElem)
         
         ! Element normal, tangential, and spanwise vectors
-        nxe=nx(nGeom,nElem)                                                  
-        nye=ny(nGeom,nElem)                                                  
-        nze=nz(nGeom,nElem)
-        txe=tx(nGeom,nElem)                                                  
-        tye=ty(nGeom,nElem)                                                  
-        tze=tz(nGeom,nElem)
-        sxe=sx(nGeom,nElem)                                                  
-        sye=sy(nGeom,nElem)                                                  
-        sze=sz(nGeom,nElem)
+        nxe=nxBC(nElem)                                                  
+        nye=nyBC(nElem)                                                  
+        nze=nzBC(nElem)
+        txe=txBC(nElem)                                                  
+        tye=tyBC(nElem)                                                  
+        tze=tzBC(nElem)
+        sxe=sxBC(nElem)                                                  
+        sye=syBC(nElem)                                                  
+        sze=szBC(nElem)
         
         ! Airfoil section                                                 
         SectInd=isect(nElem)                                                     
@@ -120,14 +121,14 @@ SUBROUTINE bsload(nElem,nGeom,IsBE,alpha,Re,umach,ur,CN,CT,Fx,Fy,Fz,te)
         
         ! Force and moment coeff. from this blade element, re-referenced to full turbine scale 
         ! (F/(1/2*rho*Uinf^2*At) and M/(1/2*rho*Uinf^2*At*R)                                         
-        FN=CN*(ElemChordR*ElemSpanR/at)*ur**2                                                       
-        FT=CT*(ElemChordR*ElemSpanR/at)*ur**2   
-        MS=CM25*ElemChordR*(ElemChordR*ElemSpanR/at)*ur**2      
+        FN=CN*(ElemAreaR/at)*ur**2                                                       
+        FT=CT*(ElemAreaR/at)*ur**2   
+        MS=CM25*ElemChordR*(ElemAreaR/at)*ur**2      
         ! Corresponding torque coeff. (T/(1/2*rho*Uinf^2*At*R))                                              
         Fx=FN*nxe+FT*txe
         Fy=FN*nye+FT*tye
         Fz=FN*nze+FT*tze
-        CALL cross(xe,ye,ze,Fx,Fy,Fz,TRx,TRy,TRz)
+        CALL cross(xe-RotPX,ye-RotPY,ze-RotPZ,Fx,Fy,Fz,TRx,TRy,TRz)
         te=(TRx*RotX+TRy*RotY+TRz*RotZ)+MS*(sxe*RotX+sye*RotY+sze*RotZ)                           
       
 Return                                                                                                                                                           

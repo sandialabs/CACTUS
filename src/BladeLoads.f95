@@ -1,4 +1,4 @@
-SUBROUTINE BladeLoads(nGeom,NLTol,iConv)  
+SUBROUTINE BladeLoads(NLTol,iConv)  
 
         use parameters
         use pidef
@@ -12,7 +12,7 @@ SUBROUTINE BladeLoads(nGeom,NLTol,iConv)
 
         Implicit None
 	
-        integer nGeom, iConv
+        integer iConv
         integer i, j, nei, nej, nej1, IsBE, offset, Loop, LBCheck
         real alpha, Re, umach, ur, CN, CT, te, NLTol, dgb, Fx, Fy, Fz
         real BladeLoad(MaxBlades,3), BladeTorque(MaxBlades)
@@ -44,7 +44,7 @@ SUBROUTINE BladeLoads(nGeom,NLTol,iConv)
 			end if
 			                                                                                                                             
 			! Calculate the loads on the blade segment                                                                                              
-			CALL bsload(nej,nGeom,IsBE,alpha,Re,umach,ur,CN,CT,Fx,Fy,Fz,te) 
+			CALL bsload(nej,IsBE,alpha,Re,umach,ur,CN,CT,Fx,Fy,Fz,te) 
 			                                                                                  
 			! Calculate the bound vortex strength change (w.r.t reference circulation)                                                                                                   
 			dgb=abs((GB(nej1)-GS(nt,nej1))/(CrRef*ut))                          
@@ -121,15 +121,15 @@ SUBROUTINE BladeLoads(nGeom,NLTol,iConv)
                      nej=nei+j
 				
                      ! Strut element center location
-                     xe=0.5*(xSe(nGeom,nej)+xSe(nGeom,nej-1))
-                     ye=0.5*(ySe(nGeom,nej)+ySe(nGeom,nej-1))
-                     ze=0.5*(zSe(nGeom,nej)+zSe(nGeom,nej-1))
+                     xe=0.5*(xSe(nej)+xSe(nej-1))
+                     ye=0.5*(ySe(nej)+ySe(nej-1))
+                     ze=0.5*(zSe(nej)+zSe(nej-1))
 
                      rade = 0.5*(real(j)/real(nbe) + real(j-1)/real(nbe)) ! element radius 
                      dr = 1.0 / real(nbe) ! element width
 
                      ! Freestream velocity at strut location
-                     Call CalcFreestream(ySe(nGeom,nej),uFSs,vFSs,wFSs,ygcerr)
+                     Call CalcFreestream(ySe(nej),uFSs,vFSs,wFSs,ygcerr)
 
                      ! Blade velocity due to rotation                                                      
                      CALL CalcBladeVel(wRotX,wRotY,wRotZ,xe,ye,ze,uBlade,vBlade,wBlade)

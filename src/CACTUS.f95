@@ -151,37 +151,13 @@ PROGRAM CACTUS
         ! Blade Geometry setup. 
         ! Global axes: x is oriented with the nominal freestream flow direction, y is in the vertically upward direction (opposite gravity),
         ! z direction from RHR (to the right when looking in the streamwise direction).
+        CALL BGeomSetup()
+       
+        ! Set normalized turbine rotation rate
+        wRotX=ut*RotX
+        wRotY=ut*RotY  
+        wRotZ=ut*RotZ
         delt=2.0*pi/nti 
-        deltb=2.0*pi/nb
-        if (GeomFlag == 1) then 
-                ! Create VAWT geometry                                                                                                                              
-                delty=hr/nbe                                                 
-                CALL BGeomSetup_v(delty,delt,deltb)
-                
-                ! VAWT axis and normalized rotation rate
-                RotX=0.0
-                RotY=1.0
-                RotZ=0.0
-                wRotX=0.0
-                wRotY=ut  
-                wRotZ=0.0
-                 
-        else
-                ! Create HAWT geometry                                                                                                                                   
-                deltr=(1.0-hubrr)/nbe                                                       
-                CALL BGeomSetup_h(deltr,delt,deltb) 
-                
-                ! HAWT axis and normalized rotation rate
-                RotX=1.0
-                RotY=0.0
-                RotZ=0.0
-                wRotX=ut
-                wRotY=0.0  
-                wRotZ=0.0
-                
-        end if
-        
-!---------- VAWT/HAWT specific geometry creation code above here -----------
         
         ! Setup wall geometry and solution if necessary
         if (GPFlag == 1 .OR. FSFlag == 1) then
@@ -277,8 +253,9 @@ PROGRAM CACTUS
                                 write(6,*) 'Timestep: ', nt
                         end if
                         
-                        ! Get current geometry                                                                 
-                        CALL bgeom(i)        
+                        ! Set new wake element locations
+                        ! JCM: can move this function into expanded blade module when created...                                                                 
+                        CALL SetBoundWake()        
                      
                         ! Fixed-point iteration to converge non-linear system consisting of 
                         ! blade element bound vorticity (potentially non linear with local AOA),
@@ -307,8 +284,9 @@ PROGRAM CACTUS
                                         Reg_NLIter=iter
                                 end if
                                 
-                                ! Calculate blade loads and bound vorticity                                                           
-                                CALL BladeLoads(i,NLTol,iConv)                                                  
+                                ! Calculate blade loads and bound vorticity
+                                ! JCM: can move this function into expanded blade module when created...                                                           
+                                CALL BladeLoads(NLTol,iConv)                                                  
         
                                 if ((iConv == 0) .OR. (iter == MaxNLIters)) then   
                                         ContinueNL=.FALSE.      
@@ -363,6 +341,9 @@ PROGRAM CACTUS
 
                         ! Update last AOA values
                         Call UpdateAOALast(ne)                                   
+
+                        ! Rotate turbine geometry
+                        Call RotateTurbine(delt)
 
                         ! Regression test
                         if (RegTFlag == 1) then
@@ -420,12 +401,6 @@ PROGRAM CACTUS
                                         convrg=convrgf 
                                         delt=2.0*pi/nti
                                         DT=DelT/ut
-                                        ! Recreate the geometry arrays with the new theta resolution (Note: VAWT/HAWT specific since we are recreating geometry)
-                                        if (GeomFlag == 1) then                                                       
-                                                CALL BGeomSetup_v(delty,delt,deltb)
-                                        else
-                                                CALL BGeomSetup_h(deltr,delt,deltb) 
-                                        end if
                                         ! Reset CPF and KPF fit in endrev (output)
                                         FitStartRev=irev
                                 end if

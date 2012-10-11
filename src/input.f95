@@ -20,8 +20,7 @@ SUBROUTINE input(ErrFlag)
         use output            
 	
 	integer, parameter :: InBufferNumSectionTables = 100
-	integer, parameter :: InBufferNumSegPerBlade = 100
-	integer, parameter :: InBufferNumSeg = 100
+	integer, parameter :: InBufferNumWL = 100
         integer, parameter :: MaxReadLine = 1000    
         integer, parameter :: MaxTempAOA = 1000   
         
@@ -29,23 +28,19 @@ SUBROUTINE input(ErrFlag)
 	integer ErrFlag
 	logical NotDone, NotBlank
         character(MaxReadLine) :: ReadLine
+        character(MaxReadLine) :: GeomFilePath    ! path to geometry input file 
         integer :: CI, EOF
         real :: temp, temp1(MaxTempAOA,4)
                
 	       
-	! Temp buffers for airfoil section data inputs. If more sections or segments become necessary, its probably time to 
-	! create a more generic geometry file with all the relevant geometry for one blade defined, and read this file in (using a loop).
-	character(MaxReadLine) :: AFDPath(InBufferNumSectionTables)	! Airfoil section data path
-	integer :: iSection(InBufferNumSegPerBlade)	! section index for each element
-	real :: ChR(InBufferNumSegPerBlade)	! chord ratio for each element
-	real :: bTwist(InBufferNumSegPerBlade)	! twist for each element (currently only used for HAWT geometry)
-	integer :: WLI(InBufferNumSeg)     ! wake line index buffer
+	! Temp buffers
+	character(MaxReadLine) :: AFDPath(InBufferNumSectionTables)	! Airfoil section data path      
+	integer :: WLI(InBufferNumWL)     ! wake line index buffer
                 
 	! Namelist input file declaration
-	NAMELIST/ConfigInputs/RegTFlag,DiagOutFlag,GeomFlag,GPFlag,FSFlag,rho,vis,tempr,hBLRef,slex,nr,convrg,nti,iut,iWall,ivtxcor,VCRFB,VCRFT,VCRFS,ifc,convrgf,nric,ntif,iutf,ixterm,xstop, &
+	NAMELIST/ConfigInputs/RegTFlag,DiagOutFlag,GPFlag,FSFlag,nr,convrg,nti,iut,iWall,ivtxcor,VCRFB,VCRFT,VCRFS,ifc,convrgf,nric,ntif,iutf,ixterm,xstop, &
                               Output_ELFlag,WallOutFlag,Incompr,DSFlag,PRFlag,k1pos,k1neg,GPGridSF,FSGridSF
-	NAMELIST/XFlowInputs/jbtitle,Rmax,RPM,Ut,ChR,hr,eta,nb,nbe,nSect,AFDPath,iSection,hAG,dFS,Istraight,Istrut,sThick,Cdpar,CTExcrM,WakeOutFlag,WLI,BladeFileFlag
-	NAMELIST/AxFlowInputs/jbtitle,R,HubR,RPM,Ut,Tilt,ChR,bCone,bi,bTwist,eta,nb,nbe,nSect,AFDPath,iSection,hAG,dFS,CTExcrM,WakeOutFlag,WLI
+	NAMELIST/CaseInputs/jbtitle,GeomFilePath,RPM,Ut,nSect,AFDPath,hAG,dFS,rho,vis,tempr,hBLRef,slex,Cdpar,CTExcrM,WakeOutFlag,WLI
 	
 	! Input Defaults
         RegTFlag = 0 
@@ -55,8 +50,6 @@ SUBROUTINE input(ErrFlag)
         WallOutFlag = 0
         GPFlag=0
         FSFlag=0    
-	nb = 2
-	nbe = 5 
 	nSect = 1  
 	ifc = 0   
 	nr = 10
@@ -74,41 +67,26 @@ SUBROUTINE input(ErrFlag)
         VCRFB=1.0       
 	VCRFT=1.0
         VCRFS=1.0       
-	iSection(:)=1 ! all set to 1 
-	bTwist(:)=0.0 ! all set to 0
-	ChR(:)=0.0 ! all set to 0
         WLI(:)=0 ! all set to 0      
 	hAG=0.0
-        dFS=0.0       
-	Tilt=0.0
-	bCone=0.0 
-	HubR=0.0                                                    
-	Incompr=0
-	Istrut=0
-	sThick=0.0                         
+        dFS=0.0                                                          
+	Incompr=0                        
         Cdpar=0.0
         CTExcrM=0.0
         DSFlag=1
         PRFlag=1
         k1pos = 1.0                      
         k1neg = 0.5
-        BladeFileFlag = 0
         GPGridSF = 1.0
         FSGridSF = 1.0
 	                                                                              
-	! Config Namelist input
-	read(4, nml=ConfigInputs)                                                                              
+	! Namelist input
+	read(4, nml=ConfigInputs) 
+        read(4, nml=CaseInputs)                                                                                    
 	                                                                              
-	! If GeomFlag is 1, import VAWT data, otherwise import HAWT data...                                           
-	if (GeomFlag == 1) then
-		! VAWT Namelist input
-		read(4, nml=XFlowInputs)
-	else
-		! HAWT Namelist input
-		read(4, nml=AxFlowInputs)
-		Rmax=R
-	end if
-	
+        ! Read geometry file
+        Call InputGeom(GeomFilePath)
+        
 	! Set array bounds based on inputs
 	! Geometry
 	MaxBlades = nb
@@ -143,25 +121,15 @@ SUBROUTINE input(ErrFlag)
         
 	! Array construction
         CALL blade_cns(MaxWakeNodes,MaxSegEnds)
-	CALL element_cns(MaxTimeStepPerRev,MaxSegEnds,MaxSegEndPerBlade)     
+	CALL element_cns(MaxSegEnds,MaxSegEndPerBlade)     
 	CALL airfoil_cns(MaxAOAVals,MaxReVals,MaxAirfoilSect)
 	CALL wakedata_cns()
 	CALL freestream_cns(MaxWakeNodes,MaxSegEnds)
 	CALL dystl_cns(MaxAirfoilSect,MaxReVals,MaxSegEnds)
         CALL output_cns(MaxRevs, MaxTimeSteps, MaxSeg, MaxBlades)       
         
-	! Write from buffer...
-	iSect(1:(nbe+1))=iSection(1:(nbe+1))
-        If (BladeFileFlag) Then
-           Call ReadBladeFile(MaxSegEndPerBlade,yB,rr,cr)
-        Else
-           cr(1:(nbe+1))=ChR(1:(nbe+1))
-        End If
-	btw(1:(nbe+1))=bTwist(1:(nbe+1))     
+	! Write from buffer...    
         WakeLineInd(1:NWakeInd)=WLI(1:NWakeInd)       
-	
-	! Set hub radius ratio
-	hubrr=HubR/Rmax
 	
 	! Set ground plane location for wall solution
 	GPy=-hAG/Rmax
@@ -184,45 +152,10 @@ SUBROUTINE input(ErrFlag)
 	
         ! Set number of RHS evaluations to average for the free surface calculation (should cover approx 1 revolution)
         NFSRHSAve=nti/iWall
-        
-	! Check chord to radius ratio. If a scalar has been input for cr, replicate for the entire blade.
-	if (cr(2) == 0) then
-		do i = 1,(nbe+1)
-			cr(i)=cr(1)
-		end do 
-	end if
-	                  				
+                				
 	ne = (nbe+1)*nb ! Total number of blade segment ends (over all blades)
-	
-	! iSect setup
-	if (nSect > 1) then                                       
 
-		! Replicate input first blade iSect setup for all subsequent blades		
-		nbse = nbe+1         
-		do i = 2, nb            
-			nei = 1+(i-1)*nbse
-			iSect(nei) = iSect(1)           
-			do j = 1, nbe   
-				nej = nei+j        
-				jp1 = j+1      
-				iSect(nej) = iSect(jp1)      
-			end do
-		end do
-		
-		! Catch invalid iSect inputs and default them to use section 1, write warning to std out...
-		do i = 1, ne
-			if (iSect(i) < 1 .OR. iSect(i) > nsect) then 
-				iSect(i) = 1     
-				write (6,601) i
-			end if 
-		end do  
-		
-	else
-		! All blades use first and only section
-		iSect(:)=1
-	end if
 
-	
         ! Airfoil Data Tables: Read CL, CD, CM vs AOA from data files
         ! Format Example:
         ! Title: AFTitle
@@ -406,30 +339,5 @@ Return
 End 
 	
 
-! Subroutine: ReadBladeFile
-! Reads in a blade geometry file containing radius and chord as a function of vertical position						
-Subroutine ReadBladeFile(Nsegends,y,r,chord)
-
-  Use ioption
-
-  Implicit None
-
-  Integer :: Nsegends, N, I
-  Real, Dimension(Nsegends) :: y, r, chord
-  Integer, Parameter :: inunit=10
-
-  Open(unit=inunit,file=BladeFileName,form='formatted',status='unknown')
-  Read(inunit,*) N
-  If (N .NE. Nsegends) Then
-     Write(6,'(''Number of blade coordinates in blade file does not match the input file.'')')
-     STOP
-  End If
-  Read(inunit,*) (y(I), r(I), chord(I), I=1,N)
-  Close(inunit)
-
-  Write(*,*) (y(I), r(I), chord(I), I=1,N)
-  Return
-
-End Subroutine ReadBladeFile
 
 

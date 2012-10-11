@@ -3,7 +3,6 @@ MODULE configr
         ! Configuration data
 	     
         integer :: DiagOutFlag          ! Set to 1 to print iteration info to stdout      
-        integer :: GeomFlag		! Set to 1 for VAWT calculation, 0 for HAWT calculation
         integer :: nb			! Number of blades
         integer :: nbe			! Number of blade segments/elements in a blade
         integer :: ne			! Number of blade segment ends (total)
@@ -19,6 +18,8 @@ MODULE configr
         integer :: nsWall               ! Next iteration at which the wall models will be updated     
         integer :: Istraight		! Set to 1 for straight-bladed VAWT, 0 for parabolic blade shape
         integer :: Istrut 		! Set to 1 for equatorial ! cross-flow turbine blade struts, 0 for no struts
+        real :: convrg                  ! Convergence level
+        real :: convrgf                 ! Convergence level to be used for final convergence step (if ifc = 1)         
         real :: sthick                  ! Strut sectional thickness-to-chord ratio
         real :: Cdpar                   ! Additional strut parasitic drag coefficient based on equatorial blade "chord area" (chord squared)
         real :: CTExcrM                 ! Additional machine level excrescence torque based on tip speed and Rmax
@@ -35,15 +36,19 @@ MODULE configr
         real :: RotX				! Machine rotation axis X
         real :: RotY				! Machine rotation axis Y
         real :: RotZ				! Machine rotation axis Z
-        real :: convrg				! Convergence level
-        real :: convrgf				! Convergence level to be used for final convergence step (if ifc = 1)	
-        real :: AT				! Normalized frontal area (frontal area / (equitorial radius)^2)
-        real :: AreaT				! Frontal area
+        real :: RotPX                           ! Rotation origin X
+        real :: RotPY                           ! Rotation origin Y
+        real :: RotPZ                           ! Rotation origin Z  
+        real :: ReM                             ! Machine Reynolds number based on Rmax
+        real :: MInf                            ! Freestream mach number       
+
+        real :: Theta                           ! Current turbine rotation phase angle
         real :: TorqueC                         ! Output torque normalization
         real :: Torque                          ! Output torque for the current revolution       
         real :: PowerC				! Output power normalization
         real :: Power				! Output power for the current revolution
-        real :: ReM				! Machine Reynolds number based on Rmax
-        real :: MInf                                    ! Freestream mach number       
+        real :: AT                              ! Normalized frontal area (frontal area / (equitorial radius)^2)
+        real :: AreaT                           ! Frontal area
+      
 	
 End
