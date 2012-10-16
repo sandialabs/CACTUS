@@ -64,6 +64,45 @@ MODULE util
             vRz=pR(4,1)+Oz
             
         end subroutine
+        
+        
+        SUBROUTINE csvwrite(FID,Header,Data,WriteHead,NRows)
+
+            integer :: FID, WriteHead, NRows
+            character(1000) :: Header
+            real :: Data(:,:)
+            
+            integer :: nRow, nCol, i, j
+            
+            ! Writes comma separated data to file specified by FID (assumed already opened with the open command).
+            ! If WriteHead is 1, will write the input header line, else will skip header line.
+            ! NRows is the number of rows of Data to write. If NRows<1, all rows of Data will be written...
+            
+            ! Write header
+            if (WriteHead>0) then
+                write (FID,*) trim(Header)
+            end if
+            
+            ! Write data
+            if (NRows>0) then
+                    nRow=NRows
+            else
+                    nRow=size(Data,1)
+            end if
+            nCol=size(Data,2)
+            do i=1,nRow
+                    do j=1,nCol
+                            if (j<nCol) then
+                                    write(FID,10) Data(i,j)
+                            else
+                                    write(FID,'(E13.7)') Data(i,j)
+                            end if          
+                    end do
+            end do
+
+        Return
+        10 format(E13.7,',',$) 
+        End
 
 
 End

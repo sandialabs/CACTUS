@@ -11,6 +11,11 @@ T.NBlade=A;
 
 S=fgetl(fid);
 Ind=strfind(S,':');
+A=sscanf(S(Ind+1:end),'%d');
+T.NStrut=A;
+
+S=fgetl(fid);
+Ind=strfind(S,':');
 A=sscanf(S(Ind+1:end),'%e');
 T.RotN=A';
 
@@ -100,6 +105,55 @@ for i=1:T.NBlade
     Ind=strfind(S,':');
     A=sscanf(S(Ind+1:end),'%d');
     T.B(i).iSect=A';
+end
+
+for i=1:T.NStrut
+    S=fgetl(fid);
+    
+    S=fgetl(fid);
+    Ind=strfind(S,':');
+    A=sscanf(S(Ind+1:end),'%d');
+    T.S(i).NElem=A;
+    
+    S=fgetl(fid);
+    Ind=strfind(S,':');
+    A=sscanf(S(Ind+1:end),'%e');
+    T.S(i).SEx=A';
+
+    S=fgetl(fid);
+    Ind=strfind(S,':');
+    A=sscanf(S(Ind+1:end),'%e');
+    T.S(i).SEy=A';
+    
+    S=fgetl(fid);
+    Ind=strfind(S,':');
+    A=sscanf(S(Ind+1:end),'%e');
+    T.S(i).SEz=A';
+    
+    S=fgetl(fid);
+    Ind=strfind(S,':');
+    A=sscanf(S(Ind+1:end),'%e');
+    T.S(i).CtoR=A';
+
+    S=fgetl(fid);
+    Ind=strfind(S,':');
+    A=sscanf(S(Ind+1:end),'%e');
+    T.S(i).AreaR=A';
+    
+    S=fgetl(fid);
+    Ind=strfind(S,':');
+    A=sscanf(S(Ind+1:end),'%e');
+    T.S(i).TtoC=A;
+    
+    S=fgetl(fid);
+    Ind=strfind(S,':');
+    A=sscanf(S(Ind+1:end),'%d');
+    T.S(i).BInd=A;
+    
+    S=fgetl(fid);
+    Ind=strfind(S,':');
+    A=sscanf(S(Ind+1:end),'%d');
+    T.S(i).EInd=A;
 end
 
 fclose(fid);

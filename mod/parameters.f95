@@ -3,6 +3,7 @@ MODULE parameters
 	! Sizes for arrays
 	
 	integer :: MaxBlades, MaxSegPerBlade, MaxSegEndPerBlade, MaxSegEnds, MaxSeg     ! Maximums for blade geometry arrays
+        integer :: MaxStruts                                                            ! Maximums for strut arrays       
 	integer :: MaxAirfoilSect, MaxReVals, MaxAOAVals				! Maximums for airfoil coeff data arrays
 	integer :: MaxRevs								! Max revolutions
 	integer :: MaxTimeStepPerRev							! Max time increments in a revolution

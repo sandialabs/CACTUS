@@ -5,6 +5,7 @@ SUBROUTINE input(ErrFlag)
 	use dystl
 	use element
 	use blade
+        use strut       
 	use varscale
 	use shear
 	use airfoil
@@ -93,7 +94,8 @@ SUBROUTINE input(ErrFlag)
 	MaxSegPerBlade = nbe
 	MaxSegEndPerBlade = MaxSegPerBlade+1
 	MaxSegEnds = MaxSegEndPerBlade*MaxBlades
-        MaxSeg = MaxSegPerBlade*MaxBlades       
+        MaxSeg = MaxSegPerBlade*MaxBlades  
+        MaxStruts = NStrut     
 	! Airfoil Data
 	MaxAirfoilSect = nSect
 	MaxReVals = 20
@@ -126,7 +128,7 @@ SUBROUTINE input(ErrFlag)
 	CALL wakedata_cns()
 	CALL freestream_cns(MaxWakeNodes,MaxSegEnds)
 	CALL dystl_cns(MaxAirfoilSect,MaxReVals,MaxSegEnds)
-        CALL output_cns(MaxRevs, MaxTimeSteps, MaxSeg, MaxBlades)       
+        CALL output_cns(MaxSeg,MaxBlades,MaxStruts)       
         
 	! Write from buffer...    
         WakeLineInd(1:NWakeInd)=WLI(1:NWakeInd)       

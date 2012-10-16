@@ -1,4 +1,4 @@
-function BU=UpdateElemArea(B)
+function BU=UpdateBElemArea(B)
 
 % Updates AreaR component of given blade structure (element areas). Must
 % set quarter chord location, tangential vector, and chord to radius

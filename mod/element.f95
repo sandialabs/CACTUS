@@ -5,9 +5,9 @@ MODULE element
         use util
         
         ! Blade geometry input structure
-        ! JCM: Currently used only to store input geometry file data. Should eventually replace the arrays below that 
-        ! are used for the internal calculation. This will require a change to the blade/element/wake iterators 
-        ! throughout the entire code...
+        ! JCM: Currently used only to store input geometry file data and blade loads outputs. Should eventually 
+        ! replace the arrays below that are used for the internal calculation, similar to the strut module. This will 
+        ! require a change to the blade/element/wake iterators throughout the entire code...
         type BladeType
             integer :: NElem
             real, allocatable :: QCx(:)
@@ -22,6 +22,13 @@ MODULE element
             real, allocatable :: CtoR(:)
             real, allocatable :: AreaR(:)
             integer, allocatable :: iSect(:)
+            
+            ! Current total blade output (nomalized by machine scale parameters)
+            real :: CP  ! Power coefficient due to this blade
+            real :: CTR ! Torque coefficient due to this blade
+            real :: CFx ! Fx coefficient due to this blade
+            real :: CFy ! Fy coefficient due to this blade
+            real :: CFz ! Fz coefficient due to this blade
         end type
             
         type(BladeType), allocatable :: Blades(:)   ! Input blade geometry
@@ -52,6 +59,13 @@ MODULE element
 	real, allocatable :: eArea(:)		! Element area to radius ratio for each element
 	real, allocatable :: eChord(:)		! Element chord to radius ratio for each element
         integer, allocatable :: iSect(:)        ! Array of indicies of the section table to apply to each blade element
+        
+        ! Current sum of output over all blades (nomalized by machine scale parameters)
+        real :: CP_B  ! Power coefficient due to all blades
+        real :: CTR_B ! Torque coefficient due to all blades
+        real :: CFx_B ! Fx coefficient due to all blades
+        real :: CFy_B ! Fy coefficient due to all blades
+        real :: CFz_B ! Fz coefficient due to all blades
 
 	CONTAINS
 

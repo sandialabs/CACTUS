@@ -23,7 +23,7 @@ oR=T.RotP;
 TR=RotateTurbine(T,Phase,nR,oR);
 
 % Surf plot blade geometry
-for i=1:length(TR.B)
+for i=1:TR.NBlade
     QCx=TR.B(i).QCx;
     QCy=TR.B(i).QCy;
     QCz=TR.B(i).QCz;
@@ -51,23 +51,23 @@ for i=1:length(TR.B)
     % If plot objects exist, reset data and redraw for smoother
     % animation. Otherwise plot new...
     if ~isempty(HIn)
-        set(HIn{i}(1),'XData',X);
-        set(HIn{i}(1),'YData',Y);
-        set(HIn{i}(1),'ZData',Z);
+        set(HIn{1}{i}(1),'XData',X);
+        set(HIn{1}{i}(1),'YData',Y);
+        set(HIn{1}{i}(1),'ZData',Z);
         
         if PlotVec
-            set(HIn{i}(2),'XData',QCx);
-            set(HIn{i}(2),'YData',QCy);
-            set(HIn{i}(2),'ZData',QCz);
-            set(HIn{i}(2),'UData',nx);
-            set(HIn{i}(2),'VData',ny);
-            set(HIn{i}(2),'WData',nz);
-            set(HIn{i}(2),'AutoScaleFactor',SFVec);
+            set(HIn{1}{i}(2),'XData',QCx);
+            set(HIn{1}{i}(2),'YData',QCy);
+            set(HIn{1}{i}(2),'ZData',QCz);
+            set(HIn{1}{i}(2),'UData',nx);
+            set(HIn{1}{i}(2),'VData',ny);
+            set(HIn{1}{i}(2),'WData',nz);
+            set(HIn{1}{i}(2),'AutoScaleFactor',SFVec);
         end
         
         drawnow;
         
-        H{i}=HIn{i};
+        H{1}{i}=HIn{1}{i};
     else
         figure(HF)
         hold on
@@ -85,7 +85,64 @@ for i=1:length(TR.B)
         end
         
         % create array of handles for this blade
-        H{i}=[hs,hv];
+        H{1}{i}=[hs,hv];
+    end
+end
+
+% Surf plot strut geometry
+for i=1:TR.NStrut
+    SEx=TR.S(i).SEx;
+    SEy=TR.S(i).SEy;
+    SEz=TR.S(i).SEz;
+    CtoR=TR.S(i).CtoR;
+    
+    % Assume t aligned with rotational flow
+    for j=1:TR.S(i).NElem
+        v=[SEx(i+1)-SEx(i),SEy(i+1)-SEy(i),SEz(i+1)-SEz(i)];
+        t=cross(TR.RotN,v);
+        tMag=sqrt(sum(t.^2));
+        tx(j)=t(1)/tMag;
+        ty(j)=t(2)/tMag;
+        tz(j)=t(3)/tMag;
+    end
+    tx(TR.S(i).NElem+1)=tx(TR.S(i).NElem);
+    ty(TR.S(i).NElem+1)=ty(TR.S(i).NElem);
+    tz(TR.S(i).NElem+1)=tz(TR.S(i).NElem);
+    
+    % Leading and trailing edges
+    LEx=SEx-1/2*CtoR.*tx;
+    LEy=SEy-1/2*CtoR.*ty;
+    LEz=SEz-1/2*CtoR.*tz;
+    TEx=SEx+1/2*CtoR.*tx;
+    TEy=SEy+1/2*CtoR.*ty;
+    TEz=SEz+1/2*CtoR.*tz;
+
+    % plot blade
+    X=[LEx;TEx];
+    Y=[LEy;TEy];
+    Z=[LEz;TEz];
+    
+    % If plot objects exist, reset data and redraw for smoother
+    % animation. Otherwise plot new...
+    if ~isempty(HIn)
+        set(HIn{2}{i},'XData',X);
+        set(HIn{2}{i},'YData',Y);
+        set(HIn{2}{i},'ZData',Z);
+        
+        drawnow;
+        
+        H{2}{i}=HIn{2}{i};
+    else
+        figure(HF)
+        hold on
+        hs=surf(X,Y,Z);
+        set(hs,'FaceColor','k');
+        set(hs,'FaceAlpha',.5);
+        set(hs,'LineStyle','none');
+        set(hs,'FaceLighting','none')
+        
+        % create array of handles for this blade
+        H{2}{i}=hs;
     end
 end
 

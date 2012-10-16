@@ -10,8 +10,13 @@ T.RotN=QuatRot(T.RotN,Theta,nR,[0,0,0]);
 T.RotP=QuatRot(T.RotP,Theta,nR,Origin);
 
 % Rotate blades
-for i=1:length(T.B)
+for i=1:T.NBlade
     T.B(i)=RotateBlade(T.B(i),Theta,nR,Origin);
+end
+
+% Rotate struts
+for i=1:T.NStrut
+    T.S(i)=RotateStrut(T.S(i),Theta,nR,Origin);
 end
 
 TR=T;

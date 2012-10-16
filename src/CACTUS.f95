@@ -12,6 +12,7 @@ PROGRAM CACTUS
         ! by (freestream velocity)*(reference radius)
         
         use parameters
+        use util
         use dystl
         use blade
         use element
@@ -30,8 +31,6 @@ PROGRAM CACTUS
         use output       
         
         !IMPLICIT NONE !JCM: eventually...      
-    
-        include 'csvwrite.inc'
         
         integer :: ErrFlag, nargin, FNLength, status, DecInd
         logical :: FinalConv
@@ -41,8 +40,7 @@ PROGRAM CACTUS
         logical :: back
         integer :: iConv
         real :: NLTol
-        real :: cpave, cpave_last
-        real :: delt, delty, deltb, deltr
+        real :: CPAve_last
                                                       
         character(80) :: InputFN, SFOutputFN, RevOutputFN, TSOutputFN, ELOutputFN, RegOutputFN, WakeOutputFN, WakeDefOutputFN, GPOutputFN, FSOutputFN, FNBase                                   
                                                  
@@ -80,11 +78,17 @@ PROGRAM CACTUS
         ! Initialize iteration parameters                                                       
         irev=0
         nt = 0
-        ntTerm=1                                                                                                                                                       
-        FitStartRev=1  
+        Theta=0.0
+        TimeN=0.0
+        ntTerm=1 
         NLTol=1.0e-04                                                      
-        cpave=0.0
-        cpave_last=0.0
+        CPAve_last=0.0
+        CPSum=0.0
+        CTRSum=0.0
+        CFxSum=0.0
+        CFySum=0.0
+        CFzSum=0.0
+        
         
         ! Error flags                                                                                                                                                                  
         ilxtp=0
@@ -148,10 +152,11 @@ PROGRAM CACTUS
                 nsWall=1
         end if
         
-        ! Blade Geometry setup. 
+        ! Blade and strut geometry setup. 
         ! Global axes: x is oriented with the nominal freestream flow direction, y is in the vertically upward direction (opposite gravity),
         ! z direction from RHR (to the right when looking in the streamwise direction).
         CALL BGeomSetup()
+        CALL SGeomSetup()
        
         ! Set normalized turbine rotation rate
         wRotX=ut*RotX
@@ -197,7 +202,8 @@ PROGRAM CACTUS
         vRad2_S = vRad_S*vRad_S
 
         areat=at*Rmax**2                                ! frontal area (at is (frontal area) / Rmax^2 ) 
-        dynpress=rho/2.0*uinf**2                        ! dynamic pressure                  
+        dynpress=rho/2.0*uinf**2                        ! dynamic pressure        
+        forcec=dynpress*areat                           ! force coeff normalization
         torquec=dynpress*areat*Rmax                     ! torque coeff normalization                         
         powerc=rho/2.0*areat*romega**3*0.7457/550.      ! normalization for power coeff using tip speed (kp), with conversion from lb-ft/s to kW. (Used to write output)
         
@@ -213,7 +219,7 @@ PROGRAM CACTUS
         Output_SFData(1,9)=ut           ! tip speed ratio
         Output_SFData(1,10)=rem         ! machine Reynolds number based on U and Rmax
         Output_SFData(1,11)=FnR         ! Froude number based on radius 
-        Call csvwrite(8,Output_SFHead,Output_SFData,0)
+        Call csvwrite(8,Output_SFHead,Output_SFData,1,1)
                                                                                                                  
         ! Initialize needed arrays                             
         do i=1,ne                                                      
@@ -300,17 +306,25 @@ PROGRAM CACTUS
                                 CALL WriteFinalOutput()   
                                 stop                                                       
                         end if                                   
+                           
+                        ! Update strut loads
+                        CALL UpdateStrutLoads()
+
+                        ! Update influence on wall RHS and calc new wall panel strengths
+                        if (GPFlag == 1 .OR. FSFlag == 1) then
+                                Call UpdateWall() 
+                        end if 
+  
+                        ! Write output ----
+                        
+                        ! Collect timestep results and output
+                        Call EndTS()
                             
                         ! Write diagnostic info to stdout if requested
                         if (DiagOutFlag == 1) then
                                 ! Use machine level time step output (norm. time, revolution, torque coeff., power coeff.)
-                                write(6,*) 'Norm. Time, Revolution, Torque Coeff., Power Coeff.'
-                                write(6,'(E13.5,F8.0,2E13.5)') Output_TSData(nt,1),Output_TSData(nt,2),Output_TSData(nt,3),Output_TSData(nt,4)
-                        end if    
-                            
-                        ! Update influence on wall RHS and calc new wall panel strengths
-                        if (GPFlag == 1 .OR. FSFlag == 1) then
-                                Call UpdateWall() 
+                                write(6,*) 'Norm. Time, Theta (rad), Revolution, Torque Coeff., Power Coeff.'
+                                write(6,'(2E13.5,F8.0,2E13.5)') Output_TSData(1,1),Output_TSData(1,2),Output_TSData(1,3),Output_TSData(1,4),Output_TSData(1,5)
                         end if 
   
                         ! Write current wake data for viewing in Matlab
@@ -323,10 +337,10 @@ PROGRAM CACTUS
                                 Call WriteWallData()
                         end if    
   
+                        ! State Updates ----  
+  
                         ! Update current wake convection velocities (excluding wake to be shed from the current blade)                                                                    
                         CALL UpdateWakeVel()      ! Use all wake points to update the wake node velocities
-
-                        ! State Updates ----
 
                         ! Convect the wake (including wake to be shed from the current blade location)
                         CALL conlp()                                                                      
@@ -345,6 +359,10 @@ PROGRAM CACTUS
                         ! Rotate turbine geometry
                         Call RotateTurbine(delt)
 
+                        ! Update time and phase
+                        TimeN=TimeN+dt
+                        Theta=Theta+delt
+
                         ! Regression test
                         if (RegTFlag == 1) then
                                 CALL WriteRegTOutput(2)
@@ -356,13 +374,13 @@ PROGRAM CACTUS
                 end do ! Time steps 
                 
                 ! Calculate revolution average performance
-                cpave_last=cpave                                                                                                                                
-                CALL endrev(cpave)                                          
+                CPAve_last=CPAve                                                                                                                                
+                CALL EndRev()                                          
 
                 ! Write diagnostic info to stdout if requested
                 if (DiagOutFlag == 1) then
                         ! Write rev average power
-                        write(6,*) 'Revolution Average Power Coeff.: ', cpave
+                        write(6,*) 'Revolution Average Power Coeff.: ', CPAve
                         write(6,*) ' '
                 end if                                           
                                                            
@@ -373,7 +391,7 @@ PROGRAM CACTUS
                         
                         ! Define convergence as convergence of revolution average power coeff. Additionally, when using final convergence, the user can
                         ! specify an intermediate revolution number at which to switch to final convergence (if initial convergence level hasn't already been hit).
-                        if (abs((cpave-cpave_last)/cpave) < convrg) then
+                        if (abs((CPAve-CPAve_last)/CPAve) < convrg) then
                                 ConvFlag=.TRUE.
                         else if (ifc == 1 .AND. .NOT. FinalConv .AND. irev == nric) then
                                 ConvFlag=.TRUE.
@@ -401,8 +419,6 @@ PROGRAM CACTUS
                                         convrg=convrgf 
                                         delt=2.0*pi/nti
                                         DT=DelT/ut
-                                        ! Reset CPF and KPF fit in endrev (output)
-                                        FitStartRev=irev
                                 end if
                         end if
                 end if

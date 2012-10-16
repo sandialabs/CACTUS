@@ -3,6 +3,7 @@ SUBROUTINE RotateTurbine(delt)
         use configr       
 	use element
 	use blade
+        use strut       
 	
 	! Updates current turbine geometry
                                                                  
@@ -13,7 +14,10 @@ SUBROUTINE RotateTurbine(delt)
             Call RotateBlade(i,delt,RotX,RotY,RotZ,RotPX,RotPY,RotPZ)
         end do                                                        
                                                                                                           
-        ! Struts etc...                                                                                                  
+        ! Rotate struts
+        do i=1,NStrut
+            Call RotateStrut(i,delt,RotX,RotY,RotZ,RotPX,RotPY,RotPZ)
+        end do                                                                                                  
 	               
 return                                                            
 end                                                               

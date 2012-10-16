@@ -1,57 +1,61 @@
 Revolution Average Output (_RevData.csv):
 
-Rev:			Revolution number.	
-Power Coeff (-):	Revolution average machine power coefficient, Power / (1/2*rho*Uinf^3*Af), where rho is density, Uinf is freestream speed, Af is 
-			turbine frontal area.
-Tip Power Coeff (-):	Revolution average machine tip power coefficient, Power / (1/2*rho*Utip^3*Af), where rho is density, Utip is the blade speed at the 
-                        turbine radius (R in the input file), Af is turbine frontal area.	
-Power (kW):		Revolution average machine power.	
-Torque (ft-lbs):	Revolution average machine torque.	
-Delta CPU Time (s):	CPU time for each revolution.	
-Total CPU Time (s):	Total CPU time after each revolution.
+Rev: Revolution number.	
+Power Coeff. (-): Revolution average machine power coefficient, Power/(1/2*rho*Uinf^3*Af), where rho is density, Uinf is freestream speed, Af is turbine frontal area.
+Tip Power Coeff. (-):	Revolution average machine tip power coefficient, Power/(1/2*rho*Utip^3*Af), where rho is density, Utip is the blade speed at the turbine radius (R in the input file), Af is turbine frontal area.
+Torque Coeff.: Revolution average torque coefficient, Torque/(1/2*rho*Uinf^2*Af*R)
+Fx Coeff.: Revolution average x component of force coefficient, Fx/(1/2*rho*Uinf^2*Af)
+Fy Coeff.: Revolution average y component of force coefficient, Fy/(1/2*rho*Uinf^2*Af)
+Fz Coeff.: Revolution average z component of force coefficient, Fz/(1/2*rho*Uinf^2*Af)
+Power (kW): Revolution average machine power.	
+Torque (ft-lbs): Revolution average machine torque.	
+Delta CPU Time (s): CPU time for each revolution.	
+Total CPU Time (s): Total CPU time after each revolution.
+
 
 
 Timestep Output (_TimeData.csv):
 
-Normalized Time (-):	Normalized simulation time (t*Uinf/R), where Uinf is freestream speed, R is the turbine radius (defined in the input file).
-Rev:			Revolution number.
-Torque Coeff (-):	Torque coefficient, Torque / (1/2*rho*Uinf^2*Af*R), where rho is density, Uinf is freestream speed, Af is turbine frontal area, 
-			and R is the turbine radius.
-Power Coeff (-):	Power coefficient, Power / (1/2*rho*Uinf^3*Af), where rho is density, Uinf is freestream speed, Af is turbine frontal area.	
+Normalized Time (-): Normalized simulation time (t*Uinf/R), where Uinf is freestream speed, R is the turbine radius (defined in the input file).
+Theta: Turbine rotational phase angle (rad).
+Rev: Revolution number.
+Torque Coeff (-): Torque coefficient, Torque / (1/2*rho*Uinf^2*Af*R), where rho is density, Uinf is freestream speed, Af is turbine frontal area, and R is the turbine radius.
+Power Coeff (-): Power coefficient, Power / (1/2*rho*Uinf^3*Af), where rho is density, Uinf is freestream speed, Af is turbine frontal area.	
+Fx Coeff. (-): X component of force coefficient, Fx/(1/2*rho*Uinf^2*Af)
+Fy Coeff. (-): Y component of force coefficient, Fy/(1/2*rho*Uinf^2*Af)
+Fz Coeff. (-): Z component of force coefficient, Fz/(1/2*rho*Uinf^2*Af)
+
 The following are replicated for each blade:
-Blade Fx Coeff (-):	Coefficient of force in the global x direction on blade, XForce / (1/2*rho*Uinf^2*Af), where rho is density, Uinf is freestream speed, 
-			Af is turbine frontal area.
-Blade Fy Coeff (-):	Coefficient of force in the global y direction on blade, YForce / (1/2*rho*Uinf^2*Af), where rho is density, Uinf is freestream speed, 
-			Af is turbine frontal area.	
-Blade Fz Coeff (-):	Coefficient of force in the global z direction on blade, ZForce / (1/2*rho*Uinf^2*Af), where rho is density, Uinf is freestream speed, 
-			Af is turbine frontal area.	
-Blade Torque Coeff (-):	Torque coefficient from the blade, Torque / (1/2*rho*Uinf^2*Af*R), where rho is density, Uinf is freestream speed, Af is turbine 
-			frontal area, and R is the turbine radius.
+Blade Fx Coeff (-): Coefficient of force in the global x direction on blade, XForce / (1/2*rho*Uinf^2*Af), where rho is density, Uinf is freestream speed, Af is turbine frontal area.
+Blade Fy Coeff (-): Coefficient of force in the global y direction on blade, YForce / (1/2*rho*Uinf^2*Af), where rho is density, Uinf is freestream speed, Af is turbine frontal area.	
+Blade Fz Coeff (-): Coefficient of force in the global z direction on blade, ZForce / (1/2*rho*Uinf^2*Af), where rho is density, Uinf is freestream speed, Af is turbine frontal area.	
+Blade Torque Coeff (-): Torque coefficient from the blade, Torque / (1/2*rho*Uinf^2*Af*R), where rho is density, Uinf is freestream speed, Af is turbine frontal area, and R is the reference radius.
+
+The following are replicated for each strut:
+Strut Fx Coeff (-): Coefficient of force in the global x direction on strut, XForce / (1/2*rho*Uinf^2*Af), where rho is density, Uinf is freestream speed, Af is turbine frontal area.
+Strut Fy Coeff (-): Coefficient of force in the global y direction on strut, YForce / (1/2*rho*Uinf^2*Af), where rho is density, Uinf is freestream speed, Af is turbine frontal area.	
+Strut Fz Coeff (-): Coefficient of force in the global z direction on strut, ZForce / (1/2*rho*Uinf^2*Af), where rho is density, Uinf is freestream speed, Af is turbine frontal area.	
+Strut Torque Coeff (-): Torque coefficient from the strut, Torque / (1/2*rho*Uinf^2*Af*R), where rho is density, Uinf is freestream speed, Af is turbine frontal area, and R is the reference radius.
 
 
 Element Output (_ElementData.csv):
 
-Normalized Time (-): 	Normalized simulation time (t*Uinf/R), where Uinf is freestream speed, R is the turbine radius.
-Blade:			Blade number.	
-Element:		Element number.
-Rev:			Revolution number.		
-AOA (deg):		Element local flow angle of attack (deg).			
-Re (-):			Element Reynolds number based on element chord and local flow speed.	
-Mach (-):		Element Mach number based on local flow speed.	
-Ur (-):			Local flow speed ratio with freestream.	
-CN (-):			Element normal force coefficient (per span), NForce (per span) / (1/2*rho*Uloc^2*Chord), where rho is density, Uloc is local flow 
-			speed, Chord is element chord.	
-CT (-):			Element tangential force coefficient (per span), TForce (per span) / (1/2*rho*Uloc^2*Chord), where rho is density, Uloc is local 
-			flow speed, Chord is element chord.	Note tangetial direction is rearward chord line.
-Fx (-):			Coefficient of force in the global x direction on element, XForce / (1/2*rho*Uinf^2*Af), where rho is density, Uinf is freestream 
-			speed, Af is turbine frontal area.	
-Fy (-):			Coefficient of force in the global y direction on element, YForce / (1/2*rho*Uinf^2*Af), where rho is density, Uinf is freestream 
-			speed, Af is turbine frontal area.
-Fz (-):			Coefficient of force in the global z direction on element, ZForce / (1/2*rho*Uinf^2*Af), where rho is density, Uinf is freestream 
-			speed, Af is turbine frontal area.	
-te (-):			Torque coefficient from the element, Torque / (1/2*rho*Uinf^2*Af*R), where rho is density, Uinf is freestream speed, Af is turbine 
-			frontal area, and R is the turbine radius.
-LogicFlags:		Twelve logic flags related to the dynamic stall models for model testing... (see BVLogicOutputs and LBLogicOutputs in the code)
+Normalized Time (-): Normalized simulation time (t*Uinf/R), where Uinf is freestream speed, R is the turbine radius.
+Theta: Turbine rotational phase angle (rad).
+Blade: Blade number.	
+Element: Element number.
+Rev: Revolution number.		
+AOA (deg): Element local flow angle of attack (deg).			
+Re (-): Element Reynolds number based on element chord and local flow speed.	
+Mach (-): Element Mach number based on local flow speed.	
+Ur (-): Local flow speed ratio with freestream.	
+CN (-): Element normal force coefficient (per span), NForce (per span)/(1/2*rho*Uloc^2*Chord), where rho is density, Uloc is local flow speed, Chord is element chord.	
+CT (-): Element tangential force coefficient (per span), TForce (per span)/(1/2*rho*Uloc^2*Chord), where rho is density, Uloc is local flow speed, Chord is element chord.	Note tangetial direction is rearward chord line.
+Fx (-): Coefficient of force in the global x direction on element, XForce / (1/2*rho*Uinf^2*Af), where rho is density, Uinf is freestream speed, Af is turbine frontal area.	
+Fy (-): Coefficient of force in the global y direction on element, YForce / (1/2*rho*Uinf^2*Af), where rho is density, Uinf is freestream speed, Af is turbine frontal area.
+Fz (-): Coefficient of force in the global z direction on element, ZForce / (1/2*rho*Uinf^2*Af), where rho is density, Uinf is freestream speed, Af is turbine frontal area.	
+te (-): Torque coefficient from the element, Torque / (1/2*rho*Uinf^2*Af*R), where rho is density, Uinf is freestream speed, Af is turbine frontal area, and R is the turbine radius.
+LogicFlags: Twelve logic flags related to the dynamic stall models for model testing... (see BVLogicOutputs and LBLogicOutputs in the code)
 
 
 Wake Data Output (_WakeData.csv):
@@ -77,15 +81,18 @@ W/Uinf:                 Wall and wake induced velocity (no freestream) in the Z 
 
 Ground Plane Data Output (_GPData.csv):
 	
-X/R (-):		X location of the panel center normalized by turbine radius, R.
-Y/R (-):		Y location of the panel center normalized by turbine radius, R.
-Z/R (-):		Z location of the panel center normalized by turbine radius, R.
-SourceDens/Uinf (-):	Source density on the panel normalized by freestream speed, Uinf.
+X/R (-): X location of the panel center normalized by reference radius, R.
+Y/R (-): Y location of the panel center normalized by reference radius, R.
+Z/R (-): Z location of the panel center normalized by reference radius, R.
+SourceDens/Uinf (-): Source density on the panel normalized by freestream speed, Uinf.
+
 
 
 Free Surface Data Output (_FSData.csv):
         
-X/R (-):                X location of the panel center normalized by turbine radius, R.
-Y/R (-):                Y location of the panel center normalized by turbine radius, R.
-Z/R (-):                Z location of the panel center normalized by turbine radius, R.
-SourceDens/Uinf (-):    Source density on the panel normalized by freestream speed, Uinf.
+X/R (-): X location of the panel center normalized by reference radius, R.
+Y/R (-): Y location of the panel center normalized by reference radius, R.
+Z/R (-): Z location of the panel center normalized by reference radius, R.
+U/Uinf (-): Wall tangential velocity (nominal freestream direction) normalized by freestream speed, Uinf.
+dH/R (-): Free surface height (above un-deflected height) normalized by reference radius, R.
+
