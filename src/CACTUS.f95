@@ -18,6 +18,7 @@ PROGRAM CACTUS
         use element
         use varscale
         use shear
+        use iecgust
         use airfoil
         use configr
         use pidef
@@ -176,7 +177,11 @@ PROGRAM CACTUS
         ! Normalization parameters for geometry and performance outputs
         romega=2.0*pi*Rmax*rpm/60.0                                       
         uinf=romega/ut 
-        DT=DelT/ut                                      ! normalized simulation timestep (dt*Uinf/Rmax)                                               
+        DT=DelT/ut                                      ! normalized simulation timestep (dt*Uinf/Rmax)      
+
+        gustT = gusttime * uinf / Rmax
+        gustA = gustamp / uinf
+
         rem=rho*uinf*Rmax/vis                                          
 	
         if (Incompr .eq. 1) then			! incompressible/compressible flow switch (used by dynamic stall model)

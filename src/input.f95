@@ -8,6 +8,7 @@ SUBROUTINE input(ErrFlag)
         use strut       
 	use varscale
 	use shear
+        use iecgust
 	use airfoil
 	use configr
 	use pidef
@@ -41,7 +42,9 @@ SUBROUTINE input(ErrFlag)
 	! Namelist input file declaration
 	NAMELIST/ConfigInputs/RegTFlag,DiagOutFlag,GPFlag,FSFlag,nr,convrg,nti,iut,iWall,ivtxcor,VCRFB,VCRFT,VCRFS,ifc,convrgf,nric,ntif,iutf,ixterm,xstop, &
                               Output_ELFlag,WallOutFlag,Incompr,DSFlag,PRFlag,k1pos,k1neg,GPGridSF,FSGridSF
-	NAMELIST/CaseInputs/jbtitle,GeomFilePath,RPM,Ut,nSect,AFDPath,hAG,dFS,rho,vis,tempr,hBLRef,slex,Cdpar,CTExcrM,WakeOutFlag,WLI
+	NAMELIST/CaseInputs/jbtitle,GeomFilePath,RPM,Ut,nSect,AFDPath&
+             &,hAG,dFS,rho,vis,tempr,hBLRef,slex,Cdpar,CTExcrM&
+             &,WakeOutFlag,WLI,Igust,gustamp,gusttime,gustX0
 	
 	! Input Defaults
         RegTFlag = 0 
@@ -80,6 +83,10 @@ SUBROUTINE input(ErrFlag)
         k1neg = 0.5
         GPGridSF = 1.0
         FSGridSF = 1.0
+        Igust = 0
+        gustamp = 0.0
+        gusttime = 0.0
+        gustX0 = 0.0
 	                                                                              
 	! Namelist input
 	read(4, nml=ConfigInputs) 

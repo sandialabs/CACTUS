@@ -28,7 +28,7 @@ SUBROUTINE UpdateBladeVel(IFLG)
                 if (IFLG .eq. 0) then 
                         
                         !  Calculate freestream velocity at blade elements
-                        CALL CalcFreestream(Y(J,I),UFS(J,I),VFS(J,I),WFS(J,I),ygcErr)                                
+                        CALL CalcFreestream(X(J,I),Y(J,I),UFS(J,I),VFS(J,I),WFS(J,I),ygcErr)                                
                                                        
                         USUM=0.0                                                          
                         VSUM=0.0                                                          

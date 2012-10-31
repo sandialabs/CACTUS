@@ -19,7 +19,7 @@ subroutine UpdateWall()
                 do i=1,NumWP
         
                     ! Calculate freestream velocity at panel locations
-                    CALL CalcFreestream(WCPoints(i,2),dVel(1),dVel(2),dVel(3),ygcErr) 	                                
+                    CALL CalcFreestream(WCPoints(i,1),WCPoints(i,2),dVel(1),dVel(2),dVel(3),ygcErr) 	                                
                     NVelSum=sum(WZVec(i,1:3)*dVel)															
                     
                     ! Calc wake induced velocity at wall panel locations                                                                            
@@ -54,7 +54,7 @@ subroutine UpdateWall()
                     do i=1,NumFSCP
             
                         ! Calculate freestream velocity at panel locations
-                        CALL CalcFreestream(FSCPPoints(i,2),dVel(1),dVel(2),dVel(3),ygcErr)                                     
+                        CALL CalcFreestream(FSCPPoints(i,1),FSCPPoints(i,2),dVel(1),dVel(2),dVel(3),ygcErr)                                     
                         NVelSum=sum(FSCZVec(i,1:3)*dVel)    
                         TVelSum=sum(FSCXVec(i,1:3)*dVel)            
                         
@@ -88,7 +88,7 @@ subroutine UpdateWall()
                     do i=1,NumFSCP
             
                         ! Calculate freestream velocity at panel locations
-                        CALL CalcFreestream(FSCPPoints(i,2),dVel(1),dVel(2),dVel(3),ygcErr) 	                                
+                        CALL CalcFreestream(FSCPPoints(i,1),FSCPPoints(i,2),dVel(1),dVel(2),dVel(3),ygcErr) 	                                
                         NVelSum=sum(FSCZVec(i,1:3)*dVel)	
                         TVelSum=sum(FSCXVec(i,1:3)*dVel)	
                         dUdXSum=0.0

@@ -40,7 +40,7 @@ SUBROUTINE UpdateStrutLoads()
                 zs=Struts(i)%SCz(j)
                 
                 ! Freestream velocity at strut location
-                Call CalcFreestream(ys,uFSs,vFSs,wFSs,ygcerr)
+                Call CalcFreestream(xs,ys,uFSs,vFSs,wFSs,ygcerr)
         
                 ! Blade velocity due to rotation                                                      
                 CALL CalcBladeVel(wRotX,wRotY,wRotZ,xs,ys,zs,uBlade,vBlade,wBlade)

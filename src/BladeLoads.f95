@@ -128,6 +128,7 @@ SUBROUTINE BladeLoads(NLTol,iConv)
                 CFy_B=CFy_B + Blades(i)%CFy
                 CFz_B=CFz_B + Blades(i)%CFz
 
+
 	end do
                                                                  
         ! Apply any user specified machine level excrescence torque. CTExcrM = TorqueExcr / (1/2*rho*Utip^2*Rmax^3)
