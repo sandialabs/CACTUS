@@ -57,6 +57,12 @@ slex: (real) Exponent for ground shear layer model (Ex. 1/2 for parabolic lamina
 hAG: (real) Height above ground at turbine geometry origin point (ft). Note that the ground plane is assumed to be oriented with its normal vector in the +y direction.
 dFS: (real) Depth below un-deflected free surface of the turbine geometry origin point (ft). Only used if free surface calculation is active. Note that the un-deflected free surface is assumed to be oriented with its normal vector in the +y direction.
 
+IEC Gust inputs:
+Igust: (int) 0 for no gust, 1 for transient IEC gust (default: 0)
+gustamp: (real) Amplitude of gust, (ft/sec). Only used if Igust > 0
+gusttime: (real) Time scale of gust, (sec).  Only used if Igust > 0
+gustX0: (real) Starting point upstream of rotor center normalized by rotor radius. Only used if Igust > 0
+
 Geometry file:
 GeomFilePath: (string in single quotes) Path to turbine geometry input file.
 
