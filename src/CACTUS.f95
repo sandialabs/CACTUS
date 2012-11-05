@@ -362,7 +362,7 @@ PROGRAM CACTUS
                         Call UpdateAOALast(ne)                                   
 
                         ! Rotate turbine geometry
-                        Call RotateTurbine(delt)
+                        Call RotateTurbine
 
                         ! Update time and phase
                         TimeN=TimeN+dt

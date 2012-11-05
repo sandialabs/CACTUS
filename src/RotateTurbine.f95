@@ -1,4 +1,4 @@
-SUBROUTINE RotateTurbine(delt) 
+SUBROUTINE RotateTurbine
 	
         use configr       
 	use element
