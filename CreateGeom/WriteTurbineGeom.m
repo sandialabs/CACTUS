@@ -34,8 +34,10 @@ function WriteTurbineGeom(FN,T)
 %     CtoR: .1 .1 .1 .1 .1 .1
 %     AreaR: .1 .1 .1 .1 .1
 %     TtoC: .15
-%     BInd: 1
-%     EInd: 3
+%     BIndS: 0
+%     EIndS: 0
+%     BIndE: 1
+%     EIndE: 3
 % Strut 2:
 %     ...
 
@@ -161,12 +163,20 @@ for i=1:T.NStrut
     fprintf(fid,'%13.5e ',T.S(i).TtoC);
     fprintf(fid,'\n');
     
-    fprintf(fid,'\tBInd: ');
-    fprintf(fid,'%3d ',T.S(i).BInd);
+    fprintf(fid,'\tBIndS: ');
+    fprintf(fid,'%3d ',T.S(i).BIndS);
     fprintf(fid,'\n');
     
-    fprintf(fid,'\tEInd: ');
-    fprintf(fid,'%3d ',T.S(i).EInd);
+    fprintf(fid,'\tEIndS: ');
+    fprintf(fid,'%3d ',T.S(i).EIndS);
+    fprintf(fid,'\n');
+    
+    fprintf(fid,'\tBIndE: ');
+    fprintf(fid,'%3d ',T.S(i).BIndE);
+    fprintf(fid,'\n');
+    
+    fprintf(fid,'\tEIndE: ');
+    fprintf(fid,'%3d ',T.S(i).EIndE);
     fprintf(fid,'\n');
     
 end

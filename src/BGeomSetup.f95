@@ -77,6 +77,11 @@ SUBROUTINE BGeomSetup()
                         yBC(nej)=0.5*(Blades(i)%QCy(j)+Blades(i)%QCy(j+1))                                                                                              
                         zBC(nej)=0.5*(Blades(i)%QCz(j)+Blades(i)%QCz(j+1)) 
                         
+                        ! QC line 
+                        dx=Blades(i)%QCx(j+1)-Blades(i)%QCx(j)
+                        dy=Blades(i)%QCy(j+1)-Blades(i)%QCy(j)
+                        dz=Blades(i)%QCz(j+1)-Blades(i)%QCz(j)                        
+                        
                         ! Set element tangent vectors, txBC(MaxSegEnd)  
                         txBC(nej)=0.5*(Blades(i)%tx(j)+Blades(i)%tx(j+1))
                         tyBC(nej)=0.5*(Blades(i)%ty(j)+Blades(i)%ty(j+1))                                                                             
@@ -102,13 +107,22 @@ SUBROUTINE BGeomSetup()
                         nyBC(nej)=nyBC(nej)/VMag    
                         nzBC(nej)=nzBC(nej)/VMag 
                     
-                        ! Calculate spanwise vector (s = t x n)
+                        ! Calculate element spanwise vector (s = t x n)
                         CALL cross(txBC(nej),tyBC(nej),tzBC(nej),nxBC(nej),nyBC(nej),nzBC(nej),sxBC(nej),syBC(nej),szBC(nej))     
                         ! Force normalize
                         VMag=sqrt(sxBC(nej)**2+syBC(nej)**2+szBC(nej)**2) 
                         sxBC(nej)=sxBC(nej)/VMag 
                         syBC(nej)=syBC(nej)/VMag    
                         szBC(nej)=szBC(nej)/VMag 
+                        ! Calc projection direction of element spanwise vector on QC line.
+                        ! Used to correctly orient circulation in wake grid.
+                        ! Note pos. lift creates circulation in neg. element spanwise direction
+                        dp=sxBC(nej)*dx+syBC(nej)*dy+szBC(nej)*dz
+                        if (dp>0) then
+                            CircSign(nej)=-1.0
+                        else
+                            CircSign(nej)=1.0
+                        end if                        
                         
 		end do 
                 

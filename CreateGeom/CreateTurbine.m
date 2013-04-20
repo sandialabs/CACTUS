@@ -153,8 +153,10 @@ if strcmp(Type,'VAWT')==1
         T.S(i).SEz=-linspace(0,rrS(i),NSElem+1);
         T.S(i).CtoR=CRs*ones(1,NSElem+1);
         T.S(i).TtoC=TCs;
-        T.S(i).BInd=1;
-        [m,T.S(i).EInd]=min(abs(yC-yS(i)));
+        T.S(i).BIndS=0;
+        T.S(i).EIndS=0;
+        T.S(i).BIndE=1;
+        [m,T.S(i).EIndE]=min(abs(yC-yS(i)));
         
         % Calc element area
         T.S(i)=UpdateSElemArea(T.S(i));
@@ -165,7 +167,7 @@ if strcmp(Type,'VAWT')==1
         for j=1:NSpB
             SInd=(i-1)*NSpB+j;
             T.S(SInd)=RotateStrut(T.S(j),Phase(i),T.RotN,T.RotP);
-            T.S(i).BInd=i;
+            T.S(SInd).BInd=i;
         end
     end
 

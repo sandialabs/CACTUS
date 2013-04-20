@@ -84,34 +84,68 @@ SUBROUTINE UpdateStrutLoads()
             end do   
                                        
             ! Blade/strut junction interference drag
-            carea=Struts(i)%CRm(NElem)**2
-            xj=Struts(i)%SCx(NElem)
-            yj=Struts(i)%SCx(NElem)
-            zj=Struts(i)%SCx(NElem)
-            t_ave = 0.5 * (Struts(i)%sthick + Struts(i)%tc)
-            uTot=Struts(i)%u(NElem)
-            vTot=Struts(i)%v(NElem)
-            wTot=Struts(i)%w(NElem)
-            ur=Struts(i)%ur(NElem)
-            Cdj = t_ave*t_ave * (17.0 * t_ave*t_ave - 0.05)
-            !Cdj = 0.0112  ! t/c_avg = 0.165
-            !Cdj = 0.0535  ! t/c_avg = 0.24
-            Cdj = Cdj + Cdpar  ! Additional user-specified parasitic drag
-            ! Drag coeff vector, re-referenced to full turbine scale 
-            ! (D/(1/2*rho*Uinf^2*At)
-            Djunc = Cdj * carea / at * ur**2
-            Fx=Djunc*uTot/ur
-            Fy=Djunc*vTot/ur
-            Fz=Djunc*wTot/ur
-            ! Corresponding torque coeff. (T/(1/2*rho*Uinf^2*At*R)) 
-            CALL cross(xj-RotPX,yj-RotPY,zj-RotPZ,Fx,Fy,Fz,TRx,TRy,TRz)
-            te=(TRx*RotX+TRy*RotY+TRz*RotZ)
-            ! Add to strut output
-            Struts(i)%CTR=Struts(i)%CTR + te
-            Struts(i)%CP=Struts(i)%CP + te*ut
-            Struts(i)%CFx=Struts(i)%CFx + Fx
-            Struts(i)%CFy=Struts(i)%CFy + Fy
-            Struts(i)%CFz=Struts(i)%CFz + Fz
+            ! First strut element
+            if (Struts(i)%BIndS > 0) then
+                carea=Struts(i)%CRm(1)**2
+                xj=Struts(i)%SCx(1)
+                yj=Struts(i)%SCx(1)
+                zj=Struts(i)%SCx(1)
+                t_ave = 0.5 * (Struts(i)%sthick + Struts(i)%tcS)
+                uTot=Struts(i)%u(1)
+                vTot=Struts(i)%v(1)
+                wTot=Struts(i)%w(1)
+                ur=Struts(i)%ur(1)
+                Cdj = t_ave*t_ave * (17.0 * t_ave*t_ave - 0.05)
+                !Cdj = 0.0112  ! t/c_avg = 0.165
+                !Cdj = 0.0535  ! t/c_avg = 0.24
+                Cdj = Cdj + Cdpar  ! Additional user-specified parasitic drag
+                ! Drag coeff vector, re-referenced to full turbine scale 
+                ! (D/(1/2*rho*Uinf^2*At)
+                Djunc = Cdj * carea / at * ur**2
+                Fx=Djunc*uTot/ur
+                Fy=Djunc*vTot/ur
+                Fz=Djunc*wTot/ur
+                ! Corresponding torque coeff. (T/(1/2*rho*Uinf^2*At*R)) 
+                CALL cross(xj-RotPX,yj-RotPY,zj-RotPZ,Fx,Fy,Fz,TRx,TRy,TRz)
+                te=(TRx*RotX+TRy*RotY+TRz*RotZ)
+                ! Add to strut output
+                Struts(i)%CTR=Struts(i)%CTR + te
+                Struts(i)%CP=Struts(i)%CP + te*ut
+                Struts(i)%CFx=Struts(i)%CFx + Fx
+                Struts(i)%CFy=Struts(i)%CFy + Fy
+                Struts(i)%CFz=Struts(i)%CFz + Fz
+            end if            
+            ! Last strut element
+            if (Struts(i)%BIndE > 0) then
+                carea=Struts(i)%CRm(NElem)**2
+                xj=Struts(i)%SCx(NElem)
+                yj=Struts(i)%SCx(NElem)
+                zj=Struts(i)%SCx(NElem)
+                t_ave = 0.5 * (Struts(i)%sthick + Struts(i)%tcE)
+                uTot=Struts(i)%u(NElem)
+                vTot=Struts(i)%v(NElem)
+                wTot=Struts(i)%w(NElem)
+                ur=Struts(i)%ur(NElem)
+                Cdj = t_ave*t_ave * (17.0 * t_ave*t_ave - 0.05)
+                !Cdj = 0.0112  ! t/c_avg = 0.165
+                !Cdj = 0.0535  ! t/c_avg = 0.24
+                Cdj = Cdj + Cdpar  ! Additional user-specified parasitic drag
+                ! Drag coeff vector, re-referenced to full turbine scale 
+                ! (D/(1/2*rho*Uinf^2*At)
+                Djunc = Cdj * carea / at * ur**2
+                Fx=Djunc*uTot/ur
+                Fy=Djunc*vTot/ur
+                Fz=Djunc*wTot/ur
+                ! Corresponding torque coeff. (T/(1/2*rho*Uinf^2*At*R)) 
+                CALL cross(xj-RotPX,yj-RotPY,zj-RotPZ,Fx,Fy,Fz,TRx,TRy,TRz)
+                te=(TRx*RotX+TRy*RotY+TRz*RotZ)
+                ! Add to strut output
+                Struts(i)%CTR=Struts(i)%CTR + te
+                Struts(i)%CP=Struts(i)%CP + te*ut
+                Struts(i)%CFx=Struts(i)%CFx + Fx
+                Struts(i)%CFy=Struts(i)%CFy + Fy
+                Struts(i)%CFz=Struts(i)%CFz + Fz
+            end if
             
             ! Add to total struts output
             CTR_S=CTR_S + Struts(i)%CTR

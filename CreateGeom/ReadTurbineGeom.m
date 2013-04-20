@@ -148,12 +148,22 @@ for i=1:T.NStrut
     S=fgetl(fid);
     Ind=strfind(S,':');
     A=sscanf(S(Ind+1:end),'%d');
-    T.S(i).BInd=A;
+    T.S(i).BIndS=A;
     
     S=fgetl(fid);
     Ind=strfind(S,':');
     A=sscanf(S(Ind+1:end),'%d');
-    T.S(i).EInd=A;
+    T.S(i).EIndS=A;
+    
+    S=fgetl(fid);
+    Ind=strfind(S,':');
+    A=sscanf(S(Ind+1:end),'%d');
+    T.S(i).BIndE=A;
+    
+    S=fgetl(fid);
+    Ind=strfind(S,':');
+    A=sscanf(S(Ind+1:end),'%d');
+    T.S(i).EIndE=A;    
 end
 
 fclose(fid);

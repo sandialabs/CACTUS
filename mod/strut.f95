@@ -19,22 +19,33 @@ MODULE strut
             real, allocatable :: SCx(:)
             real, allocatable :: SCy(:)
             real, allocatable :: SCz(:)
+            ! Strut element spanwise vector
+            real, allocatable :: sx(:)
+            real, allocatable :: sy(:)
+            real, allocatable :: sz(:)
             ! Strut mean chord to radius and norm. area
             real, allocatable :: CRm(:)
             real, allocatable :: AreaR(:)
             ! Interference drag calc parameters
             real :: sthick  ! Strut thickness to chord ratio
-            real :: tc      ! Thickness to chord of the blade element at the strut-blade junction
+            real :: tcS      ! Thickness to chord of the blade element at the strut-blade junction (first strut element)
+            real :: tcE      ! Thickness to chord of the blade element at the strut-blade junction (last strut element)
             ! Blade and element indicies to which the strut connects (for interference drag calc)
-            integer :: BInd
-            integer :: EInd
+            ! For struts that are attached to the rotor shaft at one end (not to another blade), set the appropriate BInd and EInd values to zero.
+            ! BIndS, EIndS : first strut element
+            ! BIndE, EIndE : last strut element 
+            integer :: BIndS
+            integer :: EIndS
+            integer :: BIndE
+            integer :: EIndE
+            real :: LR      ! Strut length to radius ratio
             
             ! Current flow quantities at each element center
             real, allocatable :: ReStrut(:) 
             real, allocatable :: u(:) ! u velocity over Uinf
             real, allocatable :: v(:) ! v velocity over Uinf
-            real, allocatable :: w(:)
-            real, allocatable :: ur(:)
+            real, allocatable :: w(:) ! w velocity over Uinf
+            real, allocatable :: ur(:) ! velocity mag over Uinf
             
             ! Current strut element coeffs (normalized by strut element scale parameters)
             real, allocatable :: Cd0(:)
@@ -80,6 +91,9 @@ MODULE strut
             allocate(Struts(SInd)%SCx(NElem))  
             allocate(Struts(SInd)%SCy(NElem)) 
             allocate(Struts(SInd)%SCz(NElem))
+            allocate(Struts(SInd)%sx(NElem))  
+            allocate(Struts(SInd)%sy(NElem)) 
+            allocate(Struts(SInd)%sz(NElem))
             allocate(Struts(SInd)%CRm(NElem)) 
             allocate(Struts(SInd)%AreaR(NElem))
             allocate(Struts(SInd)%ReStrut(NElem)) 
@@ -108,26 +122,45 @@ MODULE strut
                 Struts(SInd)%SEz(j)=vrz 
             end do 
             
-            ! Strut center locations
+            ! Strut element center locations
             do j=1,Struts(SInd)%NElem  
                 Call QuatRot(Struts(SInd)%SCx(j),Struts(SInd)%SCy(j),Struts(SInd)%SCz(j),delt,nrx,nry,nrz,px,py,pz,vrx,vry,vrz)
                 Struts(SInd)%SCx(j)=vrx                                       
                 Struts(SInd)%SCy(j)=vry                                                                                               
                 Struts(SInd)%SCz(j)=vrz 
             end do 
-                           
+            
+            ! Strut element spanwise vectors
+            do j=1,Struts(SInd)%NElem  
+                Call QuatRot(Struts(SInd)%sx(j),Struts(SInd)%sy(j),Struts(SInd)%sz(j),delt,nrx,nry,nrz,0.0,0.0,0.0,vrx,vry,vrz)
+                ! Force normalize
+                VMag=sqrt(vrx**2+vry**2+vrz**2) 
+                Struts(SInd)%sx(j)=vrx/VMag                                       
+                Struts(SInd)%sy(j)=vry/VMag                                                                                              
+                Struts(SInd)%sz(j)=vrz/VMag  
+            end do 
+       
         End SUBROUTINE
                 
         
         SUBROUTINE StrutElemCoeffs(SInd,EInd)  
         
             integer :: SInd, EInd
-            real :: st, ReS
+            real :: st, ReS, vs, AOS, pc
             real :: Cflam, Cdlam, Cfturb, Cdturb, Fblend
             
             ! Updates strut element coeffs for current flow states
-            st=Struts(SInd)%sthick
-            ReS=Struts(SInd)%ReStrut(EInd)
+            
+            ! Calc sideslip angle
+            vs=Struts(SInd)%u(EInd)*Struts(SInd)%sx(EInd)+Struts(SInd)%v(EInd)*Struts(SInd)%sy(EInd)+Struts(SInd)%w(EInd)*Struts(SInd)%sz(EInd)
+            AOS=asin(vs/Struts(SInd)%ur(EInd)) 
+            
+            ! Effective section thickness and Re referenced to nominal flow path length rather than chord (p/c = 1/cos(AOS))
+            ! Allows estimation at high element sideslip (azimuthal struts).
+            pc=1.0/abs(cos(AOS))
+            pc=min(pc,Struts(SInd)%LR/Struts(SInd)%CRm(EInd)) ! Limit p to strut length
+            st=Struts(SInd)%sthick/pc
+            ReS=Struts(SInd)%ReStrut(EInd)*pc
                                 
             ! Calculate strut element profile drag
             Cflam = 2.66 / SQRT(ReS)  ! Laminar friction drag coefficient

@@ -47,8 +47,10 @@ SUBROUTINE InputGeom(FN)
 !            CtoR: .1 .1 .1 .1 .1 .1
 !            AreaR: .1 .1 .1 .1 .1
 !            TtoC: .15
-!            BInd: 1
-!            EInd: 3
+!            BIndS: 0
+!            EIndE: 0
+!            BIndE: 1
+!            EIndE: 3
 !        Strut 2:
 !            ...
                
@@ -166,10 +168,16 @@ SUBROUTINE InputGeom(FN)
             read(ReadLine(index(ReadLine,':')+1:),*) Struts(i)%sthick
        
             read(15,'(A)') ReadLine
-            read(ReadLine(index(ReadLine,':')+1:),*) Struts(i)%BInd
+            read(ReadLine(index(ReadLine,':')+1:),*) Struts(i)%BIndS
             
             read(15,'(A)') ReadLine
-            read(ReadLine(index(ReadLine,':')+1:),*) Struts(i)%EInd
+            read(ReadLine(index(ReadLine,':')+1:),*) Struts(i)%EIndS
+            
+            read(15,'(A)') ReadLine
+            read(ReadLine(index(ReadLine,':')+1:),*) Struts(i)%BIndE
+            
+            read(15,'(A)') ReadLine
+            read(ReadLine(index(ReadLine,':')+1:),*) Struts(i)%EIndE
         
         end do 
         

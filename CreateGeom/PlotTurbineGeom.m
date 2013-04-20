@@ -5,16 +5,22 @@ function H=PlotTurbineGeom(T,HF,Phase,HIn,varargin)
 % HIn is a cell array containing vectors of handles for any objects to
 % update (created on first call and returned in H).
 % Optional args:
+%   Transparency: Surface transparency value (0 to 1, 1 is opaque, default: .5)
 %   PlotVec: 1 to plot element normal vectors
 %   SFVec: scale factor for normal vector plotting (default: 1)
 
+SurfTrans=.5;
 PlotVec=0;
 SFVec=1;
 if nargin==5
-    PlotVec=varargin{1};
+    SurfTrans=varargin{1};
 elseif nargin==6
-    PlotVec=varargin{1};
-    SFVec=varargin{2};
+    SurfTrans=varargin{1};
+    PlotVec=varargin{2};
+elseif nargin == 7 
+    SurfTrans=varargin{1};
+    PlotVec=varargin{2};
+    SFVec=varargin{3};
 end
 
 % Rotate turbine to phase
@@ -73,7 +79,7 @@ for i=1:TR.NBlade
         hold on
         hs=surf(X,Y,Z);
         set(hs,'FaceColor','b');
-        set(hs,'FaceAlpha',.5);
+        set(hs,'FaceAlpha',SurfTrans);
         set(hs,'LineStyle','none');
         set(hs,'FaceLighting','none')
         
@@ -96,26 +102,31 @@ for i=1:TR.NStrut
     SEz=TR.S(i).SEz;
     CtoR=TR.S(i).CtoR;
     
-    % Assume t aligned with rotational flow
+    % Assume t normal to turbine rotation axis and strut spanwise vector.
+    % It's generally assumed that the strut lies in the plane normal to rotation axis,
+    % otherwise, should probably be modeled as a blade...
+    txS=zeros(1,TR.S(i).NElem+1);
+    tyS=zeros(1,TR.S(i).NElem+1);
+    tzS=zeros(1,TR.S(i).NElem+1);
     for j=1:TR.S(i).NElem
-        v=[SEx(i+1)-SEx(i),SEy(i+1)-SEy(i),SEz(i+1)-SEz(i)];
+        v=[SEx(j+1)-SEx(j),SEy(j+1)-SEy(j),SEz(j+1)-SEz(j)];
         t=cross(TR.RotN,v);
         tMag=sqrt(sum(t.^2));
-        tx(j)=t(1)/tMag;
-        ty(j)=t(2)/tMag;
-        tz(j)=t(3)/tMag;
+        txS(j)=t(1)/tMag;
+        tyS(j)=t(2)/tMag;
+        tzS(j)=t(3)/tMag;
     end
-    tx(TR.S(i).NElem+1)=tx(TR.S(i).NElem);
-    ty(TR.S(i).NElem+1)=ty(TR.S(i).NElem);
-    tz(TR.S(i).NElem+1)=tz(TR.S(i).NElem);
+    txS(TR.S(i).NElem+1)=txS(TR.S(i).NElem);
+    tyS(TR.S(i).NElem+1)=tyS(TR.S(i).NElem);
+    tzS(TR.S(i).NElem+1)=tzS(TR.S(i).NElem);
     
     % Leading and trailing edges
-    LEx=SEx-1/2*CtoR.*tx;
-    LEy=SEy-1/2*CtoR.*ty;
-    LEz=SEz-1/2*CtoR.*tz;
-    TEx=SEx+1/2*CtoR.*tx;
-    TEy=SEy+1/2*CtoR.*ty;
-    TEz=SEz+1/2*CtoR.*tz;
+    LEx=SEx-1/2*CtoR.*txS;
+    LEy=SEy-1/2*CtoR.*tyS;
+    LEz=SEz-1/2*CtoR.*tzS;
+    TEx=SEx+1/2*CtoR.*txS;
+    TEy=SEy+1/2*CtoR.*tyS;
+    TEz=SEz+1/2*CtoR.*tzS;
 
     % plot blade
     X=[LEx;TEx];
@@ -137,7 +148,7 @@ for i=1:TR.NStrut
         hold on
         hs=surf(X,Y,Z);
         set(hs,'FaceColor','k');
-        set(hs,'FaceAlpha',.5);
+        set(hs,'FaceAlpha',SurfTrans);
         set(hs,'LineStyle','none');
         set(hs,'FaceLighting','none')
         
