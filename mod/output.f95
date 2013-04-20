@@ -14,7 +14,7 @@ MODULE output
         real :: Output_RevData(1,11)                ! Revolution average data for each revolution 
   
         ! Timestep data
-        character(1000) :: Output_TSHead = 'Normalized Time (-),Theta (rad),Rev,Torque Coeff. (-),Power Coeff. (-),Fx Coeff. (-),Fy Coeff. (-),Fz Coeff. (-)'
+        character(10000) :: Output_TSHead = 'Normalized Time (-),Theta (rad),Rev,Torque Coeff. (-),Power Coeff. (-),Fx Coeff. (-),Fy Coeff. (-),Fz Coeff. (-)'
         character(1000) :: Output_TSHeadBlade = 'Blade Fx Coeff. (-),Blade Fy Coeff. (-),Blade Fz Coeff. (-),Blade Torque Coeff. (-)'
         character(1000) :: Output_TSHeadStrut = 'Strut Fx Coeff. (-),Strut Fy Coeff. (-),Strut Fz Coeff. (-),Strut Torque Coeff. (-)'
         integer :: Output_NTSOut                                ! Number of timestep outputs

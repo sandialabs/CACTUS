@@ -69,7 +69,7 @@ MODULE util
         SUBROUTINE csvwrite(FID,Header,Data,WriteHead,NRows)
 
             integer :: FID, WriteHead, NRows
-            character(1000) :: Header
+            character(10000) :: Header
             real :: Data(:,:)
             
             integer :: nRow, nCol, i, j
