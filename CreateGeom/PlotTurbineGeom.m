@@ -6,7 +6,7 @@ function H=PlotTurbineGeom(T,HF,Phase,HIn,varargin)
 % update (created on first call and returned in H).
 % Optional args:
 %   Transparency: Surface transparency value (0 to 1, 1 is opaque, default: .5)
-%   PlotVec: 1 to plot element normal vectors
+%   PlotVec: 1 to plot element normal and tangent vectors
 %   SFVec: scale factor for normal vector plotting (default: 1)
 
 SurfTrans=.5;
@@ -69,6 +69,13 @@ for i=1:TR.NBlade
             set(HIn{1}{i}(2),'VData',ny);
             set(HIn{1}{i}(2),'WData',nz);
             set(HIn{1}{i}(2),'AutoScaleFactor',SFVec);
+            set(HIn{1}{i}(3),'XData',QCx);
+            set(HIn{1}{i}(3),'YData',QCy);
+            set(HIn{1}{i}(3),'ZData',QCz);
+            set(HIn{1}{i}(3),'UData',tx);
+            set(HIn{1}{i}(3),'VData',ty);
+            set(HIn{1}{i}(3),'WData',tz);
+            set(HIn{1}{i}(3),'AutoScaleFactor',SFVec);
         end
         
         drawnow;
@@ -84,14 +91,17 @@ for i=1:TR.NBlade
         set(hs,'FaceLighting','none')
         
         % plot normals
-        hv=[];
+        hnv=[];
+        htv=[];
         if PlotVec
-            hv=quiver3(QCx,QCy,QCz,nx,ny,nz,SFVec);
-            set(hv,'Color','b')
+            hnv=quiver3(QCx,QCy,QCz,nx,ny,nz,SFVec);
+            set(hnv,'Color','b')
+            htv=quiver3(QCx,QCy,QCz,tx,ty,tz,SFVec);
+            set(htv,'Color','g')
         end
         
         % create array of handles for this blade
-        H{1}{i}=[hs,hv];
+        H{1}{i}=[hs,hnv,htv];
     end
 end
 
