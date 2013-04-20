@@ -20,7 +20,7 @@ SUBROUTINE bsload(nElem,IsBE,alpha,Re,umach,ur,CN,CT,Fx,Fy,Fz,te)
         real uAve, vAve, wAve, uFSAve, vFSAve, wFSAve, uBlade, vBlade, wBlade, urdn, urdc
         real xe5, ye5, ze5, xe75, ye75, ze75, uBlade5, vBlade5, wBlade5, uBlade75, vBlade75, wBlade75
         real urdn5, ur5, alpha5, Re5, urdn75, ur75, alpha75, Re75     
-        real CL, CD, CM25, FN, FT, MS, TRx, TRy, TRz, CLCirc   
+        real CL, CD, CM25, FN, FT, MS, TRx, TRy, TRz, CLCirc, CircDir
         
         
         ! Calculates aero loads on a blade element. Static and dynamic airfoil characteristics calculated here...
@@ -49,6 +49,9 @@ SUBROUTINE bsload(nElem,IsBE,alpha,Re,umach,ur,CN,CT,Fx,Fy,Fz,te)
         sxe=sxBC(nElem)                                                  
         sye=syBC(nElem)                                                  
         sze=szBC(nElem)
+        
+        ! Direction of circulation in wake grid at positive lift
+        CircDir=CircSign(nElem)
         
         ! Airfoil section                                                 
         SectInd=isect(nElem)                                                     
@@ -114,7 +117,7 @@ SUBROUTINE bsload(nElem,IsBE,alpha,Re,umach,ur,CN,CT,Fx,Fy,Fz,te)
                 
         ! Bound vortex strength from CL via Kutta-Joukowski analogy. 
         ! Save corresponding AOA as well                                                                                          
-        GB(nElem1)=CLCirc*ElemChordR*ur/2.0  
+        GB(nElem1)=CircDir*(CLCirc*ElemChordR*ur/2.0)
         AOA(nElem1)=alpha
         ! normalized time step used to update states in the LB model
         ds(nElem)=2.0*ur*DT/ElemChordR

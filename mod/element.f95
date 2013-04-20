@@ -55,7 +55,8 @@ MODULE element
 	real, allocatable :: tzBC(:)		! Tangential Z for each blade segment 	
         real, allocatable :: sxBC(:)		! Spanwise X for each blade segment 	
 	real, allocatable :: syBC(:)		! Spanwise Y for each blade segment 	
-	real, allocatable :: szBC(:)		! Spanwise Z for each blade segment 	
+	real, allocatable :: szBC(:)		! Spanwise Z for each blade segment 
+        real, allocatable :: CircSign(:)        ! Direction of segment circulation on wake grid	at positive lift
 	real, allocatable :: eArea(:)		! Element area to radius ratio for each element
 	real, allocatable :: eChord(:)		! Element chord to radius ratio for each element
         integer, allocatable :: iSect(:)        ! Array of indicies of the section table to apply to each blade element
@@ -116,7 +117,8 @@ MODULE element
 		allocate(tzBC(MaxSegEnds))		
 		allocate(sxBC(MaxSegEnds))		
 		allocate(syBC(MaxSegEnds))		
-		allocate(szBC(MaxSegEnds))	        
+		allocate(szBC(MaxSegEnds))
+                allocate(CircSign(MaxSegEnds))              	        
 		allocate(eArea(MaxSegEnds))	
 		allocate(eChord(MaxSegEnds))			
                 allocate(iSect(MaxSegEnds))              
