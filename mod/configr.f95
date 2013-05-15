@@ -1,8 +1,16 @@
 MODULE configr
 	
         ! Configuration data
-	     
-        integer :: DiagOutFlag          ! Set to 1 to print iteration info to stdout      
+        
+        ! Input flags
+        character*80 :: jbtitle         ! job title
+        integer :: ivtxcor              ! switches whether to use finite vortex core model...
+        integer :: ifc                  ! Flag to use final convergence step
+        integer :: iXTerm               ! Flag to ignore wake points beyond xstop 
+        integer :: DiagOutFlag          ! Set to 1 to print iteration info to stdout   
+        integer :: PRFlag               ! 0 for no pitch rate aero effects, 1 to include these effects
+           
+        ! Params  
         integer :: nb			! Number of blades
         integer :: nbe			! Number of blade segments/elements in a blade
         integer :: ne			! Number of blade segment ends (total)
@@ -11,18 +19,20 @@ MODULE configr
         integer :: iRev			! Revolution counter
         integer :: nt			! Time step counter
         integer :: nti			! Number of time steps per revolution
+        integer :: nric                 ! Intermediate rev at which to switch to final convergence (if ifc = 1)
+        integer :: ntif                 ! final number of time steps per revolution (used instead of nti during final convergence step if ifc = 1)
+        integer :: iutf                 ! final number of time steps between updating the wake velocities (used instead of iut during final convergence step if ifc = 1)
         integer :: ntTerm		! Time step level beyond which wake is ignored (if iXTerm = 1)
         integer :: nSect		! Number of airfoil section data tables used
         integer :: nsw			! Next iteration at which wake velocities will be calculated
-        integer :: nsWall               ! Next iteration at which the wall models will be updated     
-        integer :: Istraight		! Set to 1 for straight-bladed VAWT, 0 for parabolic blade shape
+        integer :: nsWall               ! Next iteration at which the wall models will be updated
         real :: convrg                  ! Convergence level
-        real :: convrgf                 ! Convergence level to be used for final convergence step (if ifc = 1)         
+        real :: convrgf                 ! Convergence level to be used for final convergence step (if ifc = 1)    
+        real :: XStop                   ! If iXTerm = 1, ignore wake beyond x = xstop      
         real :: CTExcrM                 ! Additional machine level excrescence torque based on tip speed and Rmax
         real :: VCRFB                   ! Vortex core radius factor (on max blade chord) for bound vortex
         real :: VCRFT                   ! Vortex core radius factor (on blade discretization level) for trailing wake vorticies
         real :: VCRFS                   ! Vortex core radius factor (on temporal discretization level) for spanwise wake vorticies
-        integer :: PRFlag               ! 0 for no pitch rate aero effects, 1 to include these effects
 	
         real :: ut				! Tip speed ratio       
         real :: dt                              ! Normalized timestep

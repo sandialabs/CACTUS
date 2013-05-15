@@ -40,13 +40,7 @@ SUBROUTINE EndRev()
         Output_RevData(1,11)=etime
            
         ! Write to revolution average data csv file
-        if (irev == 1) then
-            ! If first call, write header
-            Call csvwrite(9,Output_RevHead,Output_RevData,1,1) 
-        else  
-            ! No header
-            Call csvwrite(9,Output_RevHead,Output_RevData,0,1)  
-        end if
+        Call csvwrite(9,Output_RevHead,Output_RevData,0,1)  
                                                         							
         ! Reset rev average sums
         CPSum=0.0

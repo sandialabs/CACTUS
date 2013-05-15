@@ -53,23 +53,11 @@ SUBROUTINE EndTS()
         end do    
                                                          
         ! Write to timestep data csv file
-        if (nt == 1) then
-            ! If first call, write header
-            Call csvwrite(10,Output_TSHead,Output_TSData,1,1) 
-        else
-            ! No header
-            Call csvwrite(10,Output_TSHead,Output_TSData,0,1)                                             
-        end if
+        Call csvwrite(10,Output_TSHead,Output_TSData,0,1)                                             
         
         ! Write to element loads data csv file
         if (Output_ELFlag == 1) then
-            if (nt == 1) then
-                ! If first call, write header
-                Call csvwrite(11,Output_ELHead,Output_ELData,1,0)
-            else
-                ! No header
-                Call csvwrite(11,Output_ELHead,Output_ELData,0,0)
-            end if 
+                Call csvwrite(11,Output_ELHead,Output_ELData,0,-1)
         end if
         
         ! Reg test

@@ -12,7 +12,6 @@ SUBROUTINE input(ErrFlag)
 	use airfoil
 	use configr
 	use pidef
-	use ioption
 	use vortex
 	use wakedata
 	use time
@@ -41,7 +40,7 @@ SUBROUTINE input(ErrFlag)
                 
 	! Namelist input file declaration
 	NAMELIST/ConfigInputs/RegTFlag,DiagOutFlag,GPFlag,FSFlag,nr,convrg,nti,iut,iWall,ivtxcor,VCRFB,VCRFT,VCRFS,ifc,convrgf,nric,ntif,iutf,ixterm,xstop, &
-                              Output_ELFlag,WallOutFlag,Incompr,DSFlag,PRFlag,k1pos,k1neg,GPGridSF,FSGridSF
+                              Output_ELFlag,WallOutFlag,Incompr,DSFlag,PRFlag,k1pos,k1neg,GPGridSF,FSGridSF,TSFilFlag,ntsf
 	NAMELIST/CaseInputs/jbtitle,GeomFilePath,RPM,Ut,nSect,AFDPath&
              &,hAG,dFS,rho,vis,tempr,hBLRef,slex,Cdpar,CTExcrM&
              &,WakeOutFlag,WLI,Igust,gustamp,gusttime,gustX0
@@ -54,6 +53,8 @@ SUBROUTINE input(ErrFlag)
         WallOutFlag = 0
         GPFlag=0
         FSFlag=0    
+        TSFilFlag=0
+        ntsf=3
 	nSect = 1  
 	ifc = 0   
 	nr = 10
@@ -164,6 +165,8 @@ SUBROUTINE input(ErrFlag)
                 				
 	ne = (nbe+1)*nb ! Total number of blade segment ends (over all blades)
 
+        ! Timestep filter setup
+        KTF=1.0/real(ntsf)
 
         ! Airfoil Data Tables: Read CL, CD, CM vs AOA from data files
         ! Format Example:

@@ -5,6 +5,7 @@ MODULE blade
         ! Blade loading data
         real, allocatable :: GB(:)              ! Bound vorticity
         real, allocatable :: OGB(:)             ! Old bound vorticity (previous time step)
+        real, allocatable :: GB_Raw(:)          ! Raw (pre-filter) bound vorticity
         real, allocatable :: AOA(:)             ! AOA on blade elements    
         real, allocatable :: AOA_Last(:)        ! Last value of AOA on blade elements
          
@@ -30,6 +31,11 @@ MODULE blade
         real, allocatable :: UO(:,:)            ! Last lattice point x velocity for each wake point
         real, allocatable :: VO(:,:)            ! Last lattice point y velocity for each wake point
         real, allocatable :: WO(:,:)            ! Last lattice point z velocity for each wake point
+        
+        ! Timestep filter
+        integer :: TSFilFlag            ! 1 to enable timestep filtering, 0 for no filtering (default) 
+        integer :: ntsf                 ! Number of timesteps over which the bound vorticity is filtered smooth (if TSFilFlag = 1)
+        real    :: KTF                
                 
         CONTAINS
 
@@ -41,6 +47,7 @@ MODULE blade
         
                 allocate(GB(MaxSegEnds))            
                 allocate(OGB(MaxSegEnds))
+                allocate(GB_Raw(MaxSegEnds))
                 allocate(AOA(MaxSegEnds))   
                 allocate(AOA_Last(MaxSegEnds))   
                 allocate(UIWake(MaxSegEnds))
@@ -72,5 +79,18 @@ MODULE blade
                 end do 
         
         End SUBROUTINE
+        
+        SUBROUTINE UpdateTSFilter(ne)
+        
+                integer :: ne
+                integer :: k
+        
+                ! Update filtered bound vorticity (filtered smooth over approx. ntsf timesteps using a first order discrete filter)
+        
+                do k=1,ne                                                                                                             
+                        GB(k)=KTF*GB_Raw(k) + (1.0-KTF)*GB(k)                                                        
+                end do 
+        
+        End SUBROUTINE        
 
 End

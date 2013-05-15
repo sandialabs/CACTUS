@@ -11,17 +11,14 @@ SUBROUTINE WriteWakeData()
         
 	integer :: tCount, tCountMax, wcount, xcount, ycount, zcount
         real :: dxgrid, dygrid, dzgrid       
-        real :: vx, vy, vz       
-
-        ! Write header
+        real :: vx, vy, vz 
+              
+        ! Wake deficit setup
         if (NT==1) then
-                write(12,*) trim(WakeOutHead)
-                
-                ! Wake deficit setup
+
                 ntcount=0
                 
                 if (WakeOutFlag==2) then
-                        write(13,*) trim(HGridVelOutHead)
                 
                         ! Setup horizontal grid
                         dxgrid=(xhgridU-xhgridL)/(nxhgrid-1)
@@ -36,7 +33,6 @@ SUBROUTINE WriteWakeData()
                                 end do
                         end do
                 else if (WakeOutFlag==3) then
-                        write(13,*) trim(VGridVelOutHead)
                 
                         ! Setup vertical grid
                         dxgrid=(xvgridU-xvgridL)/(nxvgrid-1)

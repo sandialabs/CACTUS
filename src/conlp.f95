@@ -3,7 +3,6 @@ SUBROUTINE conlp()
         use configr
 	use blade
 	use freestream
-	use ioption
 			
 	logical NotDone
       									

@@ -11,16 +11,9 @@ SUBROUTINE WriteWallData()
         real :: TVel, dH 
         real, allocatable :: TVelIFS(:,:)   
 
-        ! Write header
+        ! Setup
         if (NT==1) then
-            if (GPFlag == 1) then
-                write(14,*) trim(GPOutHead)
-            end if
-            
-            if (FSFlag == 1) then
-                write(15,*) trim(FSOutHead)
-            end if
-            
+
             ! Iteration on which to write (FS only, GP always last iter)
             OutIterFS=nti
             

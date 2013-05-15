@@ -50,15 +50,24 @@ SUBROUTINE BladeLoads(NLTol,iConv)
 			! Calculate the loads on the blade segment                                                                                              
 			CALL bsload(nej,IsBE,alpha,Re,umach,ur,CN,CT,Fx,Fy,Fz,te) 
 			                                                                                  
-			! Calculate the bound vortex strength change (w.r.t reference circulation)                                                                                                   
-			dgb=abs((GB(nej1)-GS(nt,nej1))/(CrRef*ut))                          
-			
-			! If change outside tolerance for any element, set flag
-			if (dgb .gt. NLTol) iConv=1 
-			 
-                        ! Set the bound circulation as the current entry in the spanwise
-                        ! vorticity array for velocity calculation (and eventual wake convection)                                  
-                        GS(nt,nej1)=GB(nej1)                       
+                        if (TSFilFlag == 1) then
+                            ! Don't allow NL iteration to update bound vorticity (fixed at filtered value)
+                            ! This trivializes the NL iteration...
+                            dgb=0.0                                                                       
+                        else
+                            ! Set GB directly equal to GB_Raw (no filtering)
+                            GB(nej1)=GB_Raw(nej1)                                                                      
+                                                                                                  
+                            ! Calculate the bound vortex strength change (w.r.t reference circulation)                                                                                                   
+                            dgb=abs((GB(nej1)-GS(nt,nej1))/(CrRef*ut))                          
+                            
+                            ! If change outside tolerance for any element, set flag
+                            if (dgb .gt. NLTol) iConv=1 
+                            
+                            ! Reset the bound circulation as the current entry in the spanwise
+                            ! vorticity array for velocity calculation (and eventual wake convection)                                  
+                            GS(nt,nej1)=GB(nej1)  
+                        end if                     
                          
                         
                         ! Update output data 

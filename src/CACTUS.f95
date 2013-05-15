@@ -22,7 +22,6 @@ PROGRAM CACTUS
         use airfoil
         use configr
         use pidef
-        use ioption
         use vortex
         use wakedata
         use time
@@ -75,6 +74,7 @@ PROGRAM CACTUS
         OPEN(8, FILE=SFOutputFN) 
         OPEN(9, FILE=RevOutputFN)
         OPEN(10, FILE=TSOutputFN)
+        
 
         ! Initialize iteration parameters                                                       
         irev=0
@@ -103,6 +103,14 @@ PROGRAM CACTUS
                 stop
         end if
         
+        
+        ! Setup output
+        
+        ! Write headers on standard output files
+        Call csvwrite(8,Output_SFHead,Output_SFData,1,0)
+        Call csvwrite(9,Output_RevHead,Output_RevData,1,0) 
+        Call csvwrite(10,Output_TSHead,Output_TSData,1,0)
+
         ! Simple output for regression testing        
         if (RegTFlag == 1) then      
                  RegOutputFN=trim(FNBase)//'_RegData.out'
@@ -113,17 +121,24 @@ PROGRAM CACTUS
         ! Optional element load output
         if (Output_ELFlag == 1) then
                 OPEN(11, FILE=ELOutputFN)
+                Call csvwrite(11,Output_ELHead,Output_ELData,1,0)
         end if
                                                                             
         ! Optional wake line data output
         if (WakeOutFlag > 0) then
                 WakeOutputFN=trim(FNBase)//'_WakeData.csv'
                 OPEN(12, FILE=WakeOutputFN)
+                write(12,*) trim(WakeOutHead)
                 
                 if (WakeOutFlag > 1) then
                         ! wake deficit surface output
                         WakeDefOutputFN=trim(FNBase)//'_WakeDefData.csv'
                         OPEN(13, FILE=WakeDefOutputFN)
+                        if (WakeOutFlag==2) then
+                            write(13,*) trim(HGridVelOutHead)
+                        else if (WakeOutFlag==3) then
+                            write(13,*) trim(VGridVelOutHead)
+                        end if
                 end if
         end if                                                                    
                                                                             
@@ -132,11 +147,13 @@ PROGRAM CACTUS
                 if (GPFlag == 1) then
                     GPOutputFN=trim(FNBase)//'_GPData.csv'
                     OPEN(14, FILE=GPOutputFN)
+                    write(14,*) trim(GPOutHead)
                 end if
                 
                 if (FSFlag == 1) then
                     FSOutputFN=trim(FNBase)//'_FSData.csv'
                     OPEN(15, FILE=FSOutputFN)
+                    write(15,*) trim(FSOutHead)
                 end if
         end if                                                                             
                                                                             
@@ -224,11 +241,12 @@ PROGRAM CACTUS
         Output_SFData(1,9)=ut           ! tip speed ratio
         Output_SFData(1,10)=rem         ! machine Reynolds number based on U and Rmax
         Output_SFData(1,11)=FnR         ! Froude number based on radius 
-        Call csvwrite(8,Output_SFHead,Output_SFData,1,1)
+        Call csvwrite(8,Output_SFHead,Output_SFData,0,1)
                                                                                                                  
         ! Initialize needed arrays                             
         do i=1,ne                                                      
-                gs(1,i)=0.0                                                       
+                gs(1,i)=0.0   
+                gb(i)=0.0                                                    
                 ogb(i)=0.0 
                 AOA(i)=0.0                                                                                                                                                             
         end do 
@@ -343,13 +361,18 @@ PROGRAM CACTUS
                         end if    
   
                         ! State Updates ----  
-  
+
                         ! Update current wake convection velocities (excluding wake to be shed from the current blade)                                                                    
                         CALL UpdateWakeVel()      ! Use all wake points to update the wake node velocities
 
                         ! Convect the wake (including wake to be shed from the current blade location)
                         CALL conlp()                                                                      
-                        
+
+                        ! Update bound vorticity timestep filter (used to reject grid scale temporal modes)
+                        if (TSFilFlag == 1) then
+                            Call UpdateTSFilter(ne)
+                        end if
+                                                
                         ! Shed new wake                         
                         CALL shedvor()  
 

@@ -76,7 +76,7 @@ MODULE util
             
             ! Writes comma separated data to file specified by FID (assumed already opened with the open command).
             ! If WriteHead is 1, will write the input header line, else will skip header line.
-            ! NRows is the number of rows of Data to write. If NRows<1, all rows of Data will be written...
+            ! NRows is the number of rows of Data to write. If NRows<0, all rows of Data will be written...
             
             ! Write header
             if (WriteHead>0) then
@@ -84,7 +84,7 @@ MODULE util
             end if
             
             ! Write data
-            if (NRows>0) then
+            if (NRows>=0) then
                     nRow=NRows
             else
                     nRow=size(Data,1)

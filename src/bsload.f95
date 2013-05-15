@@ -117,7 +117,7 @@ SUBROUTINE bsload(nElem,IsBE,alpha,Re,umach,ur,CN,CT,Fx,Fy,Fz,te)
                 
         ! Bound vortex strength from CL via Kutta-Joukowski analogy. 
         ! Save corresponding AOA as well                                                                                          
-        GB(nElem1)=CircDir*(CLCirc*ElemChordR*ur/2.0)
+        GB_Raw(nElem1)=CircDir*(CLCirc*ElemChordR*ur/2.0)
         AOA(nElem1)=alpha
         ! normalized time step used to update states in the LB model
         ds(nElem)=2.0*ur*DT/ElemChordR
