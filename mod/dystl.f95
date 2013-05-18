@@ -16,9 +16,10 @@ MODULE dystl
         ! Modified Boeing-Vertol (Gormont) model      
         real :: K1Pos                                   ! lagged AOA magnitude tweak for CL increasing
         real :: K1Neg                                   ! lagged AOA magnitude tweak for CL decreasing
-
+        integer, allocatable :: BV_DynamicFlagL(:)      ! Dynamic stall active flags
+        integer, allocatable :: BV_DynamicFlagD(:)      ! Dynamic stall active flags
+        
         ! Additional BV diagnostic output     
-        integer :: BV_LogicOutputs(2)
         real :: BV_alphaL, BV_alphaD, BV_adotnorm, BV_alrefL, BV_alrefD     
 
 
@@ -32,7 +33,7 @@ MODULE dystl
         real, allocatable :: dF(:)
         real, allocatable :: dCNv(:)
         real, allocatable :: sLEv(:) 
-        integer, allocatable :: LESepState (:)
+        integer, allocatable :: LESepState(:)
         
         ! Other states needed at the program level and discrete lagged values used in the state update process (held for each element)
         real, allocatable :: CLRef(:) 
@@ -68,6 +69,10 @@ MODULE dystl
                 conrad = pi/180.0                                                  
                 condeg = 180.0/pi         
                 
+                ! Boeing-Vertol
+                allocate(BV_DynamicFlagL(MaxSegEnds))
+                allocate(BV_DynamicFlagD(MaxSegEnds))
+                
                 ! Leishman-Beddoes
                 allocate(ds(MaxSegEnds))
                 allocate(dp(MaxSegEnds))
@@ -97,15 +102,15 @@ MODULE dystl
         SUBROUTINE dystl_init_LB()
                 
                 ! Initialize LB model
-                dp = 0.0
-                dF = 0.0
-                dCNv = 0.0
-                LESepState = 0
-                sLEv = 0.0
-                CLRef_Last = 0.0
-                CLRefLE_Last = 0.0
-                Fstat_Last = 1.0
-                cv_Last = 0.0
+                dp(:) = 0.0
+                dF(:) = 0.0
+                dCNv(:) = 0.0
+                LESepState(:) = 0
+                sLEv(:) = 0.0
+                CLRef_Last(:) = 0.0
+                CLRefLE_Last(:) = 0.0
+                Fstat_Last(:) = 1.0
+                cv_Last(:) = 0.0
                 
                 LB_LogicOutputs(:,:)=0
                 
@@ -113,7 +118,8 @@ MODULE dystl
                 
         SUBROUTINE dystl_init_BV()
 
-                BV_LogicOutputs(:)=0
+                BV_DynamicFlagL(:)=0
+                BV_DynamicFlagD(:)=0
                 
         End SUBROUTINE 
               

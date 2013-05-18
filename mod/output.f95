@@ -29,7 +29,7 @@ MODULE output
         
         ! Dynamic stall diagnostic output
         integer :: Output_DSType 
-        character(10000) :: Output_BVHead = 'Normalized Time (-),Theta (rad),Blade,Element,Rev,alphaL (deg),alphaD (deg),adotnorm (-),alrefL (deg),alLagD (deg),DynamicFlagL,DynamicFlagD'
+        character(10000) :: Output_BVHead = 'Normalized Time (-),Theta (rad),Blade,Element,Rev,alphaL (deg),alphaD (deg),adotnorm (-),alrefL (deg),alrefD (deg),DynamicFlagL,DynamicFlagD'
         integer :: Output_NBVOut = 12                           ! Number of BV diagnostic outputs
         integer :: Output_BVRow                                 ! Rows of element row output
         real, allocatable :: Output_BVData(:,:)                 ! Diagnostic data for each timestep   

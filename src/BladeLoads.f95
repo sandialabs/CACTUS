@@ -117,8 +117,8 @@ SUBROUTINE BladeLoads(NLTol,iConv)
                                 Output_BVData(Output_BVRow,8)=BV_adotnorm
                                 Output_BVData(Output_BVRow,9)=BV_alrefL                   ! ref lift AOA        
                                 Output_BVData(Output_BVRow,10)=BV_alrefD                  ! ref drag AOA
-                                Output_BVData(Output_BVRow,11)=BV_LogicOutputs(1)         ! Lift flag
-                                Output_BVData(Output_BVRow,12)=BV_LogicOutputs(2)         ! Drag flag
+                                Output_BVData(Output_BVRow,11)=BV_DynamicFlagL(nej)       ! Lift flag
+                                Output_BVData(Output_BVRow,12)=BV_DynamicFlagD(nej)       ! Drag flag
                         else if (Output_DSFlag == 1 .AND. Output_DSType == 2) then
                                 Output_LBRow=(i-1)*nbe+j
                                 Output_LBData(Output_LBRow,1)=TimeN         ! Normalized simulation time (t*Uinf/Rmax) 
@@ -145,7 +145,7 @@ SUBROUTINE BladeLoads(NLTol,iConv)
                         ! Regression test
                         if (RegTFlag == 1) then
                                 Reg_ElemNum=nej1 
-                                Reg_DFL=BV_LogicOutputs(1)
+                                Reg_DFL=BV_DynamicFlagL(nej)
                                 Reg_LBC=LBCheck
                                 Reg_ElemAOA=alpha*180.0/3.14159 
                                 Reg_ElemCirc=GB(nej1)

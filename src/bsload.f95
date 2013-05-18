@@ -12,14 +12,14 @@ SUBROUTINE bsload(nElem,IsBE,alpha,alpha5,alpha75,adotnorm,Re,umach,ur,CL,CD,CM2
         implicit none
                                                       
         integer nElem, IsBE
-        real alpha, alpha75, adotnorm, Re, umach, ur, CL, CD, CM25, CLCirc, CN, CT, Fx, Fy, Fz, te
+        real alpha, alpha5, alpha75, adotnorm, Re, umach, ur, CL, CD, CM25, CLCirc, CN, CT, Fx, Fy, Fz, te
         
         integer SectInd, nElem1
         real ElemAreaR, ElemChordR, xe, ye, ze, nxe, nye, nze, txe, tye, tze, sxe, sye, sze
         real dal, wP, wPNorm
         real uAve, vAve, wAve, uFSAve, vFSAve, wFSAve, uBlade, vBlade, wBlade, urdn, urdc
         real xe5, ye5, ze5, xe75, ye75, ze75, uBlade5, vBlade5, wBlade5, uBlade75, vBlade75, wBlade75
-        real urdn5, ur5, alpha5, Re5, urdn75, ur75, Re75     
+        real urdn5, ur5, urdn75, ur75   
         real FN, FT, MS, TRx, TRy, TRz, CircDir  
         
         
@@ -96,24 +96,20 @@ SUBROUTINE bsload(nElem,IsBE,alpha,alpha5,alpha75,adotnorm,Re,umach,ur,CL,CD,CM2
             CALL CalcBladeVel(wRotX,wRotY,wRotZ,xe5,ye5,ze5,uBlade5,vBlade5,wBlade5)
             CALL CalcBladeVel(wRotX,wRotY,wRotZ,xe75,ye75,ze75,uBlade75,vBlade75,wBlade75)
             urdn5 = (nxe*(uAve+uFSAve-uBlade5)+nye*(vAve+vFSAve-vBlade5)+nze*(wAve+wFSAve-wBlade5)) 
-            ur5=sqrt(urdn5**2+urdc**2)                                        
-            Re5=ReM*ElemChordR*ur5                                                       
+            ur5=sqrt(urdn5**2+urdc**2)                                                                                             
             alpha5=atan2(urdn5,urdc) 
             urdn75 = (nxe*(uAve+uFSAve-uBlade75)+nye*(vAve+vFSAve-vBlade75)+nze*(wAve+wFSAve-wBlade75))     
-            ur75=sqrt(urdn75**2+urdc**2)                                        
-            Re75=ReM*ElemChordR*ur75                                                       
+            ur75=sqrt(urdn75**2+urdc**2)                                                                                             
             alpha75=atan2(urdn75,urdc)
         else
             alpha5=alpha
             alpha75=alpha
-            Re5=Re
-            Re75=Re
             wPNorm=0.0
         end if
         !--------
         
         ! Evaluate aero coefficients and dynamic stall effects as appropriate
-        Call AeroCoeffs(nElem,alpha75,alpha5,alpha,Re75,Re5,Re,wPNorm,adotnorm,umach,SectInd,IsBE,CL,CD,CN,CT,CLCirc,CM25)
+        Call AeroCoeffs(nElem,alpha75,alpha5,Re,wPNorm,adotnorm,umach,SectInd,IsBE,CL,CD,CN,CT,CLCirc,CM25)
                 
         ! Bound vortex strength from CL via Kutta-Joukowski analogy. 
         ! Save corresponding AOA as well                                                                                          
