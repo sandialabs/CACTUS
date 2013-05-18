@@ -52,12 +52,12 @@ SUBROUTINE LB_DynStall(nElem,CLstat,CDstat,alphaL,alpha5,umach,Re,SectInd,CL,CD)
                 Fstat(nElem)=min((sqrt(4.0*CLRatio)-1.0)**2,1.0)
                 
                 ! JCM test logic
-                LBLogicOutputs(nElem,1)=1
+                LB_LogicOutputs(nElem,1)=1
         else
                 Fstat(nElem)=0
                 
                 ! JCM test logic
-                LBLogicOutputs(nElem,1)=2
+                LB_LogicOutputs(nElem,1)=2
         end if
         ! calc lagged Fstat to represent dynamic TE separation point
         F(nElem)=Fstat(nElem)-dF(nElem)
@@ -75,19 +75,19 @@ SUBROUTINE LB_DynStall(nElem,CLstat,CDstat,alphaL,alpha5,umach,Re,SectInd,CL,CD)
                 CLID=CLstat
                 
                 ! JCM test logic
-                LBLogicOutputs(nElem,2)=1
+                LB_LogicOutputs(nElem,2)=1
         end if
         
         if (CLRatio > 0.25) then
                 CLsep=CLID/4.0
                 
                 ! JCM test logic
-                LBLogicOutputs(nElem,3)=1
+                LB_LogicOutputs(nElem,3)=1
         else
                 CLsep=CLstat
                 
                 ! JCM test logic
-                LBLogicOutputs(nElem,3)=2
+                LB_LogicOutputs(nElem,3)=2
         end if
         CLF=CLsep+CLID*0.25*(F(nElem)+2.0*sqrt(F(nElem)))
         dCDF=KD*(CLstat-CLF)*sign(1.0,CLstat)
@@ -107,7 +107,7 @@ SUBROUTINE LB_DynStall(nElem,CLstat,CDstat,alphaL,alpha5,umach,Re,SectInd,CL,CD)
                 dcv=0.0
                 
                 ! JCM test logic
-                LBLogicOutputs(nElem,4)=1
+                LB_LogicOutputs(nElem,4)=1
         end if
         
         ! Total lift and drag

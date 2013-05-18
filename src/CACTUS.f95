@@ -42,7 +42,7 @@ PROGRAM CACTUS
         real :: NLTol
         real :: CPAve_last
                                                       
-        character(80) :: InputFN, SFOutputFN, RevOutputFN, TSOutputFN, ELOutputFN, RegOutputFN, WakeOutputFN, WakeDefOutputFN, GPOutputFN, FSOutputFN, FNBase                                   
+        character(80) :: InputFN, SFOutputFN, RevOutputFN, TSOutputFN, ELOutputFN, RegOutputFN, WakeOutputFN, WakeDefOutputFN, GPOutputFN, FSOutputFN, DSOutputFN, FNBase                                   
                                                  
         ! Pi definition
         pi = 4.0*atan(1.0)
@@ -155,7 +155,18 @@ PROGRAM CACTUS
                     OPEN(15, FILE=FSOutputFN)
                     write(15,*) trim(FSOutHead)
                 end if
-        end if                                                                             
+        end if         
+                                                                            
+        ! Optional dynamic stall diagnostic output
+        if (Output_DSFlag == 1) then
+                DSOutputFN=trim(FNBase)//'_DSData.csv'
+                OPEN(16, FILE=DSOutputFN)
+                if (Output_DSType == 1) then
+                    Call csvwrite(16,Output_BVHead,Output_BVData,1,0)
+                else if (Output_DSType == 2) then
+                    Call csvwrite(16,Output_LBHead,Output_LBData,1,0)
+                end if
+        end if
                                                                             
         ! If wake update interval set to a negative number, set next wake update iteration to -1 (no wake velocity updates will be performed)
         ! Otherwise, make the first update on the second iteration (when the wake first appears)

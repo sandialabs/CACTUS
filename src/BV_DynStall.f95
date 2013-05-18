@@ -10,7 +10,7 @@ SUBROUTINE BV_DynStall(CLstat,CDstat,alphaL,alphaD,adotnorm,umach,ReL,ReD,Re,Sec
         integer :: SectInd
 
         integer :: isgn, DynamicFlagL, DynamicFlagD
-        real :: dalphaRefMax, TransA, dalphaLRef, dalphaDRef, dalphaL, dalphaD
+        real :: dalphaRefMax, TransA, dalphaLRef, dalphaDRef, dalphaL, dalphaD, Fac
         real :: diff, smachl, hmachl, gammaxl, dgammal, smachm, hmachm, gammaxm, dgammam, gammal, gammam
         real :: alssn, alssp, alrefL, alLagD, alrefD, delN, delP, C, C1, AOA0
         
@@ -30,7 +30,8 @@ SUBROUTINE BV_DynStall(CLstat,CDstat,alphaL,alphaD,adotnorm,umach,ReL,ReD,Re,Sec
         ! Limit reference dalpha to a maximum to keep sign of CL the same for
         ! alpha and lagged alpha (considered a reasonable lag...). Note:
         ! magnitude increasing and decreasing effect ratios are maintained.
-        dalphaRefMax=min(abs(alssp-AOA0),abs(alssn-AOA0))/max(k1pos,k1neg)
+        Fac=.9 ! Margin to ensure that dalphaRef is never large enough to make alrefL == AOA0 (blows up linear expansion model)
+        dalphaRefMax=Fac*min(abs(alssp-AOA0),abs(alssn-AOA0))/max(k1pos,k1neg)
         TransA=.5*dalphaRefMax ! transition region for fairing lagged AOA in pure lag model
         
         ! Dynamic flags
@@ -126,9 +127,16 @@ SUBROUTINE BV_DynStall(CLstat,CDstat,alphaL,alphaD,adotnorm,umach,ReL,ReD,Re,Sec
                 CD=CDstat                                                                              
         end if
         
-        ! Fill logic outputs
-        BVLogicOutputs(1)=DynamicFlagL
-        BVLogicOutputs(2)=DynamicFlagD
+        
+        ! Diagnostic output
+        BV_alphaL=alphaL*condeg
+        BV_alphaD=alphaD*condeg
+        BV_adotnorm=adotnorm
+        BV_alrefL=alrefL*condeg           
+        BV_alrefD=alrefD*condeg           
+        BV_LogicOutputs(1)=DynamicFlagL
+        BV_LogicOutputs(2)=DynamicFlagD
+       
         
 Return
 End

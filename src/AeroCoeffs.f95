@@ -16,8 +16,7 @@ SUBROUTINE AeroCoeffs(nElem,alpha75,alpha5,alpha,Re75,Re5,Re,wPNorm,adotnorm,uma
         CALL intp(Re75,alpha75*condeg,CLstat75,C,C1,SectInd) 
         CALL intp(Re5,alpha5*condeg,CLstat5,CDstat5,CM25stat,SectInd)
         
-        ! Apply pitch rate effects by analogy to pitching flat plate potential flow theory 
-        ! (SAND81-7017) 
+        ! Apply pitch rate effects by analogy to pitching flat plate potential flow theory (SAND report)
         CL5=CLstat75
         CD5=CDstat5
         CM25=CM25stat+cos(alpha5)*(CLstat75-CLstat5)/4.0
@@ -48,8 +47,7 @@ SUBROUTINE AeroCoeffs(nElem,alpha75,alpha5,alpha,Re75,Re5,Re,wPNorm,adotnorm,uma
         CN=CL5*cos(alpha5)+CD5*sin(alpha5)                                   
         CT=-CL5*sin(alpha5)+CD5*cos(alpha5) 
         
-        ! Calc tangential added mass increment by analogy to pitching flat plate potential flow theory 
-        ! (SAND81-7017) 
+        ! Calc tangential added mass increment by analogy to pitching flat plate potential flow theory (SAND report) 
         dCTAM=2.0/cos(alpha5)*wPNorm*CM25stat-CLstat5/2.0*wPNorm
         ! Add in alphadot added mass effects (Theodorsen flat plate approx., Katz ch. 13)
         dCLAD=pi*adotnorm
@@ -65,9 +63,9 @@ SUBROUTINE AeroCoeffs(nElem,alpha75,alpha5,alpha,Re75,Re5,Re,wPNorm,adotnorm,uma
         CT=CT+Fac*dCTAM
         CN=CN+Fac*dCNAM
         
-        ! Calc quarter-chord lift and drag coefficient for reference
-        CL=CN*cos(alpha)-CT*sin(alpha)
-        CD=CN*sin(alpha)+CT*cos(alpha)
+        ! Calc total lift and drag coefficient based on flow direction at half-chord for reference
+        CL=CN*cos(alpha5)-CT*sin(alpha5)
+        CD=CN*sin(alpha5)+CT*cos(alpha5)
                       		
 Return
 End

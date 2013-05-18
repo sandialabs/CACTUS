@@ -1,4 +1,4 @@
-SUBROUTINE bsload(nElem,IsBE,alpha,Re,umach,ur,CN,CT,Fx,Fy,Fz,te) 
+SUBROUTINE bsload(nElem,IsBE,alpha,alpha5,alpha75,adotnorm,Re,umach,ur,CL,CD,CM25,CLCirc,CN,CT,Fx,Fy,Fz,te) 
        
         use element
         use blade
@@ -12,15 +12,15 @@ SUBROUTINE bsload(nElem,IsBE,alpha,Re,umach,ur,CN,CT,Fx,Fy,Fz,te)
         implicit none
                                                       
         integer nElem, IsBE
-        real alpha, Re, umach, ur, CN, CT, Fx, Fy, Fz, te
+        real alpha, alpha75, adotnorm, Re, umach, ur, CL, CD, CM25, CLCirc, CN, CT, Fx, Fy, Fz, te
         
         integer SectInd, nElem1
         real ElemAreaR, ElemChordR, xe, ye, ze, nxe, nye, nze, txe, tye, tze, sxe, sye, sze
-        real adotnorm, dal, wP, wPNorm
+        real dal, wP, wPNorm
         real uAve, vAve, wAve, uFSAve, vFSAve, wFSAve, uBlade, vBlade, wBlade, urdn, urdc
         real xe5, ye5, ze5, xe75, ye75, ze75, uBlade5, vBlade5, wBlade5, uBlade75, vBlade75, wBlade75
-        real urdn5, ur5, alpha5, Re5, urdn75, ur75, alpha75, Re75     
-        real CL, CD, CM25, FN, FT, MS, TRx, TRy, TRz, CLCirc, CircDir  
+        real urdn5, ur5, alpha5, Re5, urdn75, ur75, Re75     
+        real FN, FT, MS, TRx, TRy, TRz, CircDir  
         
         
         ! Calculates aero loads on a blade element. Static and dynamic airfoil characteristics calculated here...

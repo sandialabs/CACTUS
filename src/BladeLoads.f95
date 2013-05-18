@@ -2,8 +2,8 @@ SUBROUTINE BladeLoads(NLTol,iConv)
 
         use parameters
         use pidef
-	use blade            
-	use configr
+        use blade            
+        use configr
         use regtest
         use output       
         use element
@@ -11,10 +11,10 @@ SUBROUTINE BladeLoads(NLTol,iConv)
         use dystl
 
         Implicit None
-	
+        
         integer iConv
         integer i, j, nei, nej, nej1, IsBE, Loop, LBCheck
-        real alpha, Re, umach, ur, CN, CT, te, NLTol, dgb, Fx, Fy, Fz
+        real alpha, alpha5, alpha75, adotnorm, Re, umach, ur, CL, CD, CM25, CLCirc, CN, CT, te, NLTol, dgb, Fx, Fy, Fz
         real CTExcr
         
         ! Calculates blade performance, bound and new shed vorticity        
@@ -27,8 +27,8 @@ SUBROUTINE BladeLoads(NLTol,iConv)
         CFy_B=0.0
         CFz_B=0.0 
        
-	iConv=0											                                           
-	do i=1,nb
+        iConv=0                                                                                                                            
+        do i=1,nb
                                                                                                              
                 ! Zero out current blade loads
                 Blades(i)%CP=0.0
@@ -37,19 +37,19 @@ SUBROUTINE BladeLoads(NLTol,iConv)
                 Blades(i)%CFy=0.0
                 Blades(i)%CFz=0.0                                                                                             
                                                                                                              
-		nei=1+(i-1)*(nbe+1)                                               
-		do j=1,nbe                                                     
-			nej=nei+j                                                         
-			nej1=nej-1 
-			
-			IsBE=0
-			if (j==1 .OR. j==nbe) then
-				IsBE=1
-			end if
-			                                                                                                                             
-			! Calculate the loads on the blade segment                                                                                              
-			CALL bsload(nej,IsBE,alpha,Re,umach,ur,CN,CT,Fx,Fy,Fz,te) 
-			                                                                                  
+                nei=1+(i-1)*(nbe+1)                                               
+                do j=1,nbe                                                     
+                        nej=nei+j                                                         
+                        nej1=nej-1 
+                        
+                        IsBE=0
+                        if (j==1 .OR. j==nbe) then
+                                IsBE=1
+                        end if
+                                                                                                                                                     
+                        ! Calculate the loads on the blade segment                                                                                              
+                        CALL bsload(nej,IsBE,alpha,alpha5,alpha75,adotnorm,Re,umach,ur,CL,CD,CM25,CLCirc,CN,CT,Fx,Fy,Fz,te)
+                                                                                                          
                         if (TSFilFlag == 1) then
                             ! Don't allow NL iteration to update bound vorticity (fixed at filtered value)
                             ! This trivializes the NL iteration...
@@ -85,27 +85,52 @@ SUBROUTINE BladeLoads(NLTol,iConv)
                                 Output_ELData(Output_ELRow,3)=i      
                                 Output_ELData(Output_ELRow,4)=j 
                                 Output_ELData(Output_ELRow,5)=irev
-                                Output_ELData(Output_ELRow,6)=alpha*condeg              ! Element angle of attack
-                                Output_ELData(Output_ELRow,7)=Re                        ! Element Reynolds number based on local chord and flow velocity
-                                Output_ELData(Output_ELRow,8)=umach                     ! Element Mach number based on local flow velocity
-                                Output_ELData(Output_ELRow,9)=ur                        ! Element velocity ratio with freestream
-                                Output_ELData(Output_ELRow,10)=CN                        ! Element normal force coefficient (per span) based on local chord and flow velocity
-                                Output_ELData(Output_ELRow,11)=CT                       ! Element tangential force coefficient (per span) based on local chord and flow velocity
-                                Output_ELData(Output_ELRow,12)=Fx                       ! Element global x force coefficient based on freestream flow and turbine area
-                                Output_ELData(Output_ELRow,13)=Fy                       ! Element global y force coefficient based on freestream flow and turbine area
-                                Output_ELData(Output_ELRow,14)=Fz                       ! Element global z force coefficient based on freestream flow and turbine area
-                                Output_ELData(Output_ELRow,15)=te                       ! Element torque coefficient contribution based on freestream flow, turbine area, and Rmax       
-                                
-                                ! BV Logic
-                                Output_ELData(Output_ELRow,16)=BVLogicOutputs(1)          ! BV Dynamic stall flag for lift coefficient
-                                Output_ELData(Output_ELRow,17)=BVLogicOutputs(2)          ! BV Dynamic stall flag for drag coefficient
-                                
+                                Output_ELData(Output_ELRow,6)=alpha*condeg              ! Element angle of attack @ 25% chord
+                                Output_ELData(Output_ELRow,7)=alpha5*condeg             ! Element angle of attack @ 50% chord
+                                Output_ELData(Output_ELRow,8)=alpha75*condeg            ! Element angle of attack @ 75% chord
+                                Output_ELData(Output_ELRow,9)=adotnorm                  ! Normalized AOA rate                               
+                                Output_ELData(Output_ELRow,10)=Re                       ! Element Reynolds number based on local chord and flow velocity
+                                Output_ELData(Output_ELRow,11)=umach                    ! Element Mach number based on local flow velocity
+                                Output_ELData(Output_ELRow,12)=ur                       ! Element velocity ratio with freestream
+                                Output_ELData(Output_ELRow,13)=CL                       ! Element lift coeff (defined with alpha5 flow direction)
+                                Output_ELData(Output_ELRow,14)=CD                       ! Element drag coeff (defined with alpha5 flow direction)
+                                Output_ELData(Output_ELRow,15)=CM25                     ! Element moment coeff (about quarter-chord point)
+                                Output_ELData(Output_ELRow,16)=CLCirc                   ! Element circulatory lift coeff (defined with alpha5 flow direction and specifies element bound circ strength)
+                                Output_ELData(Output_ELRow,17)=CN                       ! Element normal force coefficient (per span) based on local chord and flow velocity
+                                Output_ELData(Output_ELRow,18)=CT                       ! Element tangential force coefficient (per span) based on local chord and flow velocity
+                                Output_ELData(Output_ELRow,19)=Fx                       ! Element global x force coefficient based on freestream flow and turbine area
+                                Output_ELData(Output_ELRow,20)=Fy                       ! Element global y force coefficient based on freestream flow and turbine area
+                                Output_ELData(Output_ELRow,21)=Fz                       ! Element global z force coefficient based on freestream flow and turbine area
+                                Output_ELData(Output_ELRow,22)=te                       ! Element torque coefficient contribution based on freestream flow, turbine area, and Rmax       
+                        end if
+
+                        ! Dynamic stall diagnostic output
+                        if (Output_DSFlag == 1 .AND. Output_DSType == 1) then
+                                Output_BVRow=(i-1)*nbe+j
+                                Output_BVData(Output_BVRow,1)=TimeN         ! Normalized simulation time (t*Uinf/Rmax) 
+                                Output_BVData(Output_BVRow,2)=Theta         ! Phase angle
+                                Output_BVData(Output_BVRow,3)=i      
+                                Output_BVData(Output_BVRow,4)=j 
+                                Output_BVData(Output_BVRow,5)=irev
+                                Output_BVData(Output_BVRow,6)=BV_alphaL
+                                Output_BVData(Output_BVRow,7)=BV_alphaD
+                                Output_BVData(Output_BVRow,8)=BV_adotnorm
+                                Output_BVData(Output_BVRow,9)=BV_alrefL                   ! ref lift AOA        
+                                Output_BVData(Output_BVRow,10)=BV_alrefD                  ! ref drag AOA
+                                Output_BVData(Output_BVRow,11)=BV_LogicOutputs(1)         ! Lift flag
+                                Output_BVData(Output_BVRow,12)=BV_LogicOutputs(2)         ! Drag flag
+                        else if (Output_DSFlag == 1 .AND. Output_DSType == 2) then
+                                Output_LBRow=(i-1)*nbe+j
+                                Output_LBData(Output_LBRow,1)=TimeN         ! Normalized simulation time (t*Uinf/Rmax) 
+                                Output_LBData(Output_LBRow,2)=Theta         ! Phase angle
+                                Output_LBData(Output_LBRow,3)=i      
+                                Output_LBData(Output_LBRow,4)=j 
+                                Output_LBData(Output_LBRow,5)=irev
                                 ! LB Logic 
                                 do Loop=1,9
-                                        Output_ELData(Output_ELRow,17+Loop)=LBLogicOutputs(nej,Loop)   
+                                        Output_LBData(Output_LBRow,5+Loop)=LB_LogicOutputs(nej,Loop)   
                                 end do
-                                Output_ELData(Output_ELRow,27)=LBCheck           
-                                
+                                Output_ELData(Output_ELRow,15)=LBCheck
                         end if
 
                         
@@ -120,7 +145,7 @@ SUBROUTINE BladeLoads(NLTol,iConv)
                         ! Regression test
                         if (RegTFlag == 1) then
                                 Reg_ElemNum=nej1 
-                                Reg_DFL=BVLogicOutputs(1)
+                                Reg_DFL=BV_LogicOutputs(1)
                                 Reg_LBC=LBCheck
                                 Reg_ElemAOA=alpha*180.0/3.14159 
                                 Reg_ElemCirc=GB(nej1)
@@ -128,7 +153,7 @@ SUBROUTINE BladeLoads(NLTol,iConv)
                                 Call WriteRegTOutput(1)                  
                         end if                                                
                                                                   
-		end do
+                end do
                 
                 ! Add to total blades output
                 CTR_B=CTR_B + Blades(i)%CTR
@@ -138,7 +163,7 @@ SUBROUTINE BladeLoads(NLTol,iConv)
                 CFz_B=CFz_B + Blades(i)%CFz
 
 
-	end do
+        end do
                                                                  
         ! Apply any user specified machine level excrescence torque. CTExcrM = TorqueExcr / (1/2*rho*Utip^2*Rmax^3)
         CTExcr = CTExcrM*ut**2/at 

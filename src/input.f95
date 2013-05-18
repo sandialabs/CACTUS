@@ -40,7 +40,7 @@ SUBROUTINE input(ErrFlag)
                 
 	! Namelist input file declaration
 	NAMELIST/ConfigInputs/RegTFlag,DiagOutFlag,GPFlag,FSFlag,nr,convrg,nti,iut,iWall,ivtxcor,VCRFB,VCRFT,VCRFS,ifc,convrgf,nric,ntif,iutf,ixterm,xstop, &
-                              Output_ELFlag,WallOutFlag,Incompr,DSFlag,PRFlag,k1pos,k1neg,GPGridSF,FSGridSF,TSFilFlag,ntsf
+                              Output_ELFlag,Output_DSFlag,WallOutFlag,Incompr,DSFlag,PRFlag,k1pos,k1neg,GPGridSF,FSGridSF,TSFilFlag,ntsf
 	NAMELIST/CaseInputs/jbtitle,GeomFilePath,RPM,Ut,nSect,AFDPath&
              &,hAG,dFS,rho,vis,tempr,hBLRef,slex,Cdpar,CTExcrM&
              &,WakeOutFlag,WLI,Igust,gustamp,gusttime,gustX0
@@ -49,6 +49,7 @@ SUBROUTINE input(ErrFlag)
         RegTFlag = 0 
         DiagOutFlag = 0
         Output_ELFlag = 0 
+        Output_DSFlag = 0
         WakeOutFlag = 0 
         WallOutFlag = 0
         GPFlag=0
@@ -136,7 +137,7 @@ SUBROUTINE input(ErrFlag)
 	CALL wakedata_cns()
 	CALL freestream_cns(MaxWakeNodes,MaxSegEnds)
 	CALL dystl_cns(MaxAirfoilSect,MaxReVals,MaxSegEnds)
-        CALL output_cns(MaxSeg,MaxBlades,MaxStruts)       
+        CALL output_cns(MaxSeg,MaxBlades,MaxStruts,DSFlag)       
         
 	! Write from buffer...    
         WakeLineInd(1:NWakeInd)=WLI(1:NWakeInd)       

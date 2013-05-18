@@ -60,6 +60,15 @@ SUBROUTINE EndTS()
                 Call csvwrite(11,Output_ELHead,Output_ELData,0,-1)
         end if
         
+        ! Write to dynamic stall diagnostic data csv file
+        if (Output_DSFlag == 1) then
+                if (Output_DSType == 1) then
+                    Call csvwrite(16,Output_BVHead,Output_BVData,0,-1)
+                else if (Output_DSType == 2) then
+                    Call csvwrite(16,Output_LBHead,Output_LBData,0,-1)
+                end if
+        end if
+        
         ! Reg test
         if (RegTFlag == 1) then
                 Reg_CPOut=CP     

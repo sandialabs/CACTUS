@@ -1,6 +1,6 @@
 MODULE dystl
-	
-	! Dynamic stall data
+        
+        ! Dynamic stall data
         
         ! Module private data
         private :: pi, conrad, condeg
@@ -14,12 +14,13 @@ MODULE dystl
 
 
         ! Modified Boeing-Vertol (Gormont) model      
-	real :: K1Pos					! lagged AOA magnitude tweak for CL increasing
-	real :: K1Neg					! lagged AOA magnitude tweak for CL decreasing
+        real :: K1Pos                                   ! lagged AOA magnitude tweak for CL increasing
+        real :: K1Neg                                   ! lagged AOA magnitude tweak for CL decreasing
 
-        ! Logic outputs
-        integer :: BVLogicOutputs(2)
-        
+        ! Additional BV diagnostic output     
+        integer :: BV_LogicOutputs(2)
+        real :: BV_alphaL, BV_alphaD, BV_adotnorm, BV_alrefL, BV_alrefD     
+
 
         ! Leishman-Beddoes model
         
@@ -48,19 +49,19 @@ MODULE dystl
         real, allocatable :: Fstat_Last(:)
         real, allocatable :: cv_Last(:)
         
-        ! Logic outptus
+        ! Additional LB diagnostic output
         integer, parameter :: NLBL = 9
-        integer, allocatable :: LBLogicOutputs(:,:) 
-        integer :: Logic_W(NLBL) = [1,1,1,1,1,3,2,1,1]             ! Logic weights for logic checksum
+        integer, allocatable :: LB_LogicOutputs(:,:) 
+        integer :: Logic_W(NLBL) = [1,1,1,1,1,3,2,1,1]             ! Logic weights for logic checksum  
         
         
-	CONTAINS
-	
-	SUBROUTINE dystl_cns(MaxAirfoilSect, MaxReVals, MaxSegEnds)
-		
-		! Constructor for the arrays in this module
-		
-		integer :: MaxAirfoilSect, MaxReVals, MaxSegEnds
+        CONTAINS
+        
+        SUBROUTINE dystl_cns(MaxAirfoilSect, MaxReVals, MaxSegEnds)
+                
+                ! Constructor for the arrays in this module
+                
+                integer :: MaxAirfoilSect, MaxReVals, MaxSegEnds
                 
                 ! Pi definition
                 pi = 4.0*atan(1.0)
@@ -89,12 +90,12 @@ MODULE dystl
                 allocate(Fstat_Last(MaxSegEnds))
                 allocate(cv_Last(MaxSegEnds))
                 
-                allocate(LBLogicOutputs(MaxSegEnds,NLBL))
+                allocate(LB_LogicOutputs(MaxSegEnds,NLBL))
                 
-	End SUBROUTINE
+        End SUBROUTINE
         
         SUBROUTINE dystl_init_LB()
-	        
+                
                 ! Initialize LB model
                 dp = 0.0
                 dF = 0.0
@@ -106,13 +107,13 @@ MODULE dystl
                 Fstat_Last = 1.0
                 cv_Last = 0.0
                 
-                LBLogicOutputs(:,:)=0
+                LB_LogicOutputs(:,:)=0
                 
         End SUBROUTINE   
                 
         SUBROUTINE dystl_init_BV()
 
-                BVLogicOutputs(:)=0
+                BV_LogicOutputs(:)=0
                 
         End SUBROUTINE 
               
@@ -215,14 +216,14 @@ MODULE dystl
                                                 sLEv(nElem)=0 ! reset leading edge vortex time counter
                                                 
                                                 ! Set logic state flags (for model diagnosis output)
-                                                LBLogicOutputs(nElem,5)=1
+                                                LB_LogicOutputs(nElem,5)=1
                                         else if (LESepState(nElem)==1 .AND. (CLRefLE(nElem)<CLCritP(nElem) .AND. CLRefLE(nElem)>CLCritN(nElem))) then
                                                 ! Out of LE separation state
                                                 LESepState(nElem)=0
                                                 sLEv(nElem)=0 ! reset leading edge vortex time counter
                                                 
                                                 ! Set logic state flags (for model diagnosis output)
-                                                LBLogicOutputs(nElem,5)=2
+                                                LB_LogicOutputs(nElem,5)=2
                                         end if
                                         
                                         ! Set time constants based on LE separation state and TE separation point
@@ -235,17 +236,17 @@ MODULE dystl
                                                                 Tv=TvRef
                                                                 
                                                                 ! Set logic state flags (for model diagnosis output)
-                                                                LBLogicOutputs(nElem,8)=1
+                                                                LB_LogicOutputs(nElem,8)=1
                                                         else
                                                                 Tf=1.0/2.0*TfRef
                                                                 Tv=1.0/2.0*TvRef
                                                                 
                                                                 ! Set logic state flags (for model diagnosis output)
-                                                                LBLogicOutputs(nElem,8)=2
+                                                                LB_LogicOutputs(nElem,8)=2
                                                         end if
                                                         
                                                         ! Set logic state flags (for model diagnosis output)
-                                                        LBLogicOutputs(nElem,7)=1
+                                                        LB_LogicOutputs(nElem,7)=1
                                                 else if (sLEv(nElem)<2.0*TvL) then
                                                         if (CLRateFlag(nElem)>0) then
                                                                 ! orig 
@@ -255,17 +256,17 @@ MODULE dystl
                                                                 Tv=TvRef
                                                                 
                                                                 ! Set logic state flags (for model diagnosis output)
-                                                                LBLogicOutputs(nElem,8)=3
+                                                                LB_LogicOutputs(nElem,8)=3
                                                         else
                                                                 Tf=1.0/2.0*TfRef
                                                                 Tv=1.0/2.0*TvRef
                                                                 
                                                                 ! Set logic state flags (for model diagnosis output)
-                                                                LBLogicOutputs(nElem,8)=4                                                        
+                                                                LB_LogicOutputs(nElem,8)=4                                                        
                                                         end if
                                                         
                                                         ! Set logic state flags (for model diagnosis output)
-                                                        LBLogicOutputs(nElem,7)=2                                                
+                                                        LB_LogicOutputs(nElem,7)=2                                                
                                                 else
                                                         ! orig
                                                         !Tf=4.0*TfRef
@@ -274,27 +275,27 @@ MODULE dystl
                                                         Tv=TvRef
                                                         
                                                         ! Set logic state flags (for model diagnosis output)
-                                                        LBLogicOutputs(nElem,7)=3
+                                                        LB_LogicOutputs(nElem,7)=3
                                                 end if
                                                 
                                                 ! Set logic state flags (for model diagnosis output)
-                                                LBLogicOutputs(nElem,6)=1
+                                                LB_LogicOutputs(nElem,6)=1
                                         else
                                                 if (F(nElem)>0.7) then
                                                         Tf=TfRef
                                                         
                                                         ! Set logic state flags (for model diagnosis output)
-                                                        LBLogicOutputs(nElem,7)=4
+                                                        LB_LogicOutputs(nElem,7)=4
                                                 else
                                                         Tf=2*TfRef
                                                         
                                                         ! Set logic state flags (for model diagnosis output)
-                                                        LBLogicOutputs(nElem,7)=5
+                                                        LB_LogicOutputs(nElem,7)=5
                                                 end if
                                                 Tv=TvRef
                                                 
                                                 ! Set logic state flags (for model diagnosis output)
-                                                LBLogicOutputs(nElem,6)=2
+                                                LB_LogicOutputs(nElem,6)=2
                                         end if
                                         
                                         ! update LE vortex time counter if in LE separation state
@@ -302,7 +303,7 @@ MODULE dystl
                                                 sLEv(nElem)=sLEv(nElem)+ds(nElem)
                                                 
                                                 ! Set logic state flags (for model diagnosis output)
-                                                LBLogicOutputs(nElem,9)=1
+                                                LB_LogicOutputs(nElem,9)=1
                                         end if
                                         
                                         ! Update states, first order lag equations, exponential recursion form (midpoint rule version)
@@ -332,7 +333,7 @@ MODULE dystl
                 
                 LBCheck=0
                 do Loop=1,NLBL
-                        LBCheck=LBCheck+LBLogicOutputs(nElem,Loop)*Logic_W(Loop)
+                        LBCheck=LBCheck+LB_LogicOutputs(nElem,Loop)*Logic_W(Loop)
                 end do
                         
         End SUBROUTINE
