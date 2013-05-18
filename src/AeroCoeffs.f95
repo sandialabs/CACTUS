@@ -9,7 +9,7 @@ SUBROUTINE AeroCoeffs(nElem,alpha75,alpha5,Re,wPNorm,adotnorm,umach,SectInd,IsBE
         integer :: SectInd, IsBE, nElem
         real :: alpha75, alpha5, adotnorm, wPNorm, Re, umach, CL, CD, CN, CT, CLCirc
         real :: CLstat75, CLstat5, CDstat75, CLdyn5, CDdyn5, dCLAD, dCTAM, dCNAM, CL5, CD5, C, C1, CM25stat, CM25
-        real :: alphaL, aref, Fac
+        real :: alphaL, alphaD, aref, Fac
         
         
         ! Calc static characteristics
@@ -23,13 +23,12 @@ SUBROUTINE AeroCoeffs(nElem,alpha75,alpha5,Re,wPNorm,adotnorm,umach,SectInd,IsBE
         alphaL=alpha75
         CLCirc=CLstat75
         
-        ! If blade end segment or no dynamic stall, use static values, else calc dynamic stall
-        if (IsBE == 0 .AND. DSFlag/=0) then
+        ! If no dynamic stall, use static values, else calc dynamic stall
+        if (DSFlag/=0) then
             
             if (DSFlag==1) then
-                ! Modified Boeing-Vertol approach
-                !Call BV_DynStall(nElem,CL5,CD5,alphaL,adotnorm,umach,Re,SectInd,CLdyn5,CDdyn5)   
-                Call BV_DynStall(nElem,CL5,CD5,alphaL,alphaL,adotnorm,umach,Re,Re,Re,SectInd,CLdyn5,CDdyn5)   
+                ! Modified Boeing-Vertol approach  
+                Call BV_DynStall(nElem,CL5,CD5,alphaL,adotnorm,umach,Re,SectInd,CLdyn5,CDdyn5)   
             else
                 ! Leishman-Beddoes model
                 Call LB_DynStall(nElem,CL5,CD5,alphaL,alpha5,umach,Re,SectInd,CLdyn5,CDdyn5)

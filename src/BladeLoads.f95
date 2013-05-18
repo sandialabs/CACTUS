@@ -112,13 +112,12 @@ SUBROUTINE BladeLoads(NLTol,iConv)
                                 Output_BVData(Output_BVRow,3)=i      
                                 Output_BVData(Output_BVRow,4)=j 
                                 Output_BVData(Output_BVRow,5)=irev
-                                Output_BVData(Output_BVRow,6)=BV_alphaL
-                                Output_BVData(Output_BVRow,7)=BV_alphaD
-                                Output_BVData(Output_BVRow,8)=BV_adotnorm
-                                Output_BVData(Output_BVRow,9)=BV_alrefL                   ! ref lift AOA        
-                                Output_BVData(Output_BVRow,10)=BV_alrefD                  ! ref drag AOA
-                                Output_BVData(Output_BVRow,11)=BV_DynamicFlagL(nej)       ! Lift flag
-                                Output_BVData(Output_BVRow,12)=BV_DynamicFlagD(nej)       ! Drag flag
+                                Output_BVData(Output_BVRow,6)=BV_alpha
+                                Output_BVData(Output_BVRow,7)=BV_adotnorm
+                                Output_BVData(Output_BVRow,8)=BV_alrefL                   ! ref lift AOA        
+                                Output_BVData(Output_BVRow,9)=BV_alrefD                   ! ref drag AOA
+                                Output_BVData(Output_BVRow,10)=BV_DynamicFlagL(nej)       ! Lift flag
+                                Output_BVData(Output_BVRow,11)=BV_DynamicFlagD(nej)       ! Drag flag
                         else if (Output_DSFlag == 1 .AND. Output_DSType == 2) then
                                 Output_LBRow=(i-1)*nbe+j
                                 Output_LBData(Output_LBRow,1)=TimeN         ! Normalized simulation time (t*Uinf/Rmax) 

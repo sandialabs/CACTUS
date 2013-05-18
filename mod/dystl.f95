@@ -20,7 +20,7 @@ MODULE dystl
         integer, allocatable :: BV_DynamicFlagD(:)      ! Dynamic stall active flags
         
         ! Additional BV diagnostic output     
-        real :: BV_alphaL, BV_alphaD, BV_adotnorm, BV_alrefL, BV_alrefD     
+        real :: BV_alpha, BV_adotnorm, BV_alrefL, BV_alrefD     
 
 
         ! Leishman-Beddoes model

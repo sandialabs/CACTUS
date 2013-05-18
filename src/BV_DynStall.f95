@@ -1,4 +1,4 @@
-SUBROUTINE BV_DynStall(nElem,CLstat,CDstat,alphaL,alphaD,adotnorm,umach,ReL,ReD,Re,SectInd,CL,CD)
+SUBROUTINE BV_DynStall(nElem,CLstat,CDstat,alpha,adotnorm,umach,Re,SectInd,CL,CD)
 
         use airfoil
         use dystl
@@ -6,7 +6,7 @@ SUBROUTINE BV_DynStall(nElem,CLstat,CDstat,alphaL,alphaD,adotnorm,umach,ReL,ReD,
 
         implicit none
 
-        real :: CLstat, CDstat, CL, CD, alphaL, alphaD, adotnorm, umach, ReL, ReD, Re
+        real :: CLstat, CDstat, CL, CD, alpha, adotnorm, umach, Re
         integer :: SectInd, nElem
 
         integer :: isgn
@@ -43,10 +43,10 @@ SUBROUTINE BV_DynStall(nElem,CLstat,CDstat,alphaL,alphaD,adotnorm,umach,ReL,ReD,
         dalphaLRef=gammal*sqrt(abs(adotnorm))                              
         dalphaLRef=min(dalphaLRef,dalphaRefMax)
         
-        if ((adotnorm*(alphaL-AOA0)) < 0.0) then     
+        if ((adotnorm*(alpha-AOA0)) < 0.0) then     
                 ! Magnitude of CL decreasing                                     
                 dalphaL=k1neg*dalphaLRef                                                     
-                alrefL=alphaL-dalphaL*isgn                                           
+                alrefL=alpha-dalphaL*isgn                                           
         
                 ! Only switch DS off using lagged alpha
                 if (BV_DynamicFlagL(nElem) == 1 .AND. (alrefL > alssn .AND. alrefL < alssp)) then
@@ -56,10 +56,10 @@ SUBROUTINE BV_DynStall(nElem,CLstat,CDstat,alphaL,alphaD,adotnorm,umach,ReL,ReD,
         else                
                 ! Magnitude of CL increasing                                     
                 dalphaL=dalphaLRef*k1pos                                               
-                alrefL=alphaL-dalphaL*isgn                                           
+                alrefL=alpha-dalphaL*isgn                                           
         
                 ! switch DS on or off using alpha
-                if (alphaL <= alssn .OR. alphaL >= alssp) then
+                if (alpha <= alssn .OR. alpha >= alssp) then
                         BV_DynamicFlagL(nElem)=1
                 else     
                         BV_DynamicFlagL(nElem)=0
@@ -74,10 +74,10 @@ SUBROUTINE BV_DynStall(nElem,CLstat,CDstat,alphaL,alphaD,adotnorm,umach,ReL,ReD,
         dalphaDRef=gammam*sqrt(abs(adotnorm))                              
         dalphaDRef=min(dalphaDRef,dalphaRefMax)
         
-        if ((adotnorm*(alphaD-AOA0)) < 0.0) then     
+        if ((adotnorm*(alpha-AOA0)) < 0.0) then     
                 ! Magnitude of CL decreasing                                                                                   
                 dalphaD=k1neg*dalphaDRef                                                 
-                alLagD=alphaD-dalphaD*isgn
+                alLagD=alpha-dalphaD*isgn
                 
                 ! Only switch DS off using lagged alpha
                 if (BV_DynamicFlagD(nElem) == 1) then
@@ -90,11 +90,11 @@ SUBROUTINE BV_DynStall(nElem,CLstat,CDstat,alphaL,alphaD,adotnorm,umach,ReL,ReD,
         else                
                 ! Magnitude of CL increasing                                                                                    
                 dalphaD=dalphaDRef*k1pos                                           
-                alLagD=alphaD-dalphaD*isgn 
+                alLagD=alpha-dalphaD*isgn 
         
                 ! switch DS on or off using alpha
-                delN=alssn-alphaD
-                delP=alphaD-alssp
+                delN=alssn-alpha
+                delP=alpha-alssp
         end if
         
         if (delN > TransA .OR. delP > TransA) then
@@ -102,11 +102,11 @@ SUBROUTINE BV_DynStall(nElem,CLstat,CDstat,alphaL,alphaD,adotnorm,umach,ReL,ReD,
                 BV_DynamicFlagD(nElem)=1
         elseif (delN > 0 .AND. delN < TransA) then
                 ! Transition region (fairing effect...)
-                alrefD=alphaD+(alLagD-alphaD)*delN/TransA
+                alrefD=alpha+(alLagD-alpha)*delN/TransA
                 BV_DynamicFlagD(nElem)=1 
         elseif (delP > 0 .AND. delP < TransA) then
                 ! Transition region (fairing effect...)
-                alrefD=alphaD+(alLagD-alphaD)*delP/TransA
+                alrefD=alpha+(alLagD-alpha)*delP/TransA
                 BV_DynamicFlagD(nElem)=1 
         else
                 BV_DynamicFlagD(nElem)=0
@@ -116,8 +116,8 @@ SUBROUTINE BV_DynStall(nElem,CLstat,CDstat,alphaL,alphaD,adotnorm,umach,ReL,ReD,
         if (BV_DynamicFlagL(nElem) == 1) then
                 ! Dynamic stall characteristics                                 
                 ! Linear expansion model for linear region coeffs  
-                CALL intp(ReL,alrefL*condeg,CL,C,C1,SectInd)                                                                                      
-                CL=CL/(alrefL-AOA0)*(alphaL-AOA0) 
+                CALL intp(Re,alrefL*condeg,CL,C,C1,SectInd)                                                                                      
+                CL=CL/(alrefL-AOA0)*(alpha-AOA0) 
         else        
                 ! Static characteristics  
                 CL=CLstat                                      
@@ -126,7 +126,7 @@ SUBROUTINE BV_DynStall(nElem,CLstat,CDstat,alphaL,alphaD,adotnorm,umach,ReL,ReD,
         if (BV_DynamicFlagD(nElem) == 1) then
                 ! Dynamic characteristics                                
                 ! Pure lag model for drag        
-                CALL intp(ReD,alrefD*condeg,C,CD,C1,SectInd)                                                                                    
+                CALL intp(Re,alrefD*condeg,C,CD,C1,SectInd)                                                                                    
         else    
                 ! Static characteristics    
                 CD=CDstat                                                                              
@@ -134,8 +134,7 @@ SUBROUTINE BV_DynStall(nElem,CLstat,CDstat,alphaL,alphaD,adotnorm,umach,ReL,ReD,
         
         
         ! Diagnostic output
-        BV_alphaL=alphaL*condeg
-        BV_alphaD=alphaD*condeg
+        BV_alpha=alpha*condeg
         BV_adotnorm=adotnorm
         BV_alrefL=alrefL*condeg           
         BV_alrefD=alrefD*condeg              

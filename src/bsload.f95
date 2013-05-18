@@ -77,8 +77,8 @@ SUBROUTINE bsload(nElem,IsBE,alpha,alpha5,alpha75,adotnorm,Re,umach,ur,CL,CD,CM2
 
         ur=sqrt(urdn**2+urdc**2)                                          
         alpha=atan2(urdn,urdc) 
-        dal=alpha-AOA_Last(nelem1)                                                                                       
-        adotnorm=dal/DT*ElemChordR/(2.0*max(ur,0.001))  ! adot*c/(2*U)
+!         dal=alpha-AOA_Last(nelem1)                                                                                       
+!         adotnorm=dal/DT*ElemChordR/(2.0*max(ur,0.001))  ! adot*c/(2*U)
         wPNorm=wP*ElemChordR/(2.0*max(ur,0.001))        ! wP*c/(2*U)
                                      
         Re=ReM*ElemChordR*ur                                                         
@@ -106,6 +106,9 @@ SUBROUTINE bsload(nElem,IsBE,alpha,alpha5,alpha75,adotnorm,Re,umach,ur,CL,CD,CM2
             alpha75=alpha
             wPNorm=0.0
         end if
+        
+        dal=alpha75-AOA_Last(nelem1)                                                                                       
+        adotnorm=dal/DT*ElemChordR/(2.0*max(ur,0.001))  ! adot*c/(2*U)
         !--------
         
         ! Evaluate aero coefficients and dynamic stall effects as appropriate
@@ -114,7 +117,8 @@ SUBROUTINE bsload(nElem,IsBE,alpha,alpha5,alpha75,adotnorm,Re,umach,ur,CL,CD,CM2
         ! Bound vortex strength from CL via Kutta-Joukowski analogy. 
         ! Save corresponding AOA as well                                                                                          
         GB_Raw(nElem1)=CircDir*(CLCirc*ElemChordR*ur/2.0)
-        AOA(nElem1)=alpha
+!         AOA(nElem1)=alpha
+        AOA(nElem1)=alpha75
         ! normalized time step used to update states in the LB model
         ds(nElem)=2.0*ur*DT/ElemChordR
         
