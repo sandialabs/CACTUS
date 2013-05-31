@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 # This python script runs a number of single iteration regression tests and diffs output with the expected output...
-# Script should be run from the folder in which the cactus executable exists.
+# Run the RegTest folder and pass the path to the relevant cactus executable as an argument on the command line (ex. runreg.py ../../../cactus)
 # Note: if no differences exist, the regression test output file is deleted for convenience.
 
 import os
@@ -14,15 +14,20 @@ import difflib
 # Note: To debug, call the python debugger module, pdb, as a script with this script as the argument (python -m pdb script.py)
 # or insert: import pdb; pdb.set_trace() above, and call from terminal as usual
 
-RegDir=os.path.dirname(os.path.realpath(__file__))
-print 'Running runreg.py in ' + RegDir
+# Get exe path from command line
+if len(sys.argv) > 1:
+    CACTUSExe=sys.argv[1].strip()
+else:
+    sys.exit('Error: Call runreg.py with the path to the cactus executable on the command line (ex. runreg.py ../../../cactus)')
+#endif
+print 'Running runreg.py with ' + CACTUSExe
 print ''
 
 
 # Run regression test 1
 print 'Running regression test 1'
-IFN=RegDir + '/RegTest1.in'
-CCommand='cactus ' + IFN 
+IFN='RegTest1.in'
+CCommand=CACTUSExe + ' ' + IFN 
 os.system(CCommand)
 
 # clean up standard output files which are meaningless for this calculation
@@ -32,7 +37,7 @@ os.remove('RegTest1_TimeData.csv')
 
 # diff output
 FN1='RegTest1_RegData.out'
-FN2=RegDir + '/RegTest1_RegData_Ex.out'
+FN2='RegTest1_RegData_Ex.out'
 if not filecmp.cmp(FN1,FN2):
     print 'Summary of differences between ' + FN1 + ' and ' + FN2 + ':'
     
@@ -57,8 +62,8 @@ print ''
 
 # Run regression test 2
 print 'Running regression test 2'
-IFN=RegDir + '/RegTest2.in'
-CCommand='cactus ' + IFN 
+IFN='RegTest2.in'
+CCommand=CACTUSExe + ' ' + IFN 
 os.system(CCommand)
 
 # clean up standard output files which are meaningless for this calculation
@@ -68,7 +73,7 @@ os.remove('RegTest2_TimeData.csv')
 
 # diff output
 FN1='RegTest2_RegData.out'
-FN2=RegDir + '/RegTest2_RegData_Ex.out'
+FN2='RegTest2_RegData_Ex.out'
 if not filecmp.cmp(FN1,FN2):
     print 'Summary of differences between ' + FN1 + ' and ' + FN2 + ':'
     
@@ -93,8 +98,8 @@ print ''
 
 # Run regression test 3
 print 'Running regression test 3'
-IFN=RegDir + '/RegTest3.in'
-CCommand='cactus ' + IFN 
+IFN='RegTest3.in'
+CCommand=CACTUSExe + ' ' + IFN 
 os.system(CCommand)
 
 # clean up standard output files which are meaningless for this calculation
@@ -104,7 +109,7 @@ os.remove('RegTest3_TimeData.csv')
 
 # diff output
 FN1='RegTest3_RegData.out'
-FN2=RegDir + '/RegTest3_RegData_Ex.out'
+FN2='RegTest3_RegData_Ex.out'
 if not filecmp.cmp(FN1,FN2):
     print 'Summary of differences between ' + FN1 + ' and ' + FN2 + ':'
     

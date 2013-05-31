@@ -16,6 +16,7 @@
 	convrgf	= .0001
 
     DiagOutFlag=1
+    Output_ELFlag=1
 
 /End
 

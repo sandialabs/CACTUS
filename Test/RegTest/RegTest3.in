@@ -35,11 +35,11 @@
 	Ut 	= 5.0	
 
 	! Turbine geometry
-	GeomFilePath='./trunk/RegTest/TestVAWT.geom'
+	GeomFilePath='../TestGeom/TestVAWT.geom'
 
 	! Airfoil section data
 	nSect 	= 1
-	AFDPath	= './trunk/Airfoil_Section_Data/NACA_0015.dat' 
+	AFDPath	= '../../Airfoil_Section_Data/NACA_0015.dat'
 		
 /End
 

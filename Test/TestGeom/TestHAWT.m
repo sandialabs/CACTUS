@@ -4,7 +4,7 @@ close all
 % Creates test HAWT geometry file
 
 % Add geom creation scripts to path
-path(path,'/ascldap/users/jmurray/Project/CACTUS/stable/trunk/CreateGeom');
+path(path,'../../CreateGeom');
 
 % Params
 R=18.15; % radius (ft)
@@ -42,9 +42,10 @@ if PlotTurbine
     YLim=[-2,2];
     ZLim=[-2,2];
     
-    % Plot element normals
+    % Plot controls
     PlotVec=1;
     SFVec=.5;
+    Trans=.5;
     
     hf=figure(1);
     set(hf,'Position',[303   124   956   610]) 
@@ -62,7 +63,7 @@ if PlotTurbine
     HIn=[];
     PhasePlot=linspace(0,2*pi,150);
     for i=1:length(PhasePlot)
-       H=PlotTurbineGeom(T,hf,PhasePlot(i),HIn,PlotVec,SFVec);
+       H=PlotTurbineGeom(T,hf,PhasePlot(i),HIn,Trans,PlotVec,SFVec);
        HIn=H;
        pause(.01);
     end
