@@ -11,8 +11,8 @@ MODULE output
         real :: Output_SFData(1,11)                             ! Data
         
         ! Revolution average data
-        character(10000) :: Output_RevHead = 'Rev,Power Coeff. (-),Tip Power Coeff. (-),Torque Coeff. (-),Fx Coeff. (-),Fy Coeff. (-),Fz Coeff. (-),Power (kW),Torque (ft-lbs),Delta CPU Time (s),Total CPU Time (s)'
-        real :: Output_RevData(1,11)                ! Revolution average data for each revolution 
+        character(10000) :: Output_RevHead = 'Rev,Power Coeff. (-),Tip Power Coeff. (-),Torque Coeff. (-),Fx Coeff. (-),Fy Coeff. (-),Fz Coeff. (-),Power (kW),Torque (ft-lbs)'
+        real :: Output_RevData(1,9)                ! Revolution average data for each revolution
   
         ! Timestep data
         character(10000) :: Output_TSHead = 'Normalized Time (-),Theta (rad),Rev,Torque Coeff. (-),Power Coeff. (-),Fx Coeff. (-),Fy Coeff. (-),Fz Coeff. (-)'

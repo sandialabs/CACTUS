@@ -17,7 +17,10 @@ INC = $(wildcard $(SRCDIR)/*.inc)
 # for debugging, debug flag and detailed runtime error checking. 
 #FLAGS = -g -C -r8 -Mbounds
 # standard compiler optimization
-FLAGS = -fast -r8
+# Note: was having issues with compiling the code with -fast on newer pgi compilers...
+# using all -fast options other than -Munroll which seems to cause the issue...
+#FLAGS = -fast -r8 
+FLAGS = -O -Mvect=sse -Mcache_align -Mpre -Mnoframe -Mlre -Mflushz -Mautoinline -r8
 # No compiler optimization
 #FLAGS = -r8
 

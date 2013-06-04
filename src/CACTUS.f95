@@ -42,7 +42,7 @@ PROGRAM CACTUS
         real :: NLTol
         real :: CPAve_last
                                                       
-        character(80) :: InputFN, SFOutputFN, RevOutputFN, TSOutputFN, ELOutputFN, RegOutputFN, WakeOutputFN, WakeDefOutputFN, GPOutputFN, FSOutputFN, DSOutputFN, FNBase                                   
+        character(80) :: InputFN, SFOutputFN, RevOutputFN, TSOutputFN, ELOutputFN, RegOutputFN, WakeOutputFN, WakeDefOutputFN, GPOutputFN, FSOutputFN, DSOutputFN, FNBase
                                                  
         ! Pi definition
         pi = 4.0*atan(1.0)
@@ -420,6 +420,8 @@ PROGRAM CACTUS
                 if (DiagOutFlag == 1) then
                         ! Write rev average power
                         write(6,*) 'Revolution Average Power Coeff.: ', CPAve
+                        write(6,'(A,F13.2)') ' Rev Wall Time (sec): ', dtime
+                        write(6,'(A,F13.2)') ' Total Elapsed Wall Time (sec): ', etime
                         write(6,*) ' '
                 end if                                           
                                                            
