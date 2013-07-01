@@ -1,0 +1,858 @@
+DAKOTA version 5.3.1 released 05/15/2013.
+Subversion revision 1608 built Apr 30 2013 12:09:24.
+Running MPI executable in serial mode.
+Start time: Sun Jun 30 20:15:39 2013
+
+-----------------------
+Begin DAKOTA input file
+OptTSR.dak
+-----------------------
+# Runs local surrogate based optimization on CACTUS. The local surrogate is fit to the CACTUS cost function using "global" sampling within a trust
+# region defined for the surrogate function. This keeps the method from having to use the slightly noisy CACTUS results in gradient calculations. 
+# This method is faster (especially when using async parallel CACTUS evalutations in the fitting of the surrogate function) and more robust than 
+# direct gradient optimization on CACTUS output.
+# Note: Apparently, surrogate optimization methods can only minimize a cost function (their trust region method fails for maximization)...
+
+strategy
+	single_method
+	tabular_graphics_data
+	  tabular_graphics_file = 'Opt_Data_Out.dat'
+	method_pointer = 'SBLO'
+
+method
+	id_method = 'SBLO'
+	surrogate_based_local
+	max_iterations = 50
+    convergence_tolerance = 1e-02
+	soft_convergence_limit = 3 # terminate after this number of surrogate model iterations with improvement less than tolerance
+	trust_region
+	  initial_size = 0.5
+	  minimum_size = 1.0e-2
+	output silent
+	# Surrogate model and minimization method pointers
+	model_pointer = 'SURROGATE'
+	approx_method_pointer = 'NLP'
+
+method
+	id_method = 'NLP'
+    output silent
+	dot_bfgs
+	  max_iterations = 50
+	  convergence_tolerance = 1e-8
+
+model
+	id_model = 'SURROGATE'
+	surrogate 
+      global # Surrogate fit with "global" sampling within trust region
+	  # Surrogate function
+	  #polynomial quadratic # simple
+	  gaussian_process surfpack # kriging
+	  # Total samples to take in fitting the surrogate
+	  total_points = 5 # oversample (more than recommended point count) to smooth noisy cost function output
+ 	  #recommended_points
+	  reuse_samples region # reuse samples that are still in the current trust region
+	  # Sampling method and responses pointers   	
+	  responses_pointer = 'SURROGATE_RESP'
+	  dace_method_pointer = 'SAMPLING' 
+	  # Surrogate model fit diagnostics
+	  #diagnostics	 				
+
+variables
+    # There appears to be a bug in DAKOTA's (version <= 5.2) surrogate_based_local method that makes it 
+    # impossible to use state variables, at least when doing global sampling to fit the surrogate model
+    # to the cost function... Set all non-optimized parameters directly in the CACTUS input file...
+ 	continuous_design = 1
+  	  initial_point = 6
+  	  lower_bounds = 2 
+  	  upper_bounds = 10
+  	  descriptors = 'Ut'
+
+responses
+	id_responses = 'SURROGATE_RESP'
+	num_objective_functions = 1
+	# Must apply CACTUS descriptors to the surrogate responses as well as the true responses as these descriptors
+	# somehow propagate to, and overwrite, the true response descriptors in the input files passed to the analysis driver (probably a bug)...
+    descriptors = 'CostFunc_MaxCP' 
+  	numerical_gradients			
+  	  method_source dakota			
+  	  interval_type central			
+ 	  fd_gradient_step_size = 1.e-6		
+	no_hessians
+
+method
+	id_method = 'SAMPLING'
+	model_pointer = 'TRUTH'
+	dace lhs
+	  # Set samples to minimum number of new truth model samples to be added to the 
+      # surrogate model basis on each surrogate model iteration. Do a couple per dimension
+	  # to hedge against directional bias potentially introduced by reusing samples...		
+	  samples = 2   
+
+model
+	id_model = 'TRUTH'
+	single
+	  interface_pointer = 'TRUE_FN'
+	  responses_pointer = 'TRUE_RESP'
+
+interface
+	id_interface = 'TRUE_FN'
+ 	analysis_drivers = '../Driver/CACTUS_Driver.py'
+  	  analysis_components = '/home/jmurray/Project/CACTUS/stable/cactus' 'TestVAWTNom.in' 'N'
+  	  fork
+   	  parameters_file = 'Inputs.in'
+   	  results_file = 'Outputs.out'
+	  # need to tag files for async calculation
+   	  file_tag
+ 	asynchronous
+  	  evaluation_concurrency = 10
+
+responses
+	id_responses = 'TRUE_RESP'
+	num_objective_functions = 1
+ 	descriptors = 'CostFunc_MaxCP'
+	no_gradients		
+	no_hessians		
+
+---------------------
+End DAKOTA input file
+---------------------
+
+Constructing Single Method Strategy...
+Writing new restart file dakota.rst
+methodName = dace
+gradientType = none
+hessianType = none
+methodName = surrogate_based_local
+gradientType = numerical
+Numerical gradients using central differences
+to be calculated by the dakota finite difference routine.
+hessianType = none
+methodName = dot_bfgs
+gradientType = numerical
+Numerical gradients using central differences
+to be calculated by the dakota finite difference routine.
+hessianType = none
+
+>>>>> Running Single Method Strategy.
+
+>>>>> Running surrogate_based_local iterator.
+
+**************************************************************************
+Begin SBLM Iteration Number 1
+
+Current Trust Region
+                               Lower             Center              Upper
+              Ut:                  4                  6                  8
+**************************************************************************
+
+>>>>> Evaluating actual model at trust region center.
+
+------------------------------
+Begin Function Evaluation    1
+------------------------------
+Parameters for function evaluation 1:
+                      6.0000000000e+00 Ut
+
+blocking fork: ../Driver/CACTUS_Driver.py Inputs.in.1 Outputs.out.1
+
+Active response data for function evaluation 1:
+Active set vector = { 1 }
+                     -5.1308810000e-01 CostFunc_MaxCP
+
+
+
+>>>>> Building global_kriging approximations.
+
+DACE method = lhs Samples = 5 Symbols = 5 Seed (system-generated) = 736524
+
+------------------------------
+Begin Function Evaluation    2
+------------------------------
+Parameters for function evaluation 2:
+                      5.5883233298e+00 Ut
+
+(Asynchronous job 2 added to queue)
+
+------------------------------
+Begin Function Evaluation    3
+------------------------------
+Parameters for function evaluation 3:
+                      7.0847266942e+00 Ut
+
+(Asynchronous job 3 added to queue)
+
+------------------------------
+Begin Function Evaluation    4
+------------------------------
+Parameters for function evaluation 4:
+                      6.3247220982e+00 Ut
+
+(Asynchronous job 4 added to queue)
+
+------------------------------
+Begin Function Evaluation    5
+------------------------------
+Parameters for function evaluation 5:
+                      7.5358489142e+00 Ut
+
+(Asynchronous job 5 added to queue)
+
+------------------------------
+Begin Function Evaluation    6
+------------------------------
+Parameters for function evaluation 6:
+                      4.5244361306e+00 Ut
+
+(Asynchronous job 6 added to queue)
+
+Blocking synchronize of 5 asynchronous evaluations
+First pass: initiating 5 asynchronous jobs
+Initiating function evaluation 2
+nonblocking fork: ../Driver/CACTUS_Driver.py Inputs.in.2 Outputs.out.2
+Initiating function evaluation 3
+nonblocking fork: ../Driver/CACTUS_Driver.py Inputs.in.3 Outputs.out.3
+Initiating function evaluation 4
+nonblocking fork: ../Driver/CACTUS_Driver.py Inputs.in.4 Outputs.out.4
+Initiating function evaluation 5
+nonblocking fork: ../Driver/CACTUS_Driver.py Inputs.in.5 Outputs.out.5
+Initiating function evaluation 6
+nonblocking fork: ../Driver/CACTUS_Driver.py Inputs.in.6 Outputs.out.6
+Waiting on completed jobs
+Function evaluation 5 has completed
+Waiting on completed jobs
+Function evaluation 4 has completed
+Waiting on completed jobs
+Function evaluation 3 has completed
+Waiting on completed jobs
+Function evaluation 2 has completed
+Waiting on completed jobs
+Function evaluation 6 has completed
+
+Active response data for function evaluation 2:
+Active set vector = { 1 }
+                     -4.9651770000e-01 CostFunc_MaxCP
+
+
+Active response data for function evaluation 3:
+Active set vector = { 1 }
+                     -5.0949900000e-01 CostFunc_MaxCP
+
+
+Active response data for function evaluation 4:
+Active set vector = { 1 }
+                     -5.1627940000e-01 CostFunc_MaxCP
+
+
+Active response data for function evaluation 5:
+Active set vector = { 1 }
+                     -5.0289230000e-01 CostFunc_MaxCP
+
+
+Active response data for function evaluation 6:
+Active set vector = { 1 }
+                     -4.5198250000e-01 CostFunc_MaxCP
+
+Constructing global approximations with one anchor, 5 DACE samples, and 0 reused points.
+
+<<<<< global_kriging approximation builds completed.
+
+>>>>> Evaluating approximation at trust region center.
+Beginning Approximate Fn Evaluations...
+
+>>>>> Starting approximate optimization cycle.
+
+<<<<< Approximate optimization cycle completed.
+
+>>>>> Evaluating approximate solution with actual model.
+
+------------------------------
+Begin Function Evaluation    7
+------------------------------
+Parameters for function evaluation 7:
+                      6.2760041055e+00 Ut
+
+blocking fork: ../Driver/CACTUS_Driver.py Inputs.in.7 Outputs.out.7
+
+Active response data for function evaluation 7:
+Active set vector = { 1 }
+                     -5.1640430000e-01 CostFunc_MaxCP
+
+
+
+<<<<< Trust Region Ratio = 1.0204589566e+00:
+<<<<< Excellent Accuracy, Iterate in Trust Region Interior, ACCEPT Step, RETAIN Trust Region Size
+
+
+**************************************************************************
+Begin SBLM Iteration Number 2
+
+Current Trust Region
+                               Lower             Center              Upper
+              Ut:   4.2760041055e+00   6.2760041055e+00   8.2760041055e+00
+**************************************************************************
+
+>>>>> Building global_kriging approximations.
+
+Adjusting the number of symbols and samples....
+  num_variables   = 1
+  OLD num_samples = 2    OLD num_symbols = 0
+  NEW num_samples = 2    NEW num_symbols = 2
+
+DACE method = lhs Samples = 2 Symbols = 2 Seed not reset from previous DACE execution
+
+------------------------------
+Begin Function Evaluation    8
+------------------------------
+Parameters for function evaluation 8:
+                      6.4607414089e+00 Ut
+
+(Asynchronous job 8 added to queue)
+
+------------------------------
+Begin Function Evaluation    9
+------------------------------
+Parameters for function evaluation 9:
+                      4.4707137111e+00 Ut
+
+(Asynchronous job 9 added to queue)
+
+Blocking synchronize of 2 asynchronous evaluations
+First pass: initiating 2 asynchronous jobs
+Initiating function evaluation 8
+nonblocking fork: ../Driver/CACTUS_Driver.py Inputs.in.8 Outputs.out.8
+Initiating function evaluation 9
+nonblocking fork: ../Driver/CACTUS_Driver.py Inputs.in.9 Outputs.out.9
+Waiting on completed jobs
+Function evaluation 9 has completed
+Waiting on completed jobs
+Function evaluation 8 has completed
+
+Active response data for function evaluation 8:
+Active set vector = { 1 }
+                     -5.1581830000e-01 CostFunc_MaxCP
+
+
+Active response data for function evaluation 9:
+Active set vector = { 1 }
+                     -4.4847460000e-01 CostFunc_MaxCP
+
+Constructing global approximations with one anchor, 2 DACE samples, and 6 reused points.
+
+<<<<< global_kriging approximation builds completed.
+
+>>>>> Evaluating approximation at trust region center.
+
+>>>>> Starting approximate optimization cycle.
+
+<<<<< Approximate optimization cycle completed.
+
+>>>>> Evaluating approximate solution with actual model.
+
+------------------------------
+Begin Function Evaluation   10
+------------------------------
+Parameters for function evaluation 10:
+                      6.2477543018e+00 Ut
+
+blocking fork: ../Driver/CACTUS_Driver.py Inputs.in.10 Outputs.out.10
+
+Active response data for function evaluation 10:
+Active set vector = { 1 }
+                     -5.1631800000e-01 CostFunc_MaxCP
+
+
+
+<<<<< Iterate rejected by Filter, Trust Region Ratio = -3.5666718196e+00:
+<<<<< Poor accuracy, REJECT Step, REDUCE Trust Region Size
+
+
+**************************************************************************
+Begin SBLM Iteration Number 3
+
+Current Trust Region
+                               Lower             Center              Upper
+              Ut:   5.7760041055e+00   6.2760041055e+00   6.7760041055e+00
+**************************************************************************
+
+>>>>> Building global_kriging approximations.
+
+Adjusting the number of symbols and samples....
+  num_variables   = 1
+  OLD num_samples = 2    OLD num_symbols = 0
+  NEW num_samples = 2    NEW num_symbols = 2
+
+DACE method = lhs Samples = 2 Symbols = 2 Seed not reset from previous DACE execution
+
+------------------------------
+Begin Function Evaluation   11
+------------------------------
+Parameters for function evaluation 11:
+                      6.2715396144e+00 Ut
+
+(Asynchronous job 11 added to queue)
+
+------------------------------
+Begin Function Evaluation   12
+------------------------------
+Parameters for function evaluation 12:
+                      6.5593495751e+00 Ut
+
+(Asynchronous job 12 added to queue)
+
+Blocking synchronize of 2 asynchronous evaluations
+First pass: initiating 2 asynchronous jobs
+Initiating function evaluation 11
+nonblocking fork: ../Driver/CACTUS_Driver.py Inputs.in.11 Outputs.out.11
+Initiating function evaluation 12
+nonblocking fork: ../Driver/CACTUS_Driver.py Inputs.in.12 Outputs.out.12
+Waiting on completed jobs
+Function evaluation 11 has completed
+Waiting on completed jobs
+Function evaluation 12 has completed
+
+Active response data for function evaluation 11:
+Active set vector = { 1 }
+                     -5.1639030000e-01 CostFunc_MaxCP
+
+
+Active response data for function evaluation 12:
+Active set vector = { 1 }
+                     -5.1524340000e-01 CostFunc_MaxCP
+
+Constructing global approximations with one anchor, 2 DACE samples, and 4 reused points.
+
+<<<<< global_kriging approximation builds completed.
+
+>>>>> Evaluating approximation at trust region center.
+
+>>>>> Starting approximate optimization cycle.
+
+
+
+
+
+
+
+                  DDDDD        OOOOO       TTTTTTT
+                  D    D      O     O         T
+                  D    D  ==  O  *  O  ==     T
+                  D    D      O     O         T
+                  DDDDD        OOOOO          T
+
+                     DESIGN OPTIMIZATION TOOLS
+
+
+
+                       (C) COPYRIGHT, 1995
+
+                               VR&D
+
+                  ALL RIGHTS RESERVED, WORLDWIDE
+
+                           VERSION 4.20
+
+
+
+             - YOUR INTEGRITY IS OUR COPY PROTECTION -
+
+
+
+
+
+  CONTROL PARAMETERS
+
+  OPTIMIZATION METHOD,                METHOD =       1
+  NUMBER OF DECISION VARIABLES,          NDV =       1
+  NUMBER OF CONSTRAINTS,                NCON =       0
+  PRINT CONTROL PARAMETER,            IPRINT =       3
+  GRADIENT PARAMETER,                  IGRAD =       1
+    GRADIENTS ARE SUPPLIED BY THE USER
+  THE OBJECTIVE FUNCTION WILL BE MINIMIZED
+
+
+  -- SCALAR PROGRAM PARAMETERS
+
+  REAL PARAMETERS
+    1) CT     = -3.00000E-02            8) DX2    =  1.20000E+00
+    2) CTMIN  =  3.00000E-03            9) FDCH   =  1.00000E-03
+    3) DABOBJ =  5.13088E-05           10) FDCHM  =  1.00000E-04
+    4) DELOBJ =  1.00000E-08           11) RMVLMZ =  4.00000E-01
+    5) DOBJ1  =  1.00000E-01           12) DABSTR =  5.13088E-05
+    6) DOBJ2  =  2.00000E-01           13) DELSTR =  1.00000E-03
+    7) DX1    =  1.00000E-02
+
+  INTEGER PARAMETERS
+    1) IGRAD  =      1    6) NCOLA  =      0   11) IPRNT1 =      0
+    2) ISCAL  =      1    7) IGMAX  =      0   12) IPRNT2 =      0
+    3) ITMAX  =     50    8) JTMAX  =     50   13) JWRITE =      0
+    4) ITRMOP =      2    9) ITRMST =      2
+    5) IWRITE =      6   10) JPRINT =      0
+
+
+     STORAGE REQUIREMENTS
+  ARRAY  DIMENSION  REQUIRED
+    WK        51        51
+   IWK        72        72
+
+
+  -- INITIAL VARIABLES AND BOUNDS
+
+  LOWER BOUNDS ON THE DECISION VARIABLES (XL-VECTOR)
+       1)   4.00000E+00
+
+  DECISION VARIABLES (X-VECTOR)
+       1)   6.00000E+00
+
+  UPPER BOUNDS ON THE DECISION VARIABLES (XU-VECTOR)
+       1)   8.00000E+00
+
+
+  -- INITIAL FUNCTION VALUES
+
+  OBJ = -0.51309    
+
+
+
+  --- BEGIN UNCONSTRAINED OPTIMIZATION: BFGS METHOD
+
+
+  -- BEGIN ITERATION  1
+
+  OBJECTIVE =-5.16338E-01
+
+  DECISION VARIABLES (X-VECTOR)
+       1)   6.27577E+00
+
+
+  -- BEGIN ITERATION  2
+
+  OBJECTIVE =-5.16338E-01
+
+  DECISION VARIABLES (X-VECTOR)
+       1)   6.27600E+00
+
+
+  -- BEGIN ITERATION  3
+
+
+
+
+  -- OPTIMIZATION IS COMPLETE
+
+  TERMINATION CRITERIA
+
+  KUHN-TUCKER CONDITIONS ARE SATISFIED
+
+
+  -- OPTIMIZATION RESULTS
+
+
+  OBJECTIVE, F(X) =   -5.16338E-01
+
+
+  DECISION VARIABLES, X
+
+     ID         XL             X            XU
+      1     4.00000E+00   6.27600E+00   8.00000E+00
+
+  FUNCTION CALLS =       9
+
+  GRADIENT CALLS =       3
+
+
+
+
+
+
+
+                  DDDDD        OOOOO       TTTTTTT
+                  D    D      O     O         T
+                  D    D  ==  O  *  O  ==     T
+                  D    D      O     O         T
+                  DDDDD        OOOOO          T
+
+                     DESIGN OPTIMIZATION TOOLS
+
+
+
+                       (C) COPYRIGHT, 1995
+
+                               VR&D
+
+                  ALL RIGHTS RESERVED, WORLDWIDE
+
+                           VERSION 4.20
+
+
+
+             - YOUR INTEGRITY IS OUR COPY PROTECTION -
+
+
+
+
+
+  CONTROL PARAMETERS
+
+  OPTIMIZATION METHOD,                METHOD =       1
+  NUMBER OF DECISION VARIABLES,          NDV =       1
+  NUMBER OF CONSTRAINTS,                NCON =       0
+  PRINT CONTROL PARAMETER,            IPRINT =       3
+  GRADIENT PARAMETER,                  IGRAD =       1
+    GRADIENTS ARE SUPPLIED BY THE USER
+  THE OBJECTIVE FUNCTION WILL BE MINIMIZED
+
+
+  -- SCALAR PROGRAM PARAMETERS
+
+  REAL PARAMETERS
+    1) CT     = -3.00000E-02            8) DX2    =  1.20000E+00
+    2) CTMIN  =  3.00000E-03            9) FDCH   =  1.00000E-03
+    3) DABOBJ =  5.13088E-05           10) FDCHM  =  1.00000E-04
+    4) DELOBJ =  1.00000E-08           11) RMVLMZ =  4.00000E-01
+    5) DOBJ1  =  1.00000E-01           12) DABSTR =  5.13088E-05
+    6) DOBJ2  =  2.00000E-01           13) DELSTR =  1.00000E-03
+    7) DX1    =  1.00000E-02
+
+  INTEGER PARAMETERS
+    1) IGRAD  =      1    6) NCOLA  =      0   11) IPRNT1 =      0
+    2) ISCAL  =      1    7) IGMAX  =      0   12) IPRNT2 =      0
+    3) ITMAX  =     50    8) JTMAX  =     50   13) JWRITE =      0
+    4) ITRMOP =      2    9) ITRMST =      2
+    5) IWRITE =      6   10) JPRINT =      0
+
+
+     STORAGE REQUIREMENTS
+  ARRAY  DIMENSION  REQUIRED
+    WK        51        51
+   IWK        72        72
+
+
+  -- INITIAL VARIABLES AND BOUNDS
+
+  LOWER BOUNDS ON THE DECISION VARIABLES (XL-VECTOR)
+       1)   4.27600E+00
+
+  DECISION VARIABLES (X-VECTOR)
+       1)   6.27600E+00
+
+  UPPER BOUNDS ON THE DECISION VARIABLES (XU-VECTOR)
+       1)   8.27600E+00
+
+
+  -- INITIAL FUNCTION VALUES
+
+  OBJ = -0.51640    
+
+
+
+  --- BEGIN UNCONSTRAINED OPTIMIZATION: BFGS METHOD
+
+
+  -- BEGIN ITERATION  1
+
+  OBJECTIVE =-5.16428E-01
+
+  DECISION VARIABLES (X-VECTOR)
+       1)   6.24732E+00
+
+
+  -- BEGIN ITERATION  2
+
+  OBJECTIVE =-5.16428E-01
+
+  DECISION VARIABLES (X-VECTOR)
+       1)   6.24775E+00
+
+
+
+
+  -- OPTIMIZATION IS COMPLETE
+
+  TERMINATION CRITERIA
+
+  ABSOLUTE CONVERGENCE CRITERION WAS MET FOR  2 CONSECUTIVE ITERATIONS
+
+
+  -- OPTIMIZATION RESULTS
+
+
+  OBJECTIVE, F(X) =   -5.16428E-01
+
+
+  DECISION VARIABLES, X
+
+     ID         XL             X            XU
+      1     4.27600E+00   6.24775E+00   8.27600E+00
+
+  FUNCTION CALLS =       9
+
+  GRADIENT CALLS =       2
+
+
+
+
+
+
+
+                  DDDDD        OOOOO       TTTTTTT
+                  D    D      O     O         T
+                  D    D  ==  O  *  O  ==     T
+                  D    D      O     O         T
+                  DDDDD        OOOOO          T
+
+                     DESIGN OPTIMIZATION TOOLS
+
+
+
+                       (C) COPYRIGHT, 1995
+
+                               VR&D
+
+                  ALL RIGHTS RESERVED, WORLDWIDE
+
+                           VERSION 4.20
+
+
+
+             - YOUR INTEGRITY IS OUR COPY PROTECTION -
+
+
+
+
+
+  CONTROL PARAMETERS
+
+  OPTIMIZATION METHOD,                METHOD =       1
+  NUMBER OF DECISION VARIABLES,          NDV =       1
+  NUMBER OF CONSTRAINTS,                NCON =       0
+  PRINT CONTROL PARAMETER,            IPRINT =       3
+  GRADIENT PARAMETER,                  IGRAD =       1
+    GRADIENTS ARE SUPPLIED BY THE USER
+  THE OBJECTIVE FUNCTION WILL BE MINIMIZED
+
+
+  -- SCALAR PROGRAM PARAMETERS
+
+  REAL PARAMETERS
+    1) CT     = -3.00000E-02            8) DX2    =  1.20000E+00
+    2) CTMIN  =  3.00000E-03            9) FDCH   =  1.00000E-03
+    3) DABOBJ =  5.13088E-05           10) FDCHM  =  1.00000E-04
+    4) DELOBJ =  1.00000E-08           11) RMVLMZ =  4.00000E-01
+    5) DOBJ1  =  1.00000E-01           12) DABSTR =  5.13088E-05
+    6) DOBJ2  =  2.00000E-01           13) DELSTR =  1.00000E-03
+    7) DX1    =  1.00000E-02
+
+  INTEGER PARAMETERS
+    1) IGRAD  =      1    6) NCOLA  =      0   11) IPRNT1 =      0
+    2) ISCAL  =      1    7) IGMAX  =      0   12) IPRNT2 =      0
+    3) ITMAX  =     50    8) JTMAX  =     50   13) JWRITE =      0
+    4) ITRMOP =      2    9) ITRMST =      2
+    5) IWRITE =      6   10) JPRINT =      0
+
+
+     STORAGE REQUIREMENTS
+  ARRAY  DIMENSION  REQUIRED
+    WK        51        51
+   IWK        72        72
+
+
+  -- INITIAL VARIABLES AND BOUNDS
+
+  LOWER BOUNDS ON THE DECISION VARIABLES (XL-VECTOR)
+       1)   5.77600E+00
+
+  DECISION VARIABLES (X-VECTOR)
+       1)   6.27600E+00
+
+  UPPER BOUNDS ON THE DECISION VARIABLES (XU-VECTOR)
+       1)   6.77600E+00
+
+
+  -- INITIAL FUNCTION VALUES
+
+  OBJ = -0.51640    
+
+
+
+  --- BEGIN UNCONSTRAINED OPTIMIZATION: BFGS METHOD
+
+
+  -- BEGIN ITERATION  1
+
+  OBJECTIVE =-5.16428E-01
+
+  DECISION VARIABLES (X-VECTOR)
+       1)   6.29008E+00
+
+
+  -- BEGIN ITERATION  2
+
+  OBJECTIVE =-5.16428E-01
+
+  DECISION VARIABLES (X-VECTOR)
+       1)   6.29012E+00
+
+
+
+
+  -- OPTIMIZATION IS COMPLETE
+
+  TERMINATION CRITERIA
+
+  ABSOLUTE CONVERGENCE CRITERION WAS MET FOR  2 CONSECUTIVE ITERATIONS
+
+
+  -- OPTIMIZATION RESULTS
+
+
+  OBJECTIVE, F(X) =   -5.16428E-01
+
+
+  DECISION VARIABLES, X
+
+     ID         XL             X            XU
+
+<<<<< Approximate optimization cycle completed.
+
+>>>>> Evaluating approximate solution with actual model.
+
+------------------------------
+Begin Function Evaluation   13
+------------------------------
+Parameters for function evaluation 13:
+                      6.2901196904e+00 Ut
+
+blocking fork: ../Driver/CACTUS_Driver.py Inputs.in.13 Outputs.out.13
+
+Active response data for function evaluation 13:
+Active set vector = { 1 }
+                     -5.1642090000e-01 CostFunc_MaxCP
+
+
+
+<<<<< Trust Region Ratio = 6.9610860967e-01:
+<<<<< Satisfactory Accuracy, ACCEPT Step, RETAIN Trust Region Size
+
+
+Surrogate-Based Optimization Complete - Soft Convergence Tolerance Reached
+Progress Between 3 Successive Iterations <= Convergence Tolerance
+Total Number of Iterations = 3
+<<<<< Function evaluation summary (APPROX_INTERFACE): 42 total (42 new, 0 duplicate)
+<<<<< Function evaluation summary (TRUE_FN): 13 total (13 new, 0 duplicate)
+<<<<< Best parameters          =
+                      6.2901196904e+00 Ut
+<<<<< Best objective function  =
+                     -5.1642090000e-01
+<<<<< Best data captured at function evaluation 13
+
+
+<<<<< Iterator surrogate_based_local completed.
+<<<<< Single Method Strategy completed.
+DAKOTA execution time in seconds:
+  Total CPU        =       0.12 [parent =   0.110984, child =   0.009016]
+  Total wall clock =    28.5222
+      1     5.77600E+00   6.29012E+00   6.77600E+00
+
+  FUNCTION CALLS =       7
+
+  GRADIENT CALLS =       2

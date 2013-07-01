@@ -1,0 +1,40 @@
+# DAKOTA parameter study on CACTUS
+strategy
+ tabular_graphics_data
+  tabular_graphics_file = 'Param_Data_Out.dat'
+ single_method
+
+method
+ multidim_parameter_study
+  partitions = 16 0 0
+
+model
+ single
+
+variables
+ continuous_design = 1
+  lower_bounds = 2  
+  upper_bounds = 10
+  descriptors =  'Ut'
+ continuous_state = 2
+  lower_bounds = 16 0
+  upper_bounds = 16 0 
+  descriptors = 'nti' 'iut' 
+
+interface
+ analysis_drivers = '../Driver/CACTUS_Driver.py'
+  analysis_components = '/home/jmurray/Project/CACTUS/stable/cactus' 'TestVAWTNom.in' 'N'
+  fork
+   parameters_file = 'Inputs.in'
+   results_file = 'Outputs.out'
+# need to tag files for async calculation
+   file_tag
+ asynchronous
+  evaluation_concurrency = 10
+
+responses
+ num_response_functions = 2
+ descriptors = 'Cp' 'CostFunc_MaxCP'
+ no_gradients
+ no_hessians
+
