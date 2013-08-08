@@ -179,7 +179,7 @@ elseif strcmp(Type,'HAWT')==1
     % RMaxR: Turbine radius to reference radius ratio
     % HubRR: Hub radius to turbine radius ratio
     % CR: Blade chord to turbine radius ratio (NBElem+1 elements ordered root to tip)
-    % bTwist: Blade planform twist at each element end (deg, w.r.t. rotor disk plane, positive LE into the wind (-x), NBElem+1 elements ordered root to tip)
+    % bTwist: Blade planform twist at each element end (deg, w.r.t. blade planform plane (rotor disk plane when bi=0), positive LE into the wind (-x), NBElem+1 elements ordered root to tip)
     % bi: Blade planform incidence (deg, w.r.t. rotor disk plane, positive LE into the wind (-x))
     % eta: Blade mount point ratio ((distance behind leading edge of the blade mount point) / (chord))
     % bCone: Blade coning angle (deg, positive tip into the wind (-x))
