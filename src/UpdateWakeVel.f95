@@ -2,11 +2,11 @@ SUBROUTINE UpdateWakeVel()
         
         use configr
       	use blade
-      	use freestream
         use regtest 
         
         integer :: ygcErr                                                                
-                                                                       
+
+
 	! Calculate the induced velocity at each lattice point in the wake from wake (including bound vorticity), wall, and freestream        
                                                                                                                                   
       	if (NT .ge. 1) then                                           

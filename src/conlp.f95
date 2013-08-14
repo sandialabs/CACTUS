@@ -2,7 +2,6 @@ SUBROUTINE conlp()
         
         use configr
 	use blade
-	use freestream
 			
 	logical NotDone
       									

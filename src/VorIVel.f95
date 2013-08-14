@@ -2,7 +2,7 @@ subroutine VorIVel(VFlag,CalcDer,G,X1,Y1,Z1,X2,Y2,Z2,XP,YP,ZP,UP,VP,WP,DUDX)
 
         use vortex
         
-        real :: DVFDX       
+        real :: DVFDX, RRAT
         integer :: VFlag       ! 0 for bound vortex element, 1 for trailing wake element, 2 for spanwise wake element (sets core radius)
         integer :: CalcDer     ! 1 to calc dudx
 
@@ -50,11 +50,22 @@ subroutine VorIVel(VFlag,CalcDer,G,X1,Y1,Z1,X2,Y2,Z2,XP,YP,ZP,UP,VP,WP,DUDX)
         end if
 	
         if (CCAV >= 1.0E-07) then
-            if (CCAV < A2*VRAD2) then
-                CCAV = A2*VRAD2
-                VF   = (ADBDB-ADCDC)*G/(12.56637*CCAV)
-                if (CalcDer == 1) then
-                    DVFDX = G/12.56637*((AX/C-CX*ADC/C**3-AX/B+BX*ADB/B**3)/CCAV)
+            if (ivtxcor > 0 .and. CCAV < A2*VRAD2) then
+            	if (ivtxcor == 1) then
+            		! Constant velocity (approx) core
+	                CCAV = A2*VRAD2 ! limit denominator to value at core radius
+	                VF   = (ADBDB-ADCDC)*G/(12.56637*CCAV)
+	                if (CalcDer == 1) then
+	                    DVFDX = G/12.56637*((AX/C-CX*ADC/C**3-AX/B+BX*ADB/B**3)/CCAV)
+	                end if
+                else if (ivtxcor == 2) then
+                	! Linear velocity (approx) core
+                	RRAT=sqrt(CCAV/(A2*VRAD2)) ! radius to core radius ratio
+	                CCAV = A2*VRAD2 ! limit denominator to value at core radius
+	                VF   = RRAT*(ADBDB-ADCDC)*G/(12.56637*CCAV)
+	                if (CalcDer == 1) then
+	                    DVFDX = G/12.56637*((AX/C-CX*ADC/C**3-AX/B+BX*ADB/B**3)/CCAV)
+	                end if
                 end if
             else
                 VF   = (ADBDB-ADCDC)*G/(12.56637*CCAV)

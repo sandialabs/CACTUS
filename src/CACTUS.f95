@@ -66,7 +66,6 @@ PROGRAM CACTUS
         use vortex
         use wakedata
         use time
-        use freestream
         use wallsoln
         use regtest
         use output       
@@ -261,7 +260,7 @@ PROGRAM CACTUS
 
         ! Setup vortex core radius for bound vorticity based on max chord, and for trailing and spanwise wake based on 
         ! temporal and spatial discretization levels, respectively.
-        if (ivtxcor == 0) then
+        if (ivtxcor > 0) then
                 vRad_B = CrRef*VCRFB
                 vRad_T = dSGeom*VCRFT
                 dSWake = delt*(1.0+1.0/max(ut,1.0))   ! representative wake discretization size (wake line at Rmax in Uinf freestream)
@@ -469,10 +468,11 @@ PROGRAM CACTUS
                 ! If nr revs have been performed, then done. Otherwise, if initial convergence is hit, set final convergence params (if desired) and continue
                 if (irev == nr) then
                         ContinueRevs = .FALSE.
-                else if (irev > 1 .AND. convrg > 0.0) then
+                else if (irev > 1) then
                         
-                        ! Define convergence as convergence of revolution average power coeff. Additionally, when using final convergence, the user can
-                        ! specify an intermediate revolution number at which to switch to final convergence (if initial convergence level hasn't already been hit).
+                        ! Define convergence as convergence of revolution average power coeff. Note, negative values of convrg bypass the convergence check.
+                        ! Additionally, when using final convergence, the user can specify an intermediate revolution number at which to switch to
+                        ! final convergence (if initial convergence level hasn't already been hit, or is bypassed).
                         if (abs((CPAve-CPAve_last)/CPAve) < convrg) then
                                 ConvFlag=.TRUE.
                         else if (ifc == 1 .AND. .NOT. FinalConv .AND. irev == nric) then

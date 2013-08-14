@@ -226,6 +226,122 @@ for i in range(NumACs):
     
 fDAKInput.close()  
 
+#######################
+# Check for additional analysis components
+KeepFiles=False
+RunCase=True
+if NumACs>1:
+    
+    for i in range(1,NumACs):
+        CodeStr=ACs[i].Code
+        
+        if CodeStr.find('KeepFiles') >= 0:
+            # Check for keep files flag. If 'KeepFiles', keep files for all iterations.
+            # If 'KeepFiles:1,2,5-8,...', files will be kept for the list of iteration numbers provided. Note the
+            # iteration number is the last (lowest level) Dakota index attached to the analysis driver input file.
+            
+            # Check for specific iteration numbers
+            if CodeStr.find(':') >= 0:
+                CTag,IterList=CodeStr.split(':')
+                
+                # fill out - fields
+                ILS=IterList.split(',')
+                for j,ILSI in enumerate(ILS):
+                    Ind=ILSI.find('-')
+                    if Ind>0:
+                        LBUB=ILSI.split('-')
+                        ILS[j]=','.join(map(str,range(LBUB[0],LBUB[1]+1)))
+                    #endif
+                #endfor
+                IterList=','.join(ILS)
+
+                IL=map(int,IterList.split(','))
+                # Try to find current iteration in list
+                try:
+                    IL.index(DAKIndLast)
+                except ValueError:
+                    KeepFiles=False
+                else:
+                    KeepFiles=True
+                #endtry
+            else:
+                KeepFiles=True
+            #endif
+            
+        elif CodeStr.find('SkipCase:') >= 0:    
+            # Check for skip case flag. 
+            # If 'SkipCase:1,2,5-8,...', the indicated cases will not be run. Note the
+            # iteration number is the last (lowest level) Dakota index attached to the analysis driver input file.
+            
+            CTag,IterList=CodeStr.split(':')
+            
+            # fill out - fields
+            ILS=IterList.split(',')
+            for j,ILSI in enumerate(ILS):
+                Ind=ILSI.find('-')
+                if Ind>0:
+                    LBUB=ILSI.split('-')
+                    ILS[j]=','.join(map(str,range(int(LBUB[0]),int(LBUB[1])+1)))
+                #endif
+            #endfor
+            IterList=','.join(ILS)
+
+            IL=map(int,IterList.split(','))
+            # Try to find current iteration in list
+            try:
+                IL.index(DAKIndLast)
+            except ValueError:
+                RunCase=True
+            else:
+                RunCase=False
+            #endtry
+            
+        elif CodeStr.find('RunCase:') >= 0:    
+            # Check for run case flag. 
+            # If 'RunCase:1,2,5-8,...', the indicated cases will be run. RunCase overrides SkipCase if both present. Note the
+            # iteration number is the last (lowest level) Dakota index attached to the analysis driver input file.
+            
+            CTag,IterList=CodeStr.split(':')
+            
+            # fill out - fields
+            ILS=IterList.split(',')
+            for j,ILSI in enumerate(ILS):
+                Ind=find(ILSI,'-')
+                if Ind>0:
+                    LBUB=ILSI.split('-')
+                    ILS[j]=','.join(map(str,range(int(LBUB[0]),int(LBUB[1])+1)))
+                #endif
+            #endfor
+            IterList=','.join(ILS)
+
+            IL=map(int,IterList.split(','))
+            # Try to find current iteration in list
+            try:
+                IL.index(DAKIndLast)
+            except ValueError:
+                RunCase=False
+            else:
+                RunCase=True
+            #endtry            
+            
+        #endif 
+        
+    #endfor
+     
+#endif
+
+# End here if skipping this case
+if not RunCase:
+    fDAKOut = open(DAKOutFN, 'w')
+    for Func in Funcs:
+        OutLine = '-999 ' + Func.Tag + '\n'
+        fDAKOut.write(OutLine)
+    #endfor
+
+    sys.exit(0)
+#endif
+######################33
+
 ############## Add analysis specific pre-processing of top level inputs here #############
 # Create dictionary from input variables...
 VarDict={}
@@ -300,40 +416,7 @@ if CodeStr.strip().lower() == 'y':
 
 #endif
 
-#######################
-# Check for additional analysis components
-KeepFiles=False
-if NumACs>1:
-    
-    for i in range(1,NumACs):
-        CodeStr=ACs[i].Code
-        
-        if CodeStr.find('KeepFiles') >= 0:
-            # Check for keep files flag. If 'KeepFiles', keep files for all iterations.
-            # If 'KeepFiles:1,2,5,8,...', files will be kept for the list of iteration numbers provided. Note the
-            # iteration number is the last (lowest level) Dakota index attached to the analysis driver input file.
-            
-            # Check for specific iteration numbers
-            if CodeStr.find(':') >= 0:
-                CTag,IterList=CodeStr.split(':')
-                IL=map(int,IterList.split(','))
-                # Try to find current iteration in list
-                try:
-                    IL.index(DAKIndLast)
-                except ValueError:
-                    KeepFiles=False
-                else:
-                    KeepFiles=True
-                #endtry
-            else:
-                KeepFiles=True
-            #endif
-            
-        #endif 
-        
-    #endfor
-     
-#endif
+
 
 ##### Apply modifications to template specific to each DAKOTA input tag. Input tags should generally have the form TAG:DES
 ##### where the TAG identifies the variable. The designator (DES) can be either "F" "D" or "V", indicating the value should

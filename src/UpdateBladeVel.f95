@@ -2,16 +2,13 @@ SUBROUTINE UpdateBladeVel(IFLG)
         
         use configr
         use blade
-        use freestream 
         use wallsoln  
 
-        integer :: i,j,k,m,ygcErr,VFlag
+        integer :: i,ygcErr
         real :: Point(3), dVel(3), dUdX                                                       
                                                                  
         ! Calculate the velocity induced on the blades by wake, wall, and freestream
-                                                                       
-        J=NT                                                              
-        NT1=NT-1  
+
 
         if (iflg .eq. 0) then
                 ! re-initialize uiwake viwake wiwake as we are beginning a new time step
@@ -28,7 +25,13 @@ SUBROUTINE UpdateBladeVel(IFLG)
                 if (IFLG .eq. 0) then 
                         
                         !  Calculate freestream velocity at blade elements
-                        CALL CalcFreestream(X(J,I),Y(J,I),UFS(J,I),VFS(J,I),WFS(J,I),ygcErr)                                
+                        CALL CalcFreestream(X(NT,I),Y(NT,I),UFSB(I),VFSB(I),WFSB(I),ygcErr)
+
+                        ! Set freestream velocity of next shed wake elements to that calculated on the blade
+                        UFS(NT,I)=UFSB(I)
+			            VFS(NT,I)=VFSB(I)
+			            WFS(NT,I)=WFSB(I)
+
                                                        
                         USUM=0.0                                                          
                         VSUM=0.0                                                          
@@ -36,10 +39,10 @@ SUBROUTINE UpdateBladeVel(IFLG)
                         if (NT > 1) then                                         
                                                                        
                                 ! Calculate wake velocity at blade elements (excluding bound vorticity component)
-                                Call BladeIndVel(NT,ntTerm,NBE,NB,NE,X(J,I),Y(J,I),Z(J,I),USUM,VSUM,WSUM,dUdX,2,0)                                                  
+                                Call BladeIndVel(NT,ntTerm,NBE,NB,NE,X(NT,I),Y(NT,I),Z(NT,I),USUM,VSUM,WSUM,dUdX,2,0)
   
                                 ! Calculate wall induced velocities at blade locations   
-                                Point=[X(J,I),Y(J,I),Z(J,I)]
+                                Point=[X(NT,I),Y(NT,I),Z(NT,I)]
                                 Call WallIndVel(Point,dVel)
                                 USUM=USUM+dVel(1)
                                 VSUM=VSUM+dVel(2)
@@ -57,14 +60,26 @@ SUBROUTINE UpdateBladeVel(IFLG)
                 end if                                                         
                                                                        
                 ! CALCULATE THE VELOCITY CONTRIBUTIONS DUE TO JUST THE BOUND VORTICIES ON THE BLADES ( GS(NT,:) ) 
-                Call BladeIndVel(NT,ntTerm,NBE,NB,NE,X(J,I),Y(J,I),Z(J,I),UP,VP,WP,dUdX,1,0) 
+                Call BladeIndVel(NT,ntTerm,NBE,NB,NE,X(NT,I),Y(NT,I),Z(NT,I),UP,VP,WP,dUdX,1,0)
                 
                 ! Set wake and wall velocities on blade
-                U(J,I)=USUM+UP                                                       
-                V(J,I)=VSUM+VP                                                       
-                W(J,I)=WSUM+WP 
+                UB(I)=USUM+UP
+                VB(I)=VSUM+VP
+                WB(I)=WSUM+WP
+
+                ! Set induced velocity of next shed wake elements
+                if (iut .eq. -2) then
+	            	! Fix wake velocities at freestream velocity
+	                U(NT,I)=0.0
+		            V(NT,I)=0.0
+		            W(NT,I)=0.0
+            	else
+		            U(NT,I)=UB(I)
+		            V(NT,I)=VB(I)
+		            W(NT,I)=WB(I)
+            	end if
                                                                       
-        end do   
+        end do
                                                        
 RETURN                                                            
 END                                                               

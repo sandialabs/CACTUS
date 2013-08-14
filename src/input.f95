@@ -15,7 +15,6 @@ SUBROUTINE input(ErrFlag)
 	use vortex
 	use wakedata
 	use time
-	use freestream
 	use wallsoln 
         use regtest
         use output            
@@ -60,10 +59,10 @@ SUBROUTINE input(ErrFlag)
 	ifc = 0   
 	nr = 10
 	convrg = -1
-	convrgf = .0001
-	nti = 16
-	ntif = 16
-	ivtxcor = 0
+	convrgf = -1
+	nti = 20
+	ntif = -1
+	ivtxcor = 1
 	ixterm = 0
 	xstop = 5.0
 	iut = 0
@@ -135,7 +134,6 @@ SUBROUTINE input(ErrFlag)
 	CALL element_cns(MaxSegEnds,MaxSegEndPerBlade)     
 	CALL airfoil_cns(MaxAOAVals,MaxReVals,MaxAirfoilSect)
 	CALL wakedata_cns()
-	CALL freestream_cns(MaxWakeNodes,MaxSegEnds)
 	CALL dystl_cns(MaxAirfoilSect,MaxReVals,MaxSegEnds)
         CALL output_cns(MaxSeg,MaxBlades,MaxStruts,DSFlag)       
         
@@ -160,6 +158,11 @@ SUBROUTINE input(ErrFlag)
 	if (iutf == 0) iutf = ut  
 	if (iut == 0) iut = ut 
         if (iWall == 0) iWall = ut
+
+    ! Default ntif to nti if nothing was input
+    if (ntif .eq. -1) then
+    	ntif=nti
+	end if
 	
         ! Set number of RHS evaluations to average for the free surface calculation (should cover approx 1 revolution)
         NFSRHSAve=nti/iWall

@@ -4,7 +4,6 @@ MODULE configr
         
         ! Input flags
         character*80 :: jbtitle         ! job title
-        integer :: ivtxcor              ! switches whether to use finite vortex core model...
         integer :: ifc                  ! Flag to use final convergence step
         integer :: iXTerm               ! Flag to ignore wake points beyond xstop 
         integer :: DiagOutFlag          ! Set to 1 to print iteration info to stdout   
@@ -14,7 +13,7 @@ MODULE configr
         integer :: nb			! Number of blades
         integer :: nbe			! Number of blade segments/elements in a blade
         integer :: ne			! Number of blade segment ends (total)
-        integer :: iut			! Number of time steps over which the wake velocities are left constant
+        integer :: iut			! Number of time steps over which the wake velocities are left constant (Note: values of 0, -1, and -2 have defined meanings)
         integer :: nr			! Number of revolutions to perform
         integer :: iRev			! Revolution counter
         integer :: nt			! Time step counter
@@ -26,8 +25,8 @@ MODULE configr
         integer :: nSect		! Number of airfoil section data tables used
         integer :: nsw			! Next iteration at which wake velocities will be calculated
         integer :: nsWall               ! Next iteration at which the wall models will be updated
-        real :: convrg                  ! Convergence level
-        real :: convrgf                 ! Convergence level to be used for final convergence step (if ifc = 1)    
+        real :: convrg                  ! Convergence level (Note: for no convergence check, input -1)
+        real :: convrgf                 ! Convergence level to be used for final convergence step (if ifc = 1) (Note: for no convergence check, input -1)
         real :: XStop                   ! If iXTerm = 1, ignore wake beyond x = xstop      
         real :: CTExcrM                 ! Additional machine level excrescence torque based on tip speed and Rmax
         real :: VCRFB                   ! Vortex core radius factor (on max blade chord) for bound vortex

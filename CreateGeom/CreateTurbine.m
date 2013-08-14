@@ -29,7 +29,10 @@ function T=CreateTurbine(NBlade,NBElem,NStrut,NSElem,RefR,RotN,RotP,RefAR,Type,v
 
 T.NBlade=NBlade;
 T.NStrut=NStrut;
-T.RotN=RotN/sqrt(sum(RotN.^2)); % force normalize
+if ~isempty(RotN)
+    RotN=RotN/sqrt(sum(RotN.^2)); % force normalize
+end
+T.RotN=RotN;
 T.RotP=RotP;
 T.RefAR=RefAR;
 T.RefR=RefR;

@@ -6,7 +6,6 @@ SUBROUTINE bsload(nElem,IsBE,alpha,alpha5,alpha75,adotnorm,Re,umach,ur,CL,CD,CM2
         use configr
         use airfoil
         use dystl
-        use freestream 
         use util
         
         implicit none
@@ -60,13 +59,13 @@ SUBROUTINE bsload(nElem,IsBE,alpha,alpha5,alpha75,adotnorm,Re,umach,ur,CL,CD,CM2
         ! Calculate the local blade segment angle of attack                 
 
         ! Wall and wake induced velocity                                                   
-        uAve=(u(nt,nElem)+u(nt,nElem1))/2.0                                   
-        vAve=(v(nt,nElem)+v(nt,nElem1))/2.0                                   
-        wAve=(w(nt,nElem)+w(nt,nElem1))/2.0    
+        uAve=(uB(nElem)+uB(nElem1))/2.0
+        vAve=(vB(nElem)+vB(nElem1))/2.0
+        wAve=(wB(nElem)+wB(nElem1))/2.0
         ! Freestream velocity
-        uFSAve=(uFS(nt,nElem)+uFS(nt,nElem1))/2.0                                   
-        vFSAve=(vFS(nt,nElem)+vFS(nt,nElem1))/2.0                                   
-        wFSAve=(wFS(nt,nElem)+wFS(nt,nElem1))/2.0 
+        uFSAve=(uFSB(nElem)+uFSB(nElem1))/2.0
+        vFSAve=(vFSB(nElem)+vFSB(nElem1))/2.0
+        wFSAve=(wFSB(nElem)+wFSB(nElem1))/2.0
         ! Blade velocity due to rotation                                                      
         CALL CalcBladeVel(wRotX,wRotY,wRotZ,xe,ye,ze,uBlade,vBlade,wBlade)
         

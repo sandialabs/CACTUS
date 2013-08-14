@@ -22,11 +22,26 @@ MODULE blade
         real, allocatable :: Y(:,:)             ! Y position
         real, allocatable :: Z(:,:)             ! Z position
         
-        ! Wake lattice point velocity data
+        ! Induced velocity on blade lattice points
+        real, allocatable :: UB(:)             ! Lattice point x velocity for each element end lattice point
+        real, allocatable :: VB(:)             ! Lattice point y velocity for each element end lattice point
+        real, allocatable :: WB(:)             ! Lattice point z velocity for each element end lattice point
+
+        ! Freestream velocity on blade lattice points
+        real, allocatable :: UFSB(:)             ! Lattice point x velocity for each element end lattice point
+        real, allocatable :: VFSB(:)             ! Lattice point y velocity for each element end lattice point
+        real, allocatable :: WFSB(:)             ! Lattice point z velocity for each element end lattice point
+
+        ! Induced velocity on wake lattice points
         real, allocatable :: U(:,:)             ! Lattice point x velocity for each wake point
         real, allocatable :: V(:,:)             ! Lattice point y velocity for each wake point
         real, allocatable :: W(:,:)             ! Lattice point z velocity for each wake point
         
+        ! Freestream velocity at wake lattice points
+    	real, allocatable :: UFS(:,:)		! Lattice point freestream x velocity
+		real, allocatable :: VFS(:,:)		! Lattice point freestream y velocity
+		real, allocatable :: WFS(:,:)		! Lattice point freestream z velocity
+
         ! Old wake lattice point velocities
         real, allocatable :: UO(:,:)            ! Last lattice point x velocity for each wake point
         real, allocatable :: VO(:,:)            ! Last lattice point y velocity for each wake point
@@ -58,9 +73,18 @@ MODULE blade
                 allocate(X(MaxWakeNodes,MaxSegEnds))
                 allocate(Y(MaxWakeNodes,MaxSegEnds))
                 allocate(Z(MaxWakeNodes,MaxSegEnds))
+                allocate(UB(MaxSegEnds))
+                allocate(VB(MaxSegEnds))
+                allocate(WB(MaxSegEnds))
+        		allocate(UFSB(MaxSegEnds))
+				allocate(VFSB(MaxSegEnds))
+				allocate(WFSB(MaxSegEnds))
                 allocate(U(MaxWakeNodes,MaxSegEnds))
                 allocate(V(MaxWakeNodes,MaxSegEnds))
                 allocate(W(MaxWakeNodes,MaxSegEnds))
+        		allocate(UFS(MaxWakeNodes,MaxSegEnds))
+				allocate(VFS(MaxWakeNodes,MaxSegEnds))
+				allocate(WFS(MaxWakeNodes,MaxSegEnds))
                 allocate(UO(MaxWakeNodes,MaxSegEnds))
                 allocate(VO(MaxWakeNodes,MaxSegEnds))
                 allocate(WO(MaxWakeNodes,MaxSegEnds))               
