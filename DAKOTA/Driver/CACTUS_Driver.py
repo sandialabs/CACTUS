@@ -340,7 +340,7 @@ if not RunCase:
 
     sys.exit(0)
 #endif
-######################33
+######################
 
 ############## Add analysis specific pre-processing of top level inputs here #############
 # Create dictionary from input variables...
@@ -611,6 +611,23 @@ for i,Func in enumerate(Funcs):
         else:
             Funcs[i].FnVal=-999
         #endif 
+        
+    elif Tag == 'Cp_3Rev':
+        # Average Cp over last 3 revs
+        Ind=1
+        if len(RevData)>3:
+            SumCp=0.0
+            for RDInd in range(len(RevData)-3,len(RevData)):
+                SumCp=SumCp+RevData[RDInd][Ind]
+            #endfor
+            Funcs[i].FnVal=SumCp/3
+        else:
+            SumCp=0.0
+            for RD in RevData:
+                SumCp=SumCp+RD[Ind]
+            #endfor
+            Funcs[i].FnVal=SumCp/len(RevData)
+        #endif         
         
     elif Tag == 'NLConv':
         # Flag is 1 if NL iteration converged, 0 if the iteration failed to converge
