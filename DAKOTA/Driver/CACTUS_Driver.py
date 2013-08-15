@@ -15,7 +15,6 @@ import shutil
 import sys
 import string
 import math
-import FileUtil  # must be on python path
 
 # Note: To debug, call the python debugger module, pdb, as a script with this script as the argument (python -m pdb SCRIPT)
 # or insert: import pdb; pdb.set_trace() above, and call from terminal as usual
@@ -62,6 +61,43 @@ def TestNumString(TestStr):
 
     return IsNumString
 #enddef    
+
+def tail(fname, window):
+    """Read last N lines from file fname."""
+    try:
+        f = open(fname, 'r')
+    except IOError, err:
+        if err.errno == errno.ENOENT:
+            return []
+        else:
+            raise
+        #endif
+    else:
+        BUFSIZ = 1024
+        f.seek(0, 2)
+        fsize = f.tell()
+        block = -1
+        data = ""
+        exit = False
+        while not exit:
+            step = (block * BUFSIZ)
+            if abs(step) >= fsize:
+                f.seek(0)
+                exit = True
+            else:
+                f.seek(step, 2)
+            #endif
+            data = f.read().strip()
+            if data.count('\n') >= window:
+                break
+            else:
+                block -= 1
+            #endif
+        #endwhile
+            
+        return data.splitlines()[-window:]
+    #endtry
+#enddef
 
 def ReplaceScalar(FileLines,FileTag,VarVal,VarDes):
     # Replace scalar value in in template file...
@@ -523,7 +559,7 @@ fCACTUSDOut.close()
 # Check for non convergence of the NL iteration
 NLConv=1
 # Read last 4 lines
-Lines=FileUtil.tail(CLOutFN,4)
+Lines=tail(CLOutFN,4)
 for TL in Lines:
     if len(TL)>0:
         # Find error string
@@ -539,7 +575,7 @@ for TL in Lines:
 # Check for potential presence of temporal odd-even non-physical mode
 OECheck=0
 # Read last 4 lines
-Lines=FileUtil.tail(CACTUSTimeDataFN,4)
+Lines=tail(CACTUSTimeDataFN,4)
 # Check if end-1 Cp value is consistent with end and end-2, to within tol...
 if len(Lines) == 4:
     Tol=.01
@@ -575,6 +611,15 @@ for i,Func in enumerate(Funcs):
             Funcs[i].FnVal=-999
         #endif   
         
+    elif Tag == 'Ctr':
+        # Last torque coeff
+        Ind=3
+        if len(RevData)>0:
+            Funcs[i].FnVal=RevData[len(RevData)-1][Ind]
+        else:
+            Funcs[i].FnVal=-999
+        #endif    
+            
     elif Tag == 'Kp':
         # Last Kp
         Ind=2
