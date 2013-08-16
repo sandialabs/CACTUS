@@ -109,14 +109,21 @@ def ReplaceScalar(FileLines,FileTag,VarVal,VarDes):
         
         Cond=(LL[0].strip().lower() == FileTag.lower())  # Condition for identifying the correct line...
         if Cond:
-            # strip ';' if present (MATLAB)
             VS=LL[1]
+
+            # remove comment if present (MATLAB)
+            ComInd=VS.find('%')
+            if ComInd>0:
+                VS=VS[0:ComInd]
+            #endif
+
+            # strip ';' if present (MATLAB)
             HasSC=False
             if VS.find(';')>0:
-                VS=VS.strip(';')
+                VS=VS.strip('; ')
                 HasSC=True
             #endif
-            
+
             # reset value
             if VarDes == 'F':
                 LL[1]=str(float(VS)*VarVal) 
@@ -125,14 +132,14 @@ def ReplaceScalar(FileLines,FileTag,VarVal,VarDes):
             else:
                 LL[1]=str(VarVal)        
             #endif
-            
+
             if HasSC:
                 LL[1]=LL[1] + ';'           
             #endif
-            
+
             # rejoin LL and replace line in TempFileLines
             FileLines[LInd]='='.join(LL)
-            
+
             DoneLines=True
         elif LInd == len(FileLines)-1:
             DoneLines=True
@@ -152,11 +159,11 @@ def ReplaceString(FileLines,FileTag,ValString):
         
         Cond=(LL[0].strip().lower() == FileTag.lower())  # Condition for identifying the correct line...
         if Cond:
-            # strip ';' if present (MATLAB)
             VS=LL[1]
+            
+            # determine if ';' is present
             HasSC=False
             if VS.find(';')>0:
-                VS=VS.strip(';')
                 HasSC=True
             #endif
             
@@ -190,9 +197,16 @@ def GetScalar(FileLines,FileTag):
         
         Cond=(LL[0].strip().lower() == FileTag.lower())  # Condition for identifying the correct line...
         if Cond:
-            # get value
+            VS=LL[1]
+            
+            # remove comment if present (MATLAB)
+            ComInd=VS.find('%')
+            if ComInd>0:
+                VS=VS[0:ComInd]
+            #endif
+            
             # strip ';' if present (MATLAB)
-            VS=LL[1].strip(';')
+            VS=VS.strip('; ')
             Val=float(VS)      
             DoneLines=True
         elif LInd == len(FileLines)-1:
