@@ -87,9 +87,11 @@ DAKOutFB,DAKOutExt=DAKOutFN.split('.',1)
 
 SplitList=DAKInFN.split('.')
 DAKInd=''
+DAKIndLast=None
 for SL in SplitList:
     if TestNumString(SL):
         DAKInd=DAKInd + '_' + SL
+        DAKIndLast=int(SL)
     #endif
 #endfor
 
