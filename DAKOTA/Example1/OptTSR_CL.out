@@ -1,7 +1,7 @@
 DAKOTA version 5.3.1 released 05/15/2013.
 Subversion revision 1608 built Apr 30 2013 12:09:24.
 Running MPI executable in serial mode.
-Start time: Sun Jun 30 20:15:39 2013
+Start time: Sat Aug 17 15:55:57 2013
 
 -----------------------
 Begin DAKOTA input file
@@ -58,14 +58,14 @@ model
 	  #diagnostics	 				
 
 variables
-    # There appears to be a bug in DAKOTA's (version <= 5.2) surrogate_based_local method that makes it 
-    # impossible to use state variables, at least when doing global sampling to fit the surrogate model
-    # to the cost function... Set all non-optimized parameters directly in the CACTUS input file...
  	continuous_design = 1
   	  initial_point = 6
   	  lower_bounds = 2 
   	  upper_bounds = 10
   	  descriptors = 'Ut'
+    continuous_state = 1
+  	  initial_state = 52
+  	  descriptors = 'RPM'
 
 responses
 	id_responses = 'SURROGATE_RESP'
@@ -83,6 +83,7 @@ method
 	id_method = 'SAMPLING'
 	model_pointer = 'TRUTH'
 	dace lhs
+	  seed = 1000
 	  # Set samples to minimum number of new truth model samples to be added to the 
       # surrogate model basis on each surrogate model iteration. Do a couple per dimension
 	  # to hedge against directional bias potentially introduced by reusing samples...		
@@ -152,24 +153,26 @@ Begin Function Evaluation    1
 ------------------------------
 Parameters for function evaluation 1:
                       6.0000000000e+00 Ut
+                      5.2000000000e+01 RPM
 
 blocking fork: ../Driver/CACTUS_Driver.py Inputs.in.1 Outputs.out.1
 
 Active response data for function evaluation 1:
 Active set vector = { 1 }
-                     -5.1308810000e-01 CostFunc_MaxCP
+                     -5.1316450000e-01 CostFunc_MaxCP
 
 
 
 >>>>> Building global_kriging approximations.
 
-DACE method = lhs Samples = 5 Symbols = 5 Seed (system-generated) = 736524
+DACE method = lhs Samples = 5 Symbols = 5 Seed (user-specified) = 1000
 
 ------------------------------
 Begin Function Evaluation    2
 ------------------------------
 Parameters for function evaluation 2:
-                      5.5883233298e+00 Ut
+                      7.6851639482e+00 Ut
+                      5.2000000000e+01 RPM
 
 (Asynchronous job 2 added to queue)
 
@@ -177,7 +180,8 @@ Parameters for function evaluation 2:
 Begin Function Evaluation    3
 ------------------------------
 Parameters for function evaluation 3:
-                      7.0847266942e+00 Ut
+                      5.5076686043e+00 Ut
+                      5.2000000000e+01 RPM
 
 (Asynchronous job 3 added to queue)
 
@@ -185,7 +189,8 @@ Parameters for function evaluation 3:
 Begin Function Evaluation    4
 ------------------------------
 Parameters for function evaluation 4:
-                      6.3247220982e+00 Ut
+                      4.6490128550e+00 Ut
+                      5.2000000000e+01 RPM
 
 (Asynchronous job 4 added to queue)
 
@@ -193,7 +198,8 @@ Parameters for function evaluation 4:
 Begin Function Evaluation    5
 ------------------------------
 Parameters for function evaluation 5:
-                      7.5358489142e+00 Ut
+                      6.5820780043e+00 Ut
+                      5.2000000000e+01 RPM
 
 (Asynchronous job 5 added to queue)
 
@@ -201,7 +207,8 @@ Parameters for function evaluation 5:
 Begin Function Evaluation    6
 ------------------------------
 Parameters for function evaluation 6:
-                      4.5244361306e+00 Ut
+                      6.3722004663e+00 Ut
+                      5.2000000000e+01 RPM
 
 (Asynchronous job 6 added to queue)
 
@@ -218,39 +225,39 @@ nonblocking fork: ../Driver/CACTUS_Driver.py Inputs.in.5 Outputs.out.5
 Initiating function evaluation 6
 nonblocking fork: ../Driver/CACTUS_Driver.py Inputs.in.6 Outputs.out.6
 Waiting on completed jobs
-Function evaluation 5 has completed
-Waiting on completed jobs
-Function evaluation 4 has completed
-Waiting on completed jobs
-Function evaluation 3 has completed
-Waiting on completed jobs
 Function evaluation 2 has completed
 Waiting on completed jobs
 Function evaluation 6 has completed
+Waiting on completed jobs
+Function evaluation 5 has completed
+Waiting on completed jobs
+Function evaluation 3 has completed
+Waiting on completed jobs
+Function evaluation 4 has completed
 
 Active response data for function evaluation 2:
 Active set vector = { 1 }
-                     -4.9651770000e-01 CostFunc_MaxCP
+                     -4.9793820000e-01 CostFunc_MaxCP
 
 
 Active response data for function evaluation 3:
 Active set vector = { 1 }
-                     -5.0949900000e-01 CostFunc_MaxCP
+                     -4.9411820000e-01 CostFunc_MaxCP
 
 
 Active response data for function evaluation 4:
 Active set vector = { 1 }
-                     -5.1627940000e-01 CostFunc_MaxCP
+                     -4.5883620000e-01 CostFunc_MaxCP
 
 
 Active response data for function evaluation 5:
 Active set vector = { 1 }
-                     -5.0289230000e-01 CostFunc_MaxCP
+                     -5.1515090000e-01 CostFunc_MaxCP
 
 
 Active response data for function evaluation 6:
 Active set vector = { 1 }
-                     -4.5198250000e-01 CostFunc_MaxCP
+                     -5.1641530000e-01 CostFunc_MaxCP
 
 Constructing global approximations with one anchor, 5 DACE samples, and 0 reused points.
 
@@ -269,17 +276,18 @@ Beginning Approximate Fn Evaluations...
 Begin Function Evaluation    7
 ------------------------------
 Parameters for function evaluation 7:
-                      6.2760041055e+00 Ut
+                      6.3078211696e+00 Ut
+                      5.2000000000e+01 RPM
 
 blocking fork: ../Driver/CACTUS_Driver.py Inputs.in.7 Outputs.out.7
 
 Active response data for function evaluation 7:
 Active set vector = { 1 }
-                     -5.1640430000e-01 CostFunc_MaxCP
+                     -5.1649850000e-01 CostFunc_MaxCP
 
 
 
-<<<<< Trust Region Ratio = 1.0204589566e+00:
+<<<<< Trust Region Ratio = 9.9427035297e-01:
 <<<<< Excellent Accuracy, Iterate in Trust Region Interior, ACCEPT Step, RETAIN Trust Region Size
 
 
@@ -288,7 +296,7 @@ Begin SBLM Iteration Number 2
 
 Current Trust Region
                                Lower             Center              Upper
-              Ut:   4.2760041055e+00   6.2760041055e+00   8.2760041055e+00
+              Ut:   4.3078211696e+00   6.3078211696e+00   8.3078211696e+00
 **************************************************************************
 
 >>>>> Building global_kriging approximations.
@@ -304,7 +312,8 @@ DACE method = lhs Samples = 2 Symbols = 2 Seed not reset from previous DACE exec
 Begin Function Evaluation    8
 ------------------------------
 Parameters for function evaluation 8:
-                      6.4607414089e+00 Ut
+                      4.9842137513e+00 Ut
+                      5.2000000000e+01 RPM
 
 (Asynchronous job 8 added to queue)
 
@@ -312,7 +321,8 @@ Parameters for function evaluation 8:
 Begin Function Evaluation    9
 ------------------------------
 Parameters for function evaluation 9:
-                      4.4707137111e+00 Ut
+                      7.2211038783e+00 Ut
+                      5.2000000000e+01 RPM
 
 (Asynchronous job 9 added to queue)
 
@@ -329,12 +339,12 @@ Function evaluation 8 has completed
 
 Active response data for function evaluation 8:
 Active set vector = { 1 }
-                     -5.1581830000e-01 CostFunc_MaxCP
+                     -4.7627260000e-01 CostFunc_MaxCP
 
 
 Active response data for function evaluation 9:
 Active set vector = { 1 }
-                     -4.4847460000e-01 CostFunc_MaxCP
+                     -5.0874260000e-01 CostFunc_MaxCP
 
 Constructing global approximations with one anchor, 2 DACE samples, and 6 reused points.
 
@@ -352,17 +362,18 @@ Constructing global approximations with one anchor, 2 DACE samples, and 6 reused
 Begin Function Evaluation   10
 ------------------------------
 Parameters for function evaluation 10:
-                      6.2477543018e+00 Ut
+                      6.3126838801e+00 Ut
+                      5.2000000000e+01 RPM
 
 blocking fork: ../Driver/CACTUS_Driver.py Inputs.in.10 Outputs.out.10
 
 Active response data for function evaluation 10:
 Active set vector = { 1 }
-                     -5.1631800000e-01 CostFunc_MaxCP
+                     -5.1649710000e-01 CostFunc_MaxCP
 
 
 
-<<<<< Iterate rejected by Filter, Trust Region Ratio = -3.5666718196e+00:
+<<<<< Iterate rejected by Filter, Trust Region Ratio = -2.3305318959e+00:
 <<<<< Poor accuracy, REJECT Step, REDUCE Trust Region Size
 
 
@@ -371,7 +382,7 @@ Begin SBLM Iteration Number 3
 
 Current Trust Region
                                Lower             Center              Upper
-              Ut:   5.7760041055e+00   6.2760041055e+00   6.7760041055e+00
+              Ut:   5.8078211696e+00   6.3078211696e+00   6.8078211696e+00
 **************************************************************************
 
 >>>>> Building global_kriging approximations.
@@ -387,7 +398,8 @@ DACE method = lhs Samples = 2 Symbols = 2 Seed not reset from previous DACE exec
 Begin Function Evaluation   11
 ------------------------------
 Parameters for function evaluation 11:
-                      6.2715396144e+00 Ut
+                      6.0664341560e+00 Ut
+                      5.2000000000e+01 RPM
 
 (Asynchronous job 11 added to queue)
 
@@ -395,7 +407,8 @@ Parameters for function evaluation 11:
 Begin Function Evaluation   12
 ------------------------------
 Parameters for function evaluation 12:
-                      6.5593495751e+00 Ut
+                      6.6911596505e+00 Ut
+                      5.2000000000e+01 RPM
 
 (Asynchronous job 12 added to queue)
 
@@ -406,18 +419,18 @@ nonblocking fork: ../Driver/CACTUS_Driver.py Inputs.in.11 Outputs.out.11
 Initiating function evaluation 12
 nonblocking fork: ../Driver/CACTUS_Driver.py Inputs.in.12 Outputs.out.12
 Waiting on completed jobs
-Function evaluation 11 has completed
-Waiting on completed jobs
 Function evaluation 12 has completed
+Waiting on completed jobs
+Function evaluation 11 has completed
 
 Active response data for function evaluation 11:
 Active set vector = { 1 }
-                     -5.1639030000e-01 CostFunc_MaxCP
+                     -5.1456570000e-01 CostFunc_MaxCP
 
 
 Active response data for function evaluation 12:
 Active set vector = { 1 }
-                     -5.1524340000e-01 CostFunc_MaxCP
+                     -5.1413170000e-01 CostFunc_MaxCP
 
 Constructing global approximations with one anchor, 2 DACE samples, and 4 reused points.
 
@@ -475,9 +488,9 @@ Constructing global approximations with one anchor, 2 DACE samples, and 4 reused
   REAL PARAMETERS
     1) CT     = -3.00000E-02            8) DX2    =  1.20000E+00
     2) CTMIN  =  3.00000E-03            9) FDCH   =  1.00000E-03
-    3) DABOBJ =  5.13088E-05           10) FDCHM  =  1.00000E-04
+    3) DABOBJ =  5.13164E-05           10) FDCHM  =  1.00000E-04
     4) DELOBJ =  1.00000E-08           11) RMVLMZ =  4.00000E-01
-    5) DOBJ1  =  1.00000E-01           12) DABSTR =  5.13088E-05
+    5) DOBJ1  =  1.00000E-01           12) DABSTR =  5.13164E-05
     6) DOBJ2  =  2.00000E-01           13) DELSTR =  1.00000E-03
     7) DX1    =  1.00000E-02
 
@@ -509,7 +522,7 @@ Constructing global approximations with one anchor, 2 DACE samples, and 4 reused
 
   -- INITIAL FUNCTION VALUES
 
-  OBJ = -0.51309    
+  OBJ = -0.51316    
 
 
 
@@ -518,21 +531,26 @@ Constructing global approximations with one anchor, 2 DACE samples, and 4 reused
 
   -- BEGIN ITERATION  1
 
-  OBJECTIVE =-5.16338E-01
+  OBJECTIVE =-5.16517E-01
 
   DECISION VARIABLES (X-VECTOR)
-       1)   6.27577E+00
+       1)   6.31270E+00
 
 
   -- BEGIN ITERATION  2
 
-  OBJECTIVE =-5.16338E-01
+  OBJECTIVE =-5.16518E-01
 
   DECISION VARIABLES (X-VECTOR)
-       1)   6.27600E+00
+       1)   6.30781E+00
 
 
   -- BEGIN ITERATION  3
+
+  OBJECTIVE =-5.16518E-01
+
+  DECISION VARIABLES (X-VECTOR)
+       1)   6.30782E+00
 
 
 
@@ -541,21 +559,21 @@ Constructing global approximations with one anchor, 2 DACE samples, and 4 reused
 
   TERMINATION CRITERIA
 
-  KUHN-TUCKER CONDITIONS ARE SATISFIED
+  ABSOLUTE CONVERGENCE CRITERION WAS MET FOR  2 CONSECUTIVE ITERATIONS
 
 
   -- OPTIMIZATION RESULTS
 
 
-  OBJECTIVE, F(X) =   -5.16338E-01
+  OBJECTIVE, F(X) =   -5.16518E-01
 
 
   DECISION VARIABLES, X
 
      ID         XL             X            XU
-      1     4.00000E+00   6.27600E+00   8.00000E+00
+      1     4.00000E+00   6.30782E+00   8.00000E+00
 
-  FUNCTION CALLS =       9
+  FUNCTION CALLS =      11
 
   GRADIENT CALLS =       3
 
@@ -607,9 +625,9 @@ Constructing global approximations with one anchor, 2 DACE samples, and 4 reused
   REAL PARAMETERS
     1) CT     = -3.00000E-02            8) DX2    =  1.20000E+00
     2) CTMIN  =  3.00000E-03            9) FDCH   =  1.00000E-03
-    3) DABOBJ =  5.13088E-05           10) FDCHM  =  1.00000E-04
+    3) DABOBJ =  5.13164E-05           10) FDCHM  =  1.00000E-04
     4) DELOBJ =  1.00000E-08           11) RMVLMZ =  4.00000E-01
-    5) DOBJ1  =  1.00000E-01           12) DABSTR =  5.13088E-05
+    5) DOBJ1  =  1.00000E-01           12) DABSTR =  5.13164E-05
     6) DOBJ2  =  2.00000E-01           13) DELSTR =  1.00000E-03
     7) DX1    =  1.00000E-02
 
@@ -630,18 +648,18 @@ Constructing global approximations with one anchor, 2 DACE samples, and 4 reused
   -- INITIAL VARIABLES AND BOUNDS
 
   LOWER BOUNDS ON THE DECISION VARIABLES (XL-VECTOR)
-       1)   4.27600E+00
+       1)   4.30782E+00
 
   DECISION VARIABLES (X-VECTOR)
-       1)   6.27600E+00
+       1)   6.30782E+00
 
   UPPER BOUNDS ON THE DECISION VARIABLES (XU-VECTOR)
-       1)   8.27600E+00
+       1)   8.30782E+00
 
 
   -- INITIAL FUNCTION VALUES
 
-  OBJ = -0.51640    
+  OBJ = -0.51650    
 
 
 
@@ -650,18 +668,18 @@ Constructing global approximations with one anchor, 2 DACE samples, and 4 reused
 
   -- BEGIN ITERATION  1
 
-  OBJECTIVE =-5.16428E-01
+  OBJECTIVE =-5.16499E-01
 
   DECISION VARIABLES (X-VECTOR)
-       1)   6.24732E+00
+       1)   6.31270E+00
 
 
   -- BEGIN ITERATION  2
 
-  OBJECTIVE =-5.16428E-01
+  OBJECTIVE =-5.16499E-01
 
   DECISION VARIABLES (X-VECTOR)
-       1)   6.24775E+00
+       1)   6.31268E+00
 
 
 
@@ -676,15 +694,15 @@ Constructing global approximations with one anchor, 2 DACE samples, and 4 reused
   -- OPTIMIZATION RESULTS
 
 
-  OBJECTIVE, F(X) =   -5.16428E-01
+  OBJECTIVE, F(X) =   -5.16499E-01
 
 
   DECISION VARIABLES, X
 
      ID         XL             X            XU
-      1     4.27600E+00   6.24775E+00   8.27600E+00
+      1     4.30782E+00   6.31268E+00   8.30782E+00
 
-  FUNCTION CALLS =       9
+  FUNCTION CALLS =       7
 
   GRADIENT CALLS =       2
 
@@ -736,9 +754,9 @@ Constructing global approximations with one anchor, 2 DACE samples, and 4 reused
   REAL PARAMETERS
     1) CT     = -3.00000E-02            8) DX2    =  1.20000E+00
     2) CTMIN  =  3.00000E-03            9) FDCH   =  1.00000E-03
-    3) DABOBJ =  5.13088E-05           10) FDCHM  =  1.00000E-04
+    3) DABOBJ =  5.13164E-05           10) FDCHM  =  1.00000E-04
     4) DELOBJ =  1.00000E-08           11) RMVLMZ =  4.00000E-01
-    5) DOBJ1  =  1.00000E-01           12) DABSTR =  5.13088E-05
+    5) DOBJ1  =  1.00000E-01           12) DABSTR =  5.13164E-05
     6) DOBJ2  =  2.00000E-01           13) DELSTR =  1.00000E-03
     7) DX1    =  1.00000E-02
 
@@ -759,18 +777,18 @@ Constructing global approximations with one anchor, 2 DACE samples, and 4 reused
   -- INITIAL VARIABLES AND BOUNDS
 
   LOWER BOUNDS ON THE DECISION VARIABLES (XL-VECTOR)
-       1)   5.77600E+00
+       1)   5.80782E+00
 
   DECISION VARIABLES (X-VECTOR)
-       1)   6.27600E+00
+       1)   6.30782E+00
 
   UPPER BOUNDS ON THE DECISION VARIABLES (XU-VECTOR)
-       1)   6.77600E+00
+       1)   6.80782E+00
 
 
   -- INITIAL FUNCTION VALUES
 
-  OBJ = -0.51640    
+  OBJ = -0.51650    
 
 
 
@@ -779,18 +797,18 @@ Constructing global approximations with one anchor, 2 DACE samples, and 4 reused
 
   -- BEGIN ITERATION  1
 
-  OBJECTIVE =-5.16428E-01
+  OBJECTIVE =-5.16499E-01
 
   DECISION VARIABLES (X-VECTOR)
-       1)   6.29008E+00
+       1)   6.31216E+00
 
 
   -- BEGIN ITERATION  2
 
-  OBJECTIVE =-5.16428E-01
+  OBJECTIVE =-5.16499E-01
 
   DECISION VARIABLES (X-VECTOR)
-       1)   6.29012E+00
+       1)   6.31216E+00
 
 
 
@@ -805,12 +823,6 @@ Constructing global approximations with one anchor, 2 DACE samples, and 4 reused
   -- OPTIMIZATION RESULTS
 
 
-  OBJECTIVE, F(X) =   -5.16428E-01
-
-
-  DECISION VARIABLES, X
-
-     ID         XL             X            XU
 
 <<<<< Approximate optimization cycle completed.
 
@@ -820,18 +832,19 @@ Constructing global approximations with one anchor, 2 DACE samples, and 4 reused
 Begin Function Evaluation   13
 ------------------------------
 Parameters for function evaluation 13:
-                      6.2901196904e+00 Ut
+                      6.3121563830e+00 Ut
+                      5.2000000000e+01 RPM
 
 blocking fork: ../Driver/CACTUS_Driver.py Inputs.in.13 Outputs.out.13
 
 Active response data for function evaluation 13:
 Active set vector = { 1 }
-                     -5.1642090000e-01 CostFunc_MaxCP
+                     -5.1649790000e-01 CostFunc_MaxCP
 
 
 
-<<<<< Trust Region Ratio = 6.9610860967e-01:
-<<<<< Satisfactory Accuracy, ACCEPT Step, RETAIN Trust Region Size
+<<<<< Iterate rejected by Filter, Trust Region Ratio = -1.2843468298e+00:
+<<<<< Poor accuracy, REJECT Step, REDUCE Trust Region Size
 
 
 Surrogate-Based Optimization Complete - Soft Convergence Tolerance Reached
@@ -840,18 +853,25 @@ Total Number of Iterations = 3
 <<<<< Function evaluation summary (APPROX_INTERFACE): 42 total (42 new, 0 duplicate)
 <<<<< Function evaluation summary (TRUE_FN): 13 total (13 new, 0 duplicate)
 <<<<< Best parameters          =
-                      6.2901196904e+00 Ut
+                      6.3078211696e+00 Ut
+                      5.2000000000e+01 RPM
 <<<<< Best objective function  =
-                     -5.1642090000e-01
-<<<<< Best data captured at function evaluation 13
+                     -5.1649850000e-01
+<<<<< Best data captured at function evaluation 7
 
 
 <<<<< Iterator surrogate_based_local completed.
 <<<<< Single Method Strategy completed.
 DAKOTA execution time in seconds:
-  Total CPU        =       0.12 [parent =   0.110984, child =   0.009016]
-  Total wall clock =    28.5222
-      1     5.77600E+00   6.29012E+00   6.77600E+00
+  Total CPU        =       0.08 [parent =   0.077988, child =   0.002012]
+  Total wall clock =    26.0272
+  OBJECTIVE, F(X) =   -5.16499E-01
+
+
+  DECISION VARIABLES, X
+
+     ID         XL             X            XU
+      1     5.80782E+00   6.31216E+00   6.80782E+00
 
   FUNCTION CALLS =       7
 

@@ -1,17 +1,21 @@
 #!/usr/bin/env python
 
-# CACTUS modification: Need to run surrogate based optimization. DAKOTA version <= 5.2 can't handle state variables in surrogate optimization methods.
-# This script hardcodes all CACTUS recognized variables in a modified CACTUS input file and inserts this filename into the DAKOTA templates 
-# before calling the DAKOTA optimization methods. The first AC is the nominal CACTUS input filename. 
-
-# DAKOTA sub-level analysis driver. (Optimization) Runs an initial optimization method and optionally refines the results with a second optimization method.
+# DAKOTA sub-level analysis driver. (Optimization) 
+# Runs an initial optimization method and optionally refines the results with a second optimization method. Returns
 # Typical application of this script is a coarse/fine hybrid approach in which a global method (like DAKOTA's DIRECT method) is used to find likely 
 # global minimizer candidates, and the results are passed to a fast local gradient search method (like DAKOTA's DOTBFGS) for refinement.
-# Second AC is 'Y' if second refinement optimization is to be performed. Third and fourth ACs are the template DAKOTA input files for the initial
-# and refined optimization analyses. The template files should contain tags to be replaced with DAKOTA variables. Tags should be the top-level DAKOTA variable 
+
+# Analysis component inputs:
+#   1. Input 'Y' if second refinement optimization is to be performed, otherwise 'N'
+#   2. Template DAKOTA input file for the initial optimization analysis
+#   3. Template DAKOTA input file for the refined optimization analysis
+#   Other optional analysis components in no particular order (KeepFiles, etc...). See those recognized below...
+
+# The template files should contain tags to be replaced with DAKOTA variables. Tags should be the top-level DAKOTA variable 
 # descriptor name enclosed in curly braces (ex. {RPM}). In order to use the output of the first optimization as the initial conditions for the second,
 # the tags for the optimization parameters in the refined optimization template should be the DAKOTA variable descriptor used for the corresponding parameter 
 # in the initial optimization template (enclosed in curly braces).
+
 
 import os
 import shutil
@@ -65,38 +69,6 @@ def TestNumString(TestStr):
 
     return IsNumString
 #enddef    
-        
-# CACTUS input file modifications        
-def ReplaceScalar(FileLines,FileTag,VarVal,VarDes):
-    # Find FileTag line in template file 
-    DoneLines=False
-    LInd=0
-    while not DoneLines:
-        Line=FileLines[LInd]
-        LL=Line.split('=')
-        
-        Cond=(LL[0].strip().lower() == FileTag.lower())  # Condition for identifying the correct line...
-        if Cond:
-            # reset value
-            if VarDes == 'F':
-                LL[1]=str(float(LL[1])*VarVal)        
-            elif VarDes == 'D':
-                LL[1]=str(float(LL[1])+VarVal)        
-            else:
-                LL[1]=str(VarVal)        
-            #endif
-            
-            # rejoin LL and replace line in TempFileLines
-            FileLines[LInd]='='.join(LL)
-            
-            DoneLines=True
-        elif LInd == len(FileLines)-1:
-            DoneLines=True
-        #endif
-        
-        LInd+=1
-    #endwhile    
-#enddef        
         
 ############################        
     
@@ -154,94 +126,120 @@ for i in range(NumACs):
     
 fDAKInput.close()  
 
-############## Add analysis specific pre-processing of top level inputs here #############
-
-# Put CACTUS recognized variables into modified CACTUS input file
-# Get the CACTUS template file
-CACTUSTempFN=ACs[0].Code
-CACTUSFB,CACTUSExt=CACTUSTempFN.rsplit('.',1)
-if CACTUSFB.find('/') >= 0:
-    FF,CACTUSFB=CACTUSFB.rsplit('/',1) # keep temp files in local directory
-#endif
-
-CACTUSFN=CACTUSFB + '_Mod'
-if DAKInd:
-    CACTUSFN=CACTUSFN + DAKInd
-#endif
-CACTUSProbFN=CACTUSFN + '.' + CACTUSExt
-
-fTemp=open(CACTUSTempFN,'r')
-TempFile=fTemp.read()  # read the file into a string
-fTemp.close()
-
-# Split template into lines
-TempFileLines=TempFile.splitlines()
-
-##### Apply modifications to CACTUS template specific to each DAKOTA input tag. Input tags should generally have the form TAG_DES
-##### where the TAG identifies the variable. The designator (DES) can be either "F" "D" or "V", indicating the value should
-##### be applied as a factor on, delta over, or directly as the value of the identified variable...
-
-for Var in Vars:
-    VarTag=Var.Tag
-    Val=float(Var.Val)
+#######################
+# Check for additional analysis components
+KeepFiles=False
+RunCase=True
+for i in range(NumACs):
+    CodeStr=ACs[i].Code
     
-    if VarTag.find('_') < 0:
-        Tag=VarTag
-        Des=None
-    else:
-        Tag,Des=VarTag.split('_')
-    #endif
-    
-    Tag=Tag.strip()
-    # Recognize DAKOTA tags. If not a special tag defined below, Tag is assumed to be a scalar variable in the input file.
-    if Tag == 'RotorSolidity':
-        # Vary rotor solidity by modifying chord-to-radius ratio array (only factor and delta designators recognized)
+    if CodeStr.find('KeepFiles') >= 0:
+        # Check for keep files flag. If 'KeepFiles', keep files for all iterations.
+        # If 'KeepFiles:1,2,5-8,...', files will be kept for the list of iteration numbers provided. Note the
+        # iteration number is the last (lowest level) Dakota index attached to the analysis driver input file.
         
-        # Find Ut line in template file 
-        DoneLines=False
-        LInd=0
-        while not DoneLines:
-            Line=TempFileLines[LInd]
-            LL=Line.split('=')
+        # Check for specific iteration numbers
+        if CodeStr.find(':') >= 0:
+            CTag,IterList=CodeStr.split(':')
             
-            Cond=(LL[0].strip().lower() == 'chr')  # Condition for identifying the correct line...
-            if Cond:
-                # reset all comma separated values
-                LLV=LL[1].split(',')
-                for i in range(len(LLV)):
-                    if Des == 'F':
-                        LLV[i]=str(float(LLV[i])*Val)        
-                    elif Des == 'D':
-                        LLV[i]=str(float(LLV[i])+Val)               
-                    #endif
-                #endfor
-                
-                # rejoin LLV and replace line in TempFileLines
-                TempFileLines[LInd]=LL[0] + '=' + ','.join(LLV)
-                
-                DoneLines=True
-            elif LInd == len(TempFileLines)-1:
-                DoneLines=True
+            # fill out - fields
+            ILS=IterList.split(',')
+            for j,ILSI in enumerate(ILS):
+                Ind=ILSI.find('-')
+                if Ind>0:
+                    LBUB=ILSI.split('-')
+                    ILS[j]=','.join(map(str,range(LBUB[0],LBUB[1]+1)))
+                #endif
+            #endfor
+            IterList=','.join(ILS)
+
+            IL=map(int,IterList.split(','))
+            # Try to find current iteration in list
+            try:
+                IL.index(DAKIndLast)
+            except ValueError:
+                KeepFiles=False
+            else:
+                KeepFiles=True
+            #endtry
+        else:
+            KeepFiles=True
+        #endif
+        
+    elif CodeStr.find('SkipCase:') >= 0:    
+        # Check for skip case flag. 
+        # If 'SkipCase:1,2,5-8,...', the indicated cases will not be run. Note the
+        # iteration number is the last (lowest level) Dakota index attached to the analysis driver input file.
+        
+        CTag,IterList=CodeStr.split(':')
+        
+        # fill out - fields
+        ILS=IterList.split(',')
+        for j,ILSI in enumerate(ILS):
+            Ind=ILSI.find('-')
+            if Ind>0:
+                LBUB=ILSI.split('-')
+                ILS[j]=','.join(map(str,range(int(LBUB[0]),int(LBUB[1])+1)))
             #endif
-            
-            LInd+=1
-        #endwhile
+        #endfor
+        IterList=','.join(ILS)
+
+        IL=map(int,IterList.split(','))
+        # Try to find current iteration in list
+        try:
+            IL.index(DAKIndLast)
+        except ValueError:
+            RunCase=True
+        else:
+            RunCase=False
+        #endtry
         
-    else:
-        # Assume Tag matches a variable name in the CACTUS input file, and we are replacing a scalar...
-        ReplaceScalar(TempFileLines,Tag,Val,Des) 
-                      
-    #endif
+    elif CodeStr.find('RunCase:') >= 0:    
+        # Check for run case flag. 
+        # If 'RunCase:1,2,5-8,...', the indicated cases will be run. RunCase overrides SkipCase if both present. Note the
+        # iteration number is the last (lowest level) Dakota index attached to the analysis driver input file.
+        
+        CTag,IterList=CodeStr.split(':')
+        
+        # fill out - fields
+        ILS=IterList.split(',')
+        for j,ILSI in enumerate(ILS):
+            Ind=ILSI.find('-')
+            if Ind>0:
+                LBUB=ILSI.split('-')
+                ILS[j]=','.join(map(str,range(int(LBUB[0]),int(LBUB[1])+1)))
+            #endif
+        #endfor
+        IterList=','.join(ILS)
+
+        IL=map(int,IterList.split(','))
+        # Try to find current iteration in list
+        try:
+            IL.index(DAKIndLast)
+        except ValueError:
+            RunCase=False
+        else:
+            RunCase=True
+        #endtry            
+        
+    #endif 
     
 #endfor
 
-# Rejoin TempFileLines into file string (with carriage returns)
-TempFileNew='\n'.join(TempFileLines) + '\n'
+# End here if skipping this case
+if not RunCase:
+    fDAKOut = open(DAKOutFN, 'w')
+    for Func in Funcs:
+        OutLine = '-999 ' + Func.Tag + '\n'
+        fDAKOut.write(OutLine)
+    #endfor
 
-# Write the CACTUS input file
-fCACTUSInput = open(CACTUSProbFN, 'w')
-fCACTUSInput.write(TempFileNew)
-fCACTUSInput.close()
+    sys.exit(0)
+#endif
+######################
+
+############## Add analysis specific pre-processing of top level inputs here #############
+
 
 ########################################################################################
    
@@ -249,13 +247,14 @@ fCACTUSInput.close()
 # optimization as an initial condition. The second and third AC must be template files for the initial
 # and refinement optimization DAKOTA analyses.
 RunFine=False
-if ACs[1].Code == 'Y':
+if ACs[0].Code == 'Y':
     RunFine=True
 #endif
    
 # Get the sub-level analysis template file for initial opt, and write a modified file for this call
-SLATempFN=ACs[2].Code
-SLAFB,SLAExt=SLATempFN.split('.',1)
+SLATempFN=ACs[1].Code
+TempFN=SLATempFN.rsplit('/',1) # split directory and filename
+SLAFB,SLAExt=TempFN[len(TempFN)-1].split('.',1)
 
 SLAFN=SLAFB + '_Mod'
 if DAKInd:
@@ -277,11 +276,9 @@ for Var in Vars:
 #endfor
 
 # Write the analysis driver input and output filenames for the sub-level analysis...
-# Write CACTUS input filename.
 # (these tags must exist in the sub-level analysis DAKOTA template)
 TempFile=TempFile.replace('{SLADriverInFB}',SLADriverInFB) 
 TempFile=TempFile.replace('{SLADriverOutFB}',SLADriverOutFB)   
-TempFile=TempFile.replace('{CACTUSInFN}',CACTUSProbFN)
 
 # Write the sub-level analysis DAKOTA input file
 fSLAInput = open(SLAInFN1, 'w')
@@ -331,7 +328,7 @@ fSLADOut.close()
 # Run refined optimization if requested
 if RunFine:
     # Get the sub-level analysis template file, and write a modified file for this call
-    SLATempFN=ACs[3].Code
+    SLATempFN=ACs[2].Code
     SLAFB,SLAExt=SLATempFN.split('.',1)
     
     SLAFN=SLAFB + '_Mod'
@@ -365,8 +362,7 @@ if RunFine:
     # Write the analysis driver input and output filenames for the sub-level analysis...
     # (these tags must exist in the sub-level analysis DAKOTA template)
     TempFile=TempFile.replace('{SLADriverInFB}',SLADriverInFB) 
-    TempFile=TempFile.replace('{SLADriverOutFB}',SLADriverOutFB)  
-    TempFile=TempFile.replace('{CACTUSInFN}',CACTUSProbFN) 
+    TempFile=TempFile.replace('{SLADriverOutFB}',SLADriverOutFB)   
     
     # Write the sub-level analysis DAKOTA input file
     fSLAInput = open(SLAInFN2, 'w')
@@ -450,8 +446,7 @@ for Func in Funcs:
 fDAKOut.close()
 
 # Delete temporary files. If sim failed, keep temp files and save DAKOTA input and output files with a .test ext...
-if not SIMFailFlag:
-    os.remove(CACTUSProbFN)
+if not SIMFailFlag and not KeepFiles:
     os.remove(CLOutFN1)
     os.remove(SLAInFN1)
     if RunFine:

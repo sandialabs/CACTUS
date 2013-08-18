@@ -49,14 +49,14 @@ model
 	  #diagnostics	 				
 
 variables
-    # There appears to be a bug in DAKOTA's (version <= 5.2) surrogate_based_local method that makes it 
-    # impossible to use state variables, at least when doing global sampling to fit the surrogate model
-    # to the cost function... Set all non-optimized parameters directly in the CACTUS input file...
  	continuous_design = 1
   	  initial_point = 6
   	  lower_bounds = 2 
   	  upper_bounds = 10
   	  descriptors = 'Ut'
+    continuous_state = 1
+  	  initial_state = 52
+  	  descriptors = 'RPM'
 
 responses
 	id_responses = 'SURROGATE_RESP'
@@ -74,6 +74,7 @@ method
 	id_method = 'SAMPLING'
 	model_pointer = 'TRUTH'
 	dace lhs
+	  seed = 1000
 	  # Set samples to minimum number of new truth model samples to be added to the 
       # surrogate model basis on each surrogate model iteration. Do a couple per dimension
 	  # to hedge against directional bias potentially introduced by reusing samples...		

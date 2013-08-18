@@ -4,11 +4,11 @@
 # Reads DAKOTA input, writes input for CACTUS, executes, and compiles a DAKOTA return file.
 # Analysis component inputs:
 #   1. Path to CACTUS executable to use
-#   2. CACTUS template input file to modify on each call
+#   2. CACTUS nominal input file to modify on each call
 #   3. If the geometry file is to be modified, should be set to 'Y', otherwise 'N'
-#   4. Path to template geometry generation script (if AC 3 set to 'Y')
+#   4. Path to nominal geometry generation script (if AC 3 set to 'Y')
 #      Note: The name of the output geometry file should be assigned to a variable named 'FN' in the script.
-#   5-. Other optional analysis components (KeepFiles, etc...). See those recognized below...
+#   Other optional analysis components in no particular order (KeepFiles, etc...). See those recognized below...
 
 import os
 import shutil
@@ -280,49 +280,16 @@ fDAKInput.close()
 # Check for additional analysis components
 KeepFiles=False
 RunCase=True
-if NumACs>1:
+for i in range(NumACs):
+    CodeStr=ACs[i].Code
     
-    for i in range(1,NumACs):
-        CodeStr=ACs[i].Code
+    if CodeStr.find('KeepFiles') >= 0:
+        # Check for keep files flag. If 'KeepFiles', keep files for all iterations.
+        # If 'KeepFiles:1,2,5-8,...', files will be kept for the list of iteration numbers provided. Note the
+        # iteration number is the last (lowest level) Dakota index attached to the analysis driver input file.
         
-        if CodeStr.find('KeepFiles') >= 0:
-            # Check for keep files flag. If 'KeepFiles', keep files for all iterations.
-            # If 'KeepFiles:1,2,5-8,...', files will be kept for the list of iteration numbers provided. Note the
-            # iteration number is the last (lowest level) Dakota index attached to the analysis driver input file.
-            
-            # Check for specific iteration numbers
-            if CodeStr.find(':') >= 0:
-                CTag,IterList=CodeStr.split(':')
-                
-                # fill out - fields
-                ILS=IterList.split(',')
-                for j,ILSI in enumerate(ILS):
-                    Ind=ILSI.find('-')
-                    if Ind>0:
-                        LBUB=ILSI.split('-')
-                        ILS[j]=','.join(map(str,range(LBUB[0],LBUB[1]+1)))
-                    #endif
-                #endfor
-                IterList=','.join(ILS)
-
-                IL=map(int,IterList.split(','))
-                # Try to find current iteration in list
-                try:
-                    IL.index(DAKIndLast)
-                except ValueError:
-                    KeepFiles=False
-                else:
-                    KeepFiles=True
-                #endtry
-            else:
-                KeepFiles=True
-            #endif
-            
-        elif CodeStr.find('SkipCase:') >= 0:    
-            # Check for skip case flag. 
-            # If 'SkipCase:1,2,5-8,...', the indicated cases will not be run. Note the
-            # iteration number is the last (lowest level) Dakota index attached to the analysis driver input file.
-            
+        # Check for specific iteration numbers
+        if CodeStr.find(':') >= 0:
             CTag,IterList=CodeStr.split(':')
             
             # fill out - fields
@@ -331,7 +298,7 @@ if NumACs>1:
                 Ind=ILSI.find('-')
                 if Ind>0:
                     LBUB=ILSI.split('-')
-                    ILS[j]=','.join(map(str,range(int(LBUB[0]),int(LBUB[1])+1)))
+                    ILS[j]=','.join(map(str,range(LBUB[0],LBUB[1]+1)))
                 #endif
             #endfor
             IterList=','.join(ILS)
@@ -341,44 +308,73 @@ if NumACs>1:
             try:
                 IL.index(DAKIndLast)
             except ValueError:
-                RunCase=True
+                KeepFiles=False
             else:
-                RunCase=False
+                KeepFiles=True
             #endtry
-            
-        elif CodeStr.find('RunCase:') >= 0:    
-            # Check for run case flag. 
-            # If 'RunCase:1,2,5-8,...', the indicated cases will be run. RunCase overrides SkipCase if both present. Note the
-            # iteration number is the last (lowest level) Dakota index attached to the analysis driver input file.
-            
-            CTag,IterList=CodeStr.split(':')
-            
-            # fill out - fields
-            ILS=IterList.split(',')
-            for j,ILSI in enumerate(ILS):
-                Ind=find(ILSI,'-')
-                if Ind>0:
-                    LBUB=ILSI.split('-')
-                    ILS[j]=','.join(map(str,range(int(LBUB[0]),int(LBUB[1])+1)))
-                #endif
-            #endfor
-            IterList=','.join(ILS)
-
-            IL=map(int,IterList.split(','))
-            # Try to find current iteration in list
-            try:
-                IL.index(DAKIndLast)
-            except ValueError:
-                RunCase=False
-            else:
-                RunCase=True
-            #endtry            
-            
-        #endif 
+        else:
+            KeepFiles=True
+        #endif
         
-    #endfor
-     
-#endif
+    elif CodeStr.find('SkipCase:') >= 0:    
+        # Check for skip case flag. 
+        # If 'SkipCase:1,2,5-8,...', the indicated cases will not be run. Note the
+        # iteration number is the last (lowest level) Dakota index attached to the analysis driver input file.
+        
+        CTag,IterList=CodeStr.split(':')
+        
+        # fill out - fields
+        ILS=IterList.split(',')
+        for j,ILSI in enumerate(ILS):
+            Ind=ILSI.find('-')
+            if Ind>0:
+                LBUB=ILSI.split('-')
+                ILS[j]=','.join(map(str,range(int(LBUB[0]),int(LBUB[1])+1)))
+            #endif
+        #endfor
+        IterList=','.join(ILS)
+
+        IL=map(int,IterList.split(','))
+        # Try to find current iteration in list
+        try:
+            IL.index(DAKIndLast)
+        except ValueError:
+            RunCase=True
+        else:
+            RunCase=False
+        #endtry
+        
+    elif CodeStr.find('RunCase:') >= 0:    
+        # Check for run case flag. 
+        # If 'RunCase:1,2,5-8,...', the indicated cases will be run. RunCase overrides SkipCase if both present. Note the
+        # iteration number is the last (lowest level) Dakota index attached to the analysis driver input file.
+        
+        CTag,IterList=CodeStr.split(':')
+        
+        # fill out - fields
+        ILS=IterList.split(',')
+        for j,ILSI in enumerate(ILS):
+            Ind=ILSI.find('-')
+            if Ind>0:
+                LBUB=ILSI.split('-')
+                ILS[j]=','.join(map(str,range(int(LBUB[0]),int(LBUB[1])+1)))
+            #endif
+        #endfor
+        IterList=','.join(ILS)
+
+        IL=map(int,IterList.split(','))
+        # Try to find current iteration in list
+        try:
+            IL.index(DAKIndLast)
+        except ValueError:
+            RunCase=False
+        else:
+            RunCase=True
+        #endtry            
+        
+    #endif 
+    
+#endfor
 
 # End here if skipping this case
 if not RunCase:
