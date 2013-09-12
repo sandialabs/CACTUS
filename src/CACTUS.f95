@@ -68,7 +68,8 @@ PROGRAM CACTUS
     use time
     use wallsoln
     use regtest
-    use output       
+    use output
+    use tower
 
     !IMPLICIT NONE !JCM: eventually...      
 
@@ -226,6 +227,14 @@ PROGRAM CACTUS
     ! z direction from RHR (to the right when looking in the streamwise direction).
     CALL BGeomSetup()
     CALL SGeomSetup()
+    if (Itower.EQ.1) Then
+       ! Non-dimensionalize tower inputs
+       tower_D = tower_D / Rmax
+       tower_x = tower_x / Rmax
+       tower_ybot = tower_ybot / Rmax
+       tower_ytop = tower_ytop / Rmax
+       CALL setup_tower()
+    End if
 
     ! Set normalized turbine rotation rate
     wRotX=ut*RotX
@@ -357,6 +366,8 @@ PROGRAM CACTUS
                 else
                     CALL UpdateBladeVel(iflg) 
                 end if
+
+                If (Itower.EQ.1) Call UpdateTowerVelocity()
 
                 ! Regression test
                 if (RegTFlag == 1) then

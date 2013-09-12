@@ -26,7 +26,7 @@ SUBROUTINE UpdateWakeVel()
         ygcErr=0
 		do I=1,NE                                                      
             do J=ntTerm,NT1
-                CALL CalcFreestream(X(J,I),Y(J,I),UFS(J,I),VFS(J,I),WFS(J,I),ygcErr) 	                                
+                CALL CalcFreestream(X(J,I),Y(J,I),Z(J,I),UFS(J,I),VFS(J,I),WFS(J,I),ygcErr) 	                                
             end do
 		end do
 

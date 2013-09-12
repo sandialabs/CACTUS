@@ -1,14 +1,15 @@
-SUBROUTINE CalcFreestream(xElem,yElem,u,v,w,ygcErr)
+SUBROUTINE CalcFreestream(xElem,yElem,zElem,u,v,w,ygcErr)
 
 	use shear
     use configr
     use iecgust
+    use tower
 
 	real u, v, w
-	real xElem,yElem
+	real xElem,yElem,zElem
 	integer ygcErr
 
-    real IECGustVel
+    real IECGustVel, Vxtower
 
 	! Freestream velocity (with ground shear model)    
 	! At y/R = 0, u/Uinf = 0. At y/R = yref, u/Uinf = 1
@@ -37,6 +38,14 @@ SUBROUTINE CalcFreestream(xElem,yElem,u,v,w,ygcErr)
 		v=0.0
 		w=0.0                                                        
 	end if
+
+    if (Itower .EQ. 1) then
+       Vxtower = wake_defect_velocity(xElem,yElem,zElem)
+       !Write(20,'(4F20.12)') xElem,yElem,zElem,Vxtower
+       u = u - Vxtower
+       u = max(u,.01)
+       !If (Vxtower .GT. .001) Write(20,'(F20.12)') u+Vxtower, u
+    end if
 
     Return
 End SUBROUTINE CalcFreestream

@@ -25,7 +25,7 @@ SUBROUTINE UpdateBladeVel(IFLG)
         if (IFLG .eq. 0) then 
 
             !  Calculate freestream velocity at blade elements
-            CALL CalcFreestream(X(NT,I),Y(NT,I),UFSB(I),VFSB(I),WFSB(I),ygcErr)
+            CALL CalcFreestream(X(NT,I),Y(NT,I),Z(NT,I),UFSB(I),VFSB(I),WFSB(I),ygcErr)
 
             ! Set freestream velocity of next shed wake elements to that calculated on the blade
             UFS(NT,I)=UFSB(I)

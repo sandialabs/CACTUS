@@ -5,10 +5,10 @@ SUBROUTINE input(ErrFlag)
 	use dystl
 	use element
 	use blade
-    use strut       
+        use strut       
 	use varscale
 	use shear
-    use iecgust
+        use iecgust
 	use airfoil
 	use configr
 	use pidef
@@ -16,8 +16,10 @@ SUBROUTINE input(ErrFlag)
 	use wakedata
 	use time
 	use wallsoln 
-    use regtest
-    use output            
+        use regtest
+        use output 
+        use tower
+    
 
 	integer, parameter :: InBufferNumSectionTables = 100
 	integer, parameter :: InBufferNumWL = 100
@@ -31,7 +33,7 @@ SUBROUTINE input(ErrFlag)
     character(MaxReadLine) :: GeomFilePath    ! path to geometry input file 
     integer :: CI, EOF
     real :: temp, temp1(MaxTempAOA,4)
-
+        
 
 	! Temp buffers
 	character(MaxReadLine) :: AFDPath(InBufferNumSectionTables)	! Airfoil section data path      
@@ -39,7 +41,9 @@ SUBROUTINE input(ErrFlag)
 
     ! Namelist input file declaration
 	NAMELIST/ConfigInputs/RegTFlag,DiagOutFlag,GPFlag,FSFlag,nr,convrg,nti,iut,iWall,ivtxcor,VCRFB,VCRFT,VCRFS,ifc,convrgf,nric,ntif,iutf,ixterm,xstop, &
-        Output_ELFlag,Output_DSFlag,WallOutFlag,Incompr,DSFlag,PRFlag,k1pos,k1neg,GPGridSF,FSGridSF,TSFilFlag,ntsf
+        Output_ELFlag,Output_DSFlag,WallOutFlag,Incompr,DSFlag,PRFlag&
+        &,k1pos,k1neg,GPGridSF,FSGridSF,TSFilFlag,ntsf,&
+        Itower,tower_Npts,tower_x,tower_ybot,tower_ytop,tower_D,tower_CD
 	NAMELIST/CaseInputs/jbtitle,GeomFilePath,RPM,Ut,nSect,AFDPath&
         &,hAG,dFS,rho,vis,tempr,hBLRef,slex,Cdpar,CTExcrM&
         &,WakeOutFlag,WLI,Igust,gustamp,gusttime,gustX0
@@ -88,6 +92,13 @@ SUBROUTINE input(ErrFlag)
     gustamp = 0.0
     gusttime = 0.0
     gustX0 = 0.0
+    Itower = 0
+    tower_Npts = 10
+    tower_x = 0.0
+    tower_ybot = 0.0
+    tower_ytop = 0.0
+    tower_D = 0.05
+    tower_CD = 1.0
 
 	! Namelist input
 	read(4, nml=ConfigInputs) 
