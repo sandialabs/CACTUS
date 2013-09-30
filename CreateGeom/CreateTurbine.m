@@ -91,22 +91,12 @@ if strcmp(Type,'VAWT')==1
         % Frontal area normalized by RefR^2
         T.RefAR=2*(REqR*HR-1/3*HR);
         
-        % Fill first blade
+        % Fill element end geometry
         deltac=(eta-.25)*CR;
         T.B(1).CtoR=CR*ones(1,NBElem+1);
         T.B(1).tx=ones(1,NBElem+1);
         T.B(1).ty=zeros(1,NBElem+1);
         T.B(1).tz=zeros(1,NBElem+1);
-        % normal vector (machine inward)
-        drdy=-8/HR*(yB/HR-1/2);
-        n=[zeros(1,NBElem+1);drdy;ones(1,NBElem+1)];
-        nmag=sqrt(sum(n.^2));
-        n=n./nmag(ones(1,3),:);
-        Ind=find(n(3,:)<0);
-        n(:,Ind)=-n(:,Ind);
-        T.B(1).nx=n(1,:);
-        T.B(1).ny=n(2,:);
-        T.B(1).nz=n(3,:);
         T.B(1).QCx=-deltac*ones(1,NBElem+1);
         T.B(1).QCy=yB;
         T.B(1).QCz=-rr;
@@ -116,23 +106,19 @@ if strcmp(Type,'VAWT')==1
         % Frontal area normalized by RefR^2
         T.RefAR=2*REqR*HR;
         
-        % Fill first blade
+        % Fill element end geometry
         deltac=(eta-.25)*CR;
         T.B(1).CtoR=CR*ones(1,NBElem+1);
         T.B(1).tx=ones(1,NBElem+1);
         T.B(1).ty=zeros(1,NBElem+1);
         T.B(1).tz=zeros(1,NBElem+1);
-        % normal vector (machine inward)
-        T.B(1).nx=zeros(1,NBElem+1);
-        T.B(1).ny=zeros(1,NBElem+1);
-        T.B(1).nz=ones(1,NBElem+1);
         T.B(1).QCx=-deltac*ones(1,NBElem+1);
         T.B(1).QCy=yB;
         T.B(1).QCz=-rr;
     end
-
-    % Calc element area
-    T.B(1)=UpdateBElemArea(T.B(1));
+    
+    % Calc element geom for first blade
+    T.B(1)=CalcBEGeom(T.B(1));
     
     % Copy and rotate for other blades
     Phase=linspace(0,2*pi,NBlade+1);
@@ -151,9 +137,10 @@ if strcmp(Type,'VAWT')==1
     yC=(yB(2:end)+yB(1:end-1))/2;
     
     for i=1:NSpB
-        T.S(i).SEx=zeros(1,NSElem+1);
-        T.S(i).SEy=yS(i)*ones(1,NSElem+1);
-        T.S(i).SEz=-linspace(0,rrS(i),NSElem+1);
+        % Fill element end geometry
+        T.S(i).MCx=zeros(1,NSElem+1);
+        T.S(i).MCy=yS(i)*ones(1,NSElem+1);
+        T.S(i).MCz=-linspace(0,rrS(i),NSElem+1);
         T.S(i).CtoR=CRs*ones(1,NSElem+1);
         T.S(i).TtoC=TCs;
         T.S(i).BIndS=0;
@@ -161,8 +148,8 @@ if strcmp(Type,'VAWT')==1
         T.S(i).BIndE=1;
         [m,T.S(i).EIndE]=min(abs(yC-yS(i)));
         
-        % Calc element area
-        T.S(i)=UpdateSElemArea(T.S(i));
+        % Calc element geom
+        T.S(i)=CalcSEGeom(T.S(i));
     end
     
     % Copy and rotate for other blades
@@ -170,7 +157,7 @@ if strcmp(Type,'VAWT')==1
         for j=1:NSpB
             SInd=(i-1)*NSpB+j;
             T.S(SInd)=RotateStrut(T.S(j),Phase(i),T.RotN,T.RotP);
-            T.S(SInd).BInd=i;
+            T.S(SInd).BIndE=i;
         end
     end
 
@@ -214,7 +201,7 @@ elseif strcmp(Type,'HAWT')==1
     % Frontal area normalized by RefR^2
     T.RefAR=pi*RMaxR^2;
 
-    % Fill first blade
+    % Fill element end data for first blade
     deltac=(eta-.25)*CR(1);
     T.B(1).QCx=zeros(1,NBElem+1);
     T.B(1).QCy=rB;
@@ -225,13 +212,9 @@ elseif strcmp(Type,'HAWT')==1
     T.B(1).tx=sTwist;
     T.B(1).ty=zeros(1,NBElem+1);
     T.B(1).tz=-cTwist;
-    % normal vector (machine rearward (x))
-    T.B(1).nx=cTwist;
-    T.B(1).ny=zeros(1,NBElem+1);
-    T.B(1).nz=sTwist;
 
-    % Calc element area
-    T.B(1)=UpdateBElemArea(T.B(1));
+    % Calc element geom for first blade
+    T.B(1)=CalcBEGeom(T.B(1));
     
     % Rotate through incidence and coning angle
     T.B(1)=RotateBlade(T.B(1),bi/180*pi,[0,-1,0],[0,0,0]);

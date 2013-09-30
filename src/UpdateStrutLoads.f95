@@ -35,9 +35,9 @@ SUBROUTINE UpdateStrutLoads()
         NElem=Struts(i)%NElem
         do j=1,NElem 
 
-            xs=Struts(i)%SCx(j)
-            ys=Struts(i)%SCy(j)
-            zs=Struts(i)%SCz(j)
+            xs=Struts(i)%PEx(j)
+            ys=Struts(i)%PEy(j)
+            zs=Struts(i)%PEz(j)
 
             ! Freestream velocity at strut location
             Call CalcFreestream(xs,ys,zs,uFSs,vFSs,wFSs,ygcerr)
@@ -53,7 +53,7 @@ SUBROUTINE UpdateStrutLoads()
             vTot = vs+vFSs-vBlade
             wTot = ws+wFSs-wBlade
             ur = sqrt(uTot*uTot + vTot*vTot + wTot*wTot)
-            ReStrut = ReM*ur*Struts(i)%CRm(j)  ! Strut chord Reynolds number
+            ReStrut = ReM*ur*Struts(i)%ECtoR(j)  ! Strut chord Reynolds number
 
             ! Fill current flow quantities at strut element
             Struts(i)%u(j)=uTot
@@ -67,7 +67,7 @@ SUBROUTINE UpdateStrutLoads()
 
             ! Drag coeff vector from this strut element, re-referenced to full turbine scale 
             ! (D/(1/2*rho*Uinf^2*At)
-            Delem = Struts(i)%Cd0(j) * Struts(i)%AreaR(j) / at * ur**2                               
+            Delem = Struts(i)%Cd0(j) * Struts(i)%EAreaR(j) / at * ur**2
             Fx=Delem*uTot/ur
             Fy=Delem*vTot/ur
             Fz=Delem*wTot/ur
@@ -86,11 +86,11 @@ SUBROUTINE UpdateStrutLoads()
         ! Blade/strut junction interference drag
         ! First strut element
         if (Struts(i)%BIndS > 0) then
-            carea=Struts(i)%CRm(1)**2
-            xj=Struts(i)%SCx(1)
-            yj=Struts(i)%SCx(1)
-            zj=Struts(i)%SCx(1)
-            t_ave = 0.5 * (Struts(i)%sthick + Struts(i)%tcS)
+            carea=Struts(i)%ECtoR(1)**2
+            xj=Struts(i)%PEx(1)
+            yj=Struts(i)%PEy(1)
+            zj=Struts(i)%PEz(1)
+            t_ave = 0.5 * (Struts(i)%TtoC + Struts(i)%tcS)
             uTot=Struts(i)%u(1)
             vTot=Struts(i)%v(1)
             wTot=Struts(i)%w(1)
@@ -117,11 +117,11 @@ SUBROUTINE UpdateStrutLoads()
         end if
         ! Last strut element
         if (Struts(i)%BIndE > 0) then
-            carea=Struts(i)%CRm(NElem)**2
-            xj=Struts(i)%SCx(NElem)
-            yj=Struts(i)%SCx(NElem)
-            zj=Struts(i)%SCx(NElem)
-            t_ave = 0.5 * (Struts(i)%sthick + Struts(i)%tcE)
+            carea=Struts(i)%ECtoR(NElem)**2
+            xj=Struts(i)%PEx(NElem)
+            yj=Struts(i)%PEy(NElem)
+            zj=Struts(i)%PEz(NElem)
+            t_ave = 0.5 * (Struts(i)%TtoC + Struts(i)%tcE)
             uTot=Struts(i)%u(NElem)
             vTot=Struts(i)%v(NElem)
             wTot=Struts(i)%w(NElem)

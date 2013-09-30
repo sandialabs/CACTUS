@@ -48,6 +48,11 @@ for i=1:T.NBlade
     
     S=fgetl(fid);
     Ind=strfind(S,':');
+    A=sscanf(S(Ind+1:end),'%d');
+    T.B(i).FlipN=A;
+    
+    S=fgetl(fid);
+    Ind=strfind(S,':');
     A=sscanf(S(Ind+1:end),'%e');
     T.B(i).QCx=A';
 
@@ -60,21 +65,6 @@ for i=1:T.NBlade
     Ind=strfind(S,':');
     A=sscanf(S(Ind+1:end),'%e');
     T.B(i).QCz=A';
-    
-    S=fgetl(fid);
-    Ind=strfind(S,':');
-    A=sscanf(S(Ind+1:end),'%e');
-    T.B(i).nx=A';
-
-    S=fgetl(fid);
-    Ind=strfind(S,':');
-    A=sscanf(S(Ind+1:end),'%e');
-    T.B(i).ny=A';    
-
-    S=fgetl(fid);
-    Ind=strfind(S,':');
-    A=sscanf(S(Ind+1:end),'%e');
-    T.B(i).nz=A';
 
     S=fgetl(fid);
     Ind=strfind(S,':');
@@ -99,7 +89,72 @@ for i=1:T.NBlade
     S=fgetl(fid);
     Ind=strfind(S,':');
     A=sscanf(S(Ind+1:end),'%e');
-    T.B(i).AreaR=A';
+    T.B(i).PEx=A';
+
+    S=fgetl(fid);
+    Ind=strfind(S,':');
+    A=sscanf(S(Ind+1:end),'%e');
+    T.B(i).PEy=A';
+    
+    S=fgetl(fid);
+    Ind=strfind(S,':');
+    A=sscanf(S(Ind+1:end),'%e');
+    T.B(i).PEz=A';
+
+    S=fgetl(fid);
+    Ind=strfind(S,':');
+    A=sscanf(S(Ind+1:end),'%e');
+    T.B(i).tEx=A';
+
+    S=fgetl(fid);
+    Ind=strfind(S,':');
+    A=sscanf(S(Ind+1:end),'%e');
+    T.B(i).tEy=A';    
+
+    S=fgetl(fid);
+    Ind=strfind(S,':');
+    A=sscanf(S(Ind+1:end),'%e');
+    T.B(i).tEz=A';
+    
+    S=fgetl(fid);
+    Ind=strfind(S,':');
+    A=sscanf(S(Ind+1:end),'%e');
+    T.B(i).nEx=A';
+
+    S=fgetl(fid);
+    Ind=strfind(S,':');
+    A=sscanf(S(Ind+1:end),'%e');
+    T.B(i).nEy=A';    
+
+    S=fgetl(fid);
+    Ind=strfind(S,':');
+    A=sscanf(S(Ind+1:end),'%e');
+    T.B(i).nEz=A'; 
+    
+    S=fgetl(fid);
+    Ind=strfind(S,':');
+    A=sscanf(S(Ind+1:end),'%e');
+    T.B(i).sEx=A';
+
+    S=fgetl(fid);
+    Ind=strfind(S,':');
+    A=sscanf(S(Ind+1:end),'%e');
+    T.B(i).sEy=A';    
+
+    S=fgetl(fid);
+    Ind=strfind(S,':');
+    A=sscanf(S(Ind+1:end),'%e');
+    T.B(i).sEz=A';
+    
+    S=fgetl(fid);
+    Ind=strfind(S,':');
+    A=sscanf(S(Ind+1:end),'%e');
+    T.B(i).ECtoR=A';
+    
+    S=fgetl(fid);
+    Ind=strfind(S,':');
+    A=sscanf(S(Ind+1:end),'%e');
+    T.B(i).EAreaR=A';
     
     S=fgetl(fid);
     Ind=strfind(S,':');
@@ -118,32 +173,67 @@ for i=1:T.NStrut
     S=fgetl(fid);
     Ind=strfind(S,':');
     A=sscanf(S(Ind+1:end),'%e');
-    T.S(i).SEx=A';
-
-    S=fgetl(fid);
-    Ind=strfind(S,':');
-    A=sscanf(S(Ind+1:end),'%e');
-    T.S(i).SEy=A';
+    T.S(i).TtoC=A;
     
     S=fgetl(fid);
     Ind=strfind(S,':');
     A=sscanf(S(Ind+1:end),'%e');
-    T.S(i).SEz=A';
+    T.S(i).MCx=A';
+
+    S=fgetl(fid);
+    Ind=strfind(S,':');
+    A=sscanf(S(Ind+1:end),'%e');
+    T.S(i).MCy=A';
+    
+    S=fgetl(fid);
+    Ind=strfind(S,':');
+    A=sscanf(S(Ind+1:end),'%e');
+    T.S(i).MCz=A';
     
     S=fgetl(fid);
     Ind=strfind(S,':');
     A=sscanf(S(Ind+1:end),'%e');
     T.S(i).CtoR=A';
-
-    S=fgetl(fid);
-    Ind=strfind(S,':');
-    A=sscanf(S(Ind+1:end),'%e');
-    T.S(i).AreaR=A';
     
     S=fgetl(fid);
     Ind=strfind(S,':');
     A=sscanf(S(Ind+1:end),'%e');
-    T.S(i).TtoC=A;
+    T.S(i).PEx=A';
+
+    S=fgetl(fid);
+    Ind=strfind(S,':');
+    A=sscanf(S(Ind+1:end),'%e');
+    T.S(i).PEy=A';
+    
+    S=fgetl(fid);
+    Ind=strfind(S,':');
+    A=sscanf(S(Ind+1:end),'%e');
+    T.S(i).PEz=A';
+
+    S=fgetl(fid);
+    Ind=strfind(S,':');
+    A=sscanf(S(Ind+1:end),'%e');
+    T.S(i).sEx=A';
+
+    S=fgetl(fid);
+    Ind=strfind(S,':');
+    A=sscanf(S(Ind+1:end),'%e');
+    T.S(i).sEy=A';
+    
+    S=fgetl(fid);
+    Ind=strfind(S,':');
+    A=sscanf(S(Ind+1:end),'%e');
+    T.S(i).sEz=A';
+    
+    S=fgetl(fid);
+    Ind=strfind(S,':');
+    A=sscanf(S(Ind+1:end),'%e');
+    T.S(i).ECtoR=A';
+    
+    S=fgetl(fid);
+    Ind=strfind(S,':');
+    A=sscanf(S(Ind+1:end),'%e');
+    T.S(i).EAreaR=A';
     
     S=fgetl(fid);
     Ind=strfind(S,':');
@@ -167,23 +257,3 @@ for i=1:T.NStrut
 end
 
 fclose(fid);
-
-% Force normalize unit vectors
-T.RotN=T.RotN/sqrt(sum(T.RotN.^2));
-for i=1:T.NBlade
-    % normal
-    nv=[T.B(i).nx;T.B(i).ny;T.B(i).nz];
-    nvMag=sqrt(sum(nv.^2));
-    nv=nv./nvMag(ones(3,1),:);
-    T.B(i).nx=nv(1,:);
-    T.B(i).ny=nv(2,:);
-    T.B(i).nz=nv(3,:);
-    
-    % tangential
-    tv=[T.B(i).tx;T.B(i).ty;T.B(i).tz];
-    tvMag=sqrt(sum(tv.^2));
-    tv=tv./tvMag(ones(3,1),:);
-    T.B(i).tx=tv(1,:);
-    T.B(i).ty=tv(2,:);
-    T.B(i).tz=tv(3,:);
-end

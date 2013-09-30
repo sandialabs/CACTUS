@@ -164,11 +164,11 @@ SUBROUTINE input(ErrFlag)
 	yref = hBLRef/Rmax  ! location of boundary layer edge (U/Uinf = 99% maybe) normalized to radius... 
 	ygc  = hAG/Rmax   ! Ground clearance normalized to radius  
 
-    ! JCM: Floors the real tip speed ratio (ut) to the next lowest int
-    ! and uses this as the default update interval...
-	if (iutf == 0) iutf = ut  
-	if (iut == 0) iut = ut 
-    if (iWall == 0) iWall = ut
+    ! Floor the tip speed ratio to the next lowest int
+    ! and use this as the default update interval...
+	if (iutf == 0) iutf = floor(ut)
+	if (iut == 0) iut = floor(ut)
+    if (iWall == 0) iWall = floor(ut)
 
     ! Default ntif to nti if nothing was input
     if (ntif .eq. -1) then

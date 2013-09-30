@@ -51,12 +51,12 @@ SUBROUTINE LB_DynStall(nElem,CLstat,CDstat,alphaL,alpha5,umach,Re,SectInd,CL,CD)
     if (CLRatio > 0.25) then
         Fstat(nElem)=min((sqrt(4.0*CLRatio)-1.0)**2,1.0)
 
-        ! JCM test logic
+        ! Test logic
         LB_LogicOutputs(nElem,1)=1
     else
         Fstat(nElem)=0
 
-        ! JCM test logic
+        ! Test logic
         LB_LogicOutputs(nElem,1)=2
     end if
     ! calc lagged Fstat to represent dynamic TE separation point
@@ -74,19 +74,19 @@ SUBROUTINE LB_DynStall(nElem,CLstat,CDstat,alphaL,alpha5,umach,Re,SectInd,CL,CD)
     if (CLRatio > 1.0) then
         CLID=CLstat
 
-        ! JCM test logic
+        ! Test logic
         LB_LogicOutputs(nElem,2)=1
     end if
 
     if (CLRatio > 0.25) then
         CLsep=CLID/4.0
 
-        ! JCM test logic
+        ! Test logic
         LB_LogicOutputs(nElem,3)=1
     else
         CLsep=CLstat
 
-        ! JCM test logic
+        ! Test logic
         LB_LogicOutputs(nElem,3)=2
     end if
     CLF=CLsep+CLID*0.25*(F(nElem)+2.0*sqrt(F(nElem)))
@@ -106,7 +106,7 @@ SUBROUTINE LB_DynStall(nElem,CLstat,CDstat,alphaL,alpha5,umach,Re,SectInd,CL,CD)
     if (sign(1.0,dcv(nElem)*CLRefLE(nElem))<0 .OR. abs(alphaL-AOA0)>acut .OR. CLRateFlag(nElem)<0) then
         dcv=0.0
 
-        ! JCM test logic
+        ! Test logic
         LB_LogicOutputs(nElem,4)=1
     end if
 

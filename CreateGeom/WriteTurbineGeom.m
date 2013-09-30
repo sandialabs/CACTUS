@@ -12,28 +12,43 @@ function WriteTurbineGeom(FN,T)
 % Type: VAWT
 % Blade 1:
 %     NElem: 5
+%     FlipN: 0
 %     QCx: 0 0 0 0 0 0
 %     QCy: 1 2 3 4 5 6
 %     QCz: 1 1 1 1 1 1
-%     nx: 0 0 0 0 0 0
-%     ny: 0 0 0 0 0 0
-%     nz: -1 -1 -1 -1 -1 -1
 %     tx: 1 1 1 1 1 1
 %     ty: 0 0 0 0 0 0
 %     tz: 0 0 0 0 0 0
 %     CtoR: .1 .1 .1 .1 .1 .1
-%     AreaR: .1 .1 .1 .1 .1
+%     PEx: 0 0 0 0 0 
+%     PEy: 1 2 3 4 5 
+%     PEz: 1 1 1 1 1 
+%     tEx: 0 0 0 0 0 
+%     tEy: 1 2 3 4 5 
+%     tEz: 1 1 1 1 1 
+%     nEx: 0 0 0 0 0
+%     nEy: 1 2 3 4 5
+%     nEz: 1 1 1 1 1
+%     sEx: 1 1 1 1 1
+%     sEy: 0 0 0 0 0
+%     sEz: 1 2 3 4 5
+%     ECtoR: .1 .1 .1 .1 .1
+%     EAreaR: .1 .1 .1 .1 .1
 %     iSect: 1 1 1 1 1
 % Blade 2:
 %     ...
 % Strut 1:
 %     NElem: 5
-%     SEx: 0 0 0 0 0 0
-%     SEy: 1 2 3 4 5 6
-%     SEz: 1 1 1 1 1 1
-%     CtoR: .1 .1 .1 .1 .1 .1
-%     AreaR: .1 .1 .1 .1 .1
 %     TtoC: .15
+%     MCx: 0 0 0 0 0 0
+%     MCy: 1 2 3 4 5 6
+%     MCz: 1 1 1 1 1 1
+%     CtoR: .1 .1 .1 .1 .1 .1
+%     PEx: 0 0 0 0 0
+%     PEy: 1 2 3 4 5
+%     PEz: 1 1 1 1 1
+%     ECtoR: .1 .1 .1 .1 .1
+%     EAreaR: .1 .1 .1 .1 .1
 %     BIndS: 0
 %     EIndS: 0
 %     BIndE: 1
@@ -81,6 +96,10 @@ for i=1:T.NBlade
     fprintf(fid,'%3d ',T.B(i).NElem);
     fprintf(fid,'\n');
     
+    fprintf(fid,'\tFlipN: ');
+    fprintf(fid,'%3d ',T.B(i).FlipN);
+    fprintf(fid,'\n');
+    
     fprintf(fid,'\tQCx: ');
     fprintf(fid,'%13.5e ',T.B(i).QCx);
     fprintf(fid,'\n');
@@ -91,18 +110,6 @@ for i=1:T.NBlade
     
     fprintf(fid,'\tQCz: ');
     fprintf(fid,'%13.5e ',T.B(i).QCz);
-    fprintf(fid,'\n');
-    
-    fprintf(fid,'\tnx: ');
-    fprintf(fid,'%13.5e ',T.B(i).nx);
-    fprintf(fid,'\n');
-    
-    fprintf(fid,'\tny: ');
-    fprintf(fid,'%13.5e ',T.B(i).ny);
-    fprintf(fid,'\n');
-    
-    fprintf(fid,'\tnz: ');
-    fprintf(fid,'%13.5e ',T.B(i).nz);
     fprintf(fid,'\n');
     
     fprintf(fid,'\ttx: ');
@@ -121,8 +128,60 @@ for i=1:T.NBlade
     fprintf(fid,'%13.5e ',T.B(i).CtoR);
     fprintf(fid,'\n');
     
-    fprintf(fid,'\tAreaR: ');
-    fprintf(fid,'%13.5e ',T.B(i).AreaR);
+    fprintf(fid,'\tPEx: ');
+    fprintf(fid,'%13.5e ',T.B(i).PEx);
+    fprintf(fid,'\n');
+    
+    fprintf(fid,'\tPEy: ');
+    fprintf(fid,'%13.5e ',T.B(i).PEy);
+    fprintf(fid,'\n');
+    
+    fprintf(fid,'\tPEz: ');
+    fprintf(fid,'%13.5e ',T.B(i).PEz);
+    fprintf(fid,'\n');
+
+    fprintf(fid,'\ttEx: ');
+    fprintf(fid,'%13.5e ',T.B(i).tEx);
+    fprintf(fid,'\n');
+    
+    fprintf(fid,'\ttEy: ');
+    fprintf(fid,'%13.5e ',T.B(i).tEy);
+    fprintf(fid,'\n');
+    
+    fprintf(fid,'\ttEz: ');
+    fprintf(fid,'%13.5e ',T.B(i).tEz);
+    fprintf(fid,'\n');
+  
+    fprintf(fid,'\tnEx: ');
+    fprintf(fid,'%13.5e ',T.B(i).nEx);
+    fprintf(fid,'\n');
+    
+    fprintf(fid,'\tnEy: ');
+    fprintf(fid,'%13.5e ',T.B(i).nEy);
+    fprintf(fid,'\n');
+    
+    fprintf(fid,'\tnEz: ');
+    fprintf(fid,'%13.5e ',T.B(i).nEz);
+    fprintf(fid,'\n');
+    
+    fprintf(fid,'\tsEx: ');
+    fprintf(fid,'%13.5e ',T.B(i).sEx);
+    fprintf(fid,'\n');
+    
+    fprintf(fid,'\tsEy: ');
+    fprintf(fid,'%13.5e ',T.B(i).sEy);
+    fprintf(fid,'\n');
+    
+    fprintf(fid,'\tsEz: ');
+    fprintf(fid,'%13.5e ',T.B(i).sEz);
+    fprintf(fid,'\n');
+
+    fprintf(fid,'\tECtoR: ');
+    fprintf(fid,'%13.5e ',T.B(i).ECtoR);
+    fprintf(fid,'\n');
+    
+    fprintf(fid,'\tEAreaR: ');
+    fprintf(fid,'%13.5e ',T.B(i).EAreaR);
     fprintf(fid,'\n');
     
     fprintf(fid,'\tiSect: ');
@@ -138,31 +197,59 @@ for i=1:T.NStrut
     fprintf(fid,'\tNElem: ');
     fprintf(fid,'%3d ',T.S(i).NElem);
     fprintf(fid,'\n');
-    
-    fprintf(fid,'\tSEx: ');
-    fprintf(fid,'%13.5e ',T.S(i).SEx);
+
+    fprintf(fid,'\tTtoC: ');
+    fprintf(fid,'%13.5e ',T.S(i).TtoC);
     fprintf(fid,'\n');
     
-    fprintf(fid,'\tSEy: ');
-    fprintf(fid,'%13.5e ',T.S(i).SEy);
+    fprintf(fid,'\tMCx: ');
+    fprintf(fid,'%13.5e ',T.S(i).MCx);
     fprintf(fid,'\n');
     
-    fprintf(fid,'\tSEz: ');
-    fprintf(fid,'%13.5e ',T.S(i).SEz);
+    fprintf(fid,'\tMCy: ');
+    fprintf(fid,'%13.5e ',T.S(i).MCy);
+    fprintf(fid,'\n');
+    
+    fprintf(fid,'\tMCz: ');
+    fprintf(fid,'%13.5e ',T.S(i).MCz);
     fprintf(fid,'\n');
     
     fprintf(fid,'\tCtoR: ');
     fprintf(fid,'%13.5e ',T.S(i).CtoR);
     fprintf(fid,'\n');
     
-    fprintf(fid,'\tAreaR: ');
-    fprintf(fid,'%13.5e ',T.S(i).AreaR);
+    fprintf(fid,'\tPEx: ');
+    fprintf(fid,'%13.5e ',T.S(i).PEx);
     fprintf(fid,'\n');
     
-    fprintf(fid,'\tTtoC: ');
-    fprintf(fid,'%13.5e ',T.S(i).TtoC);
+    fprintf(fid,'\tPEy: ');
+    fprintf(fid,'%13.5e ',T.S(i).PEy);
     fprintf(fid,'\n');
     
+    fprintf(fid,'\tPEz: ');
+    fprintf(fid,'%13.5e ',T.S(i).PEz);
+    fprintf(fid,'\n');
+
+    fprintf(fid,'\tsEx: ');
+    fprintf(fid,'%13.5e ',T.S(i).sEx);
+    fprintf(fid,'\n');
+    
+    fprintf(fid,'\tsEy: ');
+    fprintf(fid,'%13.5e ',T.S(i).sEy);
+    fprintf(fid,'\n');
+    
+    fprintf(fid,'\tsEz: ');
+    fprintf(fid,'%13.5e ',T.S(i).sEz);
+    fprintf(fid,'\n');
+    
+    fprintf(fid,'\tECtoR: ');
+    fprintf(fid,'%13.5e ',T.S(i).ECtoR);
+    fprintf(fid,'\n');
+    
+    fprintf(fid,'\tEAreaR: ');
+    fprintf(fid,'%13.5e ',T.S(i).EAreaR);
+    fprintf(fid,'\n');
+   
     fprintf(fid,'\tBIndS: ');
     fprintf(fid,'%3d ',T.S(i).BIndS);
     fprintf(fid,'\n');

@@ -8,9 +8,9 @@ SUBROUTINE SGeomSetup()
     use airfoil            
 	use pidef      
 
-    Implicit None
+    implicit none
 
-    integer :: i, j, NElem, BIndS, EIndS, BIndE, EIndE, iSc     
+    integer :: i, j, NElem, BIndS, EIndS, BIndE, EIndE, iSc
     real :: sx, sy, sz, VMag, LR
 
 	! Sets up strut geometry arrays.        
@@ -39,32 +39,15 @@ SUBROUTINE SGeomSetup()
 
         ! Init length sum
         LR=0.0
-
         do j=1,NElem 
-            Struts(i)%CRm(j)=0.5*(Struts(i)%CRe(j)+Struts(i)%CRe(j+1))                 
-
-            ! Center locations 
-            Struts(i)%SCx(j)=0.5*(Struts(i)%SEx(j)+Struts(i)%SEx(j+1))                                      
-            Struts(i)%SCy(j)=0.5*(Struts(i)%SEy(j)+Struts(i)%SEy(j+1))                                                                                              
-            Struts(i)%SCz(j)=0.5*(Struts(i)%SEz(j)+Struts(i)%SEz(j+1))
-
-            ! Spanwise vector 
-            sx=Struts(i)%SEx(j+1)-Struts(i)%SEx(j)  
-            sy=Struts(i)%SEy(j+1)-Struts(i)%SEy(j)  
-            sz=Struts(i)%SEz(j+1)-Struts(i)%SEz(j)
-            VMag=sqrt(sx**2+sy**2+sz**2) 
-            sx=sx/VMag 
-            sy=sy/VMag    
-            sz=sz/VMag 
-            Struts(i)%sx(j)=sx                                  
-            Struts(i)%sy(j)=sy                                                                                         
-            Struts(i)%sz(j)=sz
-
+            VMag=sqrt(Struts(i)%sEx(j)**2+Struts(i)%sEy(j)**2+Struts(i)%sEz(j)**2)
             ! Sum length
             LR=LR+VMag
-
         end do
-        Struts(i)%LR=LR 
+        Struts(i)%LR=LR
+
+        ! Calc element geometry
+        Call CalcSEGeom(i)
 
     end do
 

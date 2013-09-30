@@ -84,7 +84,7 @@ SUBROUTINE bsload(nElem,IsBE,alpha,alpha5,alpha75,adotnorm,Re,umach,ur,CL,CD,CM2
     umach=ur*Minf                                                 
 
     !---------
-    ! JCM: These .5c and .75c locations are used to approx. pitch rate effects
+    ! These .5c and .75c locations are used to calc pitch rate effects
     if (PRFlag/=0) then
         xe5=xe+0.25*ElemChordR*txe
         ye5=ye+0.25*ElemChordR*tye

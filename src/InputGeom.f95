@@ -15,44 +15,63 @@ SUBROUTINE InputGeom(FN)
 
     ! Read geometry data file
 
-    ! Format Example:
-    !         NBlade: 3
-    !         NStrut: 3
-    !         RotN: 0 0 1
-    !         RotP: 0 0 0
-    !         RefAR: 2.0
-    !         RefR: 10.0
-    !         Type: VAWT_Par
-    !         Blade 1:
-    !             NElem: 5
-    !             QCx: 0 0 0 0 0 0
-    !             QCy: 1 2 3 4 5 6
-    !             QCz: 1 1 1 1 1 1
-    !             nx: 0 0 0 0 0 0
-    !             ny: 0 0 0 0 0 0
-    !             nz: -1 -1 -1 -1 -1 -1
-    !             tx: 1 1 1 1 1 1
-    !             ty: 0 0 0 0 0 0
-    !             tz: 0 0 0 0 0 0
-    !             CtoR: .1 .1 .1 .1 .1 .1
-    !             AreaR: .1 .1 .1 .1 .1
-    !             iSect: 1 1 1 1 1
-    !         Blade 2:
-    !             ...  
-    !         Strut 1:
-    !            NElem: 5
-    !            SEx: 0 0 0 0 0 0
-    !            SEy: 1 2 3 4 5 6
-    !            SEz: 1 1 1 1 1 1
-    !            CtoR: .1 .1 .1 .1 .1 .1
-    !            AreaR: .1 .1 .1 .1 .1
-    !            TtoC: .15
-    !            BIndS: 0
-    !            EIndE: 0
-    !            BIndE: 1
-    !            EIndE: 3
-    !        Strut 2:
-    !            ...
+	! Format example:
+	!	NBlade: 3
+	!	NStrut: 3
+	!	RotN: 0 0 1
+	!	RotP: 0 0 0
+	!	RefAR: 2.0
+	!	RefR: 10.0
+	!	Type: VAWT
+	!	Blade 1:
+	!	    NElem: 5
+	!	    FlipN: 0
+	!	    QCx: 0 0 0 0 0 0
+	!	    QCy: 1 2 3 4 5 6
+	!	    QCz: 1 1 1 1 1 1
+	!	    tx: 1 1 1 1 1 1
+	!	    ty: 0 0 0 0 0 0
+	!	    tz: 0 0 0 0 0 0
+	!	    CtoR: .1 .1 .1 .1 .1 .1
+	!	    PEx: 0 0 0 0 0
+	!	    PEy: 1 2 3 4 5
+	!	    PEz: 1 1 1 1 1
+	!	    tEx: 0 0 0 0 0
+	!	    tEy: 1 2 3 4 5
+	!	    tEz: 1 1 1 1 1
+	!	    nEx: 0 0 0 0 0
+	!	    nEy: 1 2 3 4 5
+	!	    nEz: 1 1 1 1 1
+	!	    sEx: 1 1 1 1 1
+	!	    sEy: 0 0 0 0 0
+	!	    sEz: 1 2 3 4 5
+	!	    ECtoR: .1 .1 .1 .1 .1
+	!	    EAreaR: .1 .1 .1 .1 .1
+	!	    iSect: 1 1 1 1 1
+	!	Blade 2:
+	!	    ...
+	!	Strut 1:
+	!	    NElem: 5
+	!	    TtoC: .15
+	!	    MCx: 0 0 0 0 0 0
+	!	    MCy: 1 2 3 4 5 6
+	!	    MCz: 1 1 1 1 1 1
+	!	    CtoR: .1 .1 .1 .1 .1 .1
+	!	    PEx: 0 0 0 0 0
+	!	    PEy: 1 2 3 4 5
+	!	    PEz: 1 1 1 1 1
+    !       sEx: 0 0 0 0 0
+    !       sEy: 1 2 3 4 5
+    !       sEz: 1 1 1 1 1
+	!	    ECtoR: .1 .1 .1 .1 .1
+	!	    EAreaR: .1 .1 .1 .1 .1
+	!	    BIndS: 0
+	!	    EIndS: 0
+	!	    BIndE: 1
+	!	    EIndE: 3
+	!	Strut 2:
+	!	    ...
+
 
     ! Open input file for this section
     open(15, file=FN)
@@ -101,6 +120,9 @@ SUBROUTINE InputGeom(FN)
         nbe=NElem
 
         read(15,'(A)') ReadLine
+        read(ReadLine(index(ReadLine,':')+1:),*) Blades(i)%FlipN
+
+        read(15,'(A)') ReadLine
         read(ReadLine(index(ReadLine,':')+1:),*) Blades(i)%QCx(1:NElem+1)
 
         read(15,'(A)') ReadLine
@@ -108,15 +130,6 @@ SUBROUTINE InputGeom(FN)
 
         read(15,'(A)') ReadLine
         read(ReadLine(index(ReadLine,':')+1:),*) Blades(i)%QCz(1:NElem+1)  
-
-        read(15,'(A)') ReadLine
-        read(ReadLine(index(ReadLine,':')+1:),*) Blades(i)%nx(1:NElem+1)                      
-
-        read(15,'(A)') ReadLine
-        read(ReadLine(index(ReadLine,':')+1:),*) Blades(i)%ny(1:NElem+1) 
-
-        read(15,'(A)') ReadLine
-        read(ReadLine(index(ReadLine,':')+1:),*) Blades(i)%nz(1:NElem+1) 
 
         read(15,'(A)') ReadLine
         read(ReadLine(index(ReadLine,':')+1:),*) Blades(i)%tx(1:NElem+1)                      
@@ -131,7 +144,46 @@ SUBROUTINE InputGeom(FN)
         read(ReadLine(index(ReadLine,':')+1:),*) Blades(i)%CtoR(1:NElem+1) 
 
         read(15,'(A)') ReadLine
-        read(ReadLine(index(ReadLine,':')+1:),*) Blades(i)%AreaR(1:NElem) 
+        read(ReadLine(index(ReadLine,':')+1:),*) Blades(i)%PEx(1:NElem)
+
+        read(15,'(A)') ReadLine
+        read(ReadLine(index(ReadLine,':')+1:),*) Blades(i)%PEy(1:NElem)
+
+        read(15,'(A)') ReadLine
+        read(ReadLine(index(ReadLine,':')+1:),*) Blades(i)%PEz(1:NElem)
+
+        read(15,'(A)') ReadLine
+        read(ReadLine(index(ReadLine,':')+1:),*) Blades(i)%tEx(1:NElem)
+
+        read(15,'(A)') ReadLine
+        read(ReadLine(index(ReadLine,':')+1:),*) Blades(i)%tEy(1:NElem)
+
+        read(15,'(A)') ReadLine
+        read(ReadLine(index(ReadLine,':')+1:),*) Blades(i)%tEz(1:NElem)
+
+        read(15,'(A)') ReadLine
+        read(ReadLine(index(ReadLine,':')+1:),*) Blades(i)%nEx(1:NElem)
+
+        read(15,'(A)') ReadLine
+        read(ReadLine(index(ReadLine,':')+1:),*) Blades(i)%nEy(1:NElem)
+
+        read(15,'(A)') ReadLine
+        read(ReadLine(index(ReadLine,':')+1:),*) Blades(i)%nEz(1:NElem)
+
+        read(15,'(A)') ReadLine
+        read(ReadLine(index(ReadLine,':')+1:),*) Blades(i)%sEx(1:NElem)
+
+        read(15,'(A)') ReadLine
+        read(ReadLine(index(ReadLine,':')+1:),*) Blades(i)%sEy(1:NElem)
+
+        read(15,'(A)') ReadLine
+        read(ReadLine(index(ReadLine,':')+1:),*) Blades(i)%sEz(1:NElem)
+
+        read(15,'(A)') ReadLine
+        read(ReadLine(index(ReadLine,':')+1:),*) Blades(i)%ECtoR(1:NElem)
+
+        read(15,'(A)') ReadLine
+        read(ReadLine(index(ReadLine,':')+1:),*) Blades(i)%EAreaR(1:NElem)
 
         read(15,'(A)') ReadLine
         read(ReadLine(index(ReadLine,':')+1:),*) Blades(i)%iSect(1:NElem) 
@@ -146,26 +198,47 @@ SUBROUTINE InputGeom(FN)
         read(15,'(A)') ReadLine
         read(ReadLine(index(ReadLine,':')+1:),*) NElem
 
+        read(15,'(A)') ReadLine
+        read(ReadLine(index(ReadLine,':')+1:),*) Struts(i)%TtoC
+
         ! Allocate arrays in blade structure
         Call strut_comp_cns(i,NElem)
 
         read(15,'(A)') ReadLine
-        read(ReadLine(index(ReadLine,':')+1:),*) Struts(i)%SEx(1:NElem+1)
+        read(ReadLine(index(ReadLine,':')+1:),*) Struts(i)%MCx(1:NElem+1)
 
         read(15,'(A)') ReadLine
-        read(ReadLine(index(ReadLine,':')+1:),*) Struts(i)%SEy(1:NElem+1)
+        read(ReadLine(index(ReadLine,':')+1:),*) Struts(i)%MCy(1:NElem+1)
 
         read(15,'(A)') ReadLine
-        read(ReadLine(index(ReadLine,':')+1:),*) Struts(i)%SEz(1:NElem+1)                      
+        read(ReadLine(index(ReadLine,':')+1:),*) Struts(i)%MCz(1:NElem+1)
 
         read(15,'(A)') ReadLine
-        read(ReadLine(index(ReadLine,':')+1:),*) Struts(i)%CRe(1:NElem+1) 
+        read(ReadLine(index(ReadLine,':')+1:),*) Struts(i)%CtoR(1:NElem+1)
 
         read(15,'(A)') ReadLine
-        read(ReadLine(index(ReadLine,':')+1:),*) Struts(i)%AreaR(1:NElem) 
+        read(ReadLine(index(ReadLine,':')+1:),*) Struts(i)%PEx(1:NElem)
 
         read(15,'(A)') ReadLine
-        read(ReadLine(index(ReadLine,':')+1:),*) Struts(i)%sthick
+        read(ReadLine(index(ReadLine,':')+1:),*) Struts(i)%PEy(1:NElem)
+
+        read(15,'(A)') ReadLine
+        read(ReadLine(index(ReadLine,':')+1:),*) Struts(i)%PEz(1:NElem)
+
+        read(15,'(A)') ReadLine
+        read(ReadLine(index(ReadLine,':')+1:),*) Struts(i)%sEx(1:NElem)
+
+        read(15,'(A)') ReadLine
+        read(ReadLine(index(ReadLine,':')+1:),*) Struts(i)%sEy(1:NElem)
+
+        read(15,'(A)') ReadLine
+        read(ReadLine(index(ReadLine,':')+1:),*) Struts(i)%sEz(1:NElem)
+
+        read(15,'(A)') ReadLine
+        read(ReadLine(index(ReadLine,':')+1:),*) Struts(i)%ECtoR(1:NElem)
+
+        read(15,'(A)') ReadLine
+        read(ReadLine(index(ReadLine,':')+1:),*) Struts(i)%EAreaR(1:NElem)
 
         read(15,'(A)') ReadLine
         read(ReadLine(index(ReadLine,':')+1:),*) Struts(i)%BIndS

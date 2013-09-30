@@ -4,23 +4,36 @@ MODULE element
 
     use util
 
+    implicit none
+
     ! Blade geometry input structure
     ! JCM: Currently used only to store input geometry file data and blade loads outputs. Should eventually 
     ! replace the arrays below that are used for the internal calculation, similar to the strut module. This will 
     ! require a change to the blade/element/wake iterators throughout the entire code...
     type BladeType
         integer :: NElem
+        integer :: FlipN
         real, allocatable :: QCx(:)
         real, allocatable :: QCy(:)
         real, allocatable :: QCz(:)
-        real, allocatable :: nx(:)
-        real, allocatable :: ny(:)
-        real, allocatable :: nz(:)
         real, allocatable :: tx(:)
         real, allocatable :: ty(:)
         real, allocatable :: tz(:)
         real, allocatable :: CtoR(:)
-        real, allocatable :: AreaR(:)
+        real, allocatable :: PEx(:)
+        real, allocatable :: PEy(:)
+        real, allocatable :: PEz(:)
+        real, allocatable :: tEx(:)
+        real, allocatable :: tEy(:)
+        real, allocatable :: tEz(:)
+        real, allocatable :: nEx(:)
+        real, allocatable :: nEy(:)
+        real, allocatable :: nEz(:)
+        real, allocatable :: sEx(:)
+        real, allocatable :: sEy(:)
+        real, allocatable :: sEz(:)
+        real, allocatable :: ECtoR(:)
+        real, allocatable :: EAreaR(:)
         integer, allocatable :: iSect(:)
 
         ! Current total blade output (nomalized by machine scale parameters)
@@ -37,13 +50,15 @@ MODULE element
 	real, allocatable :: yBE(:)		! Y location for each blade segment end (quarter chord)		
 	real, allocatable :: zBE(:)		! Z location for each blade segment end (quarter chord)	
 
+    real, allocatable :: txBE(:)     ! Tangential X for each blade segment end
+    real, allocatable :: tyBE(:)     ! Tangential Y for each blade segment end
+    real, allocatable :: tzBE(:)     ! Tangential Z for each blade segment end
+
+    real, allocatable :: CtoR(:)     ! Chord to radius ratio for each blade segment end
+
     real, allocatable :: xBC(:)             ! X location for each blade segment center (quarter chord)         
     real, allocatable :: yBC(:)             ! Y location for each blade segment center (quarter chord)         
-    real, allocatable :: zBC(:)             ! Z location for each blade segment center (quarter chord) 
-
-	real, allocatable :: xSE(:)		! X location for each strut segment end
-	real, allocatable :: ySE(:)		! Y location for each strut segment end
-	real, allocatable :: zSE(:)		! Z location for each strut segment end	
+    real, allocatable :: zBC(:)             ! Z location for each blade segment center (quarter chord) 	
 
     real :: dSGeom                          ! Geometry discretization level used in vortex core calculation
     real :: CrRef                           ! Ref chord to radius ratio 	
@@ -56,7 +71,8 @@ MODULE element
     real, allocatable :: sxBC(:)		! Spanwise X for each blade segment 	
 	real, allocatable :: syBC(:)		! Spanwise Y for each blade segment 	
 	real, allocatable :: szBC(:)		! Spanwise Z for each blade segment 
-    real, allocatable :: CircSign(:)        ! Direction of segment circulation on wake grid at positive lift       	
+	! JCM: note CircSign could be made a function of blade not element with the new geometry spec, or eliminated as it is a function of FlipN
+    real, allocatable :: CircSign(:)        ! Direction of segment circulation on wake grid at positive lift
 	real, allocatable :: eArea(:)		! Element area to radius ratio for each element
 	real, allocatable :: eChord(:)		! Element chord to radius ratio for each element
     integer, allocatable :: iSect(:)        ! Array of indicies of the section table to apply to each blade element
@@ -73,6 +89,8 @@ CONTAINS
 
     SUBROUTINE blade_geom_cns(BInd,NElem)
 
+        implicit none
+
         ! Constructor for the arrays in this module
 
         integer :: BInd, NElem
@@ -81,14 +99,24 @@ CONTAINS
         allocate(Blades(BInd)%QCx(NElem+1))    
         allocate(Blades(BInd)%QCy(NElem+1)) 
         allocate(Blades(BInd)%QCz(NElem+1)) 
-        allocate(Blades(BInd)%nx(NElem+1)) 
-        allocate(Blades(BInd)%ny(NElem+1)) 
-        allocate(Blades(BInd)%nz(NElem+1)) 
         allocate(Blades(BInd)%tx(NElem+1)) 
         allocate(Blades(BInd)%ty(NElem+1)) 
-        allocate(Blades(BInd)%tz(NElem+1)) 
+        allocate(Blades(BInd)%tz(NElem+1))
         allocate(Blades(BInd)%CtoR(NElem+1)) 
-        allocate(Blades(BInd)%AreaR(NElem)) 
+        allocate(Blades(BInd)%PEx(NElem))
+        allocate(Blades(BInd)%PEy(NElem))
+        allocate(Blades(BInd)%PEz(NElem))
+        allocate(Blades(BInd)%tEx(NElem))
+        allocate(Blades(BInd)%tEy(NElem))
+        allocate(Blades(BInd)%tEz(NElem))
+        allocate(Blades(BInd)%nEx(NElem))
+        allocate(Blades(BInd)%nEy(NElem))
+        allocate(Blades(BInd)%nEz(NElem))
+        allocate(Blades(BInd)%sEx(NElem))
+        allocate(Blades(BInd)%sEy(NElem))
+        allocate(Blades(BInd)%sEz(NElem))
+        allocate(Blades(BInd)%ECtoR(NElem))
+        allocate(Blades(BInd)%EAreaR(NElem))
         allocate(Blades(BInd)%iSect(NElem))         
 
     End SUBROUTINE blade_geom_cns
@@ -96,19 +124,22 @@ CONTAINS
 
 	SUBROUTINE element_cns(MaxSegEnds,MaxSegEndPerBlade)
 
-     ! Constructor for the arrays in this module
+		implicit none
+
+        ! Constructor for the arrays in this module
 
 		integer :: MaxSegEnds,MaxSegEndPerBlade
 
 		allocate(xBE(MaxSegEnds))
 		allocate(yBE(MaxSegEnds))
 		allocate(zBE(MaxSegEnds))
+        allocate(txBE(MaxSegEnds))
+        allocate(tyBE(MaxSegEnds))
+        allocate(tzBE(MaxSegEnds))
+        allocate(CtoR(MaxSegEnds))
         allocate(xBC(MaxSegEnds))
         allocate(yBC(MaxSegEnds))
         allocate(zBC(MaxSegEnds))              
-		allocate(xSE(MaxSegEnds))
-		allocate(ySE(MaxSegEnds))
-		allocate(zSE(MaxSegEnds))
 		allocate(nxBC(MaxSegEnds))		
 		allocate(nyBC(MaxSegEnds))		
 		allocate(nzBC(MaxSegEnds))		
@@ -126,80 +157,133 @@ CONTAINS
 	End SUBROUTINE element_cns
 
 
-    SUBROUTINE RotateBlade(bind,delt,nrx,nry,nrz,px,py,pz)
+    SUBROUTINE RotateBlade(BNum,delt,nrx,nry,nrz,px,py,pz)
 
-        integer :: bind
+        implicit none
+
+        integer :: BNum
         real :: delt,nrx,nry,nrz,px,py,pz 
-        integer :: nbe
+        integer :: nbe, j, nei, nej
         real :: vrx,vry,vrz,VMag
 
-        ! Rotates data in blade arrays                                                    
+        ! Rotates data in blade arrays. Rotate element end geometry and recalculate element geometry.
 
-        ! JCM: Eventually, should just be able to loop through Blades(bind) data structure
+        ! JCM: Eventually, should just be able to loop through Blades(BNum) data structure
         ! While data is still held in arrays concatenated across blades, need to replicate
         ! nbe (stored in configr) from Blades(1).NElem
         nbe=Blades(1)%NElem
 
-        nei=1+(bind-1)*(nbe+1) 
+        nei=1+(BNum-1)*(nbe+1)
 
-        ! Blade end locations (quarter chord). xBE(MaxSegEnds)
         do j=0,nbe   
             nej=nei+j ! element index 
 
+            ! Blade end locations (quarter chord). xBE(MaxSegEnds)
             Call QuatRot(xBE(nej),yBE(nej),zBE(nej),delt,nrx,nry,nrz,px,py,pz,vrx,vry,vrz)
             xBE(nej)=vrx                                       
             yBE(nej)=vry                                                                                              
             zBE(nej)=vrz 
-        end do
 
-
-        do j=1,nbe 
-            nej=nei+j                                                                                                      
-
-            ! Blade center locations (quarter chord). xBC(MaxSegEnds)
-            Call QuatRot(xBC(nej),yBC(nej),zBC(nej),delt,nrx,nry,nrz,px,py,pz,vrx,vry,vrz)
-            xBC(nej)=vrx                                      
-            yBC(nej)=vry                                                                                             
-            zBC(nej)=vrz 
-
-            ! Set element tangent vectors, txBC(MaxSegEnd)  
-            Call QuatRot(txBC(nej),tyBC(nej),tzBC(nej),delt,nrx,nry,nrz,0.0,0.0,0.0,vrx,vry,vrz)
-            txBC(nej)=vrx
-            tyBC(nej)=vry   
-            tzBC(nej)=vrz
-            ! Force normalize
-            VMag=sqrt(txBC(nej)**2+tyBC(nej)**2+tzBC(nej)**2) 
-            txBC(nej)=txBC(nej)/VMag 
-            tyBC(nej)=tyBC(nej)/VMag    
-            tzBC(nej)=tzBC(nej)/VMag 
-
-            ! Set element normal vectors, nxBC(MaxSegEnd) 
-            Call QuatRot(nxBC(nej),nyBC(nej),nzBC(nej),delt,nrx,nry,nrz,0.0,0.0,0.0,vrx,vry,vrz)
-            nxBC(nej)=vrx
-            nyBC(nej)=vry   
-            nzBC(nej)=vrz
-            ! Force normal to t
-            dp=txBC(nej)*nxBC(nej)+tyBC(nej)*nyBC(nej)+tzBC(nej)*nzBC(nej)
-            nxBC(nej)=nxBC(nej)-dp*txBC(nej)
-            nyBC(nej)=nyBC(nej)-dp*tyBC(nej)
-            nzBC(nej)=nzBC(nej)-dp*tzBC(nej)
-            ! Force normalize
-            VMag=sqrt(nxBC(nej)**2+nyBC(nej)**2+nzBC(nej)**2) 
-            nxBC(nej)=nxBC(nej)/VMag 
-            nyBC(nej)=nyBC(nej)/VMag    
-            nzBC(nej)=nzBC(nej)/VMag 
-
-            ! Calculate spanwise vector (s = t x n)
-            CALL cross(txBC(nej),tyBC(nej),tzBC(nej),nxBC(nej),nyBC(nej),nzBC(nej),sxBC(nej),syBC(nej),szBC(nej))     
-            ! Force normalize
-            VMag=sqrt(sxBC(nej)**2+syBC(nej)**2+szBC(nej)**2) 
-            sxBC(nej)=sxBC(nej)/VMag 
-            syBC(nej)=syBC(nej)/VMag    
-            szBC(nej)=szBC(nej)/VMag 
+            ! Tangent vectors
+            Call QuatRot(txBE(nej),tyBE(nej),tzBE(nej),delt,nrx,nry,nrz,px,py,pz,vrx,vry,vrz)
+            VMag=sqrt(vrx**2+vry**2+vrz**2)
+            txBE(nej)=vrx/VMag
+            tyBE(nej)=vry/VMag
+            tzBE(nej)=vrz/VMag
 
         end do
+
+        ! Calc element geometry
+        Call CalcBEGeom(BNum)
 
 
     End SUBROUTINE RotateBlade
+
+
+    SUBROUTINE CalcBEGeom(BNum)
+
+        implicit none
+
+        integer :: BNum
+        integer :: nbe, nei, FlipN, nej, j
+        real :: sEM, tEM, nEM
+        real :: PE(3), sE(3), tE(3), normE(3), P1(3), P2(3), P3(3), P4(3), V1(3), V2(3), V3(3), V4(3), A1(3), A2(3)
+
+        ! Calculates element geometry from element end geometry
+
+        ! JCM: Eventually, should just be able to loop through Blades(BNum) data structure
+        ! While data is still held in arrays concatenated across blades, need to replicate
+        ! nbe (stored in configr) from Blades(1).NElem
+        nbe=Blades(1)%NElem
+
+        FlipN=Blades(BNum)%FlipN
+
+        nei=1+(BNum-1)*(nbe+1)
+
+        do j=1,nbe
+            nej=nei+j
+
+            ! Element center locations
+            xBC(nej)=(xBE(nej)+xBE(nej-1))/2.0
+            yBC(nej)=(yBE(nej)+yBE(nej-1))/2.0
+            zBC(nej)=(zBE(nej)+zBE(nej-1))/2.0
+
+            ! Set spanwise and tangential vectors
+		    sE=-(/xBE(nej)-xBE(nej-1),yBE(nej)-yBE(nej-1),zBE(nej)-zBE(nej-1)/) ! nominal element spanwise direction set opposite to QC line
+		    sEM=sqrt(dot_product(sE,sE))
+		    sE=sE/sEM
+		    tE=(/txBE(nej)+txBE(nej-1),tyBE(nej)+tyBE(nej-1),tzBE(nej)+tzBE(nej-1)/)/2.0
+		    ! Force tE normal to sE
+		    tE=tE-dot_product(tE,sE)*sE
+		    tEM=sqrt(dot_product(tE,tE))
+		    tE=tE/tEM
+		    sxBC(nej)=sE(1)
+		    syBC(nej)=sE(2)
+		    szBC(nej)=sE(3)
+            txBC(nej)=tE(1)
+            tyBC(nej)=tE(2)
+            tzBC(nej)=tE(3)
+
+		    ! Calc normal vector
+		    Call cross(sE(1),sE(2),sE(3),tE(1),tE(2),tE(3),normE(1),normE(2),normE(3))
+		    nEM=sqrt(dot_product(normE,normE))
+		    normE=normE/nEM
+		    nxBC(nej)=normE(1)
+		    nyBC(nej)=normE(2)
+		    nzBC(nej)=normE(3)
+
+		    ! Flip normal direction if requested
+		    CircSign(nej)=1.0
+		    if (FlipN .eq. 1) then
+	            nxBC(nej)=-nxBC(nej)
+	            nyBC(nej)=-nyBC(nej)
+	            nzBC(nej)=-nzBC(nej)
+                sxBC(nej)=-sxBC(nej)
+                syBC(nej)=-syBC(nej)
+                szBC(nej)=-szBC(nej)
+                CircSign(nej)=-1.0
+		    end if
+
+		    ! Calc element area and chord
+		    P1=(/xBE(nej-1)-0.25*CtoR(nej-1)*txBE(nej-1),yBE(nej-1)-0.25*CtoR(nej-1)*tyBE(nej-1),zBE(nej-1)-0.25*CtoR(nej-1)*tzBE(nej-1)/)
+		    P2=(/xBE(nej-1)+0.75*CtoR(nej-1)*txBE(nej-1),yBE(nej-1)+0.75*CtoR(nej-1)*tyBE(nej-1),zBE(nej-1)+0.75*CtoR(nej-1)*tzBE(nej-1)/)
+		    P3=(/xBE(nej)+0.75*CtoR(nej)*txBE(nej),yBE(nej)+0.75*CtoR(nej)*tyBE(nej),zBE(nej)+0.75*CtoR(nej)*tzBE(nej)/)
+		    P4=(/xBE(nej)-0.25*CtoR(nej)*txBE(nej),yBE(nej)-0.25*CtoR(nej)*tyBE(nej),zBE(nej)-0.25*CtoR(nej)*tzBE(nej)/)
+		    V1=P2-P1
+		    V2=P3-P2
+		    V3=P4-P3
+		    V4=P1-P4
+		    ! Calc quad area from two triangular facets
+		    Call cross(V1(1),V1(2),V1(3),V2(1),V2(2),V2(3),A1(1),A1(2),A1(3))
+		    A1=A1/2.0
+            Call cross(V3(1),V3(2),V3(3),V4(1),V4(2),V4(3),A2(1),A2(2),A2(3))
+            A2=A2/2.0
+		    eArea(nej)=sqrt(dot_product(A1,A1))+sqrt(dot_product(A2,A2))
+		    ! Calc average element chord from area and span
+		    eChord(nej)=eArea(nej)/sEM
+
+        end do
+    End SUBROUTINE CalcBEGeom
+
 
 End MODULE element

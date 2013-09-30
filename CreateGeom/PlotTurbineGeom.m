@@ -33,14 +33,21 @@ for i=1:TR.NBlade
     QCx=TR.B(i).QCx;
     QCy=TR.B(i).QCy;
     QCz=TR.B(i).QCz;
-    nx=TR.B(i).nx;
-    ny=TR.B(i).ny;
-    nz=TR.B(i).nz;
     tx=TR.B(i).tx;
     ty=TR.B(i).ty;
     tz=TR.B(i).tz;
     CtoR=TR.B(i).CtoR;
     
+    PEx=TR.B(i).PEx;
+    PEy=TR.B(i).PEy;
+    PEz=TR.B(i).PEz;
+    tEx=TR.B(i).tEx;
+    tEy=TR.B(i).tEy;
+    tEz=TR.B(i).tEz;
+    nEx=TR.B(i).nEx;
+    nEy=TR.B(i).nEy;
+    nEz=TR.B(i).nEz;
+
     % Leading and trailing edges
     LEx=QCx-1/4*CtoR.*tx;
     LEy=QCy-1/4*CtoR.*ty;
@@ -62,19 +69,19 @@ for i=1:TR.NBlade
         set(HIn{1}{i}(1),'ZData',Z);
         
         if PlotVec
-            set(HIn{1}{i}(2),'XData',QCx);
-            set(HIn{1}{i}(2),'YData',QCy);
-            set(HIn{1}{i}(2),'ZData',QCz);
-            set(HIn{1}{i}(2),'UData',nx);
-            set(HIn{1}{i}(2),'VData',ny);
-            set(HIn{1}{i}(2),'WData',nz);
+            set(HIn{1}{i}(2),'XData',PEx);
+            set(HIn{1}{i}(2),'YData',PEy);
+            set(HIn{1}{i}(2),'ZData',PEz);
+            set(HIn{1}{i}(2),'UData',nEx);
+            set(HIn{1}{i}(2),'VData',nEy);
+            set(HIn{1}{i}(2),'WData',nEz);
             set(HIn{1}{i}(2),'AutoScaleFactor',SFVec);
-            set(HIn{1}{i}(3),'XData',QCx);
-            set(HIn{1}{i}(3),'YData',QCy);
-            set(HIn{1}{i}(3),'ZData',QCz);
-            set(HIn{1}{i}(3),'UData',tx);
-            set(HIn{1}{i}(3),'VData',ty);
-            set(HIn{1}{i}(3),'WData',tz);
+            set(HIn{1}{i}(3),'XData',PEx);
+            set(HIn{1}{i}(3),'YData',PEy);
+            set(HIn{1}{i}(3),'ZData',PEz);
+            set(HIn{1}{i}(3),'UData',tEx);
+            set(HIn{1}{i}(3),'VData',tEy);
+            set(HIn{1}{i}(3),'WData',tEz);
             set(HIn{1}{i}(3),'AutoScaleFactor',SFVec);
         end
         
@@ -94,9 +101,9 @@ for i=1:TR.NBlade
         hnv=[];
         htv=[];
         if PlotVec
-            hnv=quiver3(QCx,QCy,QCz,nx,ny,nz,SFVec);
+            hnv=quiver3(PEx,PEy,PEz,nEx,nEy,nEz,SFVec);
             set(hnv,'Color','b')
-            htv=quiver3(QCx,QCy,QCz,tx,ty,tz,SFVec);
+            htv=quiver3(PEx,PEy,PEz,tEx,tEy,tEz,SFVec);
             set(htv,'Color','g')
         end
         
@@ -107,38 +114,42 @@ end
 
 % Surf plot strut geometry
 for i=1:TR.NStrut
-    SEx=TR.S(i).SEx;
-    SEy=TR.S(i).SEy;
-    SEz=TR.S(i).SEz;
+    MCx=TR.S(i).MCx;
+    MCy=TR.S(i).MCy;
+    MCz=TR.S(i).MCz;
     CtoR=TR.S(i).CtoR;
     
     % Assume t normal to turbine rotation axis and strut spanwise vector.
     % It's generally assumed that the strut lies in the plane normal to rotation axis,
     % otherwise, should probably be modeled as a blade...
-    txS=zeros(1,TR.S(i).NElem+1);
-    tyS=zeros(1,TR.S(i).NElem+1);
-    tzS=zeros(1,TR.S(i).NElem+1);
-    for j=1:TR.S(i).NElem
-        v=[SEx(j+1)-SEx(j),SEy(j+1)-SEy(j),SEz(j+1)-SEz(j)];
+    NElem=TR.S(i).NElem;
+    sEx=TR.S(i).sEx;
+    sEy=TR.S(i).sEy;
+    sEz=TR.S(i).sEz;
+    txS=zeros(1,NElem+1);
+    tyS=zeros(1,NElem+1);
+    tzS=zeros(1,NElem+1);
+    for j=1:NElem
+        v=[sEx(j),sEy(j),sEz(j)];
         t=cross(TR.RotN,v);
         tMag=sqrt(sum(t.^2));
         txS(j)=t(1)/tMag;
         tyS(j)=t(2)/tMag;
         tzS(j)=t(3)/tMag;
     end
-    txS(TR.S(i).NElem+1)=txS(TR.S(i).NElem);
-    tyS(TR.S(i).NElem+1)=tyS(TR.S(i).NElem);
-    tzS(TR.S(i).NElem+1)=tzS(TR.S(i).NElem);
+    txS(NElem+1)=txS(NElem);
+    tyS(NElem+1)=tyS(NElem);
+    tzS(NElem+1)=tzS(NElem);
     
     % Leading and trailing edges
-    LEx=SEx-1/2*CtoR.*txS;
-    LEy=SEy-1/2*CtoR.*tyS;
-    LEz=SEz-1/2*CtoR.*tzS;
-    TEx=SEx+1/2*CtoR.*txS;
-    TEy=SEy+1/2*CtoR.*tyS;
-    TEz=SEz+1/2*CtoR.*tzS;
+    LEx=MCx-1/2*CtoR.*txS;
+    LEy=MCy-1/2*CtoR.*tyS;
+    LEz=MCz-1/2*CtoR.*tzS;
+    TEx=MCx+1/2*CtoR.*txS;
+    TEy=MCy+1/2*CtoR.*tyS;
+    TEz=MCz+1/2*CtoR.*tzS;
 
-    % plot blade
+    % plot strut
     X=[LEx;TEx];
     Y=[LEy;TEy];
     Z=[LEz;TEz];
