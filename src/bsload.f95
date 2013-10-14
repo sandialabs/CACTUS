@@ -76,8 +76,6 @@ SUBROUTINE bsload(nElem,IsBE,alpha,alpha5,alpha75,adotnorm,Re,umach,ur,CL,CD,CM2
 
     ur=sqrt(urdn**2+urdc**2)                                          
     alpha=atan2(urdn,urdc) 
-    !         dal=alpha-AOA_Last(nelem1)                                                                                       
-    !         adotnorm=dal/DT*ElemChordR/(2.0*max(ur,0.001))  ! adot*c/(2*U)
     wPNorm=wP*ElemChordR/(2.0*max(ur,0.001))        ! wP*c/(2*U)
 
     Re=ReM*ElemChordR*ur                                                         

@@ -367,7 +367,7 @@ PROGRAM CACTUS
                     CALL UpdateBladeVel(iflg) 
                 end if
 
-                !If (Itower.EQ.1) Call UpdateTowerVelocity() !JCM: Matt to add this function...
+                If (Itower.EQ.1) Call UpdateTowerVelocity() !JCM: Matt to add this function...
 
                 ! Regression test
                 if (RegTFlag == 1) then
