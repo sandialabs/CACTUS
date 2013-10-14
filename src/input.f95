@@ -41,12 +41,12 @@ SUBROUTINE input(ErrFlag)
 
     ! Namelist input file declaration
 	NAMELIST/ConfigInputs/RegTFlag,DiagOutFlag,GPFlag,FSFlag,nr,convrg,nti,iut,iWall,ivtxcor,VCRFB,VCRFT,VCRFS,ifc,convrgf,nric,ntif,iutf,ixterm,xstop, &
-        Output_ELFlag,Output_DSFlag,WallOutFlag,Incompr,DSFlag,PRFlag&
-        &,k1pos,k1neg,GPGridSF,FSGridSF,TSFilFlag,ntsf,&
+        Output_ELFlag,Output_DSFlag,WallOutFlag,Incompr,DSFlag,PRFlag, &
+        k1pos,k1neg,GPGridSF,FSGridSF,TSFilFlag,ntsf
+	NAMELIST/CaseInputs/jbtitle,GeomFilePath,RPM,Ut,nSect,AFDPath, &
+        hAG,dFS,rho,vis,tempr,hBLRef,slex,Cdpar,CTExcrM, &
+        WakeOutFlag,WLI,Igust,gustamp,gusttime,gustX0, &
         Itower,tower_Npts,tower_x,tower_ybot,tower_ytop,tower_D,tower_CD
-	NAMELIST/CaseInputs/jbtitle,GeomFilePath,RPM,Ut,nSect,AFDPath&
-        &,hAG,dFS,rho,vis,tempr,hBLRef,slex,Cdpar,CTExcrM&
-        &,WakeOutFlag,WLI,Igust,gustamp,gusttime,gustX0
 
     ! Input Defaults
     RegTFlag = 0 
