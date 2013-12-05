@@ -1,0 +1,39 @@
+Installation of CACTUS for Linux or Mac machines.
+
+1. Unzip the directory and put in desired location. On terminal cd into the 
+   correct directory (you should be able to see the makefiles).
+
+2. Create the executable by typing:
+     $make
+   or
+     $make -f Makefile.gfortran
+   on the terminal. The executable will be called 'cactus' and be located in the
+   directory one level above.You can add the executable's location to your path 
+   so that you can call it by simple typing 'cactus' on the terminal instead of
+   the complete path. 
+
+3. cd into the Test/RegTest directory
+     $cd ./Test/RegTest
+   and run the RegTest by executing runreg.py with the path to the CACTUS 
+   executable as an argument (or just the name of the executable if you added it 
+   to your path).
+     $./runreg.py ../../../cactus
+   or
+     $./runreg.py cactus
+   The output should say 'No differences' for all three tests. Note: if you have 
+   Python 3 installed used runreg_p3.py instead.
+
+
+CONGRATULATIONS! You have successfully installed CACTUS. :)
+
+4. To be able to use the DAKOTA-CACTUS interface you will need to download 
+   DAKOTA and OCTAVE. Follow instructions in their respective websites. If 
+   installed correctly, and all environment variables and path are set correctly
+   you should be able to type on the terminal:
+     $ dakota -version
+     $ octave -version
+   and get details on the installed versions.
+
+5. Run the CACTUS-DAKOTA Check ... (not ready yet)
+
+CONGRATULATIONS! You have CACTUS-DAKOTA successfully running on your system. :) 
