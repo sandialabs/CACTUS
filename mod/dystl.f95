@@ -96,6 +96,7 @@ CONTAINS
         allocate(cv_Last(MaxSegEnds))
 
         allocate(LB_LogicOutputs(MaxSegEnds,NLBL))
+        LB_LogicOutputs(:,:)=0!CM
 
     End SUBROUTINE dystl_cns
 
