@@ -20,12 +20,12 @@ if len(sys.argv) > 1:
 else:
     sys.exit('Error: Call runreg.py with the path to the cactus executable on the command line (ex. runreg.py ../../../cactus)')
 #endif
-print 'Running runreg.py with ' + CACTUSExe
-print ''
+print('Running runreg.py with ' + CACTUSExe)
+print('')
 
 
 # Run regression test 1
-print 'Running regression test 1'
+print('Running regression test 1')
 IFN='RegTest1.in'
 CCommand=CACTUSExe + ' ' + IFN 
 os.system(CCommand)
@@ -39,7 +39,7 @@ os.remove('RegTest1_TimeData.csv')
 FN1='RegTest1_RegData.out'
 FN2='RegTest1_RegData_Ex.out'
 if not filecmp.cmp(FN1,FN2):
-    print 'Summary of differences between ' + FN1 + ' and ' + FN2 + ':'
+    print('Summary of differences between ' + FN1 + ' and ' + FN2 + ':')
     
     f=open(FN1,'r');
     F1=f.readlines()
@@ -54,15 +54,15 @@ if not filecmp.cmp(FN1,FN2):
         sys.stdout.write(line)
     #endfor
 else:
-    print 'No differences'
+    print('No differences')
     os.remove(FN1)
 #endif
-print ''
+print('')
 
 
 # Run regression test 2
-print 'Running regression test 2'
-IFN='RegTest2.in'
+print('Running regression test 2')
+IFN=('RegTest2.in')
 CCommand=CACTUSExe + ' ' + IFN 
 os.system(CCommand)
 
@@ -75,7 +75,7 @@ os.remove('RegTest2_TimeData.csv')
 FN1='RegTest2_RegData.out'
 FN2='RegTest2_RegData_Ex.out'
 if not filecmp.cmp(FN1,FN2):
-    print 'Summary of differences between ' + FN1 + ' and ' + FN2 + ':'
+    print('Summary of differences between ' + FN1 + ' and ' + FN2 + ':')
     
     f=open(FN1,'r');
     F1=f.readlines()
@@ -90,14 +90,14 @@ if not filecmp.cmp(FN1,FN2):
         sys.stdout.write(line)
     #endfor
 else:
-    print 'No differences'
+    print('No differences')
     os.remove(FN1)
 #endif
-print ''
+print('')
 
 
 # Run regression test 3
-print 'Running regression test 3'
+print('Running regression test 3')
 IFN='RegTest3.in'
 CCommand=CACTUSExe + ' ' + IFN 
 os.system(CCommand)
@@ -111,7 +111,7 @@ os.remove('RegTest3_TimeData.csv')
 FN1='RegTest3_RegData.out'
 FN2='RegTest3_RegData_Ex.out'
 if not filecmp.cmp(FN1,FN2):
-    print 'Summary of differences between ' + FN1 + ' and ' + FN2 + ':'
+    print('Summary of differences between ' + FN1 + ' and ' + FN2 + ':')
     
     f=open(FN1,'r');
     F1=f.readlines()
@@ -126,7 +126,7 @@ if not filecmp.cmp(FN1,FN2):
         sys.stdout.write(line)
     #endfor
 else:
-    print 'No differences'
+    print('No differences')
     os.remove(FN1)
 #endif
-print ''
+print('')
