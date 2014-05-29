@@ -16,21 +16,18 @@ OBJMODUTILf95 = $(SRCMODUTILf95:%.f95=%.o)
 INC = $(wildcard $(SRCDIR)/*.inc) 
 
 # for debugging, debug flag and detailed runtime error checking. 
-#FLAGS = -g -C -r8 -Mbounds
+#FLAGS = -g -fbounds-check -fdefault-real-8 -ffree-line-length-0
 # standard compiler optimization
-# Note: was having issues with compiling the code with -fast on newer pgi compilers...
-# using all -fast options other than -Munroll which seems to cause the issue...
-#FLAGS = -fast -r8 
-FLAGS = -O -Mvect=sse -Mcache_align -Mpre -Mnoframe -Mlre -Mflushz -Mautoinline -r8
+FLAGS = -O2 -fdefault-real-8 -ffree-line-length-0
 # No compiler optimization
-#FLAGS = -r8
+#FLAGS = -fdefault-real-8 -ffree-line-length-0
 
 # includes in SRCDIR, .mod files in MODDIR
-OPT = -I$(SRCDIR) -I$(MODDIR) -I$(MODUTILDIR) $(FLAGS)
+OPT = -I$(SRCDIR) -I$(MODDIR) -I$(MODUTILDIR)  $(FLAGS)
 LINKOPT = $(FLAGS)
 # Include default liblapack.a and libblas.a for LAPACK calculations
 LIBS = -llapack -lblas
-COMPILER = pgf95
+COMPILER = gfortran
 
 
 # Primary goal: create executable from object files if object files have changed. Depends on OBJMODUTIL, OBJMOD, and OBJ

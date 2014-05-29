@@ -16,18 +16,21 @@ OBJMODUTILf95 = $(SRCMODUTILf95:%.f95=%.o)
 INC = $(wildcard $(SRCDIR)/*.inc) 
 
 # for debugging, debug flag and detailed runtime error checking. 
-#FLAGS = -g -fbounds-check -fdefault-real-8 -ffree-line-length-0
+#FLAGS = -g -C -r8 -Mbounds
 # standard compiler optimization
-FLAGS = -O2 -fdefault-real-8 -ffree-line-length-0
+# Note: was having issues with compiling the code with -fast on newer pgi compilers...
+# using all -fast options other than -Munroll which seems to cause the issue...
+#FLAGS = -fast -r8 
+FLAGS = -O -Mvect=sse -Mcache_align -Mpre -Mnoframe -Mlre -Mflushz -Mautoinline -r8
 # No compiler optimization
-#FLAGS = -fdefault-real-8 -ffree-line-length-0
+#FLAGS = -r8
 
 # includes in SRCDIR, .mod files in MODDIR
-OPT = -I$(SRCDIR) -I$(MODDIR) -I$(MODUTILDIR)  $(FLAGS)
+OPT = -I$(SRCDIR) -I$(MODDIR) -I$(MODUTILDIR) $(FLAGS)
 LINKOPT = $(FLAGS)
 # Include default liblapack.a and libblas.a for LAPACK calculations
 LIBS = -llapack -lblas
-COMPILER = gfortran
+COMPILER = pgf95
 
 
 # Primary goal: create executable from object files if object files have changed. Depends on OBJMODUTIL, OBJMOD, and OBJ
@@ -40,7 +43,7 @@ $(BINDIR)/cactus : $(OBJMODUTILf95) $(OBJMODf95) $(OBJf95)
 	$(COMPILER) -o $@ $(LINKOPT) $(OBJMODUTILf95) $(OBJMODf95) $(OBJf95)   $(LIBS)
 
 # Secondary goals: rules for OBJ. If Makefile or include files are changed, update
-$(OBJMODUTILf95) $(OBJMODf95) $(OBJf95) : Makefile.gfortran $(INC)
+$(OBJMODUTILf95) $(OBJMODf95) $(OBJf95) : Makefile.pgi $(INC)
 
 # Further secondary goals for OBJ: If individual source files are changed, update the corresponding OBJ
 $(OBJMODUTILf95):$(MODUTILDIR)%.o : $(MODUTILDIR)%.f95 
