@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 # This python script runs a number of single iteration regression tests and diffs output with the expected output...
-# Run the RegTest folder and pass the path to the relevant cactus executable as an argument on the command line (ex. runreg.py ../../../cactus)
 # Note: if no differences exist, the regression test output file is deleted for convenience.
 
 import os
@@ -14,14 +13,7 @@ import difflib
 # Note: To debug, call the python debugger module, pdb, as a script with this script as the argument (python -m pdb script.py)
 # or insert: import pdb; pdb.set_trace() above, and call from terminal as usual
 
-# Get exe path from command line
-if len(sys.argv) > 1:
-    CACTUSExe=sys.argv[1].strip()
-else:
-    sys.exit('Error: Call runreg.py with the path to the cactus executable on the command line (ex. runreg.py ../../../cactus)')
-#endif
-print('Running runreg.py with ' + CACTUSExe)
-print('')
+CACTUSExe='../../bin/cactus'
 
 
 # Run regression test 1
