@@ -8,15 +8,14 @@ MODULE wakedata
     character(1000) :: WakeOutHead = 'Timestep,Element,X/R (-),Y/R (-),Z/R (-),U/Uinf (-),V/Uinf (-),W/Uinf (-)'
 
     ! Wake deficit calculation performed on a horizontal plane if WakeOutFlag=2
-    ! JCM test: wake deficit output plane is currently hardcoded...
     character(1000) :: HGridVelOutHead = 'X/R (-),Z/R (-),U/Uinf (-),V/Uinf (-),W/Uinf (-)'
-    integer :: nxhgrid = 141
-    integer :: nzhgrid = 81
-    real :: yhgrid = 1.2325
-    real :: xhgridL = -2
-    real :: xhgridU = 5
-    real :: zhgridL = -2
-    real :: zhgridU = 2
+    integer :: nxhgrid
+    integer :: nzhgrid
+    real :: yhgrid
+    real :: xhgridL
+    real :: xhgridU
+    real :: zhgridL
+    real :: zhgridU
     real, allocatable :: XHGrid(:,:) 
     real, allocatable :: ZHGrid(:,:) 
     real, allocatable :: VXIndH(:,:) 
@@ -24,20 +23,34 @@ MODULE wakedata
     real, allocatable :: VZIndH(:,:) 
 
     ! Wake deficit calculation performed on a vertical plane if WakeOutFlag=3
-    ! JCM test: wake deficit output plane is currently hardcoded...
-    character(1000) :: VGridVelOutHead = 'X/R (-),Y/R (-),U/Uinf (-),V/Uinf (-),W/Uinf (-)'
-    integer :: nxvgrid = 141
-    integer :: nyvgrid = 101
-    real :: zvgrid = 0.0
-    real :: xvgridL = -2
-    real :: xvgridU = 5
-    real :: yvgridL = -2
-    real :: yvgridU = 3
+    character(1000) :: VGridVelOutHead = 'Timestep,X/R (-),Y/R (-),U/Uinf (-),V/Uinf (-),W/Uinf (-)'
+    integer :: nxvgrid
+    integer :: nyvgrid
+    real :: zvgrid
+    real :: xvgridL
+    real :: xvgridU
+    real :: yvgridL
+    real :: yvgridU
     real, allocatable :: XVGrid(:,:) 
     real, allocatable :: YVGrid(:,:) 
     real, allocatable :: VXIndV(:,:) 
     real, allocatable :: VYIndV(:,:) 
     real, allocatable :: VZIndV(:,:) 
+
+    ! Wake deficit calculation performed on a cross-section plane if WakeOutFlag=4
+    character(1000) :: CGridVelOutHead = 'Y/R (-),Z/R (-),U/Uinf (-),V/Uinf (-),W/Uinf (-)'
+    integer :: nycgrid
+    integer :: nzcgrid
+    real :: xcgrid
+    real :: ycgridL
+    real :: ycgridU
+    real :: zcgridL
+    real :: zcgridU
+    real, allocatable :: YCGrid(:,:)
+    real, allocatable :: ZCGrid(:,:)
+    real, allocatable :: VXIndC(:,:)
+    real, allocatable :: VYIndC(:,:)
+    real, allocatable :: VZIndC(:,:)
 
     ! global counter
     integer :: ntcount
@@ -64,6 +77,13 @@ CONTAINS
         allocate(VXIndV(nxvgrid,nyvgrid))    
         allocate(VYIndV(nxvgrid,nyvgrid)) 
         allocate(VZIndV(nxvgrid,nyvgrid)) 
+
+        ! Wake deficit output, cross-section plane
+        allocate(YCGrid(nycgrid,nzcgrid))
+        allocate(ZCGrid(nycgrid,nzcgrid))
+        allocate(VXIndC(nycgrid,nzcgrid))
+        allocate(VYIndC(nycgrid,nzcgrid))
+        allocate(VZIndC(nycgrid,nzcgrid))
 
 	End SUBROUTINE wakedata_cns
 

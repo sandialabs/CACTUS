@@ -179,6 +179,8 @@ PROGRAM CACTUS
                 write(13,*) trim(HGridVelOutHead)
             else if (WakeOutFlag==3) then
                 write(13,*) trim(VGridVelOutHead)
+            else if (WakeOutFlag==4) then
+                write(13,*) trim(CGridVelOutHead)
             end if
         end if
     end if

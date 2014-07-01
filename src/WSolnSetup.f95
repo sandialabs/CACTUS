@@ -1,4 +1,5 @@
 subroutine WSolnSetup()
+
     use wallsoln 
 
     integer :: i, j, Self, IBCInd, BCRow
@@ -51,7 +52,6 @@ subroutine WSolnSetup()
 
         allocate(IPIV(NumWP)) ! allocation storage for pivot array
         Call DGESV(NumWP,NumWP,WSMat,NumWP,IPIV,WSMatI,NumWP,INFO)
-        deallocate(IPIV)
         if (INFO>0) then
             write(6,*) 'Matrix inversion failed in WSolnSetup. Exiting...'
             stop
@@ -119,7 +119,6 @@ subroutine WSolnSetup()
 
         allocate(IPIV(NumFSP)) ! allocation storage for pivot array
         Call DGESV(NumFSP,NumFSP,FSSMat,NumFSP,IPIV,FSSMatI,NumFSP,INFO)
-        deallocate(IPIV)
         if (INFO>0) then
             write(6,*) 'Matrix inversion failed in WSolnSetup. Exiting...'
             stop

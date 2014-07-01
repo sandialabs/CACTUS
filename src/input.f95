@@ -21,8 +21,8 @@ SUBROUTINE input(ErrFlag)
         use tower
     
 
-	integer, parameter :: InBufferNumSectionTables = 100
-	integer, parameter :: InBufferNumWL = 100
+	integer, parameter :: InBufferNumSectionTables = 1000
+	integer, parameter :: InBufferNumWL = 1000
     integer, parameter :: MaxReadLine = 1000    
     integer, parameter :: MaxTempAOA = 1000   
 
@@ -42,11 +42,13 @@ SUBROUTINE input(ErrFlag)
     ! Namelist input file declaration
 	NAMELIST/ConfigInputs/RegTFlag,DiagOutFlag,GPFlag,FSFlag,nr,convrg,nti,iut,iWall,ivtxcor,VCRFB,VCRFT,VCRFS,ifc,convrgf,nric,ntif,iutf,ixterm,xstop, &
         Output_ELFlag,Output_DSFlag,WallOutFlag,Incompr,DSFlag,PRFlag, &
-        k1pos,k1neg,GPGridSF,FSGridSF,TSFilFlag,ntsf
+        k1pos,k1neg,GPGridSF,FSGridSF,TSFilFlag,ntsf,nRevWake
 	NAMELIST/CaseInputs/jbtitle,GeomFilePath,RPM,Ut,nSect,AFDPath, &
         hAG,dFS,rho,vis,tempr,hBLRef,slex,Cdpar,CTExcrM, &
         WakeOutFlag,WLI,Igust,gustamp,gusttime,gustX0, &
-        Itower,tower_Npts,tower_x,tower_ybot,tower_ytop,tower_D,tower_CD
+        Itower,tower_Npts,tower_x,tower_ybot,tower_ytop,tower_D,tower_CD, &
+        nycgrid, nzcgrid, xcgrid, ycgridL, ycgridU, zcgridL, zcgridU, &
+		nxvgrid, nyvgrid, zvgrid, xvgridL, xvgridU, yvgridL, yvgridU
 
     ! Input Defaults
     RegTFlag = 0 
@@ -99,6 +101,16 @@ SUBROUTINE input(ErrFlag)
     tower_ytop = 0.0
     tower_D = 0.05
     tower_CD = 1.0
+    
+    nycgrid = 101
+    nzcgrid = 81
+    xcgrid = 1.0
+    ycgridL = -2
+    ycgridU = 3
+    zcgridL = -2
+    zcgridU = 2
+    
+    nRevWake = 5
 
 	! Namelist input
 	read(4, nml=ConfigInputs) 
@@ -113,7 +125,9 @@ SUBROUTINE input(ErrFlag)
 	MaxSegPerBlade = nbe
 	MaxSegEndPerBlade = MaxSegPerBlade+1
 	MaxSegEnds = MaxSegEndPerBlade*MaxBlades
-    MaxSeg = MaxSegPerBlade*MaxBlades  
+    MaxSeg = MaxSegPerBlade*MaxBlades 
+ 
+ 
     MaxStruts = NStrut     
 	! Airfoil Data
 	MaxAirfoilSect = nSect
@@ -132,7 +146,7 @@ SUBROUTINE input(ErrFlag)
     NotDone=.TRUE.
     i=1
     do while (NotDone .AND. i<=MaxSeg)   
-        if (WLI(i) > 0) then
+        if (WLI(i) == 0) then
             NWakeInd=NWakeInd+1
         else
             NotDone=.FALSE. 
@@ -149,7 +163,10 @@ SUBROUTINE input(ErrFlag)
     CALL output_cns(MaxSeg,MaxBlades,MaxStruts,DSFlag)       
 
 	! Write from buffer...    
-    WakeLineInd(1:NWakeInd)=WLI(1:NWakeInd)       
+
+   !  WakeLineInd(1:NWakeInd)=WLI(1:NWakeInd)      
+	WakeLineInd = (/ (I, I = 1, MaxSeg) /) 
+	write(*,*) WakeLineInd
 
 	! Set ground plane location for wall solution
 	GPy=-hAG/Rmax
