@@ -1,0 +1,27 @@
+Title: cylinder
+Thickness to Chord Ratio: 1
+Zero Lift AOA (deg): 0
+Reverse Camber Direction: 0
+
+Reynolds Number: 1e5
+BV Dyn. Stall Model - Positive Stall AOA (deg): 0.0
+BV Dyn. Stall Model - Negative Stall AOA (deg): -10.0
+LB Dyn. Stall Model - Lift Coeff. Slope at Zero Lift AOA (per radian): 5.330
+LB Dyn. Stall Model - Positive Critical Lift Coeff.: 1.5
+LB Dyn. Stall Model - Negative Critical Lift Coeff.: -1.5
+AOA (deg) CL CD Cm25
+-180.000	0.0001	0.350	-0.0001
+   0.000	0.0001	0.350	-0.0001
+ 180.000	0.0001	0.350	-0.0001
+ 
+ Reynolds Number: 1e6
+BV Dyn. Stall Model - Positive Stall AOA (deg): 0.0
+BV Dyn. Stall Model - Negative Stall AOA (deg): -10.0
+LB Dyn. Stall Model - Lift Coeff. Slope at Zero Lift AOA (per radian): 5.330
+LB Dyn. Stall Model - Positive Critical Lift Coeff.: 1.5
+LB Dyn. Stall Model - Negative Critical Lift Coeff.: -1.5
+AOA (deg) CL CD Cm25
+-180.000	0.0001	0.350	-0.0001
+   0.000	0.0001	0.350	-0.0001
+ 180.000	0.0001	0.350	-0.0001
+ 

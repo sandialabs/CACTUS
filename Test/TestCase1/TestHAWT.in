@@ -3,14 +3,14 @@
 	GPFlag  = 0
 	
 	nr 	= 10
-	nti 	= 16
+	nti 	= 2
 	convrg	= .0001
 	iut	= 0
 	
 	ifc	= 0
 	ixterm 	= 0
 
-	ntif	= 16
+	ntif	= 30
 	iutf	= 1
 	nric 	= 9
 	convrgf	= .0001
@@ -24,7 +24,8 @@
 &CaseInputs
 
 	jbtitle = 'Test HAWT'
-  
+	WakeOutFlag = 3
+
 	rho 	= .002378  
 	vis 	= .3739E-6                                   
     tempr 	= 60.0 
