@@ -2,3 +2,4 @@ CM/
 *.o
 *.mod
 *~
+*.DS_Store
