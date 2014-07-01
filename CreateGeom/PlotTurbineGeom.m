@@ -92,10 +92,11 @@ for i=1:TR.NBlade
         figure(HF)
         hold on
         hs=surf(X,Y,Z);
-        set(hs,'FaceColor','b');
+        set(hs,'FaceColor','g');
         set(hs,'FaceAlpha',SurfTrans);
-        set(hs,'LineStyle','none');
+        set(hs,'LineStyle','-');
         set(hs,'FaceLighting','none')
+        set(hs,'EdgeColor',[0 0 0])
         
         % plot normals
         hnv=[];

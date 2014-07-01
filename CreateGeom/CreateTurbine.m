@@ -1,5 +1,5 @@
 function T=CreateTurbine(NBlade,NBElem,NStrut,NSElem,RefR,RotN,RotP,RefAR,Type,varargin)
-
+global rB bTwist HubRR Tilt eta bCone bi;
 % Creates a CACTUS turbine geometry structure.
 %
 % NBlade: Number of blades. 
@@ -197,7 +197,7 @@ elseif strcmp(Type,'HAWT')==1
     T.RotP=[0,0,0];
     
     % Radius ratio function
-    rB=linspace(HubRR,RMaxR,NBElem+1);
+    
     % Frontal area normalized by RefR^2
     T.RefAR=pi*RMaxR^2;
 
