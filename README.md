@@ -1,5 +1,6 @@
 This is the CACTUS(-CK) Git repository, a fork from the original CACTUS repository which
-adds additional functionality for wake data output and analysis.
+adds additional functionality for wake data output and analysis. Original modifications
+made by Christopher Kelley.
 
 Installation/compilation instructions are under 'Doc/Install'
 
