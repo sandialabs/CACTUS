@@ -165,28 +165,32 @@ if strcmp(Type,'VAWT')==1
 elseif strcmp(Type,'HAWT')==1
     
     % Axial-flow turbine generator for a horizontal axis wind turbine (HAWT).
-	% Additional arguments:
-    % RMaxR: Turbine radius to reference radius ratio
-    % HubRR: Hub radius to turbine radius ratio
-    % CR: Blade chord to turbine radius ratio (NBElem+1 elements ordered root to tip)
-    % bTwist: Blade planform twist at each element end (deg, w.r.t. blade planform plane (rotor disk plane when bi=0), positive LE into the wind (-x), NBElem+1 elements ordered root to tip)
-    % bi: Blade planform incidence (deg, w.r.t. rotor disk plane, positive LE into the wind (-x))
-    % eta: Blade mount point ratio ((distance behind leading edge of the blade mount point) / (chord))
-    % bCone: Blade coning angle (deg, positive tip into the wind (-x))
-    % Tilt: Rotor tilt angle (deg, positive windward axis tilted up)
+    % Additional arguments:
+    % 1 RMaxR: Turbine radius to reference radius ratio
+    % 2 HubRR: Hub radius to turbine radius ratio
+    % 3 rB : Radial locations of nodes (NBElem+1 elements ordered root to tip)
+    % 4 CR: Blade chord to turbine radius ratio (NBElem+1 elements ordered root to tip)
+    % 5 bTwist: Blade planform twist at each element end (deg, w.r.t. blade planform plane (rotor disk plane when bi =0), positive LE into the wind (-x), NBElem+1 elements ordered root to tip)
+    % 6 af : Airfoil ID (NBElem elements ordered root to tip)
+    % 7 bi: Blade planform incidence (deg, w.r.t. rotor disk plane, positive LE into the wind (-x))
+    % 8 eta: Blade mount point ratio ((distance behind leading edge of the blade mount point) / (chord))
+    % 9 bCone: Blade coning angle (deg, positive tip into the wind (-x))
+    % 10 Tilt: Rotor tilt angle (deg, positive windward axis tilted up)
 
     % Get vars
-    if length(varargin)<8
+    if length(varargin)<10
         error('Not enough inputs for selected turbine type');
     end 
     RMaxR=varargin{1};
     HubRR=varargin{2};
-    CR=varargin{3};
-    bTwist=varargin{4};
-    bi=varargin{5};
-    eta=varargin{6};
-    bCone=varargin{7};
-    Tilt=varargin{8};
+    rB=varargin{3}
+    CR=varargin{4};
+    bTwist=varargin{5};
+    af=varargin{6};
+    bi=varargin{7};
+    eta=varargin{8};
+    bCone=varargin{9};
+    Tilt=varargin{10};
     
     % Ref to reference radius
     CR=CR*RMaxR;
@@ -212,6 +216,7 @@ elseif strcmp(Type,'HAWT')==1
     T.B(1).tx=sTwist;
     T.B(1).ty=zeros(1,NBElem+1);
     T.B(1).tz=-cTwist;
+    T.B(1).iSect=af;
 
     % Calc element geom for first blade
     T.B(1)=CalcBEGeom(T.B(1));
