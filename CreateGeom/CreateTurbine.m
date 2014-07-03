@@ -183,7 +183,7 @@ elseif strcmp(Type,'HAWT')==1
     end 
     RMaxR=varargin{1};
     HubRR=varargin{2};
-    rB=varargin{3}
+    rB=varargin{3};
     CR=varargin{4};
     bTwist=varargin{5};
     af=varargin{6};

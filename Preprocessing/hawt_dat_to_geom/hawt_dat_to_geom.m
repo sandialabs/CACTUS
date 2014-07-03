@@ -49,7 +49,7 @@ function [Turbine] = hawt_dat_to_geom(dat_filename, geom_filename, rotor_params,
 	pitch      = blade_params.pitch;                 % pitch (degrees) - positive is LE into the wind
 	eta        = blade_params.eta;                   % Blade mount point ratio ((distance behind leading edge of the blade mount point) / (root chord)) 
 	
-	turbine_type = 'HAWT'
+	turbine_type = 'HAWT';
 
 	% Set some parameters
 	reference_R_ratio = 1;                           % rotor radius / reference ratio -- set to 1 for simplicity

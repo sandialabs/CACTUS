@@ -1,26 +1,33 @@
+#!/usr/bin/octave
 % create_hawt.m : Reads in parameters from './hawt_params.m', builds a HAWT geometry structure, and writes out 
-%				  to a CACTUS-formatted .geom file.
+%                 to a CACTUS-formatted .geom file.
+%
+%                     Usage : octave create_hawt.m [input_file.dat] [output_file.geom]
 %
 %                 The aerodynamic schedule file (tab-delimited: r/R, c/R, twist, airfoil_id) defining each blade
 %                 is specified in dat_filename.
+%
 
 clc
 clear all
 close all
 
+%% Read in command line arguments %%
+arg_list = argv();
+
 %% Parameters %%
-dat_filename  = 'DESIGN_A_dec.dat'
-geom_filename = 'DESIGN_A_dec.geom'
+dat_filename  = arg_list{1};
+geom_filename = arg_list{2};
 
 %% Import hawt_params.m
 % hawt_params holds three structs:
 %		rotor_params
 %		blade_params
 %		grid_params
-hawt_params
+hawt_params;
 
 %% Generate turbine geometry and write to file
-T = hawt_dat_to_geom(dat_filename, geom_filename, rotor_params, blade_params, grid_params)
+T = hawt_dat_to_geom(dat_filename, geom_filename, rotor_params, blade_params, grid_params);
 
 % % Plot controls
 % % Plot animated turbine rotation
