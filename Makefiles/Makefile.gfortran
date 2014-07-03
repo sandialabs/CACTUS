@@ -26,7 +26,9 @@ FLAGS = -O2 -fdefault-real-8 -ffree-line-length-0
 OPT = -I$(SRCDIR) -I$(MODDIR) -I$(MODUTILDIR)  $(FLAGS)
 LINKOPT = $(FLAGS)
 # Include default liblapack.a and libblas.a for LAPACK calculations
-LIBS = -llapack -lblas
+LIBLAPACK_DIR = /usr/lib64/atlas
+LIBATLAS_DIR = /usr/lib64/atlas
+LIBS = -L $(LIBLAPACK_DIR) -L $(LIBATLAS_DIR) -llapack -lblas
 COMPILER = gfortran
 
 
