@@ -1,4 +1,4 @@
-% HAWT_DAT_TO_GEOM : Reads in an aerodynamic schedule for a HAWT blade and creates a CACTUS-formatted output file.
+% HAWT_DAT_TO_GEOM : Reads in an aerodynamic schedule for a HAWT blade and creates a CACTUS-formatted .geom file.
 
 function [Turbine] = hawt_dat_to_geom(dat_filename, geom_filename, rotor_params, blade_params, grid_params, varargin)
 
@@ -38,21 +38,22 @@ function [Turbine] = hawt_dat_to_geom(dat_filename, geom_filename, rotor_params,
 	r_over_R_gridnodes = [aero_schedule_elems.r_over_R_a(1:end) aero_schedule_elems.r_over_R_b(end)];	% Blade element positions (nodes) (NBElem+1 elemnts)
 	c_over_R_gridnodes = [aero_schedule_elems.c_over_R_a(1:end) aero_schedule_elems.c_over_R_b(end)];   % Blade chord / turbine radius (NBElem+1 elements ordered root to tip)
 	beta_gridcenters   = [aero_schedule_elems.beta_a(1:end)         aero_schedule_elems.beta_b(end)];   % Blade station twist distribution in degrees (w.r.t. rotor disk plane, positive LE into wind (-x))
-	af_id_gridcenters     = aero_schedule_elems.airfoil_id;												% Airfoil ID distribution
+	af_id_gridcenters  = aero_schedule_elems.airfoil_id;												% Airfoil ID distribution
 	
 	%% Unpack parameters
-	num_blades = rotor_params.num_blades;      % Number of blades
-	R     	   = rotor_params.radius;          % Rotor radius (ft)
-	cone_angle = rotor_params.cone_angle;      % Cone angle (deg)
-	tilt_angle = rotor_params.tilt_angle;      % Tilt angle (deg)
-	
-	pitch      = blade_params.pitch;                % pitch (degrees) - positive is LE into the wind
-	eta        = blade_params.eta;                  % Blade mount point ratio ((distance behind leading edge of the blade mount point) / (root chord)) 
+	num_blades = rotor_params.num_blades;            % Number of blades
+	R     	   = rotor_params.radius;                % Rotor radius (ft)
+	cone_angle = rotor_params.cone_angle;            % Cone angle (deg)
+	tilt_angle = rotor_params.tilt_angle;            % Tilt angle (deg)
+
+	pitch      = blade_params.pitch;                 % pitch (degrees) - positive is LE into the wind
+	eta        = blade_params.eta;                   % Blade mount point ratio ((distance behind leading edge of the blade mount point) / (root chord)) 
 	
 	turbine_type = 'HAWT'
 
-	reference_R_ratio = 1;
-	hub_r             = grid_params.r_over_R_start;
+	% Set some parameters
+	reference_R_ratio = 1;                           % rotor radius / reference ratio -- set to 1 for simplicity
+	hub_r             = grid_params.r_over_R_start;  % set hub radius as the radial position of the start of the innermost grid element
 
 	%% Create turbine (using modified CreateGeom scripts)
 	Turbine = CreateTurbine(num_blades,

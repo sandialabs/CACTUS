@@ -1,15 +1,25 @@
-% test.m
+% create_hawt.m : Reads in parameters from './hawt_params.m', builds a HAWT geometry structure, and writes out 
+%				  to a CACTUS-formatted .geom file.
+%
+%                 The aerodynamic schedule file (tab-delimited: r/R, c/R, twist, airfoil_id) defining each blade
+%                 is specified in dat_filename.
 
 clc
 clear all
 close all
 
-% import HAWT_params
-HAWT_params
+%% Parameters %%
+dat_filename  = 'DESIGN_A_dec.dat'
+geom_filename = 'DESIGN_A_dec.geom'
 
-dat_filename = 'DESIGN_A_dec.dat'
-geom_filename = 'Test.geom'
+%% Import hawt_params.m
+% hawt_params holds three structs:
+%		rotor_params
+%		blade_params
+%		grid_params
+hawt_params
 
+%% Generate turbine geometry and write to file
 T = hawt_dat_to_geom(dat_filename, geom_filename, rotor_params, blade_params, grid_params)
 
 % % Plot controls
