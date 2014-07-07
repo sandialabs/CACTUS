@@ -48,69 +48,89 @@ SUBROUTINE input(ErrFlag)
         WakeOutFlag,WLI,Igust,gustamp,gusttime,gustX0, &
         Itower,tower_Npts,tower_x,tower_ybot,tower_ytop,tower_D,tower_CD, &
         nycgrid, nzcgrid, xcgrid, ycgridL, ycgridU, zcgridL, zcgridU, &
-		nxvgrid, nyvgrid, zvgrid, xvgridL, xvgridU, yvgridL, yvgridU
+		nxvgrid, nyvgrid, zvgrid, xvgridL, xvgridU, yvgridL, yvgridU, &
+        nxhgrid, nzhgrid, yhgrid, xhgridL, xhgridU, zhgridL, zhgridU
 
     ! Input Defaults
-    RegTFlag = 0 
-    DiagOutFlag = 0
+    RegTFlag      = 0 
+    DiagOutFlag   = 0
     Output_ELFlag = 0 
     Output_DSFlag = 0
-    WakeOutFlag = 0 
-    WallOutFlag = 0
-    GPFlag=0
-    FSFlag=0    
-    TSFilFlag=0
-    ntsf=3
-	nSect = 1  
-	ifc = 0   
-	nr = 10
-	convrg = -1
-	convrgf = -1
-	nti = 20
-	ntif = -1
-	ivtxcor = 1
-	ixterm = 0
-	xstop = 5.0
-	iut = 0
-    iWall = 0       
-	iutf = 0 
-	nric=-1
-    VCRFB=1.0       
-	VCRFT=1.0
-    VCRFS=1.0       
-    WLI(:)=0 ! all set to 0      
-	hAG=0.0
-    dFS=0.0                                                          
-	Incompr=0                        
-    Cdpar=0.0
-    CTExcrM=0.0
-    DSFlag=1
-    PRFlag=1
-    k1pos = 1.0                      
-    k1neg = 0.5
-    GPGridSF = 1.0
-    FSGridSF = 1.0
-    Igust = 0
-    gustamp = 0.0
-    gusttime = 0.0
-    gustX0 = 0.0
-    Itower = 0
-    tower_Npts = 10
-    tower_x = 0.0
-    tower_ybot = 0.0
-    tower_ytop = 0.0
-    tower_D = 0.05
-    tower_CD = 1.0
+    WakeOutFlag   = 0 
+    WallOutFlag   = 0
+    GPFlag        = 0
+    FSFlag        = 0    
+    TSFilFlag     = 0
+    ntsf          = 3
+    nSect         = 1  
+    ifc           = 0   
+    nr            = 10
+    convrg        = -1
+    convrgf       = -1
+    nti           = 20
+    ntif          = -1
+    ivtxcor       = 1
+    ixterm        = 0
+    xstop         = 5.0
+    iut           = 0
+    iWall         = 0       
+    iutf          = 0 
+    nric          =-1
+    VCRFB         = 1.0       
+    VCRFT         = 1.0
+    VCRFS         = 1.0       
+    WLI(:)        = 0 ! all set to 0      
+    hAG           = 0.0
+    dFS           = 0.0                                                          
+    Incompr       = 0                        
+    Cdpar         = 0.0
+    CTExcrM       = 0.0
+    DSFlag        = 1
+    PRFlag        = 1
+    k1pos         = 1.0                      
+    k1neg         = 0.5
+    GPGridSF      = 1.0
+    FSGridSF      = 1.0
+    Igust         = 0
+    gustamp       = 0.0
+    gusttime      = 0.0
+    gustX0        = 0.0
+    Itower        = 0
+    tower_Npts    = 10
+    tower_x       = 0.0
+    tower_ybot    = 0.0
+    tower_ytop    = 0.0
+    tower_D       = 0.05
+    tower_CD      = 1.0
     
-    nycgrid = 101
-    nzcgrid = 81
-    xcgrid = 1.0
-    ycgridL = -2
-    ycgridU = 3
-    zcgridL = -2
-    zcgridU = 2
+    ! horizontal plane (x-z) wake output default parameters
+    nxhgrid       = 100
+    nzhgrid       = 100
+    yhgrid        = 0
+    xhgridL       = -1.0
+    xhgridU       = 10.0
+    zhgridL       = -2.0
+    zhgridU       = 2.0
     
-    nRevWake = 5
+    ! vertical plane (x-y) wake output parameters
+    nxvgrid       = 100
+    nyvgrid       = 100
+    zvgrid        = 0.0
+    xvgridL       = -1.0
+    xvgridU       = 10.0
+    yvgridL       = -2.0
+    yvgridU       = 2.0
+    
+    ! cross-section plane (y-z) wake output parameters
+    nycgrid       = 100
+    nzcgrid       = 100
+    xcgrid        = 1.0
+    ycgridL       = -2.0
+    ycgridU       = 2.0
+    zcgridL       = -2.0
+    zcgridU       = 2.0
+    
+    nRevWake      = 5
 
 	! Namelist input
 	read(4, nml=ConfigInputs) 
