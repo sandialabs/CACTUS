@@ -32,7 +32,10 @@ MODULE configr
     real :: VCRFB                   ! Vortex core radius factor (on max blade chord) for bound vortex
     real :: VCRFT                   ! Vortex core radius factor (on blade discretization level) for trailing wake vorticies
     real :: VCRFS                   ! Vortex core radius factor (on temporal discretization level) for spanwise wake vorticies
-    integer :: nRevWake             ! Number of revolutions in wake output files
+    
+    integer :: WakeWriteIntervalRev             ! Number of revolutions between writing wake data
+    integer :: WakeWriteStartRev                ! Revolution number at which to start writing wake data
+    integer :: WakeWriteEndRev                  ! Revolution number at which to stop writing wake data
     
 
     real :: ut				! Tip speed ratio       

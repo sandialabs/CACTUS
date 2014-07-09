@@ -414,9 +414,15 @@ PROGRAM CACTUS
                 write(6,'(2E13.5,F8.0,2E13.5)') Output_TSData(1,1),Output_TSData(1,2),Output_TSData(1,3),Output_TSData(1,4),Output_TSData(1,5)
             end if
 
-            ! Write current wake data for viewing in Matlab
+            ! Write current wake data
             if (WakeOutFlag > 0) then
-                Call WriteWakeData()
+                ! Check if we should be writing the wake
+                if ((irev > WakeWriteStartRev .OR. WakeWriteStartRev == 0) .AND. (irev < WakeWriteEndRev .OR. WakeWriteEndRev == -1)) then
+                    if (MOD(irev, INT(WakeWriteIntervalRev)) == 0) then
+                        Call WriteWakePlaneData()
+                        Call WriteWakeElementData()
+                    end if
+                end if
             end if
 
             ! Write current wall data for viewing in Matlab

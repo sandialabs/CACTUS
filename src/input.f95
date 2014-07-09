@@ -42,14 +42,15 @@ SUBROUTINE input(ErrFlag)
     ! Namelist input file declaration
 	NAMELIST/ConfigInputs/RegTFlag,DiagOutFlag,GPFlag,FSFlag,nr,convrg,nti,iut,iWall,ivtxcor,VCRFB,VCRFT,VCRFS,ifc,convrgf,nric,ntif,iutf,ixterm,xstop, &
         Output_ELFlag,Output_DSFlag,WallOutFlag,Incompr,DSFlag,PRFlag, &
-        k1pos,k1neg,GPGridSF,FSGridSF,TSFilFlag,ntsf,nRevWake
+        k1pos,k1neg,GPGridSF,FSGridSF,TSFilFlag,ntsf
 	NAMELIST/CaseInputs/jbtitle,GeomFilePath,RPM,Ut,nSect,AFDPath, &
         hAG,dFS,rho,vis,tempr,hBLRef,slex,Cdpar,CTExcrM, &
         WakeOutFlag,WLI,Igust,gustamp,gusttime,gustX0, &
         Itower,tower_Npts,tower_x,tower_ybot,tower_ytop,tower_D,tower_CD, &
         nycgrid, nzcgrid, xcgrid, ycgridL, ycgridU, zcgridL, zcgridU, &
 		nxvgrid, nyvgrid, zvgrid, xvgridL, xvgridU, yvgridL, yvgridU, &
-        nxhgrid, nzhgrid, yhgrid, xhgridL, xhgridU, zhgridL, zhgridU
+        nxhgrid, nzhgrid, yhgrid, xhgridL, xhgridU, zhgridL, zhgridU, &
+        WakeWriteIntervalRev,WakeWriteStartRev,WakeWriteEndRev
 
     ! Input Defaults
     RegTFlag      = 0 
@@ -130,7 +131,10 @@ SUBROUTINE input(ErrFlag)
     zcgridL       = -2.0
     zcgridU       = 2.0
     
-    nRevWake      = 5
+    ! wake write data
+    WakeWriteIntervalRev =  5       ! write wake every 5 revs
+    WakeWriteStartRev    =  0       ! write wake starting at beginning
+    WakeWriteEndRev      = -1       ! stop writing wake at last 
 
 	! Namelist input
 	read(4, nml=ConfigInputs) 
