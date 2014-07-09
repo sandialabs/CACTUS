@@ -88,8 +88,8 @@ SUBROUTINE WriteWakeData()
             ! Output blade, wake, and wall induced streamwise velocity deficit on a plane.
 
             ! Averaged over last revolution
-            do xcount=1,nxhgrid                                                    
-                do zcount=1,nzhgrid
+            do zcount=1,nzhgrid
+                do xcount=1,nxhgrid                                                    
 
                     ! Calculate wall and wake induced velocities at grid
                     Call CalcIndVel(NT,ntTerm,NBE,NB,NE,XHGrid(xcount,zcount),yhgrid,ZHGrid(xcount,zcount),vx,vy,vz)
@@ -103,8 +103,9 @@ SUBROUTINE WriteWakeData()
 
             ! Write on last iter
             if (ntcount == nti) then
+            do zcount=1,nzhgrid  
                 do xcount=1,nxhgrid        
-                    do zcount=1,nzhgrid  
+
                         write(13,'(E13.7,",",$)') XHGrid(xcount,zcount) 
                         write(13,'(E13.7,",",$)') ZHGrid(xcount,zcount) 
                         write(13,'(E13.7,",",$)') VXIndH(xcount,zcount)
@@ -120,8 +121,8 @@ SUBROUTINE WriteWakeData()
             ! Output blade, wake, and wall induced streamwise velocity deficit on a plane.
 
             ! Averaged over last revolution
-            do xcount=1,nxvgrid                                                    
-                do ycount=1,nyvgrid
+            do ycount=1,nyvgrid
+                do xcount=1,nxvgrid                                                    
                     ! Calculate wall and wake induced velocities at grid
                     Call CalcIndVel(NT,ntTerm,NBE,NB,NE,XVGrid(xcount,ycount),YVGrid(xcount,ycount),zvgrid,vx,vy,vz)
                     VXIndV(xcount,ycount)= vx
@@ -134,7 +135,7 @@ SUBROUTINE WriteWakeData()
                     write(13,'(E13.7,",",$)') VYIndV(xcount,ycount)  
                     ! Dont suppress carriage return on last column
                     write(13,'(E13.7)') VZIndV(xcount,ycount)
-		  end do
+                end do
             end do
             ntcount=ntcount+1
 
@@ -158,8 +159,8 @@ SUBROUTINE WriteWakeData()
             ! Output blade, wake, and wall induced streamwise velocity deficit on a plane.
 
             ! Averaged over last revolution
-            do ycount=1,nycgrid
-                do zcount=1,nzcgrid
+            do zcount=1,nzcgrid
+                do ycount=1,nycgrid
 
                     ! Calculate wall and wake induced velocities at grid
                     Call CalcIndVel(NT,ntTerm,NBE,NB,NE,xcgrid,YCGrid(ycount,zcount),ZCGrid(ycount,zcount),vx,vy,vz)
@@ -173,8 +174,8 @@ SUBROUTINE WriteWakeData()
 
             ! Write on last iter
             if (ntcount == nti) then
+            do zcount=1,nzcgrid
                 do ycount=1,nycgrid
-                    do zcount=1,nzcgrid
                         write(13,'(E13.7,",",$)') YCGrid(ycount,zcount)
                         write(13,'(E13.7,",",$)') ZCGrid(ycount,zcount)
                         write(13,'(E13.7,",",$)') VXIndC(ycount,zcount)
