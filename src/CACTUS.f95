@@ -417,8 +417,8 @@ PROGRAM CACTUS
             ! Write current wake data
             if (WakeOutFlag > 0) then
                 ! Check if we should be writing the wake
-                if ((irev > WakeWriteStartRev .OR. WakeWriteStartRev == 0) .AND. (irev < WakeWriteEndRev .OR. WakeWriteEndRev == -1)) then
-                    if (MOD(irev, INT(WakeWriteIntervalRev)) == 0) then
+                if ((NT > WakeWriteStartTimestep .OR. WakeWriteEndTimestep == 0) .AND. (NT < WakeWriteEndRev .OR. WakeWriteEndTimestep == -1)) then
+                    if (MOD(NT, INT(WakeWriteIntervalTimesteps)) == 1) then
                         Call WriteWakePlaneData()
                         Call WriteWakeElementData()
                     end if

@@ -50,7 +50,7 @@ SUBROUTINE input(ErrFlag)
         nycgrid, nzcgrid, xcgrid, ycgridL, ycgridU, zcgridL, zcgridU, &
 		nxvgrid, nyvgrid, zvgrid, xvgridL, xvgridU, yvgridL, yvgridU, &
         nxhgrid, nzhgrid, yhgrid, xhgridL, xhgridU, zhgridL, zhgridU, &
-        WakeWriteIntervalRev,WakeWriteStartRev,WakeWriteEndRev
+        WakeWriteIntervalTimesteps,WakeWriteStartTimestep,WakeWriteEndTimestep
 
     ! Input Defaults
     RegTFlag      = 0 
@@ -132,9 +132,9 @@ SUBROUTINE input(ErrFlag)
     zcgridU       = 2.0
     
     ! wake write data
-    WakeWriteIntervalRev =  5       ! write wake every 5 revs
-    WakeWriteStartRev    =  0       ! write wake starting at beginning
-    WakeWriteEndRev      = -1       ! stop writing wake at last 
+    WakeWriteIntervalTimesteps =  5       ! write wake every 5 revs
+    WakeWriteStartTimestep    =  0       ! write wake starting at beginning
+    WakeWriteEndTimestep      = -1       ! stop writing wake at last 
 
 	! Namelist input
 	read(4, nml=ConfigInputs) 

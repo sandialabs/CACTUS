@@ -33,11 +33,10 @@ MODULE configr
     real :: VCRFT                   ! Vortex core radius factor (on blade discretization level) for trailing wake vorticies
     real :: VCRFS                   ! Vortex core radius factor (on temporal discretization level) for spanwise wake vorticies
     
-    integer :: WakeWriteIntervalRev             ! Number of revolutions between writing wake data
-    integer :: WakeWriteStartRev                ! Revolution number at which to start writing wake data
-    integer :: WakeWriteEndRev                  ! Revolution number at which to stop writing wake data
+    integer :: WakeWriteIntervalTimesteps             ! Number of revolutions between writing wake data
+    integer :: WakeWriteStartTimestep                ! Revolution number at which to start writing wake data
+    integer :: WakeWriteEndTimestep                  ! Revolution number at which to stop writing wake data
     
-
     real :: ut				! Tip speed ratio       
     real :: dt                              ! Normalized timestep
     real :: delt                            ! Phase angle step       
