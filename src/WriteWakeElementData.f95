@@ -14,14 +14,15 @@ SUBROUTINE WriteWakeElementData()
     tCountMax=NT
     do wcount=1,NWakeInd 
         do tCount=1,tCountMax
-            write(12,'(I8,",",$)') NT
-            write(12,'(I8,",",$)') WakeLineInd(wcount)
-            write(12,'(E13.7,",",$)') X(tCount,WakeLineInd(wcount)) 
-            write(12,'(E13.7,",",$)') Y(tCount,WakeLineInd(wcount))
-            write(12,'(E13.7,",",$)') Z(tCount,WakeLineInd(wcount))
-            write(12,'(E13.7,",",$)') U(tCount,WakeLineInd(wcount)) 
-            write(12,'(E13.7,",",$)') V(tCount,WakeLineInd(wcount))
-            write(12,'(E13.7)') W(tCount,WakeLineInd(wcount)) ! Dont suppress carriage return on last column
+            write(12,'(I8,",",$)') NT                                   ! Timestep number
+            write(12,'(I8,",",$)') WakeLineInd(wcount)                  ! Blade element number that wake element originated from
+            write(12,'(E13.7,",",$)') X(tCount,WakeLineInd(wcount))     ! Wake element X position
+            write(12,'(E13.7,",",$)') Y(tCount,WakeLineInd(wcount))     ! Wake element Y position
+            write(12,'(E13.7,",",$)') Z(tCount,WakeLineInd(wcount))     ! Wake element Z position
+            write(12,'(E13.7,",",$)') U(tCount,WakeLineInd(wcount))     ! Wake element X velocity
+            write(12,'(E13.7,",",$)') V(tCount,WakeLineInd(wcount))     ! Wake element Y velocity
+            ! Dont suppress carriage return on last column
+            write(12,'(E13.7)') W(tCount,WakeLineInd(wcount))           ! Wake element Z velocity
         end do
     end do
 
