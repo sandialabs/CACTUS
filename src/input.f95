@@ -190,7 +190,7 @@ SUBROUTINE input(ErrFlag)
 
    !  WakeLineInd(1:NWakeInd)=WLI(1:NWakeInd)      
 	WakeLineInd = (/ (I, I = 1, MaxSeg) /) 
-	write(*,*) WakeLineInd
+	! write(*,*) WakeLineInd
 
 	! Set ground plane location for wall solution
 	GPy=-hAG/Rmax
