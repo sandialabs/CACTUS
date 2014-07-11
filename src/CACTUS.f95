@@ -165,23 +165,24 @@ PROGRAM CACTUS
         Call csvwrite(11,Output_ELHead,Output_ELData,1,0)
     end if
 
-    ! Optional wake line data output
-    if (WakeOutFlag > 0) then
+    ! Optional wake element data output
+    if (WakeElementOutFlag > 0) then
         WakeOutputFN=trim(FNBase)//'_WakeData.csv'
         OPEN(12, FILE=WakeOutputFN)
         write(12,*) trim(WakeOutHead)
+    end if
 
-        if (WakeOutFlag > 1) then
-            ! wake deficit surface output
-            WakeDefOutputFN=trim(FNBase)//'_WakeDefData.csv'
-            OPEN(13, FILE=WakeDefOutputFN)
-            if (WakeOutFlag==2) then
-                write(13,*) trim(HGridVelOutHead)
-            else if (WakeOutFlag==3) then
-                write(13,*) trim(VGridVelOutHead)
-            else if (WakeOutFlag==4) then
-                write(13,*) trim(CGridVelOutHead)
-            end if
+    ! Optional wake plane data output
+    if (WakePlaneOutFlag > 0) then
+        ! wake deficit surface output
+        WakeDefOutputFN=trim(FNBase)//'_WakeDefData.csv'
+        OPEN(13, FILE=WakeDefOutputFN)
+        if (WakePlaneOutFlag==1) then
+            write(13,*) trim(HGridVelOutHead)
+        else if (WakePlaneOutFlag==2) then
+            write(13,*) trim(VGridVelOutHead)
+        else if (WakePlaneOutFlag==3) then
+            write(13,*) trim(CGridVelOutHead)
         end if
     end if
 
@@ -415,12 +416,20 @@ PROGRAM CACTUS
             end if
 
             ! Write current wake data
-            if (WakeOutFlag > 0) then
-                ! Check if we should be writing the wake
-                if ((NT > WakeWriteStartTimestep .OR. WakeWriteEndTimestep == 0) .AND. (NT < WakeWriteEndRev .OR. WakeWriteEndTimestep == -1)) then
-                    if (MOD(NT, INT(WakeWriteIntervalTimesteps)) == 1) then
-                        Call WriteWakePlaneData()
+            if (WakeElementOutFlag > 0) then
+                ! Write wake element data
+                if ((NT > WakeElementOutStartTimestep .OR. WakeElementOutStartTimestep == 0) .AND. (NT < WakeElementOutEndTimestep .OR. WakeElementOutEndTimestep == -1)) then
+                    if (MOD(NT, INT(WakeElementOutIntervalTimesteps)) == 0) then
                         Call WriteWakeElementData()
+                    end if
+                end if
+            end if
+
+            if (WakePlaneOutFlag > 0) then
+                ! Write wake plane data
+                if ((NT > WakePlaneOutStartTimestep .OR. WakePlaneOutStartTimestep == 0) .AND. (NT < WakePlaneOutEndTimestep .OR. WakePlaneOutEndTimestep == -1)) then
+                    if (MOD(NT, INT(WakePlaneOutIntervalTimesteps)) == 1) then
+                        Call WriteWakePlaneData()
                     end if
                 end if
             end if

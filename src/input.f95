@@ -45,19 +45,21 @@ SUBROUTINE input(ErrFlag)
         k1pos,k1neg,GPGridSF,FSGridSF,TSFilFlag,ntsf
 	NAMELIST/CaseInputs/jbtitle,GeomFilePath,RPM,Ut,nSect,AFDPath, &
         hAG,dFS,rho,vis,tempr,hBLRef,slex,Cdpar,CTExcrM, &
-        WakeOutFlag,WLI,Igust,gustamp,gusttime,gustX0, &
+        WakeElementOutFlag,WakePlaneOutFlag,WLI,Igust,gustamp,gusttime,gustX0, &
         Itower,tower_Npts,tower_x,tower_ybot,tower_ytop,tower_D,tower_CD, &
         nycgrid, nzcgrid, xcgrid, ycgridL, ycgridU, zcgridL, zcgridU, &
 		nxvgrid, nyvgrid, zvgrid, xvgridL, xvgridU, yvgridL, yvgridU, &
         nxhgrid, nzhgrid, yhgrid, xhgridL, xhgridU, zhgridL, zhgridU, &
-        WakeWriteIntervalTimesteps,WakeWriteStartTimestep,WakeWriteEndTimestep
+        WakeElementOutIntervalTimesteps,WakeElementOutStartTimestep,WakeElementOutEndTimestep, &
+        WakePlaneOutIntervalTimesteps,WakePlaneOutStartTimestep,WakePlaneOutEndTimestep
 
     ! Input Defaults
     RegTFlag      = 0 
     DiagOutFlag   = 0
     Output_ELFlag = 0 
     Output_DSFlag = 0
-    WakeOutFlag   = 0 
+    WakeElementOutFlag   = 0 
+    WakePlaneOutFlag   = 0 
     WallOutFlag   = 0
     GPFlag        = 0
     FSFlag        = 0    
@@ -131,10 +133,14 @@ SUBROUTINE input(ErrFlag)
     zcgridL       = -2.0
     zcgridU       = 2.0
     
-    ! wake write data
-    WakeWriteIntervalTimesteps =  5       ! write wake every 5 revs
-    WakeWriteStartTimestep    =  0       ! write wake starting at beginning
-    WakeWriteEndTimestep      = -1       ! stop writing wake at last 
+    ! Wake Output Frequency
+    WakeElementOutIntervalTimesteps =  5       ! write wake element data every 5 timesteps
+    WakeElementOutStartTimestep     =  0       ! write wake element data starting at first timestep
+    WakeElementOutEndTimestep       = -1       ! stop writing wake element data at the last timestep
+    
+    WakePlaneOutIntervalTimesteps   =  5       ! write wake plane data every 5 timesteps
+    WakePlaneOutStartTimestep       =  0       ! write wake plane data starting at first timestep
+    WakePlaneOutEndTimestep         = -1       ! stop writing wake plane data at the last timestep
 
 	! Namelist input
 	read(4, nml=ConfigInputs) 

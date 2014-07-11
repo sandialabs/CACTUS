@@ -2,12 +2,12 @@ MODULE wakedata
 
 	! Wake visualization data for WriteWakeData
 
-    integer :: WakeOutFlag
+    integer :: WakeElementOutFlag, WakePlaneOutFlag
     integer, allocatable :: WakeLineInd(:) 
     integer :: NWakeInd     
     character(1000) :: WakeOutHead = 'Timestep,Element,X/R (-),Y/R (-),Z/R (-),U/Uinf (-),V/Uinf (-),W/Uinf (-)'
 
-    ! Wake deficit calculation performed on a horizontal plane if WakeOutFlag=2
+    ! Wake deficit calculation performed on a horizontal plane
     character(1000) :: HGridVelOutHead = 'X/R (-),Z/R (-),U/Uinf (-),V/Uinf (-),W/Uinf (-)'
     integer :: nxhgrid
     integer :: nzhgrid
@@ -22,7 +22,7 @@ MODULE wakedata
     real, allocatable :: VYIndH(:,:) 
     real, allocatable :: VZIndH(:,:) 
 
-    ! Wake deficit calculation performed on a vertical plane if WakeOutFlag=3
+    ! Wake deficit calculation performed on a vertical plane
     character(1000) :: VGridVelOutHead = 'Timestep,X/R (-),Y/R (-),U/Uinf (-),V/Uinf (-),W/Uinf (-)'
     integer :: nxvgrid
     integer :: nyvgrid
@@ -37,7 +37,7 @@ MODULE wakedata
     real, allocatable :: VYIndV(:,:) 
     real, allocatable :: VZIndV(:,:) 
 
-    ! Wake deficit calculation performed on a cross-section plane if WakeOutFlag=4
+    ! Wake deficit calculation performed on a cross-section plane
     character(1000) :: CGridVelOutHead = 'Y/R (-),Z/R (-),U/Uinf (-),V/Uinf (-),W/Uinf (-)'
     integer :: nycgrid
     integer :: nzcgrid

@@ -15,7 +15,7 @@ SUBROUTINE WriteWakePlaneData()
  
     ! Set up grids for plane wake output (only on first iteration)
     if (NT==1) then
-        if (WakeOutFlag==2) then
+        if (WakePlaneOutFlag==1) then
             ! Setup horizontal grid
             dxgrid=(xhgridU-xhgridL)/(nxhgrid-1)
             dzgrid=(zhgridU-zhgridL)/(nzhgrid-1)
@@ -28,7 +28,7 @@ SUBROUTINE WriteWakePlaneData()
                     VZIndH(xcount,zcount)=0.0
                 end do
             end do
-        else if (WakeOutFlag==3) then
+        else if (WakePlaneOutFlag==2) then
             ! Setup vertical grid
             dxgrid=(xvgridU-xvgridL)/(nxvgrid-1)
             dygrid=(yvgridU-yvgridL)/(nyvgrid-1)
@@ -41,7 +41,7 @@ SUBROUTINE WriteWakePlaneData()
                     VZIndV(xcount,ycount)=0.0
                 end do
             end do
-        else if (WakeOutFlag==4) then
+        else if (WakePlaneOutFlag==3) then
             ! Setup cross-section grid
             dygrid=(ycgridU-ycgridL)/(nycgrid-1)
             dzgrid=(zcgridU-zcgridL)/(nzcgrid-1)
@@ -58,7 +58,7 @@ SUBROUTINE WriteWakePlaneData()
     end if
 
     ! Compute and write wake data on specified cartesian grid
-    if (WakeOutFlag == 2) then
+    if (WakePlaneOutFlag == 1) then
         ! Output blade, wake, and wall induced streamwise velocity deficit on a horizontal plane.
         do zcount=1,nzhgrid
             do xcount=1,nxhgrid                                                    
@@ -78,7 +78,7 @@ SUBROUTINE WriteWakePlaneData()
             end do
         end do
 
-    else if (WakeOutFlag == 3) then
+    else if (WakePlaneOutFlag == 2) then
         ! Output blade, wake, and wall induced streamwise velocity deficit on a vertical plane.
         do ycount=1,nyvgrid
             do xcount=1,nxvgrid                                                    
@@ -98,7 +98,7 @@ SUBROUTINE WriteWakePlaneData()
             end do
         end do
 
-    else if (WakeOutFlag == 4) then
+    else if (WakePlaneOutFlag == 3) then
         ! Output blade, wake, and wall induced streamwise velocity deficit on a cross-section plane.
         do zcount=1,nzcgrid
             do ycount=1,nycgrid
