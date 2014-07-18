@@ -8,7 +8,7 @@ MODULE wakedata
     character(1000) :: WakeOutHead = 'Timestep,Element,X/R (-),Y/R (-),Z/R (-),U/Uinf (-),V/Uinf (-),W/Uinf (-)'
 
     ! Wake deficit calculation performed on a horizontal plane
-    character(1000) :: HGridVelOutHead = 'X/R (-),Z/R (-),U/Uinf (-),V/Uinf (-),W/Uinf (-)'
+    character(1000) :: HGridVelOutHead = 'Timestep,X/R (-),Z/R (-),U/Uinf (-),V/Uinf (-),W/Uinf (-)'
     integer :: nxhgrid
     integer :: nzhgrid
     real :: yhgrid
@@ -38,7 +38,7 @@ MODULE wakedata
     real, allocatable :: VZIndV(:,:) 
 
     ! Wake deficit calculation performed on a cross-section plane
-    character(1000) :: CGridVelOutHead = 'Y/R (-),Z/R (-),U/Uinf (-),V/Uinf (-),W/Uinf (-)'
+    character(1000) :: CGridVelOutHead = 'Timestep,Y/R (-),Z/R (-),U/Uinf (-),V/Uinf (-),W/Uinf (-)'
     integer :: nycgrid
     integer :: nzcgrid
     real :: xcgrid
