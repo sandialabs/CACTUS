@@ -2,6 +2,7 @@ SUBROUTINE UpdateWakeVel()
 
     use configr
     use blade
+    use wake
     use regtest 
 
     integer :: ygcErr                                                                

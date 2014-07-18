@@ -2,6 +2,7 @@ SUBROUTINE conlp()
 
     use configr
 	use blade
+	use wake
 
 	logical NotDone
 

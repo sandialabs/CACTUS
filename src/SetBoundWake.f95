@@ -3,6 +3,7 @@ SUBROUTINE SetBoundWake()
     use configr       
 	use element
 	use blade
+	use wake
 
     ! Set new wake element positions
 	do i=1,nb                                                      

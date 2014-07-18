@@ -2,6 +2,7 @@ SUBROUTINE UpdateBladeVel(IFLG)
 
     use configr
     use blade
+    use wake
     use wallsoln  
 
     integer :: i,ygcErr

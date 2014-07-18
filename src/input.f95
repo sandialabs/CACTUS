@@ -2,23 +2,24 @@ SUBROUTINE input(ErrFlag)
 
 	use parameters
 
-	use dystl
-	use element
-	use blade
-        use strut       
-	use varscale
-	use shear
-        use iecgust
-	use airfoil
-	use configr
-	use pidef
-	use vortex
-	use wakedata
-	use time
-	use wallsoln 
-        use regtest
-        use output 
-        use tower
+    use dystl
+    use element
+    use blade
+    use wake
+    use strut       
+    use varscale
+    use shear
+    use iecgust
+    use airfoil
+    use configr
+    use pidef
+    use vortex
+    use wakedata
+    use time
+    use wallsoln 
+    use regtest
+    use output 
+    use tower
     
 
 	integer, parameter :: InBufferNumSectionTables = 1000
@@ -185,7 +186,8 @@ SUBROUTINE input(ErrFlag)
     end do
 
 	! Array construction
-    CALL blade_cns(MaxWakeNodes,MaxSegEnds)
+    CALL blade_cns(MaxSegEnds)
+    CALL wake_cns(MaxWakeNodes,MaxSegEnds)
 	CALL element_cns(MaxSegEnds,MaxSegEndPerBlade)     
 	CALL airfoil_cns(MaxAOAVals,MaxReVals,MaxAirfoilSect)
 	CALL wakedata_cns()

@@ -2,7 +2,8 @@ SUBROUTINE BladeLoads(NLTol,iConv)
 
     use parameters
     use pidef
-    use blade            
+    use blade
+    use wake         
     use configr
     use regtest
     use output       

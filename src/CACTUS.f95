@@ -56,6 +56,7 @@ PROGRAM CACTUS
     use util
     use dystl
     use blade
+    use wake
     use element
     use varscale
     use shear

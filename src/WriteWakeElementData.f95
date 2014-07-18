@@ -4,6 +4,7 @@ SUBROUTINE WriteWakeElementData()
 
     use wakedata
     use blade
+    use wake
     use wallsoln 
     use configr
     

@@ -11,8 +11,10 @@ MODULE element
     ! replace the arrays below that are used for the internal calculation, similar to the strut module. This will 
     ! require a change to the blade/element/wake iterators throughout the entire code...
     type BladeType
+        ! blade geometry
         integer :: NElem
         integer :: FlipN
+
         real, allocatable :: QCx(:)
         real, allocatable :: QCy(:)
         real, allocatable :: QCz(:)

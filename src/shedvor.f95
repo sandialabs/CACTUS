@@ -2,6 +2,7 @@ SUBROUTINE shedvor()
 
     use configr
     use blade
+    use wake
 
     ! CALCULATE THE STRENGTHS OF THE VORTICIES TO BE SHED                
 

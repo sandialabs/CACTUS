@@ -4,6 +4,7 @@ SUBROUTINE WriteWakePlaneData()
     
     use wakedata
     use blade
+    use wake
     use wallsoln 
     use configr
     

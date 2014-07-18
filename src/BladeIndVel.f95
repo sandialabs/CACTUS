@@ -1,6 +1,7 @@
 SUBROUTINE BladeIndVel(NT,ntTerm,NBE,NB,NE,XP,YP,ZP,UP,VP,WP,DUDX,Mode,CalcDer)
 
     use blade
+    use wake
 
     integer :: nt, ntTerm, nbe, nb, ne, Mode, CalcDer
     real :: XP, YP, ZP, UP, VP, WP, DUDX        
