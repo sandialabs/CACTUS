@@ -14,6 +14,10 @@ function [Turbine] = hawt_dat_to_geom(dat_filename, geom_filename, rotor_params,
 	r_over_R_range = grid_params.r_over_R_end - grid_params.r_over_R_start;
 
 	switch grid_params.node_distribution_type
+		case 'given'
+			% Use the distribution given in the aerodynamic schedule
+			r_over_R_node_comp = aero_schedule_nodes.r_over_R';
+
 		case 'tanh'
 			% Use a tanh distribution on both root and tip
 			r_over_R_node_comp = (r_over_R_range)*(tanh(linspace(-pi/2,pi/2,grid_params.num_elems+1))/2 + 0.5) + grid_params.r_over_R_start; 
