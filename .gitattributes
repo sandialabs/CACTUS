@@ -1,1 +1,4 @@
 * text=auto
+*.pdf -crlf -diff
+*.doc -crlf -diff
+*.docx -crlf -diff
