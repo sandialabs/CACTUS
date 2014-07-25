@@ -14,7 +14,7 @@ SUBROUTINE BladeLoads(NLTol,iConv)
     Implicit None
 
     integer iConv
-    integer i, j, nei, nej, nej1, IsBE, Loop, LBCheck
+    integer i, j, nei, nej, nej1, IsBE, Loop, LBCheck, nElem
     real alpha, alpha5, alpha75, adotnorm, Re, umach, ur, CL, CD, CM25, CLCirc, CN, CT, te, NLTol, dgb, Fx, Fy, Fz
     real CTExcr
 
@@ -78,14 +78,15 @@ SUBROUTINE BladeLoads(NLTol,iConv)
 
             ! Element loads output  
             ! JCM: when blade/element module is reorg'd, this data will be held for each element as part of the 
-            ! blades structure and sampled for output in EndTS.                                                  
+            ! blades structure and sampled for output in EndTS.
+
             if (Output_ELFlag == 1) then
                 Output_ELRow=(i-1)*nbe+j
                 Output_ELData(Output_ELRow,1)=TimeN         ! Normalized simulation time (t*Uinf/Rmax) 
                 Output_ELData(Output_ELRow,2)=Theta         ! Phase angle
-                Output_ELData(Output_ELRow,3)=i      
-                Output_ELData(Output_ELRow,4)=j 
-                Output_ELData(Output_ELRow,5)=irev
+                Output_ELData(Output_ELRow,3)=i         ! Blade Number
+                Output_ELData(Output_ELRow,4)=j         ! Element number
+                Output_ELData(Output_ELRow,5)=irev      ! rotation number
                 Output_ELData(Output_ELRow,6)=alpha*condeg              ! Element angle of attack @ 25% chord
                 Output_ELData(Output_ELRow,7)=alpha5*condeg             ! Element angle of attack @ 50% chord
                 Output_ELData(Output_ELRow,8)=alpha75*condeg            ! Element angle of attack @ 75% chord
@@ -103,7 +104,17 @@ SUBROUTINE BladeLoads(NLTol,iConv)
                 Output_ELData(Output_ELRow,20)=Fy                       ! Element global y force coefficient based on freestream flow and turbine area
                 Output_ELData(Output_ELRow,21)=Fz                       ! Element global z force coefficient based on freestream flow and turbine area
                 Output_ELData(Output_ELRow,22)=te                       ! Element torque coefficient contribution based on freestream flow, turbine area, and Rmax       
+                Output_ELData(Output_ELRow,23)=(UB(nej)+UB(nej-1))/2.0                       ! Element induced x velocity (average of the endpoint induced velocities)       
+                Output_ELData(Output_ELRow,24)=(VB(nej)+VB(nej-1))/2.0                       ! Element induced y velocity (average of the endpoint induced velocities)       
+                Output_ELData(Output_ELRow,25)=(WB(nej)+WB(nej-1))/2.0                       ! Element induced z velocity (average of the endpoint induced velocities)       
+                Output_ELData(Output_ELRow,26)=(GB(nej)+GB(nej-1))/2.0                       ! Element bound vorticity (average of the endpoint induced velocities)       
+                Output_ELData(Output_ELRow,27)=xBC(nej)                       ! Element quarter chord position x
+                Output_ELData(Output_ELRow,28)=yBC(nej)                       ! Element quarter chord position y
+                Output_ELData(Output_ELRow,29)=zBC(nej)                       ! Element quarter chord position z
+
+
             end if
+
 
             ! Dynamic stall diagnostic output
             if (Output_DSFlag == 1 .AND. Output_DSType == 1) then

@@ -128,7 +128,7 @@ SUBROUTINE input(ErrFlag)
     ! cross-section plane (y-z) wake output parameters
     nycgrid       = 100
     nzcgrid       = 100
-    xcgrid        = 1.0
+    xcgrid        = 0.0
     ycgridL       = -2.0
     ycgridU       = 2.0
     zcgridL       = -2.0

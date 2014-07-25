@@ -22,8 +22,8 @@ MODULE output
     real, allocatable :: Output_TSData(:,:)                 ! Timestep data for each timestep
 
     ! Element loads data
-    character(10000) :: Output_ELHead = 'Normalized Time (-),Theta (rad),Blade,Element,Rev,AOA25 (deg),AOA50 (deg),AOA75 (deg),AdotNorm (-),Re (-),Mach (-),Ur (-),CL (-),CD (-),CM25 (-),CLCirc (-),CN (-),CT (-),Fx (-),Fy (-),Fz (-),te (-)'
-    integer :: Output_NELOut = 22                           ! Number of element loads outputs
+    character(10000) :: Output_ELHead = 'Normalized Time (-),Theta (rad),Blade,Element,Rev,AOA25 (deg),AOA50 (deg),AOA75 (deg),AdotNorm (-),Re (-),Mach (-),Ur (-),CL (-),CD (-),CM25 (-),CLCirc (-),CN (-),CT (-),Fx (-),Fy (-),Fz (-),te (-), IndU (-), IndV (-), IndW (-), GB (?),x/R (-),y/R (-),z/R (-)'
+    integer :: Output_NELOut = 29                           ! Number of element loads outputs
     integer :: Output_ELRow                                 ! Rows of element row output
     real, allocatable :: Output_ELData(:,:)                 ! Element loads data for each timestep
 
