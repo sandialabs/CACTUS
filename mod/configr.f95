@@ -36,9 +36,9 @@ MODULE configr
     integer :: WakeElementOutIntervalTimesteps             ! Number of revolutions between writing wake data
     integer :: WakeElementOutStartTimestep                ! Revolution number at which to start writing wake data
     integer :: WakeElementOutEndTimestep                  ! Revolution number at which to stop writing wake data
-    integer :: WakePlaneOutIntervalTimesteps             ! Number of revolutions between writing wake data
-    integer :: WakePlaneOutStartTimestep                ! Revolution number at which to start writing wake data
-    integer :: WakePlaneOutEndTimestep                  ! Revolution number at which to stop writing wake data
+    integer :: WakeGridOutIntervalTimesteps             ! Number of revolutions between writing wake data
+    integer :: WakeGridOutStartTimestep                ! Revolution number at which to start writing wake data
+    integer :: WakeGridOutEndTimestep                  ! Revolution number at which to stop writing wake data
     
     real :: ut				! Tip speed ratio       
     real :: dt                              ! Normalized timestep

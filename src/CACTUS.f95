@@ -173,18 +173,12 @@ PROGRAM CACTUS
         write(12,*) trim(WakeOutHead)
     end if
 
-    ! Optional wake plane data output
-    if (WakePlaneOutFlag > 0) then
+    ! Optional wake grid data output
+    if (WakeGridOutFlag > 0) then
         ! wake deficit surface output
         WakeDefOutputFN=trim(FNBase)//'_WakeDefData.csv'
         OPEN(13, FILE=WakeDefOutputFN)
-        if (WakePlaneOutFlag==1) then
-            write(13,*) trim(HGridVelOutHead)
-        else if (WakePlaneOutFlag==2) then
-            write(13,*) trim(VGridVelOutHead)
-        else if (WakePlaneOutFlag==3) then
-            write(13,*) trim(CGridVelOutHead)
-        end if
+        write(13,*) trim(GridVelOutHead)
     end if
 
     ! Optional wall model output
@@ -426,11 +420,11 @@ PROGRAM CACTUS
                 end if
             end if
 
-            if (WakePlaneOutFlag > 0) then
-                ! Write wake plane data
-                if ((NT > WakePlaneOutStartTimestep .OR. WakePlaneOutStartTimestep == 0) .AND. (NT < WakePlaneOutEndTimestep .OR. WakePlaneOutEndTimestep == -1)) then
-                    if (MOD(NT, INT(WakePlaneOutIntervalTimesteps)) == 1) then
-                        Call WriteWakePlaneData()
+            if (WakeGridOutFlag > 0) then
+                ! Write wake grid data
+                if ((NT > WakeGridOutStartTimestep .OR. WakeGridOutStartTimestep == 0) .AND. (NT < WakeGridOutEndTimestep .OR. WakeGridOutEndTimestep == -1)) then
+                    if (MOD(NT, INT(WakeGridOutIntervalTimesteps)) == 1) then
+                        Call WriteWakeGridData()
                     end if
                 end if
             end if

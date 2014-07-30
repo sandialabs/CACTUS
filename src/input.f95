@@ -46,13 +46,11 @@ SUBROUTINE input(ErrFlag)
         k1pos,k1neg,GPGridSF,FSGridSF,TSFilFlag,ntsf
 	NAMELIST/CaseInputs/jbtitle,GeomFilePath,RPM,Ut,nSect,AFDPath, &
         hAG,dFS,rho,vis,tempr,hBLRef,slex,Cdpar,CTExcrM, &
-        WakeElementOutFlag,WakePlaneOutFlag,WLI,Igust,gustamp,gusttime,gustX0, &
+        WakeElementOutFlag,WakeGridOutFlag,WLI,Igust,gustamp,gusttime,gustX0, &
         Itower,tower_Npts,tower_x,tower_ybot,tower_ytop,tower_D,tower_CD, &
-        nycgrid, nzcgrid, xcgrid, ycgridL, ycgridU, zcgridL, zcgridU, &
-		nxvgrid, nyvgrid, zvgrid, xvgridL, xvgridU, yvgridL, yvgridU, &
-        nxhgrid, nzhgrid, yhgrid, xhgridL, xhgridU, zhgridL, zhgridU, &
+        nxgrid,nygrid,nzgrid,xgridL,ygridL,zgridL,xgridU,ygridU,zgridU, &
         WakeElementOutIntervalTimesteps,WakeElementOutStartTimestep,WakeElementOutEndTimestep, &
-        WakePlaneOutIntervalTimesteps,WakePlaneOutStartTimestep,WakePlaneOutEndTimestep
+        WakeGridOutIntervalTimesteps,WakeGridOutStartTimestep,WakeGridOutEndTimestep
 
     ! Input Defaults
     RegTFlag      = 0 
@@ -60,7 +58,7 @@ SUBROUTINE input(ErrFlag)
     Output_ELFlag = 0 
     Output_DSFlag = 0
     WakeElementOutFlag   = 0 
-    WakePlaneOutFlag   = 0 
+    WakeGridOutFlag   = 0 
     WallOutFlag   = 0
     GPFlag        = 0
     FSFlag        = 0    
@@ -107,41 +105,26 @@ SUBROUTINE input(ErrFlag)
     tower_D       = 0.05
     tower_CD      = 1.0
     
-    ! horizontal plane (x-z) wake output default parameters
-    nxhgrid       = 100
-    nzhgrid       = 100
-    yhgrid        = 0
-    xhgridL       = -1.0
-    xhgridU       = 10.0
-    zhgridL       = -2.0
-    zhgridU       = 2.0
-    
-    ! vertical plane (x-y) wake output parameters
-    nxvgrid       = 100
-    nyvgrid       = 100
-    zvgrid        = 0.0
-    xvgridL       = -1.0
-    xvgridU       = 10.0
-    yvgridL       = -2.0
-    yvgridU       = 2.0
-    
-    ! cross-section plane (y-z) wake output parameters
-    nycgrid       = 100
-    nzcgrid       = 100
-    xcgrid        = 0.0
-    ycgridL       = -2.0
-    ycgridU       = 2.0
-    zcgridL       = -2.0
-    zcgridU       = 2.0
-    
+    ! wake grid output default parameters
+    nxgrid       =    1
+    nygrid       =  100
+    nzgrid       =  100
+
+    xgridL       =  0.0
+    xgridU       =  0.0
+    ygridL       = -2.0     ! default grid is a ([-2.0,2.0],[-2.0,2.0]) 100x100 x-normal grid at x=0.0
+    ygridU       =  2.0
+    zgridL       = -2.0
+    zgridU       =  2.0
+
     ! Wake Output Frequency
     WakeElementOutIntervalTimesteps =  5       ! write wake element data every 5 timesteps
     WakeElementOutStartTimestep     =  0       ! write wake element data starting at first timestep
     WakeElementOutEndTimestep       = -1       ! stop writing wake element data at the last timestep
     
-    WakePlaneOutIntervalTimesteps   =  5       ! write wake plane data every 5 timesteps
-    WakePlaneOutStartTimestep       =  0       ! write wake plane data starting at first timestep
-    WakePlaneOutEndTimestep         = -1       ! stop writing wake plane data at the last timestep
+    WakeGridOutIntervalTimesteps   =  5       ! write wake plane data every 5 timesteps
+    WakeGridOutStartTimestep       =  0       ! write wake plane data starting at first timestep
+    WakeGridOutEndTimestep         = -1       ! stop writing wake plane data at the last timestep
 
 	! Namelist input
 	read(4, nml=ConfigInputs) 
