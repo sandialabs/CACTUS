@@ -19,19 +19,19 @@ SUBROUTINE WriteWakeGridData()
 
         ! Compute the appropriate grid spacing
         ! (if number of grids is 1 in any direction, catch a divide-by-zero error)
-        if (nxgrid==0) then
+        if (nxgrid==1) then
             dxgrid=0.0
         else
             dxgrid=(xgridU-xgridL)/(nxgrid-1)
         end if
 
-        if (nygrid==0) then
+        if (nygrid==1) then
             dygrid=0.0
         else
             dygrid=(ygridU-ygridL)/(nygrid-1)
         end if
 
-        if (nzgrid==0) then
+        if (nzgrid==1) then
             dzgrid=0.0
         else
             dzgrid=(zgridU-zgridL)/(nzgrid-1)
