@@ -19,6 +19,6 @@ SUBROUTINE WriteRegTOutput(Flag)
         write(7,*) 'MaxWakeV'
         write(7,'(E13.5)') Reg_MaxWVM
     end if
-	
+    
     Return 
 End SUBROUTINE WriteRegTOutput

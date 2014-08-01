@@ -15,62 +15,62 @@ SUBROUTINE InputGeom(FN)
 
     ! Read geometry data file
 
-	! Format example:
-	!	NBlade: 3
-	!	NStrut: 3
-	!	RotN: 0 0 1
-	!	RotP: 0 0 0
-	!	RefAR: 2.0
-	!	RefR: 10.0
-	!	Type: VAWT
-	!	Blade 1:
-	!	    NElem: 5
-	!	    FlipN: 0
-	!	    QCx: 0 0 0 0 0 0
-	!	    QCy: 1 2 3 4 5 6
-	!	    QCz: 1 1 1 1 1 1
-	!	    tx: 1 1 1 1 1 1
-	!	    ty: 0 0 0 0 0 0
-	!	    tz: 0 0 0 0 0 0
-	!	    CtoR: .1 .1 .1 .1 .1 .1
-	!	    PEx: 0 0 0 0 0
-	!	    PEy: 1 2 3 4 5
-	!	    PEz: 1 1 1 1 1
-	!	    tEx: 0 0 0 0 0
-	!	    tEy: 1 2 3 4 5
-	!	    tEz: 1 1 1 1 1
-	!	    nEx: 0 0 0 0 0
-	!	    nEy: 1 2 3 4 5
-	!	    nEz: 1 1 1 1 1
-	!	    sEx: 1 1 1 1 1
-	!	    sEy: 0 0 0 0 0
-	!	    sEz: 1 2 3 4 5
-	!	    ECtoR: .1 .1 .1 .1 .1
-	!	    EAreaR: .1 .1 .1 .1 .1
-	!	    iSect: 1 1 1 1 1
-	!	Blade 2:
-	!	    ...
-	!	Strut 1:
-	!	    NElem: 5
-	!	    TtoC: .15
-	!	    MCx: 0 0 0 0 0 0
-	!	    MCy: 1 2 3 4 5 6
-	!	    MCz: 1 1 1 1 1 1
-	!	    CtoR: .1 .1 .1 .1 .1 .1
-	!	    PEx: 0 0 0 0 0
-	!	    PEy: 1 2 3 4 5
-	!	    PEz: 1 1 1 1 1
+    ! Format example:
+    !   NBlade: 3
+    !   NStrut: 3
+    !   RotN: 0 0 1
+    !   RotP: 0 0 0
+    !   RefAR: 2.0
+    !   RefR: 10.0
+    !   Type: VAWT
+    !   Blade 1:
+    !       NElem: 5
+    !       FlipN: 0
+    !       QCx: 0 0 0 0 0 0
+    !       QCy: 1 2 3 4 5 6
+    !       QCz: 1 1 1 1 1 1
+    !       tx: 1 1 1 1 1 1
+    !       ty: 0 0 0 0 0 0
+    !       tz: 0 0 0 0 0 0
+    !       CtoR: .1 .1 .1 .1 .1 .1
+    !       PEx: 0 0 0 0 0
+    !       PEy: 1 2 3 4 5
+    !       PEz: 1 1 1 1 1
+    !       tEx: 0 0 0 0 0
+    !       tEy: 1 2 3 4 5
+    !       tEz: 1 1 1 1 1
+    !       nEx: 0 0 0 0 0
+    !       nEy: 1 2 3 4 5
+    !       nEz: 1 1 1 1 1
+    !       sEx: 1 1 1 1 1
+    !       sEy: 0 0 0 0 0
+    !       sEz: 1 2 3 4 5
+    !       ECtoR: .1 .1 .1 .1 .1
+    !       EAreaR: .1 .1 .1 .1 .1
+    !       iSect: 1 1 1 1 1
+    !   Blade 2:
+    !       ...
+    !   Strut 1:
+    !       NElem: 5
+    !       TtoC: .15
+    !       MCx: 0 0 0 0 0 0
+    !       MCy: 1 2 3 4 5 6
+    !       MCz: 1 1 1 1 1 1
+    !       CtoR: .1 .1 .1 .1 .1 .1
+    !       PEx: 0 0 0 0 0
+    !       PEy: 1 2 3 4 5
+    !       PEz: 1 1 1 1 1
     !       sEx: 0 0 0 0 0
     !       sEy: 1 2 3 4 5
     !       sEz: 1 1 1 1 1
-	!	    ECtoR: .1 .1 .1 .1 .1
-	!	    EAreaR: .1 .1 .1 .1 .1
-	!	    BIndS: 0
-	!	    EIndS: 0
-	!	    BIndE: 1
-	!	    EIndE: 3
-	!	Strut 2:
-	!	    ...
+    !       ECtoR: .1 .1 .1 .1 .1
+    !       EAreaR: .1 .1 .1 .1 .1
+    !       BIndS: 0
+    !       EIndS: 0
+    !       BIndE: 1
+    !       EIndE: 3
+    !   Strut 2:
+    !       ...
 
 
     ! Open input file for this section

@@ -1,6 +1,6 @@
 MODULE wake
 
-	! Wake data
+    ! Wake data
 
     ! Wake circulation data
     real, allocatable :: GT(:,:)            ! Trailing wake (streamwise) vorticity
@@ -17,9 +17,9 @@ MODULE wake
     real, allocatable :: W(:,:)             ! Lattice point z velocity for each wake point
 
     ! Freestream velocity at wake lattice points
-    real, allocatable :: UFS(:,:)		! Lattice point freestream x velocity
-    real, allocatable :: VFS(:,:)		! Lattice point freestream y velocity
-    real, allocatable :: WFS(:,:)		! Lattice point freestream z velocity
+    real, allocatable :: UFS(:,:)       ! Lattice point freestream x velocity
+    real, allocatable :: VFS(:,:)       ! Lattice point freestream y velocity
+    real, allocatable :: WFS(:,:)       ! Lattice point freestream z velocity
 
     ! Old wake lattice point velocities
     real, allocatable :: UO(:,:)            ! Last lattice point x velocity for each wake point
@@ -30,8 +30,8 @@ CONTAINS
 
     SUBROUTINE wake_cns(MaxWakeNodes, MaxSegEnds)
 
-		! Constructor - allocates memory for arrays
-		
+        ! Constructor - allocates memory for arrays
+        
         integer :: MaxWakeNodes, MaxSegEnds
 
         allocate(GT(MaxWakeNodes,MaxSegEnds))
@@ -39,7 +39,7 @@ CONTAINS
         allocate(X(MaxWakeNodes,MaxSegEnds))
         allocate(Y(MaxWakeNodes,MaxSegEnds))
         allocate(Z(MaxWakeNodes,MaxSegEnds))
-		allocate(U(MaxWakeNodes,MaxSegEnds))
+        allocate(U(MaxWakeNodes,MaxSegEnds))
         allocate(V(MaxWakeNodes,MaxSegEnds))
         allocate(W(MaxWakeNodes,MaxSegEnds))
         allocate(UFS(MaxWakeNodes,MaxSegEnds))

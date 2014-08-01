@@ -1,10 +1,10 @@
 MODULE regtest
 
-	! Regression test outputs
+    ! Regression test outputs
 
     integer :: RegTFlag             ! Set to 1 to perform a single iteration regression test, 0 for normal operation  
     integer :: Reg_TS               ! timestep number
-	integer :: Reg_NLIter	        ! non linear convergence loop iteration
+    integer :: Reg_NLIter           ! non linear convergence loop iteration
     integer :: Reg_ElemNum          ! element number
     integer :: Reg_DFL              ! BV lift dynamic stall flag
     integer :: Reg_LBC              ! LB dynamic stall model logic checksum

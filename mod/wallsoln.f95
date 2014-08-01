@@ -5,26 +5,26 @@ MODULE wallsoln
 
     ! Ground plane (rectangular source panel implementation)
 
-    integer :: GPFlag			! Set to 1 to do ground plane calculation, otherwise 0
+    integer :: GPFlag           ! Set to 1 to do ground plane calculation, otherwise 0
 
-    real, allocatable :: WCPoints(:,:)	! Panel center points (over radius)
-    real, allocatable :: WXVec(:,:)		! Panel tangential vectors in the length direction
-    real, allocatable :: WYVec(:,:)		! Panel tangential vectors in the width
-    real, allocatable :: WZVec(:,:)		! Panel normal vectors
-    real, allocatable :: WPL(:)		! Panel lengths (over radius)
-    real, allocatable :: WPW(:)		! Panel widths (over radius)
-    real :: GPy				! y location of ground plane (over radius)
+    real, allocatable :: WCPoints(:,:)  ! Panel center points (over radius)
+    real, allocatable :: WXVec(:,:)     ! Panel tangential vectors in the length direction
+    real, allocatable :: WYVec(:,:)     ! Panel tangential vectors in the width
+    real, allocatable :: WZVec(:,:)     ! Panel normal vectors
+    real, allocatable :: WPL(:)     ! Panel lengths (over radius)
+    real, allocatable :: WPW(:)     ! Panel widths (over radius)
+    real :: GPy             ! y location of ground plane (over radius)
     real :: GPGridSF                        ! Grid scale factor (factor on default grid discretization level)       
-    real :: WEdgeTol			! Tolerance around panel edge in which to evaluate influence in special way (to avoid inf...)
-    integer :: NumWPx			! Number of wall panels in the x direction
+    real :: WEdgeTol            ! Tolerance around panel edge in which to evaluate influence in special way (to avoid inf...)
+    integer :: NumWPx           ! Number of wall panels in the x direction
     integer :: NumWPz                       ! Number of wall panels in the z direction
-    integer :: NumWP			! Total number of wall panels    
+    integer :: NumWP            ! Total number of wall panels    
 
-    real, allocatable :: WInCoeffN(:,:)	! Wall normal velocity self influence matrix
+    real, allocatable :: WInCoeffN(:,:) ! Wall normal velocity self influence matrix
     real, allocatable :: WSource(:,:)       ! Wall source density values (column vector) (non-dimensional, normalized by freestream velocity)
-    real, allocatable :: WSMat(:,:) 	! Wall solution matrix
-    real, allocatable :: WSMatI(:,:) 	! Inverse of the wall solution matrix
-    real, allocatable :: WRHS(:,:) 		! Right hand side vector for the wall solution
+    real, allocatable :: WSMat(:,:)     ! Wall solution matrix
+    real, allocatable :: WSMatI(:,:)    ! Inverse of the wall solution matrix
+    real, allocatable :: WRHS(:,:)      ! Right hand side vector for the wall solution
 
     ! Ground plane data output
     character(1000) :: GPOutHead = 'X/R (-),Y/R (-),Z/R (-),SourceDens/Uinf (-)'
@@ -90,7 +90,7 @@ CONTAINS
 
     SUBROUTINE wallsoln_gp_cns()
 
-		! Constructor for the arrays in this module
+        ! Constructor for the arrays in this module
 
         ! Ground plane              
         allocate(WCPoints(NumWP,3))

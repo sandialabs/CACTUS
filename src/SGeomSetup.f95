@@ -1,22 +1,22 @@
 SUBROUTINE SGeomSetup() 
 
-	use parameters
+    use parameters
 
     use configr       
-	use element
+    use element
     use strut 
     use airfoil            
-	use pidef      
+    use pidef      
 
     implicit none
 
     integer :: i, j, NElem, BIndS, EIndS, BIndE, EIndE, iSc
     real :: sx, sy, sz, VMag, LR
 
-	! Sets up strut geometry arrays.        
+    ! Sets up strut geometry arrays.        
 
-	! Set initial geometry (zero theta)                                                            
-	do i=1,NStrut  
+    ! Set initial geometry (zero theta)                                                            
+    do i=1,NStrut  
         NElem=Struts(i)%NElem 
         BIndS=Struts(i)%BIndS
         EIndS=Struts(i)%EIndS

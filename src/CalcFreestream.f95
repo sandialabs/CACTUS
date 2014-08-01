@@ -1,21 +1,21 @@
 SUBROUTINE CalcFreestream(xElem,yElem,zElem,u,v,w,ygcErr)
 
-	use shear
+    use shear
     use configr
     use iecgust
     use tower
 
-	real u, v, w
-	real xElem,yElem,zElem
-	integer ygcErr
+    real u, v, w
+    real xElem,yElem,zElem
+    integer ygcErr
 
     real IECGustVel, Vxtower
 
-	! Freestream velocity (with ground shear model)    
-	! At y/R = 0, u/Uinf = 0. At y/R = yref, u/Uinf = 1
-	! slex = 0 : Constant freestream
-	! slex = 1/2 : Laminar shear layer (approx)
-	! slex = 1/7 : Turbulent shear layer (approx)   
+    ! Freestream velocity (with ground shear model)    
+    ! At y/R = 0, u/Uinf = 0. At y/R = yref, u/Uinf = 1
+    ! slex = 0 : Constant freestream
+    ! slex = 1/2 : Laminar shear layer (approx)
+    ! slex = 1/7 : Turbulent shear layer (approx)   
 
     if (Igust .EQ. 1) then
         u = IECGustVel((nt-1)*dt,xElem)
@@ -25,19 +25,19 @@ SUBROUTINE CalcFreestream(xElem,yElem,zElem,u,v,w,ygcErr)
         Return
     end if
 
-	if ((yElem+ygc) <= 0.0) then
+    if ((yElem+ygc) <= 0.0) then
         ! reflect across zero...
-		ygcErr=1                                                           
-		u=(-(yElem+ygc)/yref)**slex
+        ygcErr=1                                                           
+        u=(-(yElem+ygc)/yref)**slex
         u=max(u,.01)  ! limit to some non zero value...              
-		v=0.0
-		w=0.0   
-	else
-		u=((yElem+ygc)/yref)**slex
+        v=0.0
+        w=0.0   
+    else
+        u=((yElem+ygc)/yref)**slex
         u=max(u,.01)  ! limit to some non zero value...               
-		v=0.0
-		w=0.0                                                        
-	end if
+        v=0.0
+        w=0.0                                                        
+    end if
 
     if (Itower .EQ. 1) then
        Vxtower = wake_defect_velocity(xElem,yElem,zElem)

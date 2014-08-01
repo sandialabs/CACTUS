@@ -1,13 +1,13 @@
 SUBROUTINE WriteWallData()   
 
-	! Write wall data outputs
+    ! Write wall data outputs
 
-	use wallsoln 
-	use configr
+    use wallsoln 
+    use configr
 
     implicit none
 
-	integer :: i, OutIter  
+    integer :: i, OutIter  
     real :: TVel, dH 
     real, allocatable :: TVelIFS(:,:)   
 
@@ -22,7 +22,7 @@ SUBROUTINE WriteWallData()
 
     end if
 
-	! Write wake positions and velocity for each wake line on last rev
+    ! Write wake positions and velocity for each wake line on last rev
     if (irev == nr) then      
         OutCount=OutCount+1 
 

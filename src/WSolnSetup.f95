@@ -45,7 +45,7 @@ subroutine WSolnSetup()
         do i=1,NumWP
             do j=1,NumWP
                 if (j==i) then
-                    WSMatI(i,j)=1.0	
+                    WSMatI(i,j)=1.0 
                 end if
             end do
         end do
@@ -112,7 +112,7 @@ subroutine WSolnSetup()
         do i=1,NumFSP
             do j=1,NumFSP
                 if (j==i) then
-                    FSSMatI(i,j)=1.0	
+                    FSSMatI(i,j)=1.0    
                 end if
             end do
         end do

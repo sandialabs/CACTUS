@@ -1,11 +1,11 @@
 SUBROUTINE RotateTurbine
 
     use configr       
-	use element
-	use blade
+    use element
+    use blade
     use strut       
 
-	! Updates current turbine geometry
+    ! Updates current turbine geometry
 
     ! Rotate turbine axis of rotation and origin if necessary...                                                         
 

@@ -1,6 +1,6 @@
 SUBROUTINE input(ErrFlag) 
 
-	use parameters
+    use parameters
 
     use dystl
     use element
@@ -22,29 +22,29 @@ SUBROUTINE input(ErrFlag)
     use tower
     
 
-	integer, parameter :: InBufferNumSectionTables = 1000
-	integer, parameter :: InBufferNumWL = 1000
+    integer, parameter :: InBufferNumSectionTables = 1000
+    integer, parameter :: InBufferNumWL = 1000
     integer, parameter :: MaxReadLine = 1000    
     integer, parameter :: MaxTempAOA = 1000   
 
-	integer i, ii, jj, kk
-	integer ErrFlag
-	logical NotDone, NotBlank
+    integer i, ii, jj, kk
+    integer ErrFlag
+    logical NotDone, NotBlank
     character(MaxReadLine) :: ReadLine
     character(MaxReadLine) :: GeomFilePath    ! path to geometry input file 
     integer :: CI, EOF
     real :: temp, temp1(MaxTempAOA,4)
         
 
-	! Temp buffers
-	character(MaxReadLine) :: AFDPath(InBufferNumSectionTables)	! Airfoil section data path      
-	integer :: WLI(InBufferNumWL)     ! wake line index buffer
+    ! Temp buffers
+    character(MaxReadLine) :: AFDPath(InBufferNumSectionTables) ! Airfoil section data path      
+    integer :: WLI(InBufferNumWL)     ! wake line index buffer
 
     ! Namelist input file declaration
-	NAMELIST/ConfigInputs/RegTFlag,DiagOutFlag,GPFlag,FSFlag,nr,convrg,nti,iut,iWall,ivtxcor,VCRFB,VCRFT,VCRFS,ifc,convrgf,nric,ntif,iutf,ixterm,xstop, &
+    NAMELIST/ConfigInputs/RegTFlag,DiagOutFlag,GPFlag,FSFlag,nr,convrg,nti,iut,iWall,ivtxcor,VCRFB,VCRFT,VCRFS,ifc,convrgf,nric,ntif,iutf,ixterm,xstop, &
         Output_ELFlag,Output_DSFlag,WallOutFlag,Incompr,DSFlag,PRFlag, &
         k1pos,k1neg,GPGridSF,FSGridSF,TSFilFlag,ntsf
-	NAMELIST/CaseInputs/jbtitle,GeomFilePath,RPM,Ut,nSect,AFDPath, &
+    NAMELIST/CaseInputs/jbtitle,GeomFilePath,RPM,Ut,nSect,AFDPath, &
         hAG,dFS,rho,vis,tempr,hBLRef,slex,Cdpar,CTExcrM, &
         WakeElementOutFlag,WakeGridOutFlag,WLI,Igust,gustamp,gusttime,gustX0, &
         Itower,tower_Npts,tower_x,tower_ybot,tower_ytop,tower_D,tower_CD, &
@@ -126,36 +126,36 @@ SUBROUTINE input(ErrFlag)
     WakeGridOutStartTimestep       =  0       ! write wake plane data starting at first timestep
     WakeGridOutEndTimestep         = -1       ! stop writing wake plane data at the last timestep
 
-	! Namelist input
-	read(4, nml=ConfigInputs) 
+    ! Namelist input
+    read(4, nml=ConfigInputs) 
     read(4, nml=CaseInputs)                                                                                    
 
     ! Read geometry file
     Call InputGeom(GeomFilePath)
 
-	! Set array bounds based on inputs
-	! Geometry
-	MaxBlades = nb
-	MaxSegPerBlade = nbe
-	MaxSegEndPerBlade = MaxSegPerBlade+1
-	MaxSegEnds = MaxSegEndPerBlade*MaxBlades
+    ! Set array bounds based on inputs
+    ! Geometry
+    MaxBlades = nb
+    MaxSegPerBlade = nbe
+    MaxSegEndPerBlade = MaxSegPerBlade+1
+    MaxSegEnds = MaxSegEndPerBlade*MaxBlades
     MaxSeg = MaxSegPerBlade*MaxBlades 
  
  
     MaxStruts = NStrut     
-	! Airfoil Data
-	MaxAirfoilSect = nSect
-	MaxReVals = 20
-	MaxAOAVals = 1000
+    ! Airfoil Data
+    MaxAirfoilSect = nSect
+    MaxReVals = 20
+    MaxAOAVals = 1000
     ! Wake advancement
-	MaxRevs = nr
-	MaxTimeStepPerRev = nti
-	MaxWakeNodes = MaxRevs * MaxTimeStepPerRev   
+    MaxRevs = nr
+    MaxTimeStepPerRev = nti
+    MaxWakeNodes = MaxRevs * MaxTimeStepPerRev   
     ! Non-linear convergence iteration
-	MaxNLIters = 10
+    MaxNLIters = 10
     ! Outputs
     MaxTimeSteps = MaxRevs * MaxTimeStepPerRev       
-	! Wake outputs
+    ! Wake outputs
     NWakeInd=0       
     NotDone=.TRUE.
     i=1
@@ -168,49 +168,49 @@ SUBROUTINE input(ErrFlag)
         i=i+1
     end do
 
-	! Array construction
+    ! Array construction
     CALL blade_cns(MaxSegEnds)
     CALL wake_cns(MaxWakeNodes,MaxSegEnds)
-	CALL element_cns(MaxSegEnds,MaxSegEndPerBlade)     
-	CALL airfoil_cns(MaxAOAVals,MaxReVals,MaxAirfoilSect)
-	CALL wakedata_cns()
-	CALL dystl_cns(MaxAirfoilSect,MaxReVals,MaxSegEnds)
+    CALL element_cns(MaxSegEnds,MaxSegEndPerBlade)     
+    CALL airfoil_cns(MaxAOAVals,MaxReVals,MaxAirfoilSect)
+    CALL wakedata_cns()
+    CALL dystl_cns(MaxAirfoilSect,MaxReVals,MaxSegEnds)
     CALL output_cns(MaxSeg,MaxBlades,MaxStruts,DSFlag)       
 
-	! Write from buffer...    
+    ! Write from buffer...    
 
    !  WakeLineInd(1:NWakeInd)=WLI(1:NWakeInd)      
-	WakeLineInd = (/ (I, I = 1, MaxSeg) /) 
-	! write(*,*) WakeLineInd
+    WakeLineInd = (/ (I, I = 1, MaxSeg) /) 
+    ! write(*,*) WakeLineInd
 
-	! Set ground plane location for wall solution
-	GPy=-hAG/Rmax
+    ! Set ground plane location for wall solution
+    GPy=-hAG/Rmax
 
     ! Set depth and Froude number for free surface solution
     FSy=dFS/Rmax
     g=32.174  ! gravity, ft/s^2
     A=Rmax*(2.0*pi*rpm/60.0)**2/g   ! Accel ratio: w^2*R/g
-    FnR=sqrt(A/ut**2)   ! Froude number based on turbine radius  FnR=Uinf/sqrt(g*R)	
+    FnR=sqrt(A/ut**2)   ! Froude number based on turbine radius  FnR=Uinf/sqrt(g*R) 
 
-	! Normalize ground shear inputs
-	yref = hBLRef/Rmax  ! location of boundary layer edge (U/Uinf = 99% maybe) normalized to radius... 
-	ygc  = hAG/Rmax   ! Ground clearance normalized to radius  
+    ! Normalize ground shear inputs
+    yref = hBLRef/Rmax  ! location of boundary layer edge (U/Uinf = 99% maybe) normalized to radius... 
+    ygc  = hAG/Rmax   ! Ground clearance normalized to radius  
 
     ! Floor the tip speed ratio to the next lowest int
     ! and use this as the default update interval...
-	if (iutf == 0) iutf = floor(ut)
-	if (iut == 0) iut = floor(ut)
+    if (iutf == 0) iutf = floor(ut)
+    if (iut == 0) iut = floor(ut)
     if (iWall == 0) iWall = floor(ut)
 
     ! Default ntif to nti if nothing was input
     if (ntif .eq. -1) then
-    	ntif=nti
-	end if
+        ntif=nti
+    end if
 
     ! Set number of RHS evaluations to average for the free surface calculation (should cover approx 1 revolution)
     NFSRHSAve=nti/iWall
 
-	ne = (nbe+1)*nb ! Total number of blade segment ends (over all blades)
+    ne = (nbe+1)*nb ! Total number of blade segment ends (over all blades)
 
     ! Timestep filter setup
     KTF=1.0/real(ntsf)
@@ -393,7 +393,7 @@ SUBROUTINE input(ErrFlag)
 
     end do
 
-    Return  									                                        
+    Return                                                                              
 601 format(' ','***airfoil section specified for blade segment ',i2,' is illegal. set to airfoil section 1***')                        
 End SUBROUTINE input
 

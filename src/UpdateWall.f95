@@ -20,11 +20,11 @@ subroutine UpdateWall()
 
                 ! Calculate freestream velocity at panel locations
                 CALL CalcFreestream(WCPoints(i,1),WCPoints(i,2)&
-                     &,WCPoints(i,3),dVel(1),dVel(2),dVel(3),ygcErr) 	                                
-                NVelSum=sum(WZVec(i,1:3)*dVel)															
+                     &,WCPoints(i,3),dVel(1),dVel(2),dVel(3),ygcErr)                                    
+                NVelSum=sum(WZVec(i,1:3)*dVel)                                                          
 
                 ! Calc wake induced velocity at wall panel locations                                                                            
-                CALL BladeIndVel(NT,ntTerm,NBE,NB,NE,WCPoints(i,1),WCPoints(i,2),WCPoints(i,3),dVel(1),dVel(2),dVel(3),dUdX,0,0)                  	
+                CALL BladeIndVel(NT,ntTerm,NBE,NB,NE,WCPoints(i,1),WCPoints(i,2),WCPoints(i,3),dVel(1),dVel(2),dVel(3),dUdX,0,0)                    
                 NVelSum=NVelSum+sum(WZVec(i,1:3)*dVel)
 
                 ! Calc FS induced velocity
@@ -91,13 +91,13 @@ subroutine UpdateWall()
 
                     ! Calculate freestream velocity at panel locations
                     CALL CalcFreestream(FSCPPoints(i,1),FSCPPoints(i&
-                         &,2),FSCPPoints(i,3),dVel(1),dVel(2),dVel(3),ygcErr) 	                                
-                    NVelSum=sum(FSCZVec(i,1:3)*dVel)	
-                    TVelSum=sum(FSCXVec(i,1:3)*dVel)	
+                         &,2),FSCPPoints(i,3),dVel(1),dVel(2),dVel(3),ygcErr)                                   
+                    NVelSum=sum(FSCZVec(i,1:3)*dVel)    
+                    TVelSum=sum(FSCXVec(i,1:3)*dVel)    
                     dUdXSum=0.0
 
                     ! Calc wake induced velocity at wall panel locations                                                                            
-                    CALL BladeIndVel(NT,ntTerm,NBE,NB,NE,FSCPPoints(i,1),FSCPPoints(i,2),FSCPPoints(i,3),dVel(1),dVel(2),dVel(3),dUdX,0,1)                   	
+                    CALL BladeIndVel(NT,ntTerm,NBE,NB,NE,FSCPPoints(i,1),FSCPPoints(i,2),FSCPPoints(i,3),dVel(1),dVel(2),dVel(3),dUdX,0,1)                      
                     NVelSum=NVelSum+sum(FSCZVec(i,1:3)*dVel)
                     TVelSum=TVelSum+sum(FSCXVec(i,1:3)*dVel)
                     dUdXSum=dUdXSum+dUdX

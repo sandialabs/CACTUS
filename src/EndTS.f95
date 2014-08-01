@@ -1,9 +1,9 @@
 SUBROUTINE EndTS()  
 
     use util
-	use configr
+    use configr
     use output      
-	use element
+    use element
     use strut   
     use regtest    
 

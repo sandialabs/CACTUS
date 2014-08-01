@@ -1,10 +1,10 @@
 MODULE airfoil
 
-	! Airfoil section data
+    ! Airfoil section data
 
-	character*80, allocatable :: aftitle(:)  	! Title for each airfoil section
-	integer, allocatable :: camb(:)			! Camber flag for each section (
-	real, allocatable :: tc(:)			! Thickness to chord ratio for each section 
+    character*80, allocatable :: aftitle(:)     ! Title for each airfoil section
+    integer, allocatable :: camb(:)         ! Camber flag for each section (
+    real, allocatable :: tc(:)          ! Thickness to chord ratio for each section 
     real, allocatable :: alzer(:)                   ! Zero lift AOA for each section    
 
     ! Airfoil section coefficient data
@@ -27,19 +27,19 @@ MODULE airfoil
     ! Airfoil params for LB dyn stall
     real, allocatable :: CLaData(:,:)
     real, allocatable :: CLCritPData(:,:)
-	real, allocatable :: CLCritNData(:,:)
+    real, allocatable :: CLCritNData(:,:)
 
 CONTAINS
 
-	SUBROUTINE airfoil_cns(MaxAOAVals,MaxReVals,MaxAirfoilSect)
+    SUBROUTINE airfoil_cns(MaxAOAVals,MaxReVals,MaxAirfoilSect)
 
      ! Constructor for the arrays in this module
 
-		integer :: MaxAOAVals,MaxReVals,MaxAirfoilSect
+        integer :: MaxAOAVals,MaxReVals,MaxAirfoilSect
 
-		allocate(aftitle(MaxAirfoilSect))
-		allocate(camb(MaxAirfoilSect))
-		allocate(tc(MaxAirfoilSect))
+        allocate(aftitle(MaxAirfoilSect))
+        allocate(camb(MaxAirfoilSect))
+        allocate(tc(MaxAirfoilSect))
         allocate(alzer(MaxAirfoilSect))    
         allocate(TA(MaxAOAVals,MaxReVals,MaxAirfoilSect))
         allocate(TCL(MaxAOAVals,MaxReVals,MaxAirfoilSect))
@@ -52,9 +52,9 @@ CONTAINS
         allocate(alstln(MaxReVals,MaxAirfoilSect))         
         allocate(CLaData(MaxReVals,MaxAirfoilSect))
         allocate(CLCritPData(MaxReVals,MaxAirfoilSect))
-        allocate(CLCritNData(MaxReVals,MaxAirfoilSect))              	
+        allocate(CLCritNData(MaxReVals,MaxAirfoilSect))                 
 
-	End SUBROUTINE airfoil_cns
+    End SUBROUTINE airfoil_cns
 
 
     SUBROUTINE intp(RE,ALPHA,CL,CD,CM25,KK)   

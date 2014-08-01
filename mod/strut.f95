@@ -1,6 +1,6 @@
 MODULE strut
 
-	! Strut geometry and loads outputs
+    ! Strut geometry and loads outputs
 
     use util
 
@@ -163,9 +163,9 @@ CONTAINS
             Struts(SNum)%sEy(j)=sE(2)
             Struts(SNum)%sEz(j)=sE(3)
 
-		    ! Calc element area and chord
-		    Struts(SNum)%ECtoR(j)=0.5*(Struts(SNum)%CtoR(j+1)+Struts(SNum)%CtoR(j))
-		    Struts(SNum)%EAreaR(j)=sEM*Struts(SNum)%ECtoR(j)
+            ! Calc element area and chord
+            Struts(SNum)%ECtoR(j)=0.5*(Struts(SNum)%CtoR(j+1)+Struts(SNum)%CtoR(j))
+            Struts(SNum)%EAreaR(j)=sEM*Struts(SNum)%ECtoR(j)
 
         end do
 

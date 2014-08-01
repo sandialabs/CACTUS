@@ -1,6 +1,6 @@
 MODULE wakedata
 
-	! Wake visualization data for WriteWakeData
+    ! Wake visualization data for WriteWakeData
 
     integer :: WakeElementOutFlag, WakeGridOutFlag
     integer, allocatable :: WakeLineInd(:) 
@@ -37,7 +37,7 @@ MODULE wakedata
 
 CONTAINS
 
-	SUBROUTINE wakedata_cns()
+    SUBROUTINE wakedata_cns()
 
      ! Constructor for the arrays in this module
 
@@ -51,6 +51,6 @@ CONTAINS
         allocate(VYInd(nxgrid,nygrid,nzgrid)) 
         allocate(VZInd(nxgrid,nygrid,nzgrid))    
 
-	End SUBROUTINE wakedata_cns
+    End SUBROUTINE wakedata_cns
 
 End MODULE wakedata
