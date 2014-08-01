@@ -48,12 +48,13 @@ SUBROUTINE input(ErrFlag)
     NAMELIST/CaseInputs/jbtitle,GeomFilePath,RPM,Ut,nSect,AFDPath, &
         hAG,dFS,rho,vis,tempr,hBLRef,slex,Cdpar,CTExcrM, &
         WLI,Igust,gustamp,gusttime,gustX0, &
-        Itower,tower_Npts,tower_x,tower_ybot,tower_ytop,tower_D,tower_CD, &
-        nxgrid,nygrid,nzgrid,xgridL,ygridL,zgridL,xgridU,ygridU,zgridU
+        Itower,tower_Npts,tower_x,tower_ybot,tower_ytop,tower_D,tower_CD
 
     NAMELIST/ConfigOutputs/Output_ELFlag,Output_DSFlag,WallOutFlag,DiagOutFlag, &
         WakeElementOutFlag,WakeElementOutIntervalTimesteps,WakeElementOutStartTimestep,WakeElementOutEndTimestep, &
-        WakeGridOutFlag,WakeGridOutIntervalTimesteps,WakeGridOutStartTimestep,WakeGridOutEndTimestep
+        WakeGridOutFlag,WakeGridOutIntervalTimesteps,WakeGridOutStartTimestep,WakeGridOutEndTimestep, & 
+        nxgrid,nygrid,nzgrid,xgridL,ygridL,zgridL,xgridU,ygridU,zgridU
+
 
     ! Default ConfigInputs 
     RegTFlag   = 0 
