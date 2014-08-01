@@ -41,81 +41,86 @@ SUBROUTINE input(ErrFlag)
     integer :: WLI(InBufferNumWL)     ! wake line index buffer
 
     ! Namelist input file declaration
-    NAMELIST/ConfigInputs/RegTFlag,DiagOutFlag,GPFlag,FSFlag,nr,convrg,nti,iut,iWall,ivtxcor,VCRFB,VCRFT,VCRFS,ifc,convrgf,nric,ntif,iutf,ixterm,xstop, &
-        Output_ELFlag,Output_DSFlag,WallOutFlag,Incompr,DSFlag,PRFlag, &
+    NAMELIST/ConfigInputs/RegTFlag,GPFlag,FSFlag,nr,convrg,nti,iut,iWall,ivtxcor,VCRFB,VCRFT,VCRFS,ifc,convrgf,nric,ntif,iutf,ixterm,xstop, &
+        Incompr,DSFlag,PRFlag, &
         k1pos,k1neg,GPGridSF,FSGridSF,TSFilFlag,ntsf
+
     NAMELIST/CaseInputs/jbtitle,GeomFilePath,RPM,Ut,nSect,AFDPath, &
         hAG,dFS,rho,vis,tempr,hBLRef,slex,Cdpar,CTExcrM, &
-        WakeElementOutFlag,WakeGridOutFlag,WLI,Igust,gustamp,gusttime,gustX0, &
+        WLI,Igust,gustamp,gusttime,gustX0, &
         Itower,tower_Npts,tower_x,tower_ybot,tower_ytop,tower_D,tower_CD, &
-        nxgrid,nygrid,nzgrid,xgridL,ygridL,zgridL,xgridU,ygridU,zgridU, &
-        WakeElementOutIntervalTimesteps,WakeElementOutStartTimestep,WakeElementOutEndTimestep, &
-        WakeGridOutIntervalTimesteps,WakeGridOutStartTimestep,WakeGridOutEndTimestep
+        nxgrid,nygrid,nzgrid,xgridL,ygridL,zgridL,xgridU,ygridU,zgridU
 
-    ! Input Defaults
-    RegTFlag      = 0 
-    DiagOutFlag   = 0
-    Output_ELFlag = 0 
-    Output_DSFlag = 0
-    WakeElementOutFlag   = 0 
-    WakeGridOutFlag   = 0 
-    WallOutFlag   = 0
-    GPFlag        = 0
-    FSFlag        = 0    
-    TSFilFlag     = 0
-    ntsf          = 3
-    nSect         = 1  
-    ifc           = 0   
-    nr            = 10
-    convrg        = -1
-    convrgf       = -1
-    nti           = 20
-    ntif          = -1
-    ivtxcor       = 1
-    ixterm        = 0
-    xstop         = 5.0
-    iut           = 0
-    iWall         = 0       
-    iutf          = 0 
-    nric          =-1
-    VCRFB         = 1.0       
-    VCRFT         = 1.0
-    VCRFS         = 1.0       
-    WLI(:)        = 0 ! all set to 0      
-    hAG           = 0.0
-    dFS           = 0.0                                                          
-    Incompr       = 0                        
-    Cdpar         = 0.0
-    CTExcrM       = 0.0
-    DSFlag        = 1
-    PRFlag        = 1
-    k1pos         = 1.0                      
-    k1neg         = 0.5
-    GPGridSF      = 1.0
-    FSGridSF      = 1.0
-    Igust         = 0
-    gustamp       = 0.0
-    gusttime      = 0.0
-    gustX0        = 0.0
-    Itower        = 0
-    tower_Npts    = 10
-    tower_x       = 0.0
-    tower_ybot    = 0.0
-    tower_ytop    = 0.0
-    tower_D       = 0.05
-    tower_CD      = 1.0
+    NAMELIST/ConfigOutputs/Output_ELFlag,Output_DSFlag,WallOutFlag,DiagOutFlag, &
+        WakeElementOutFlag,WakeElementOutIntervalTimesteps,WakeElementOutStartTimestep,WakeElementOutEndTimestep, &
+        WakeGridOutFlag,WakeGridOutIntervalTimesteps,WakeGridOutStartTimestep,WakeGridOutEndTimestep
+
+    ! Default ConfigInputs 
+    RegTFlag   = 0 
+    GPFlag     = 0
+    FSFlag     = 0    
+    TSFilFlag  = 0
+    ntsf       = 3
+    nSect      = 1  
+    ifc        = 0   
+    nr         = 10
+    convrg     = -1
+    convrgf    = -1
+    nti        = 20
+    ntif       = -1
+    ivtxcor    = 1
+    ixterm     = 0
+    xstop      = 5.0
+    iut        = 0
+    iWall      = 0       
+    iutf       = 0 
+    nric       =-1
+    VCRFB      = 1.0       
+    VCRFT      = 1.0
+    VCRFS      = 1.0       
+    WLI(:)     = 0 ! all set to 0      
+    hAG        = 0.0
+    dFS        = 0.0                                                          
+    Incompr    = 0                        
+    Cdpar      = 0.0
+    CTExcrM    = 0.0
+    DSFlag     = 1
+    PRFlag     = 1
+    k1pos      = 1.0                      
+    k1neg      = 0.5
+    GPGridSF   = 1.0
+    FSGridSF   = 1.0
+    Igust      = 0
+    gustamp    = 0.0
+    gusttime   = 0.0
+    gustX0     = 0.0
+    Itower     = 0
+    tower_Npts = 10
+    tower_x    = 0.0
+    tower_ybot = 0.0
+    tower_ytop = 0.0
+    tower_D    = 0.05
+    tower_CD   = 1.0
     
-    ! wake grid output default parameters
-    nxgrid       =    1
-    nygrid       =  100
-    nzgrid       =  100
+    ! output options
+    Output_ELFlag      = 0 
+    Output_DSFlag      = 0
+    DiagOutFlag        = 0
+    WakeElementOutFlag = 0 
+    WakeGridOutFlag    = 0 
+    WallOutFlag        = 0
 
-    xgridL       =  0.0
-    xgridU       =  0.0
-    ygridL       = -2.0     ! default grid is a ([-2.0,2.0],[-2.0,2.0]) 100x100 x-normal grid at x=0.0
-    ygridU       =  2.0
-    zgridL       = -2.0
-    zgridU       =  2.0
+    ! wake grid output default parameters
+    nxgrid =    1
+    nygrid =  100
+    nzgrid =  100
+    
+    xgridL =  0.0
+    xgridU =  0.0
+    ygridL = -2.0     ! default grid is a ([-2.0,2.0],[-2.0,2.0]) 100x100 x-normal grid at x=0.0
+    ygridU =  2.0
+    zgridL = -2.0
+    zgridU =  2.0
 
     ! Wake Output Frequency
     WakeElementOutIntervalTimesteps =  5       ! write wake element data every 5 timesteps
@@ -127,8 +132,9 @@ SUBROUTINE input(ErrFlag)
     WakeGridOutEndTimestep         = -1       ! stop writing wake plane data at the last timestep
 
     ! Namelist input
-    read(4, nml=ConfigInputs) 
-    read(4, nml=CaseInputs)                                                                                    
+    read(4, nml=ConfigInputs)
+    read(4, nml=CaseInputs)
+    read(4, nml=ConfigOutputs)
 
     ! Read geometry file
     Call InputGeom(GeomFilePath)
