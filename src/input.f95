@@ -188,7 +188,7 @@ SUBROUTINE input(ErrFlag)
 
    !  WakeLineInd(1:NWakeInd)=WLI(1:NWakeInd)      
     WakeLineInd = (/ (I, I = 1, MaxSeg) /) 
-    ! write(*,*) WakeLineInd
+    ! write(*,'(A)') WakeLineInd
 
     ! Set ground plane location for wall solution
     GPy=-hAG/Rmax
@@ -332,7 +332,7 @@ SUBROUTINE input(ErrFlag)
                 end if
                 if (EOF>=0 .AND. NotBlank) then
                     if (ii == MaxAOAVals) then
-                        write(6,*) 'Max. allowed AOA values exceeded in airfoil data file: ', aftitle(kk)
+                        write(6,'(A)') 'Max. allowed AOA values exceeded in airfoil data file: ', aftitle(kk)
                         ErrFlag=1
                         NotDone=.FALSE.
                     else
@@ -347,7 +347,7 @@ SUBROUTINE input(ErrFlag)
 
             ! Check AOA limits
             if (ta(1,i,kk) > -180.0 .OR. ta(ntbl(i,kk),i,kk) < 180.0) then
-                write(6,*) 'AOA data needs to be +/-180 deg in airfoil data file: ', aftitle(kk)
+                write(6,'(A)') 'AOA data needs to be +/-180 deg in airfoil data file: ', aftitle(kk)
                 ErrFlag=1
             end if
 
@@ -391,11 +391,11 @@ SUBROUTINE input(ErrFlag)
 
         ! Check data
         if (i == 0) then
-            write(6,*) 'Error reading airfoil data file: ', aftitle(kk)
+            write(6,'(A)') 'Error reading airfoil data file: ', aftitle(kk)
             ErrFlag=1
         end if
         if (EOF > 0) then
-            write(6,*) 'Warning: Max. allowed Re values exceeded in airfoil data file: ', aftitle(kk)
+            write(6,'(A)') 'Warning: Max. allowed Re values exceeded in airfoil data file: ', aftitle(kk)
         end if
 
     end do

@@ -94,7 +94,7 @@ PROGRAM CACTUS
     ! Parse command line for the name of the input file
     nargin=command_argument_count()
     if (nargin < 1) then
-        write(6,*) 'Please call the program with the name of the input file on the command line. Ex. CACTUS INPUTFILE.in' 
+        write(6,'(A)') 'Please call the program with the name of the input file on the command line. Ex. CACTUS INPUTFILE.in' 
         stop            
     end if
     Call get_command_argument(1,InputFN,FNLength,status)
@@ -141,7 +141,7 @@ PROGRAM CACTUS
     ErrFlag = 0
     CALL input(ErrFlag)
     if (ErrFlag == 1) then
-        write(6,*) 'Input data fail. Exiting...'
+        write(6,'(A)') 'Input data fail. Exiting...'
         stop
     end if
 
@@ -170,7 +170,7 @@ PROGRAM CACTUS
     if (WakeElementOutFlag > 0) then
         WakeOutputFN=trim(FNBase)//'_WakeData.csv'
         OPEN(12, FILE=WakeOutputFN)
-        write(12,*) trim(WakeOutHead)
+        write(12,'(A)') trim(WakeOutHead)
     end if
 
     ! Optional wake grid data output
@@ -178,7 +178,7 @@ PROGRAM CACTUS
         ! wake deficit surface output
         WakeDefOutputFN=trim(FNBase)//'_WakeDefData.csv'
         OPEN(13, FILE=WakeDefOutputFN)
-        write(13,*) trim(GridVelOutHead)
+        write(13,'(A)') trim(GridVelOutHead)
     end if
 
     ! Optional wall model output
@@ -186,13 +186,13 @@ PROGRAM CACTUS
         if (GPFlag == 1) then
             GPOutputFN=trim(FNBase)//'_GPData.csv'
             OPEN(14, FILE=GPOutputFN)
-            write(14,*) trim(GPOutHead)
+            write(14,'(A)') trim(GPOutHead)
         end if
 
         if (FSFlag == 1) then
             FSOutputFN=trim(FNBase)//'_FSData.csv'
             OPEN(15, FILE=FSOutputFN)
-            write(15,*) trim(FSOutHead)
+            write(15,'(A)') trim(FSOutHead)
         end if
     end if
 
@@ -337,7 +337,7 @@ PROGRAM CACTUS
 
             ! Write diagnostic info to stdout if requested
             if (DiagOutFlag == 1) then
-                write(6,*) 'Timestep: ', nt
+                write(6,'(A)') 'Timestep: ', nt
             end if
 
             ! Set new wake element locations
@@ -406,7 +406,7 @@ PROGRAM CACTUS
             ! Write diagnostic info to stdout if requested
             if (DiagOutFlag == 1) then
                 ! Use machine level time step output (norm. time, revolution, torque coeff., power coeff.)
-                write(6,*) 'Norm. Time, Theta (rad), Revolution, Torque Coeff., Power Coeff.'
+                write(6,'(A)') 'Norm. Time, Theta (rad), Revolution, Torque Coeff., Power Coeff.'
                 write(6,'(2E13.5,F8.0,2E13.5)') Output_TSData(1,1),Output_TSData(1,2),Output_TSData(1,3),Output_TSData(1,4),Output_TSData(1,5)
             end if
 
@@ -482,10 +482,10 @@ PROGRAM CACTUS
         ! Write diagnostic info to stdout if requested
         if (DiagOutFlag == 1) then
             ! Write rev average power
-            write(6,*) 'Revolution Average Power Coeff.: ', CPAve
+            write(6,'(A)') 'Revolution Average Power Coeff.: ', CPAve
             write(6,'(A,F13.2)') ' Rev Wall Time (sec): ', dtime
             write(6,'(A,F13.2)') ' Total Elapsed Wall Time (sec): ', etime
-            write(6,*) ' '
+            write(6,'(A)') ' '
         end if
 
         ! If nr revs have been performed, then done. Otherwise, if initial convergence is hit, set final convergence params (if desired) and continue
