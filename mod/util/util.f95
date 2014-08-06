@@ -80,7 +80,7 @@ CONTAINS
 
         ! Write header
         if (WriteHead>0) then
-            write (FID,*) trim(Header)
+            write (FID,'(A)') trim(Header)
         end if
 
         ! Write data
