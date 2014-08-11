@@ -27,7 +27,7 @@ MODULE wallsoln
     real, allocatable :: WRHS(:,:)      ! Right hand side vector for the wall solution
 
     ! Ground plane data output
-    character(1000) :: GPOutHead = 'X/R (-),Y/R (-),Z/R (-),SourceDens/Uinf (-)'
+    character(1000) :: GPOutHead = 'Normalized Time (-),X/R (-),Y/R (-),Z/R (-),SourceDens/Uinf (-)'
     real, allocatable :: WSourceOut(:)       ! Output buffer for wall source density values (non-dimensional, normalized by freestream velocity)
 
 

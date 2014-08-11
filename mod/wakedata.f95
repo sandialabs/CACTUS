@@ -5,10 +5,10 @@ MODULE wakedata
     integer :: WakeElementOutFlag, WakeGridOutFlag
     integer, allocatable :: WakeLineInd(:) 
     integer :: NWakeInd     
-    character(1000) :: WakeOutHead = 'Timestep,Element,X/R (-),Y/R (-),Z/R (-),U/Uinf (-),V/Uinf (-),W/Uinf (-)'
+    character(1000) :: WakeOutHead = 'Normalized Time (-),Element,X/R (-),Y/R (-),Z/R (-),U/Uinf (-),V/Uinf (-),W/Uinf (-)'
 
     ! Wake deficit calculation on a grid
-    character(1000) :: GridVelOutHead = 'Timestep,X/R (-),Y/R (-),Z/R (-),U/Uinf (-),V/Uinf (-),W/Uinf (-)'
+    character(1000) :: GridVelOutHead = 'Normalized Time (-),X/R (-),Y/R (-),Z/R (-),U/Uinf (-),V/Uinf (-),W/Uinf (-)'
 
     ! number of grid elements in each direction    
     integer :: nxgrid

@@ -68,7 +68,7 @@ SUBROUTINE WriteWakeGridData()
                     VZInd(xcount,ycount,zcount)=vz
 
                     ! Write to file
-                    write(13,'(I8,",",$)') NT
+                    write(13,'(E13.7,",",$)') TimeN         ! Normalized simulation time (t*Uinf/Rmax)
                     write(13,'(E13.7,",",$)') XGrid(xcount,ycount,zcount) 
                     write(13,'(E13.7,",",$)') YGrid(xcount,ycount,zcount) 
                     write(13,'(E13.7,",",$)') ZGrid(xcount,ycount,zcount) 
