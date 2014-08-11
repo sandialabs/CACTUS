@@ -413,8 +413,8 @@ PROGRAM CACTUS
             ! Write current wake data
             if (WakeElementOutFlag > 0) then
                 ! Write wake element data
-                if ((NT > WakeElementOutStartTimestep .OR. WakeElementOutStartTimestep == 0) .AND. (NT < WakeElementOutEndTimestep .OR. WakeElementOutEndTimestep == -1)) then
-                    if (MOD(NT, INT(WakeElementOutIntervalTimesteps)) == 0) then
+                if ((NT >= WakeElementOutStartTimestep) .AND. (NT < WakeElementOutEndTimestep .OR. WakeElementOutEndTimestep == -1)) then
+                    if (MOD(NT, WakeElementOutIntervalTimesteps) == 1) then
                         Call WriteWakeElementData()
                     end if
                 end if
@@ -422,8 +422,8 @@ PROGRAM CACTUS
 
             if (WakeGridOutFlag > 0) then
                 ! Write wake grid data
-                if ((NT > WakeGridOutStartTimestep .OR. WakeGridOutStartTimestep == 0) .AND. (NT < WakeGridOutEndTimestep .OR. WakeGridOutEndTimestep == -1)) then
-                    if (MOD(NT, INT(WakeGridOutIntervalTimesteps)) == 1) then
+                if ((NT >= WakeGridOutStartTimestep) .AND. (NT < WakeGridOutEndTimestep .OR. WakeGridOutEndTimestep == -1)) then
+                    if (MOD(NT, WakeGridOutIntervalTimesteps) == 1) then
                         Call WriteWakeGridData()
                     end if
                 end if

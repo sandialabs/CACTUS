@@ -125,11 +125,11 @@ SUBROUTINE input(ErrFlag)
 
     ! Wake Output Frequency
     WakeElementOutIntervalTimesteps =  5       ! write wake element data every 5 timesteps
-    WakeElementOutStartTimestep     =  0       ! write wake element data starting at first timestep
+    WakeElementOutStartTimestep     =  1       ! write wake element data starting at first timestep
     WakeElementOutEndTimestep       = -1       ! stop writing wake element data at the last timestep
     
     WakeGridOutIntervalTimesteps   =  5       ! write wake plane data every 5 timesteps
-    WakeGridOutStartTimestep       =  0       ! write wake plane data starting at first timestep
+    WakeGridOutStartTimestep       =  1       ! write wake plane data starting at first timestep
     WakeGridOutEndTimestep         = -1       ! stop writing wake plane data at the last timestep
 
     ! Namelist input
