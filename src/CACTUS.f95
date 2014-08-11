@@ -337,7 +337,7 @@ PROGRAM CACTUS
 
             ! Write diagnostic info to stdout if requested
             if (DiagOutFlag == 1) then
-                write(6,'(A)') 'Timestep: ', nt
+                write(6,'(A,I0)') 'Timestep: ', nt
             end if
 
             ! Set new wake element locations
@@ -482,7 +482,7 @@ PROGRAM CACTUS
         ! Write diagnostic info to stdout if requested
         if (DiagOutFlag == 1) then
             ! Write rev average power
-            write(6,'(A)') 'Revolution Average Power Coeff.: ', CPAve
+            write(6,'(A,F13.2)') 'Revolution Average Power Coeff.: ', CPAve
             write(6,'(A,F13.2)') ' Rev Wall Time (sec): ', dtime
             write(6,'(A,F13.2)') ' Total Elapsed Wall Time (sec): ', etime
             write(6,'(A)') ' '
