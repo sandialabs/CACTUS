@@ -82,37 +82,35 @@ SUBROUTINE BladeLoads(NLTol,iConv)
 
             if (Output_ELFlag == 1) then
                 Output_ELRow=(i-1)*nbe+j
-                Output_ELData(Output_ELRow,1)=TimeN         ! Normalized simulation time (t*Uinf/Rmax) 
-                Output_ELData(Output_ELRow,2)=Theta         ! Phase angle
-                Output_ELData(Output_ELRow,3)=i         ! Blade Number
-                Output_ELData(Output_ELRow,4)=j         ! Element number
-                Output_ELData(Output_ELRow,5)=irev      ! rotation number
-                Output_ELData(Output_ELRow,6)=alpha*condeg              ! Element angle of attack @ 25% chord
-                Output_ELData(Output_ELRow,7)=alpha5*condeg             ! Element angle of attack @ 50% chord
-                Output_ELData(Output_ELRow,8)=alpha75*condeg            ! Element angle of attack @ 75% chord
-                Output_ELData(Output_ELRow,9)=adotnorm                  ! Normalized AOA rate                               
-                Output_ELData(Output_ELRow,10)=Re                       ! Element Reynolds number based on local chord and flow velocity
-                Output_ELData(Output_ELRow,11)=umach                    ! Element Mach number based on local flow velocity
-                Output_ELData(Output_ELRow,12)=ur                       ! Element velocity ratio with freestream
-                Output_ELData(Output_ELRow,13)=CL                       ! Element lift coeff (defined with alpha5 flow direction)
-                Output_ELData(Output_ELRow,14)=CD                       ! Element drag coeff (defined with alpha5 flow direction)
-                Output_ELData(Output_ELRow,15)=CM25                     ! Element moment coeff (about quarter-chord point)
-                Output_ELData(Output_ELRow,16)=CLCirc                   ! Element circulatory lift coeff (defined with alpha5 flow direction and specifies element bound circ strength)
-                Output_ELData(Output_ELRow,17)=CN                       ! Element normal force coefficient (per span) based on local chord and flow velocity
-                Output_ELData(Output_ELRow,18)=CT                       ! Element tangential force coefficient (per span) based on local chord and flow velocity
-                Output_ELData(Output_ELRow,19)=Fx                       ! Element global x force coefficient based on freestream flow and turbine area
-                Output_ELData(Output_ELRow,20)=Fy                       ! Element global y force coefficient based on freestream flow and turbine area
-                Output_ELData(Output_ELRow,21)=Fz                       ! Element global z force coefficient based on freestream flow and turbine area
-                Output_ELData(Output_ELRow,22)=te                       ! Element torque coefficient contribution based on freestream flow, turbine area, and Rmax       
-                Output_ELData(Output_ELRow,23)=(UB(nej)+UB(nej-1))/2.0                       ! Element induced x velocity (average of the endpoint induced velocities)       
-                Output_ELData(Output_ELRow,24)=(VB(nej)+VB(nej-1))/2.0                       ! Element induced y velocity (average of the endpoint induced velocities)       
-                Output_ELData(Output_ELRow,25)=(WB(nej)+WB(nej-1))/2.0                       ! Element induced z velocity (average of the endpoint induced velocities)       
-                Output_ELData(Output_ELRow,26)=(GB(nej)+GB(nej-1))/2.0                       ! Element bound vorticity (average of the endpoint induced velocities)       
-                Output_ELData(Output_ELRow,27)=xBC(nej)                       ! Element quarter chord position x
-                Output_ELData(Output_ELRow,28)=yBC(nej)                       ! Element quarter chord position y
-                Output_ELData(Output_ELRow,29)=zBC(nej)                       ! Element quarter chord position z
-
-
+                Output_ELData(Output_ELRow,1)=TimeN                     ! Normalized simulation time (t*Uinf/Rmax) 
+                Output_ELData(Output_ELRow,2)=Theta                     ! Phase angle
+                Output_ELData(Output_ELRow,3)=i                         ! Blade Number
+                Output_ELData(Output_ELRow,4)=j                         ! Element number
+                Output_ELData(Output_ELRow,5)=irev                      ! rotation number
+                Output_ELData(Output_ELRow,6)=xBC(nej)                  ! Element quarter chord position x
+                Output_ELData(Output_ELRow,7)=yBC(nej)                  ! Element quarter chord position y
+                Output_ELData(Output_ELRow,8)=zBC(nej)                  ! Element quarter chord position z
+                Output_ELData(Output_ELRow,9)=alpha*condeg              ! Element angle of attack @ 25% chord
+                Output_ELData(Output_ELRow,10)=alpha5*condeg            ! Element angle of attack @ 50% chord
+                Output_ELData(Output_ELRow,11)=alpha75*condeg           ! Element angle of attack @ 75% chord
+                Output_ELData(Output_ELRow,12)=adotnorm                 ! Normalized AOA rate                               
+                Output_ELData(Output_ELRow,13)=Re                       ! Element Reynolds number based on local chord and flow velocity
+                Output_ELData(Output_ELRow,14)=umach                    ! Element Mach number based on local flow velocity
+                Output_ELData(Output_ELRow,15)=ur                       ! Element velocity ratio with freestream
+                Output_ELData(Output_ELRow,16)=(UB(nej)+UB(nej-1))/2.0  ! Element induced x velocity (average of the endpoint induced velocities)       
+                Output_ELData(Output_ELRow,17)=(VB(nej)+VB(nej-1))/2.0  ! Element induced y velocity (average of the endpoint induced velocities)       
+                Output_ELData(Output_ELRow,18)=(WB(nej)+WB(nej-1))/2.0  ! Element induced z velocity (average of the endpoint induced velocities)    
+                Output_ELData(Output_ELRow,19)=(GB(nej1))               ! Element bound vorticity (note the last element is just a placeholder)
+                Output_ELData(Output_ELRow,20)=CL                       ! Element lift coeff (defined with alpha5 flow direction)
+                Output_ELData(Output_ELRow,21)=CD                       ! Element drag coeff (defined with alpha5 flow direction)
+                Output_ELData(Output_ELRow,22)=CM25                     ! Element moment coeff (about quarter-chord point)
+                Output_ELData(Output_ELRow,23)=CLCirc                   ! Element circulatory lift coeff (defined with alpha5 flow direction and specifies element bound circ strength)
+                Output_ELData(Output_ELRow,24)=CN                       ! Element normal force coefficient (per span) based on local chord and flow velocity
+                Output_ELData(Output_ELRow,25)=CT                       ! Element tangential force coefficient (per span) based on local chord and flow velocity
+                Output_ELData(Output_ELRow,26)=Fx                       ! Element global x force coefficient based on freestream flow and turbine area
+                Output_ELData(Output_ELRow,27)=Fy                       ! Element global y force coefficient based on freestream flow and turbine area
+                Output_ELData(Output_ELRow,28)=Fz                       ! Element global z force coefficient based on freestream flow and turbine area
+                Output_ELData(Output_ELRow,29)=te                       ! Element torque coefficient contribution based on freestream flow, turbine area, and Rmax       
             end if
 
 
