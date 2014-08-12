@@ -47,17 +47,17 @@ SUBROUTINE WriteWakeGridData()
                     ZGrid(xcount,ycount,zcount)=zgridL+(zcount-1)*dzgrid
 
                     ! Initialize induced velocities to zero
-                    VXInd=0.0
-                    VYInd=0.0
-                    VZInd=0.0
+                    VXInd(xcount,ycount,zcount)=0.0
+                    VYInd(xcount,ycount,zcount)=0.0
+                    VZInd(xcount,ycount,zcount)=0.0
                 end do
             end do
         end do
     end if ! end if (NT==1)
 
-    ! Compute and write wake data on specified cartesian grid
+    ! Compute wake data on specified cartesian grid
     if (WakeGridOutFlag == 1) then
-        ! Output blade, wake, and wall induced streamwise velocity deficit
+        ! Compute blade, wake, and wall induced streamwise velocity deficit
         do zcount=1,nzgrid
             do ycount=1,nygrid
                 do xcount=1,nxgrid
@@ -66,7 +66,14 @@ SUBROUTINE WriteWakeGridData()
                     VXInd(xcount,ycount,zcount)=vx
                     VYInd(xcount,ycount,zcount)=vy
                     VZInd(xcount,ycount,zcount)=vz
+                end do
+            end do
+        end do
 
+        ! Output blade, wake, and wall induced streamwise velocity deficit
+        do zcount=1,nzgrid
+            do ycount=1,nygrid
+                do xcount=1,nxgrid
                     ! Write to file
                     write(13,'(E13.7,",",$)') TimeN         ! Normalized simulation time (t*Uinf/Rmax)
                     write(13,'(E13.7,",",$)') XGrid(xcount,ycount,zcount) 
