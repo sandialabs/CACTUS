@@ -43,7 +43,7 @@ SUBROUTINE input(ErrFlag)
     ! Namelist input file declaration
     NAMELIST/ConfigInputs/RegTFlag,GPFlag,FSFlag,nr,convrg,nti,iut,iWall,ivtxcor,VCRFB,VCRFT,VCRFS,ifc,convrgf,nric,ntif,iutf,ixterm,xstop, &
         Incompr,DSFlag,PRFlag, &
-        k1pos,k1neg,GPGridSF,FSGridSF,TSFilFlag,ntsf
+        k1pos,k1neg,GPGridSF,GPGridExtent,FSGridSF,TSFilFlag,ntsf
 
     NAMELIST/CaseInputs/jbtitle,GeomFilePath,RPM,Ut,nSect,AFDPath, &
         hAG,dFS,rho,vis,tempr,hBLRef,slex,Cdpar,CTExcrM, &
@@ -90,6 +90,7 @@ SUBROUTINE input(ErrFlag)
     k1pos      = 1.0                      
     k1neg      = 0.5
     GPGridSF   = 1.0
+    GPGridExtent = 10.0
     FSGridSF   = 1.0
     Igust      = 0
     gustamp    = 0.0

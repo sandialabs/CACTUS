@@ -12,7 +12,7 @@ subroutine WGeomSetup()
     integer :: Ind, NU, ND, NW      
 
     ! Plane extent (over radius). To be applied in every direction around the turbine location...
-    PlaneExtent=10.0 
+    PlaneExtent=GPGridExtent
 
     ! Min and max panel size limits (Note: user can override these with scale factor input...)
     dsMinFS=.25 ! min grid size for free surface grid (to keep problem from getting too large)

@@ -15,6 +15,7 @@ MODULE wallsoln
     real, allocatable :: WPW(:)     ! Panel widths (over radius)
     real :: GPy             ! y location of ground plane (over radius)
     real :: GPGridSF                        ! Grid scale factor (factor on default grid discretization level)       
+    real :: GPGridExtent        ! Distance ground plane extends in both directions from the origin
     real :: WEdgeTol            ! Tolerance around panel edge in which to evaluate influence in special way (to avoid inf...)
     integer :: NumWPx           ! Number of wall panels in the x direction
     integer :: NumWPz                       ! Number of wall panels in the z direction
