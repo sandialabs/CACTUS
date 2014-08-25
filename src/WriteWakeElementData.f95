@@ -17,7 +17,7 @@ SUBROUTINE WriteWakeElementData()
         do tCount=1,tCountMax
             ! compute the unique ID number of the current wake filament
             ! (higher numbers correspond to newer elements)
-            node_id = NWakeInd*(tcount-1) + wcount
+            node_id = (NWakeInd+nb)*(tcount-1) + wcount
 
             write(12,'(E13.7,",",$)') TimeN                ! Normalized simulation time (t*Uinf/Rmax)
             write(12,'(I0,",",$)') node_id                 ! Unique node ID
