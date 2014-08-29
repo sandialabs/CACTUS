@@ -8,7 +8,7 @@ MODULE wakedata
     character(1000) :: WakeOutHead = 'Normalized Time (-),Node ID,Origin Node,X/R (-),Y/R (-),Z/R (-),U/Uinf (-),V/Uinf (-),W/Uinf (-)'
 
     ! Wake deficit calculation on a grid
-    character(1000) :: GridVelOutHead = 'Normalized Time (-),X/R (-),Y/R (-),Z/R (-),U/Uinf (-),V/Uinf (-),W/Uinf (-)'
+    character(1000) :: GridVelOutHead = 'Normalized Time (-),X/R (-),Y/R (-),Z/R (-),U/Uinf (-),V/Uinf (-),W/Uinf (-),Ufs/Uinf (-),Vfs/Uinf (-),Wfs/Uinf (-)'
 
     ! number of grid elements in each direction    
     integer :: nxgrid
@@ -30,7 +30,10 @@ MODULE wakedata
     real, allocatable :: VXInd(:,:,:) 
     real, allocatable :: VYInd(:,:,:) 
     real, allocatable :: VZInd(:,:,:) 
-
+    real, allocatable :: UfsGrid(:,:,:)
+    real, allocatable :: VfsGrid(:,:,:)
+    real, allocatable :: WfsGrid(:,:,:)
+    
     ! global counter
     integer :: ntcount
 
@@ -49,7 +52,10 @@ CONTAINS
         allocate(ZGrid(nxgrid,nygrid,nzgrid))
         allocate(VXInd(nxgrid,nygrid,nzgrid))    
         allocate(VYInd(nxgrid,nygrid,nzgrid)) 
-        allocate(VZInd(nxgrid,nygrid,nzgrid))    
+        allocate(VZInd(nxgrid,nygrid,nzgrid))
+        allocate(UfsGrid(nxgrid,nygrid,nzgrid))    
+        allocate(VfsGrid(nxgrid,nygrid,nzgrid)) 
+        allocate(WfsGrid(nxgrid,nygrid,nzgrid))       
 
     End SUBROUTINE wakedata_cns
 
