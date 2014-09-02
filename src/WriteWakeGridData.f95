@@ -70,8 +70,8 @@ SUBROUTINE WriteWakeGridData()
                 do xcount=1,nxgrid
                     ! Get the grid node location
                     xnode = XGrid(xcount,ycount,zcount)
-                    ynode = XGrid(xcount,ycount,zcount)
-                    znode = XGrid(xcount,ycount,zcount)
+                    ynode = YGrid(xcount,ycount,zcount)
+                    znode = ZGrid(xcount,ycount,zcount)
 
                     ! Calculate wall and wake induced velocities at grid locations
                     Call CalcIndVel(NT,ntTerm,NBE,NB,NE,xnode,ynode,znode,vx,vy,vz)
