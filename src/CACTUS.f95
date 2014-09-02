@@ -86,6 +86,25 @@ PROGRAM CACTUS
 
     character(80) :: InputFN, SFOutputFN, RevOutputFN, TSOutputFN, ELOutputFN, RegOutputFN, WakeOutputFN, WakeDefOutputFN, GPOutputFN, FSOutputFN, DSOutputFN, FNBase
 
+!$  integer :: nthreads, tid, omp_get_num_threads, omp_get_thread_num
+
+    write(*,*) 'Starting CACTUS Execution.'
+    write(*,*) '--------------------------'
+
+    ! Alert the user if OpenMP is enabled.
+!$  write(*,*) 'OpenMP is Enabled.'
+
+!$omp parallel private(nthreads,tid)
+!$  tid = omp_get_thread_num()
+!$  nthreads = omp_get_num_threads()
+!$  if (tid == 0) then
+!$      write(*,*) 'Executing with ', nthreads, ' threads.'
+!$  end if
+!$omp end parallel
+
+    write(*,*) ''
+    write(*,*) ''
+
     ! Pi definition
     pi = 4.0*atan(1.0)
     conrad = pi/180.0                                                  
@@ -319,6 +338,7 @@ PROGRAM CACTUS
 
     ! CPU time markers
     Call cpu_time(t0)                                                                                                           
+!$  t0 = omp_get_wtime()
     Time1=t0                                                                             
 
     ! Do revolutions until convergence or MaxRevs    

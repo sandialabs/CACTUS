@@ -6,7 +6,7 @@ SUBROUTINE BladeIndVel(NT,ntTerm,NBE,NB,NE,XP,YP,ZP,UP,VP,WP,DUDX,Mode,CalcDer)
     integer :: nt, ntTerm, nbe, nb, ne, Mode, CalcDer
     real :: XP, YP, ZP, UP, VP, WP, DUDX        
     integer :: i, j, k, nei, nej, nt1 
-    integer :: VFlag                                                      
+    integer :: VFlag
 
     ! COMPUTE THE VORTEX INDUCED VELOCITY AT POINT XP,YP,ZP FROM THE BLADE SYSTEM  
     ! Mode: 0 -> Calc whole system
@@ -25,7 +25,7 @@ SUBROUTINE BladeIndVel(NT,ntTerm,NBE,NB,NE,XP,YP,ZP,UP,VP,WP,DUDX,Mode,CalcDer)
 
         ! CALCULATE THE VELOCITY CONTRIBUTIONS DUE TO TRAILING VORTICIES  ( GT(1:NT-1,:) )   
         ! ntTerm represents the furthest away wake elements that are to be considered. (Calculated using user input xstop) 
-        VFlag=1         
+        VFlag=1
         do i=1,ne
             do j=ntTerm,NT1
                 Call VorIVel(VFlag,CalcDer,GT(j,i),X(j,i),Y(j,i),Z(j,i),X(j+1,i),Y(j+1,i),Z(j+1,i),XP,YP,ZP,UP,VP,WP,DUDX)                              
@@ -51,7 +51,7 @@ SUBROUTINE BladeIndVel(NT,ntTerm,NBE,NB,NE,XP,YP,ZP,UP,VP,WP,DUDX,Mode,CalcDer)
     else if (Mode == 1) then
         ! Calc induced velocity from bound vorticity only                                                                               
 
-        VFlag=0                                                 
+        VFlag=0
         do i=1,nb
             nei=(i-1)*(nbe+1)
             do j=1,nbe
@@ -66,7 +66,7 @@ SUBROUTINE BladeIndVel(NT,ntTerm,NBE,NB,NE,XP,YP,ZP,UP,VP,WP,DUDX,Mode,CalcDer)
 
         ! CALCULATE THE VELOCITY CONTRIBUTIONS DUE TO TRAILING VORTICIES  ( GT(1:NT-1,:) )   
         ! ntTerm represents the furthest away wake elements that are to be considered. (Calculated using user input xstop) 
-        VFlag=1         
+        VFlag=1
         do i=1,ne
             do j=ntTerm,NT1
                 Call VorIVel(VFlag,CalcDer,GT(j,i),X(j,i),Y(j,i),Z(j,i),X(j+1,i),Y(j+1,i),Z(j+1,i),XP,YP,ZP,UP,VP,WP,DUDX)                              

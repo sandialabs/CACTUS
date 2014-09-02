@@ -5,8 +5,10 @@ SUBROUTINE UpdateWakeVel()
     use wake
     use regtest 
 
-    integer :: ygcErr                                                                
+    integer :: ygcErr
+    real :: x_t, y_t, z_t, u_t, v_t, w_t
 
+    integer :: NTHREADS, TID, OMP_GET_NUM_THREADS, OMP_GET_THREAD_NUM, N, CHUNKSIZE, CHUNK
 
     ! Calculate the induced velocity at each lattice point in the wake from wake (including bound vorticity), wall, and freestream        
 
@@ -34,12 +36,11 @@ SUBROUTINE UpdateWakeVel()
         ! If this is proper time step, calculate system influence on wake velocities
         if (NT .eq. NSW) then                                         
 
+
+!$omp parallel do private(j) 
             do I=1,NE                                                      
                 do J=ntTerm,NT1
-
-                    ! Calculate wall and wake induced velocities at wake locations
-                    Call CalcIndVel(NT,ntTerm,NBE,NB,NE,X(J,I),Y(J,I),Z(J,I),U(J,I),V(J,I),W(J,I))                                                                   
-
+                    Call CalcIndVel(NT,ntTerm,NBE,NB,NE,X(J,I),Y(J,I),Z(J,I),U(J,I),V(J,I),W(J,I))
                 end do
             end do
 
