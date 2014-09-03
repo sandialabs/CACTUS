@@ -7,10 +7,12 @@ SUBROUTINE EndRev()
 
 
     Call cpu_time(time2)
+!$  time2 = omp_get_wtime()
 
     dtime=time2-time1
     etime=time2-t0
     time1=etime
+!$  time1=omp_get_wtime()
 
     ! Calc average power over last revolution
     CPAve=CPSum/nti

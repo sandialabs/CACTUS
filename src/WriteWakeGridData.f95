@@ -16,6 +16,8 @@ SUBROUTINE WriteWakeGridData()
     real :: xnode, ynode, znode
     integer :: ygcErr
  
+    integer :: NTHREADS, TID, OMP_GET_NUM_THREADS, OMP_GET_THREAD_NUM
+
     ! Set up grid for induced velocity output (only on first iteration)
     if (NT==1) then
 
@@ -66,6 +68,7 @@ SUBROUTINE WriteWakeGridData()
     if (WakeGridOutFlag == 1) then
         ! Compute blade, wake, and wall induced streamwise velocity deficit
         do zcount=1,nzgrid
+!$omp parallel do private(xcount,xnode,ynode,znode)
             do ycount=1,nygrid
                 do xcount=1,nxgrid
                     ! Get the grid node location
@@ -74,19 +77,19 @@ SUBROUTINE WriteWakeGridData()
                     znode = ZGrid(xcount,ycount,zcount)
 
                     ! Calculate wall and wake induced velocities at grid locations
-                    Call CalcIndVel(NT,ntTerm,NBE,NB,NE,xnode,ynode,znode,vx,vy,vz)
-                    VXInd(xcount,ycount,zcount)=vx
-                    VYInd(xcount,ycount,zcount)=vy
-                    VZInd(xcount,ycount,zcount)=vz
+                    Call CalcIndVel(NT,ntTerm,NBE,NB,NE, &
+                        xnode,ynode,znode, &
+                        VXInd(xcount,ycount,zcount),VYInd(xcount,ycount,zcount),VZInd(xcount,ycount,zcount))
 
                     ! Calculate free stream velocities at grid locations
-                    Call CalcFreestream(xnode,ynode,znode,ufs_temp,vfs_temp,wfs_temp,ygcErr)
-                    UfsGrid(xcount,ycount,zcount)=ufs_temp
-                    VfsGrid(xcount,ycount,zcount)=vfs_temp
-                    WfsGrid(xcount,ycount,zcount)=wfs_temp
+                    Call CalcFreestream(xnode,ynode,znode, &
+                        UfsGrid(xcount,ycount,zcount),VfsGrid(xcount,ycount,zcount),WfsGrid(xcount,ycount,zcount), &
+                        ygcErr)
                 end do
             end do
+!$omp end parallel do
         end do
+
 
         ! Output blade, wake, and wall induced streamwise velocity deficit
         do zcount=1,nzgrid
