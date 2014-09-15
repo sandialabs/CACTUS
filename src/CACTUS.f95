@@ -257,7 +257,7 @@ PROGRAM CACTUS
     wRotX=ut*RotX
     wRotY=ut*RotY  
     wRotZ=ut*RotZ
-    delt=2.0*pi/nti 
+    delt=2.0*pi/nti ! change in theta per timestep
 
     ! Setup wall geometry and solution if necessary
     if (GPFlag == 1 .OR. FSFlag == 1) then
@@ -428,6 +428,7 @@ PROGRAM CACTUS
                 ! Use machine level time step output (norm. time, revolution, torque coeff., power coeff.)
                 write(6,'(A)') 'Norm. Time, Theta (rad), Revolution, Torque Coeff., Power Coeff.'
                 write(6,'(2E13.5,F8.0,2E13.5)') Output_TSData(1,1),Output_TSData(1,2),Output_TSData(1,3),Output_TSData(1,4),Output_TSData(1,5)
+                write(6,'(A,F13.2)') 'Farthest Moving Particle (R): ', dmax
             end if
 
             ! Write current wake data

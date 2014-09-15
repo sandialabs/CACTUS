@@ -1,5 +1,7 @@
 MODULE wakedata
 
+    implicit none
+
     ! Wake visualization data for WriteWakeData
 
     integer :: WakeElementOutFlag, WakeGridOutFlag
@@ -23,6 +25,9 @@ MODULE wakedata
     real :: zgridL
     real :: zgridU
 
+    ! grid spacing
+    real :: dxgrid, dygrid, dzgrid       
+
     ! arrays holding grid locations
     real, allocatable :: XGrid(:,:,:) 
     real, allocatable :: YGrid(:,:,:) 
@@ -33,7 +38,10 @@ MODULE wakedata
     real, allocatable :: UfsGrid(:,:,:)
     real, allocatable :: VfsGrid(:,:,:)
     real, allocatable :: WfsGrid(:,:,:)
-    
+
+    ! array index counters
+    integer :: xcount, ycount, zcount
+
     ! global counter
     integer :: ntcount
 
@@ -56,6 +64,50 @@ CONTAINS
         allocate(UfsGrid(nxgrid,nygrid,nzgrid))    
         allocate(VfsGrid(nxgrid,nygrid,nzgrid)) 
         allocate(WfsGrid(nxgrid,nygrid,nzgrid))       
+
+        !! Set up grid for induced velocity output
+
+        ! Compute the appropriate grid spacing
+        ! (if number of grids is 1 in any direction, catch a divide-by-zero error)
+        if (nxgrid==1) then
+            dxgrid=0.0
+        else
+            dxgrid=(xgridU-xgridL)/(nxgrid-1)
+        end if
+
+        if (nygrid==1) then
+            dygrid=0.0
+        else
+            dygrid=(ygridU-ygridL)/(nygrid-1)
+        end if
+
+        if (nzgrid==1) then
+            dzgrid=0.0
+        else
+            dzgrid=(zgridU-zgridL)/(nzgrid-1)
+        end if
+
+        ! Set up grid node locations and initialize induced velocities
+        do zcount=1,nzgrid
+            do ycount=1,nygrid
+                do xcount=1,nxgrid
+                    ! Setup grid node locations
+                    XGrid(xcount,ycount,zcount)=xgridL+(xcount-1)*dxgrid
+                    YGrid(xcount,ycount,zcount)=ygridL+(ycount-1)*dygrid
+                    ZGrid(xcount,ycount,zcount)=zgridL+(zcount-1)*dzgrid
+
+                    ! Initialize induced velocities to zero
+                    VXInd(xcount,ycount,zcount)=0.0
+                    VYInd(xcount,ycount,zcount)=0.0
+                    VZInd(xcount,ycount,zcount)=0.0
+
+                    ! Initialize freestream velocities to zero
+                    UfsGrid(xcount,ycount,zcount)=0.0
+                    VfsGrid(xcount,ycount,zcount)=0.0
+                    WfsGrid(xcount,ycount,zcount)=0.0
+                end do
+            end do
+        end do
 
     End SUBROUTINE wakedata_cns
 
