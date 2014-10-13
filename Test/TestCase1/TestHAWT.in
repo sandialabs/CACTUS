@@ -15,16 +15,12 @@
 	nric 	= 9
 	convrgf	= .0001
 
-    DiagOutFlag=1
-    Output_ELFlag=1
-
 /End
 
 
 &CaseInputs
 
 	jbtitle = 'Test HAWT'
-	WakeOutFlag = 3
 
 	rho 	= .002378  
 	vis 	= .3739E-6                                   
@@ -43,4 +39,14 @@
 	nSect 	= 1
 	AFDPath	= '../../Airfoil_Section_Data/NACA_0015.dat'
 		
+/End
+
+
+&ConfigOutputs
+
+    DiagOutFlag        = 1
+    Output_ELFlag      = 1
+    WakeElementOutFlag = 1
+    WakeGridOutFlag    = 0
+
 /End
