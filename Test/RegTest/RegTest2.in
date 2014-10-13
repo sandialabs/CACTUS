@@ -43,3 +43,7 @@
 	AFDPath	= '../../Airfoil_Section_Data/NACA_0015.dat'
 		
 /End
+
+&ConfigOutputs
+
+/End
