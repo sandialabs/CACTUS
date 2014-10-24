@@ -7,10 +7,18 @@ SUBROUTINE WriteWakeElementData()
     use wake
     use wallsoln 
     use configr
+    use fnames
     
     implicit none
 
     integer :: tCount, tCountMax, wcount, node_id
+    character(len=10) :: nt_str
+
+    ! Optional wake element data output
+    write(nt_str,'(I0)') nt
+    WakeOutputFN=trim(FNBase)//'_WakeData_'//trim(nt_str)//'.csv'
+    OPEN(12, FILE=WakeOutputFN)
+    write(12,'(A)') trim(WakeOutHead)
 
     tCountMax=nt
     do wcount=1,NWakeInd+nb
@@ -32,6 +40,8 @@ SUBROUTINE WriteWakeElementData()
         end do
     end do
 
+    ! close the output file
+    CLOSE(12)
 
-Return
+    Return
 End SUBROUTINE WriteWakeElementData

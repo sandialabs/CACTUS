@@ -7,12 +7,20 @@ SUBROUTINE WriteWakeGridData()
     use wake
     use wallsoln 
     use configr
+    use fnames
     
     implicit none
     
     real :: xnode, ynode, znode
     integer :: ygcErr
+    character(len=10) :: nt_str
  
+    ! Open file for writing - a new file at each timestep
+    write(nt_str,'(I0)') nt
+    WakeDefOutputFN=trim(FNBase)//'_WakeDefData_'//trim(nt_str)//'.csv'
+    OPEN(13, FILE=WakeDefOutputFN)
+    write(13,'(A)') trim(GridVelOutHead)
+    
     !! Compute wake data on specified cartesian grid
     ! Compute blade, wake, and wall induced streamwise velocity deficit
     do zcount=1,nzgrid
@@ -57,6 +65,9 @@ SUBROUTINE WriteWakeGridData()
             end do
         end do
     end do
+
+    ! close the output file
+    CLOSE(13)
 
     Return
 End SUBROUTINE WriteWakeGridData

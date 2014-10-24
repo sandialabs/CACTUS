@@ -71,20 +71,18 @@ PROGRAM CACTUS
     use regtest
     use output
     use tower
+    use fnames
 
     !IMPLICIT NONE !JCM: eventually...      
 
-    integer :: ErrFlag, nargin, FNLength, status, DecInd
+    integer :: ErrFlag
     logical :: FinalConv
     logical :: ConvFlag
     logical :: ContinueRevs
     logical :: ContinueNL
-    logical :: back
     integer :: iConv
     real :: NLTol
     real :: CPAve_last
-
-    character(80) :: InputFN, SFOutputFN, RevOutputFN, TSOutputFN, ELOutputFN, RegOutputFN, WakeOutputFN, WakeDefOutputFN, GPOutputFN, FSOutputFN, DSOutputFN, FNBase
 
 !$  integer :: nthreads, tid, omp_get_num_threads, omp_get_thread_num
 
@@ -105,28 +103,26 @@ PROGRAM CACTUS
     write(*,*) ''
     write(*,*) ''
 
+    ! Check for correct number of command line arguments
+    nargin=command_argument_count()
+    if (nargin < 1) then
+        write(6,'(A)') 'Please call the program with the name of the input file on the command line. Ex. CACTUS INPUTFILE.in' 
+        stop
+    end if
+
+    ! Parse command line to get the base of the input filename
+    Call get_FNBase
+
+    ! Set the filenames for the output files
+    SFOutputFN=trim(FNBase)//'_Param.csv'
+    RevOutputFN=trim(FNBase)//'_RevData.csv'
+    TSOutputFN=trim(FNBase)//'_TimeData.csv'
+    ELOutputFN=trim(FNBase)//'_ElementData.csv'  
+
     ! Pi definition
     pi = 4.0*atan(1.0)
     conrad = pi/180.0                                                  
     condeg = 180.0/pi 
-
-    ! Parse command line for the name of the input file
-    nargin=command_argument_count()
-    if (nargin < 1) then
-        write(6,'(A)') 'Please call the program with the name of the input file on the command line. Ex. CACTUS INPUTFILE.in' 
-        stop            
-    end if
-    Call get_command_argument(1,InputFN,FNLength,status)
-    back=.true.
-    FNBase=InputFN((index(InputFN,'/',back)+1):len(InputFN))
-    DecInd=index(FNBase,'.',back)     
-    if (DecInd > 1) then
-        FNBase=FNBase(1:(DecInd-1))       
-    end if
-    SFOutputFN=trim(FNBase)//'_Param.csv'
-    RevOutputFN=trim(FNBase)//'_RevData.csv'
-    TSOutputFN=trim(FNBase)//'_TimeData.csv'
-    ELOutputFN=trim(FNBase)//'_ElementData.csv'        
 
     ! Namelist input file                                                       
     OPEN(4, FILE= InputFN)                                     
@@ -135,7 +131,6 @@ PROGRAM CACTUS
     OPEN(8, FILE=SFOutputFN) 
     OPEN(9, FILE=RevOutputFN)
     OPEN(10, FILE=TSOutputFN)
-
 
     ! Initialize iteration parameters                                                       
     irev=0
@@ -150,7 +145,6 @@ PROGRAM CACTUS
     CFxSum=0.0
     CFySum=0.0
     CFzSum=0.0
-
 
     ! Error flags                                                                                                                                                                  
     ilxtp=0
@@ -183,21 +177,6 @@ PROGRAM CACTUS
     if (Output_ELFlag == 1) then
         OPEN(11, FILE=ELOutputFN)
         Call csvwrite(11,Output_ELHead,Output_ELData,1,0)
-    end if
-
-    ! Optional wake element data output
-    if (WakeElementOutFlag > 0) then
-        WakeOutputFN=trim(FNBase)//'_WakeData.csv'
-        OPEN(12, FILE=WakeOutputFN)
-        write(12,'(A)') trim(WakeOutHead)
-    end if
-
-    ! Optional wake grid data output
-    if (WakeGridOutFlag > 0) then
-        ! wake deficit surface output
-        WakeDefOutputFN=trim(FNBase)//'_WakeDefData.csv'
-        OPEN(13, FILE=WakeDefOutputFN)
-        write(13,'(A)') trim(GridVelOutHead)
     end if
 
     ! Optional wall model output
