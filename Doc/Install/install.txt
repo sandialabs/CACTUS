@@ -25,7 +25,7 @@ Installation of CACTUS for Linux or Mac machines.
    and run the RegTest by executing runreg.py with the path to the CACTUS 
    executable as an argument (or just the name of the executable if you added it 
    to your path).
-     	$ python ./runreg.py ../../../cactus
+     	$ python ./runreg.py ../../bin/cactus
    or
      	$ python ./runreg.py cactus
    The output should say 'No differences' for all three tests.
