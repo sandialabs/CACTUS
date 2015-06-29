@@ -299,6 +299,9 @@ PROGRAM CACTUS
     Output_SFData(1,11)=FnR         ! Froude number based on radius 
     Call csvwrite(8,Output_SFHead,Output_SFData,0,1)
 
+    ! close parameter file for writing
+    CLOSE(8)
+    
     ! Initialize needed arrays                             
     do i=1,ne                                                      
         gs(1,i)=0.0   
