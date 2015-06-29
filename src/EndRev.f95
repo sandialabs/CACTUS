@@ -4,7 +4,7 @@ SUBROUTINE EndRev()
     use configr
     use output
     use time
-
+    use fnames
 
     Call cpu_time(time2)
 !$  time2 = omp_get_wtime()
@@ -39,8 +39,10 @@ SUBROUTINE EndRev()
     Output_RevData(1,9)=TorqueAve
 
     ! Write to revolution average data csv file
+    OPEN(9, FILE=RevOutputFN, ACCESS='append')
     Call csvwrite(9,Output_RevHead,Output_RevData,0,1)
-
+    CLOSE(9)
+    
     ! Reset rev average sums
     CPSum=0.0
     CTRSum=0.0

@@ -113,6 +113,12 @@ PROGRAM CACTUS
     ! Parse command line to get the base of the input filename
     Call get_FNBase
 
+    ! Write the input files to stdout (for bookkeping)
+    write(*,*) 'Input file'
+    write(*,*) '--------------------------'
+    Call file_to_stdout(InputFN)
+    write(*,*) ''
+
     ! Set the filenames for the output files
     SFOutputFN=trim(FNBase)//'_Param.csv'
     RevOutputFN=trim(FNBase)//'_RevData.csv'
@@ -299,6 +305,9 @@ PROGRAM CACTUS
     Output_SFData(1,11)=FnR         ! Froude number based on radius 
     Call csvwrite(8,Output_SFHead,Output_SFData,0,1)
 
+    ! close parameter file for writing
+    CLOSE(8)
+    
     ! Initialize needed arrays                             
     do i=1,ne                                                      
         gs(1,i)=0.0   
@@ -319,6 +328,9 @@ PROGRAM CACTUS
     Call cpu_time(t0)                                                                                                           
 !$  t0 = omp_get_wtime()
     Time1=t0                                                                             
+
+    write(*,*) 'Simulation Status'
+    write(*,*) '--------------------------'
 
     ! Do revolutions until convergence or MaxRevs    
     ContinueRevs = .TRUE.   

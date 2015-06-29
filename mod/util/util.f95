@@ -104,5 +104,34 @@ CONTAINS
 10      format(E13.7,',',$) 
     End SUBROUTINE Csvwrite
 
+    SUBROUTINE file_to_stdout(filename)
+    ! file_to_stdout() : Read a file in and write it's output to stdout.
+    !   (Useful for appending input files to the output)
+
+    integer, parameter :: max_linewidth = 1000    
+    character(80) :: filename
+    integer :: reason
+
+    character(max_linewidth) :: readline
+
+    ! open file for reading
+    open(30, file=filename)
+
+    ! read in line by line
+    do
+        read(30, '(A)', iostat=reason) readline
+
+        ! if end of file is reached, break out
+        if (reason < 0) then
+            exit
+        else
+            write(*,*) trim(readline)
+        end if
+    end do
+
+    ! close file
+    close(30)
+    
+    End SUBROUTINE file_to_stdout
 
 End MODULE Util
