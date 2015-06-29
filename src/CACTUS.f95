@@ -113,6 +113,12 @@ PROGRAM CACTUS
     ! Parse command line to get the base of the input filename
     Call get_FNBase
 
+    ! Write the input files to stdout (for bookkeping)
+    write(*,*) 'Input file'
+    write(*,*) '--------------------------'
+    Call file_to_stdout(InputFN)
+    write(*,*) ''
+
     ! Set the filenames for the output files
     SFOutputFN=trim(FNBase)//'_Param.csv'
     RevOutputFN=trim(FNBase)//'_RevData.csv'
@@ -322,6 +328,9 @@ PROGRAM CACTUS
     Call cpu_time(t0)                                                                                                           
 !$  t0 = omp_get_wtime()
     Time1=t0                                                                             
+
+    write(*,*) 'Simulation Status'
+    write(*,*) '--------------------------'
 
     ! Do revolutions until convergence or MaxRevs    
     ContinueRevs = .TRUE.   

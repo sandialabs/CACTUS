@@ -138,6 +138,12 @@ SUBROUTINE input(ErrFlag)
     read(4, nml=CaseInputs)
     read(4, nml=ConfigOutputs)
 
+    ! Write the geometry file to stdout (for bookkeeping)
+    write(*,*) 'Geometry file'
+    write(*,*) '--------------------------'
+    Call file_to_stdout(GeomFilePath)
+    write(*,*) ''
+
     ! Read geometry file
     Call InputGeom(GeomFilePath)
 
