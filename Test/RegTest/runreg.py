@@ -5,14 +5,25 @@
 # Note: if no differences exist, the regression test output file is deleted for convenience.
 
 import os
-import shutil
+import subprocess
 import sys
-import string
-import filecmp
 import difflib
 
 # Note: To debug, call the python debugger module, pdb, as a script with this script as the argument (python -m pdb script.py)
 # or insert: import pdb; pdb.set_trace() above, and call from terminal as usual
+
+def file_cmp(filename1,filename2):
+    """ Compares file line by line. Uses Python "universal line ending mode" to neglect 
+        platform differences in line endings. Returns True if files are same, False if different."""
+
+    with open(filename1,'rU') as f1:
+        with open(filename2,'rU') as f2:
+            for line_left, line_right in zip(f1.readlines(),f2.readlines()):
+                if line_left.strip() != line_right.strip():
+                    return False
+
+    return True
+
 
 # Get exe path from command line
 if len(sys.argv) > 1:
@@ -23,12 +34,15 @@ else:
 print 'Running runreg.py with ' + CACTUSExe
 print ''
 
+# set up log files
+logfile = open('regtest.log','w')
+errfile = open('regtest.err','w')
 
 # Run regression test 1
 print 'Running regression test 1'
 IFN='RegTest1.in'
-CCommand=CACTUSExe + ' ' + IFN 
-os.system(CCommand)
+CCommand=[CACTUSExe, IFN]
+subprocess.call(CCommand, stdout=logfile, stderr=errfile)
 
 # clean up standard output files which are meaningless for this calculation
 os.remove('RegTest1_Param.csv')
@@ -38,7 +52,8 @@ os.remove('RegTest1_TimeData.csv')
 # diff output
 FN1='RegTest1_RegData.out'
 FN2='RegTest1_RegData_Ex.out'
-if not filecmp.cmp(FN1,FN2):
+print file_cmp(FN1,FN2)
+if not file_cmp(FN1,FN2):
     print 'Summary of differences between ' + FN1 + ' and ' + FN2 + ':'
     
     f=open(FN1,'r');
@@ -63,8 +78,8 @@ print ''
 # Run regression test 2
 print 'Running regression test 2'
 IFN='RegTest2.in'
-CCommand=CACTUSExe + ' ' + IFN 
-os.system(CCommand)
+CCommand=[CACTUSExe, IFN]
+subprocess.call(CCommand, stdout=logfile, stderr=errfile)
 
 # clean up standard output files which are meaningless for this calculation
 os.remove('RegTest2_Param.csv')
@@ -74,7 +89,7 @@ os.remove('RegTest2_TimeData.csv')
 # diff output
 FN1='RegTest2_RegData.out'
 FN2='RegTest2_RegData_Ex.out'
-if not filecmp.cmp(FN1,FN2):
+if not file_cmp(FN1,FN2):
     print 'Summary of differences between ' + FN1 + ' and ' + FN2 + ':'
     
     f=open(FN1,'r');
@@ -99,8 +114,8 @@ print ''
 # Run regression test 3
 print 'Running regression test 3'
 IFN='RegTest3.in'
-CCommand=CACTUSExe + ' ' + IFN 
-os.system(CCommand)
+CCommand=[CACTUSExe, IFN]
+subprocess.call(CCommand, stdout=logfile, stderr=errfile)
 
 # clean up standard output files which are meaningless for this calculation
 os.remove('RegTest3_Param.csv')
@@ -110,7 +125,7 @@ os.remove('RegTest3_TimeData.csv')
 # diff output
 FN1='RegTest3_RegData.out'
 FN2='RegTest3_RegData_Ex.out'
-if not filecmp.cmp(FN1,FN2):
+if not file_cmp(FN1,FN2):
     print 'Summary of differences between ' + FN1 + ' and ' + FN2 + ':'
     
     f=open(FN1,'r');
