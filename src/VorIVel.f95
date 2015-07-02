@@ -49,7 +49,7 @@ subroutine VorIVel(VFlag,CalcDer,G,X1,Y1,Z1,X2,Y2,Z2,XP,YP,ZP,UP,VP,WP,DUDX)
         VRAD2=VRAD2_B
     end if
 
-    if (CCAV >= 1.0E-07) then
+    if (CCAV >= vCutOffRad) then
         if (ivtxcor > 0 .and. CCAV < A2*VRAD2) then
             if (ivtxcor == 1) then
                 ! Constant velocity (approx) core

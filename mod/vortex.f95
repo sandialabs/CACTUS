@@ -9,6 +9,7 @@ MODULE vortex
     real :: vRad2_T     ! trailing wake core radius squared
     real :: vRad_S          ! spanwise wake core radius
     real :: vRad2_S         ! spanwise wake core radius squared       
+    real :: vCutOffRad       ! cut-off radius (for bound/trailing/spanwise cores)
 
 
 End MODULE vortex

@@ -78,6 +78,7 @@ SUBROUTINE input(ErrFlag)
     nti        = 20
     ntif       = -1
     ivtxcor    = 1
+    vCutOffRad = 1e-7
     ixterm     = 0
     xstop      = 5.0
     iut        = 0
