@@ -30,7 +30,9 @@ subroutine WSolnSetup()
                 Call RectSourceVel(Point,WPL(i),WPW(i),1.0,Self,WEdgeTol,0,dVel,dudx)
 
                 ! Rotate to global frame
-                Call CalcRotation3(R,dVel,dVelG,1)                      
+                Call CalcRotation3(R,dVel,dVelG,1)
+
+                ! Calc dot product of induced velocity with panel normal
                 WInCoeffN(j,i)=sum(dVelG*WZVec(j,1:3))
             end do
         end do
