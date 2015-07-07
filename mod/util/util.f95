@@ -134,4 +134,78 @@ CONTAINS
     
     End SUBROUTINE file_to_stdout
 
+    SUBROUTINE read_p3d_grid(xyz_filename,x,y,z)
+    ! read_p3d_surf() : read a formatted (ASCII) Plot3D multi-block grid file.
+    !   Coordinates must be specified one number per line.
+
+        ! maximum grid dimensions
+        integer, parameter :: imax  = 200
+        integer, parameter :: jmax  = 200
+        integer, parameter :: kmax  = 200   ! for surfaces, can probably set this to 1, since surfaces have k-index = 1
+        integer, parameter :: nbmax = 100
+
+        ! set the IOunit
+        integer, parameter :: IOunit = 20
+
+        integer :: i
+        integer :: j
+        integer :: m
+        integer :: n
+        integer :: nblocks
+        integer :: ni(nbmax)
+        integer :: nj(nbmax)
+        integer :: nk(nbmax)
+
+        character(len=*), intent(in) :: xyz_filename 
+
+        real, intent(out) :: x(imax,jmax,kmax,nbmax)
+        real, intent(out) :: y(imax,jmax,kmax,nbmax)
+        real, intent(out) :: z(imax,jmax,kmax,nbmax)
+
+        ! open file
+        open (unit=IOunit, form='formatted', file=xyz_filename)
+
+        ! read number of blocks
+        read(IOunit,*) nblocks
+        
+        ! read dimensions of each blocks
+        do m=1,nblocks
+            read(IOunit,*) ni(m),nj(m),nk(m)
+        end do
+        
+        ! read in data for each block
+        do  m=1,nblocks
+            do i=1,ni(m)
+                do j=1,nj(m)
+                    do k=1,nk(m)
+                        read(IOunit,*) x(i,j,k,m)
+                    end do
+                end do
+            end do
+
+            do i=1,ni(m)
+                do j=1,nj(m)
+                    do k=1,nk(m)
+                        read(IOunit,*) y(i,j,k,m)
+                    end do
+                end do
+            end do
+
+
+            do i=1,ni(m)
+                do j=1,nj(m)
+                    do k=1,nk(m)
+                        read(IOunit,*) z(i,j,k,m)
+                    end do
+                end do
+            end do
+        enddo
+
+        return
+
+        ! close file
+        close(IOunit)
+
+    end SUBROUTINE read_p3d_surf
+
 End MODULE Util
