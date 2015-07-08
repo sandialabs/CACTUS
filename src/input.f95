@@ -16,6 +16,7 @@ SUBROUTINE input(ErrFlag)
     use vortex
     use wakedata
     use time
+    use wallgeom
     use wallsoln 
     use regtest
     use output 
@@ -37,7 +38,10 @@ SUBROUTINE input(ErrFlag)
         
 
     ! Temp buffers
+    
     character(MaxReadLine) :: AFDPath(InBufferNumSectionTables) ! Airfoil section data path      
+    character(MaxReadLine) :: WallMeshPath ! Wall mesh file path      
+
     integer :: WLI(InBufferNumWL)     ! wake line index buffer
 
     ! Namelist input file declaration
@@ -48,7 +52,8 @@ SUBROUTINE input(ErrFlag)
     NAMELIST/CaseInputs/jbtitle,GeomFilePath,RPM,Ut,nSect,AFDPath, &
         hAG,dFS,rho,vis,tempr,hBLRef,slex,Cdpar,CTExcrM, &
         WLI,Igust,gustamp,gusttime,gustX0, &
-        Itower,tower_Npts,tower_x,tower_ybot,tower_ytop,tower_D,tower_CD
+        Itower,tower_Npts,tower_x,tower_ybot,tower_ytop,tower_D,tower_CD, &
+        LoadWalls,WallMeshPath
 
     NAMELIST/ConfigOutputs/Output_ELFlag,Output_DSFlag,WallOutFlag,DiagOutFlag, &
         WakeElementOutFlag,WakeElementOutIntervalTimesteps,WakeElementOutStartTimestep,WakeElementOutEndTimestep, &
@@ -103,6 +108,7 @@ SUBROUTINE input(ErrFlag)
     tower_ytop = 0.0
     tower_D    = 0.05
     tower_CD   = 1.0
+    LoadWalls  = 0
     
     ! output options
     Output_ELFlag      = 0 
@@ -228,6 +234,9 @@ SUBROUTINE input(ErrFlag)
 
     ! Timestep filter setup
     KTF=1.0/real(ntsf)
+
+    ! Read in wall geometry
+    if (LoadWalls == 1) Call read_p3d_walls(WallMeshPath)
 
     ! Airfoil Data Tables: Read CL, CD, CM vs AOA from data files
     ! Format Example:
