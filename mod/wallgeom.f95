@@ -33,6 +33,7 @@ module wallgeom
     end type WallType
 
     integer                     :: Nwalls             ! number of walls
+    integer                     :: NumWP_total        ! total number of wall panels
     type(WallType), allocatable :: Walls(:)
 
 contains
@@ -85,6 +86,9 @@ contains
         ! allocate for Walls
         allocate(Walls(nblocks))
 
+        ! set initial value fo NumWP_total
+        NumWP_total = 0
+
         ! for each block (or each "wall panel")
         do m = 1,nblocks
             if (nk(m) > 1) then
@@ -94,6 +98,9 @@ contains
             ! compute the number of panels
             nnodes  = ni(m)*nj(m)
             npanels = (ni(m)-1)*(nj(m)-1)
+
+            ! add to the total number of wall panels
+            NumWP_total = NumWP_total + npanels
 
             ! set some WallType variables
             Walls(m)%NumWP1 = ni(m)-1
