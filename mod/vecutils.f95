@@ -1,15 +1,25 @@
 module vecutils
 
+    ! module vec : functions for performing vector operations
+
     implicit none
     
     private
-    public cross3, mag3, dist_point_to_segment
+    public cross3, mag3, calcrotation3
 
 contains
 
     pure function cross3(a,b)
 
         ! cross3() : returns the cross product a x b, with a(3) and b(3)
+        ! 
+        !   Inputs:
+        !   =======
+        !   a,b      : real(3) vectors
+        !
+        !   Outputs:
+        !   ========
+        !   cross(3) : real(3) vector
 
         real, intent(in) :: a(3), b(3)
         real :: cross3(3)
@@ -24,45 +34,42 @@ contains
     pure function mag3(a)
 
         ! mag3() : returns the magnitude of a(3)
+        !
+        !   Inputs:
+        !   =======
+        !   a        : real(3) vector
+        !
+        !   Outputs:
+        !   ========
+        !   mag      : real, length of a
 
         real, intent(in) :: a(3)
-        real :: mag3
+        real             :: mag3
 
         mag3 = sqrt(sum(a**2))
 
     end function mag3
 
 
-    pure function dist_point_to_segment(p,p0,p1)
+    subroutine calcrotation3(R,VecI,VecO,reverse)
 
-        ! dist_point_to_segment() : returns the shortest distance from a point p to a line 
-        !   segment with endpoints p0, p1
-        !   based on the method http://geomalgorithms.com/a02-_lines.html
+        real    :: R(3,3), VecI(3), VecO(3)
+        integer :: reverse
 
-        real, intent(in) :: p(3),p0(3),p1(3)
-        real :: dist_point_to_segment
-        real :: v(3), w(3), c1, c2, b, pb(3)
+        ! Apply rotation matrix R to VecI to get VecO
+        ! Reverse: 1 to use the transpose of R
 
-        v = p1 - p0
-        w = p - p0
-
-        c1 = dot_product(w,v)
-        if (c1 <= 0) then
-            dist_point_to_segment = mag3(p-p0)
-            return
-        end if
-            
-        c2 = dot_product(v,v)
-        if (c2 <= 0) then
-            dist_point_to_segment = mag3(p-p1)
-            return
+        if (reverse == 0) then
+            VecO(1)=R(1,1)*VecI(1)+R(1,2)*VecI(2)+R(1,3)*VecI(3)
+            VecO(2)=R(2,1)*VecI(1)+R(2,2)*VecI(2)+R(2,3)*VecI(3)
+            VecO(3)=R(3,1)*VecI(1)+R(3,2)*VecI(2)+R(3,3)*VecI(3) 
+        else
+            VecO(1)=R(1,1)*VecI(1)+R(2,1)*VecI(2)+R(3,1)*VecI(3)
+            VecO(2)=R(1,2)*VecI(1)+R(2,2)*VecI(2)+R(3,2)*VecI(3)
+            VecO(3)=R(1,3)*VecI(1)+R(2,3)*VecI(2)+R(3,3)*VecI(3)                         
         end if
 
-        b = c1/c2
-        pb = p0 + b*v
-        dist_point_to_segment = mag3(p-pb)
-
-    end function dist_point_to_segment
+    end subroutine calcrotation3
 
 
 end module vecutils
