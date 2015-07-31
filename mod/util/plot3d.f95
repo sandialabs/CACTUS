@@ -4,6 +4,9 @@ module plot3d
 
     implicit none
 
+    private
+    public read_p3d_multiblock
+    
     integer, parameter :: IOunit = 20
 
 contains
@@ -28,16 +31,27 @@ contains
         !   ...
         !   [z_nz]
         !   EOF
+        !
+        !   Inputs
+        !   ======
+        !   xyz_filename : Plot3d mesh filename (*.xyz)
+        !
+        !   Outputs
+        !   =======
+        !   nblocks      : number of blocks
+        !   ni           : mesh dimensions in first direction
+        !   nj           : mesh dimensions in second direciton
+        !   nk           : mesh dimensions in third direction
 
-        character(len=*), intent(in) :: xyz_filename 
+        character(len=*), intent(in) :: xyz_filename                             ! Plot3d mesh filename (*.xyz)
+
+        integer, intent (out)             :: nblocks                             ! number of blocks
+        integer, allocatable, intent(out) :: ni(:), nj(:), nk(:)                 ! mesh dimensions
+        real, allocatable, intent(out)    :: x(:,:,:,:), y(:,:,:,:), z(:,:,:,:)  ! mesh coordinates
 
         integer :: i,j,k
         integer :: m,n
         integer :: nimax, njmax, nkmax
-
-        integer, intent (out)             :: nblocks                             ! number of blocks (out)
-        integer, allocatable, intent(out) :: ni(:), nj(:), nk(:)                 ! mesh dimensions (out)
-        real, allocatable, intent(out)    :: x(:,:,:,:), y(:,:,:,:), z(:,:,:,:)  ! mesh coordinates (out)
 
         ! open file
         open(unit=IOunit, form='formatted', file=xyz_filename)
@@ -97,5 +111,6 @@ contains
         close(IOunit)
 
     end subroutine read_p3d_multiblock
+
 
 end module plot3d
