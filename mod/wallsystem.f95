@@ -2,7 +2,9 @@ module wallsystem
 
     ! wallsystem module for managing multiple walls and wall solution (strengths)
 
+    use util, only: cross
     use vecutils, only: cross3, mag3, calcrotation3
+    use plot3d, only: read_p3d_multiblock
     use wallgeom
     use quadsourcepanel
 
@@ -78,10 +80,7 @@ contains
         real    :: R(3,3)
 
         ! temporary variables cont'd: counters for looping through the contatenation
-        integer :: iw,jw                    ! inner/outer wall index
         integer :: ip_global,jp_global      ! inner/outer wall panel index (in entire wallsystem)
-        integer :: ip_local, jp_local       ! inner/outer wall panel index (local to each wall)
-        integer :: i_local, j_local         ! outer wall panel coordinate (i,j)
         integer :: info
         integer :: selfinfluence
 
@@ -89,10 +88,7 @@ contains
         do ip_global=1,NumWP_total
             do jp_global=1,NumWP_total
 
-                ! get the index of the walls corresponding to the inner/outer loop panels
-                call global_ip_to_local_iwip(ip_global,iw,ip_local) ! the "target", whose panel we are trying to find the influence at the center of
-                call global_ip_to_local_iwip(jp_global,jw,jp_local)
-
+                ! check if we are computing induced velocity of panel on itself
                 if (jp_global==ip_global) then
                     selfinfluence = 1
                 else
@@ -104,10 +100,8 @@ contains
                 R(2,1:3)=W2Vec(jp_global,1:3)
                 R(3,1:3)=W3Vec(jp_global,1:3)
 
-                ! get the node coordinates
-                call ij_from_ip_local(Walls(jw),jp_local,i_local,j_local)
-
-                call nodepoints_from_ij_local(Walls(jw),i_local,j_local,p1,p2,p3,p4)
+                ! get the coordinates of the nodes which make up the jp-th panel
+                call ip_global_to_nodepoints(jp_global,p1,p2,p3,p4)
 
                 ! get the relative position of the panel centers (outer-inner)
                 p        = WCPoints(ip_global,1:3) ! the point of interest
@@ -181,28 +175,24 @@ contains
         
         ! temporary variables
         real                :: R(3,3)
-        integer             :: i, iw
+        integer             :: i
         real                :: p(3), p_center(3)
         real                :: p1(3), p2(3), p3(3), p4(3) 
         real                :: p_plane(3), p1_plane(3), p2_plane(3), p3_plane(3), p4_plane(3)
         real                :: dvel(3), dvel_global(3)
-        integer             :: i_local, j_local, ip_local
         real                :: sigma
         integer             :: info
         real                :: quad(4,3)
 
         vel(:) = 0.0
         do i=1,NumWP_total
-            call global_ip_to_local_iwip(i,iw,ip_local) ! the "target", whose panel we are trying to find the influence at the center of
-
             ! get the node coordinates
-            call ij_from_ip_local(Walls(iw),ip_local,i_local,j_local)
-            call nodepoints_from_ij_local(Walls(iw),i_local,j_local,p1,p2,p3,p4)
+            call ip_global_to_nodepoints(i,p1,p2,p3,p4)
 
             ! rotation matrix from global to panel coordinates
-            R(1,1:3 = W1Vec(i,1:3)
-            R(2,1:3 = W2Vec(i,1:3)
-            R(3,1:3 = W3Vec(i,1:3)
+            R(1,1:3) = W1Vec(i,1:3)
+            R(2,1:3) = W2Vec(i,1:3)
+            R(3,1:3) = W3Vec(i,1:3)
 
             ! get the relative position of the panel centers (outer-inner)
             p        = point ! the point of interest
@@ -243,8 +233,8 @@ contains
     end subroutine wall_ind_vel
 
 
-    subroutine global_ip_to_local_iwip(ip_global,iw,ip_local)
-        ! global_ip_to_local_iwip() : returns the wall index and local panel index of a given "global" wall panel
+    subroutine ip_global_to_iwip_local(ip_global,iw,ip_local)
+        ! ip_global_to_iwip_local() : returns the wall index and local panel index of a given "global" wall panel
 
         integer, intent(in) :: ip_global
         integer, intent(out) :: iw, ip_local
@@ -256,7 +246,29 @@ contains
             iw = iw + 1
         end do
 
-    end subroutine global_ip_to_local_iwip
+    end subroutine ip_global_to_iwip_local
+
+
+    subroutine ip_global_to_nodepoints(ip_global,p1,p2,p3,p4)
+
+        ! ip_global_to_nodepoints() : returns the four node points p1,p2,p3,p4 corresponding to a given "global" wall panel
+
+        integer, intent(in) :: ip_global
+        real, intent(out)   :: p1(3), p2(3), p3(3), p4(3)
+        
+        integer             :: iw, ip_local
+        integer             :: i_panel, j_panel
+
+        ! get the wall number, iw
+        call ip_global_to_iwip_local(ip_global,iw,ip_local)
+        
+        ! get the local panel indices, i_panel & j_panel
+        call ip_local_to_ij_panel(Walls(iw),ip_local,i_panel,j_panel)
+
+        ! get the four nodes which make up the quadrilateral
+        call ij_local_to_nodepoints(Walls(iw),i_panel,j_panel,p1,p2,p3,p4)
+
+    end subroutine ip_global_to_nodepoints
 
 
     subroutine read_p3d_walls(WallMeshPath)
@@ -327,7 +339,7 @@ contains
                     Walls(m)%W1Vec(idx,1:3)    = (p2-p1)/sqrt(sum((p2-p1)**2))                     ! panel 1-tangential vector
                     Walls(m)%W2Vec(idx,1:3)    = (p4-p1)/sqrt(sum((p4-p1)**2))                     ! panel 2-tangential vector
 
-                    ! compute ! panel normal vector
+                    ! compute panel normal vector
                     Call cross(Walls(m)%W1Vec(idx,1),Walls(m)%W1Vec(idx,2),Walls(m)%W1Vec(idx,3),&
                                Walls(m)%W2Vec(idx,1),Walls(m)%W2Vec(idx,2),Walls(m)%W2Vec(idx,3),&
                                Walls(m)%W3Vec(idx,1),Walls(m)%W3Vec(idx,2),Walls(m)%W3Vec(idx,3))    

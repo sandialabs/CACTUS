@@ -53,8 +53,8 @@ contains
     end subroutine wall_cns
 
 
-    subroutine ij_from_ip_local(Wall,ip_local,i,j)
-        ! ij_from_ip_local() : returns the i,j index of the panel with "flat" index given by ip_local
+    subroutine ip_local_to_ij_panel(Wall,ip_local,i,j)
+        ! ip_local_to_ij_panel() : returns the i,j index of the panel with "flat" index given by ip_local
         
         type(WallType), intent(in) :: Wall
         integer, intent(in)        :: ip_local
@@ -63,11 +63,11 @@ contains
         i = mod(ip_local-1,Wall%NumWP1) + 1
         j = (ip_local-1)/Wall%NumWP1    + 1 ! forced to integer
 
-    end subroutine ij_from_ip_local
+    end subroutine ip_local_to_ij_panel
 
 
-    subroutine nodepoints_from_ij_local(Wall,i,j,p1,p2,p3,p4)
-        ! nodepoints_from_ij_local() : returns the coordinates of the four node points of the
+    subroutine ij_local_to_nodepoints(Wall,i,j,p1,p2,p3,p4)
+        ! ij_local_to_nodepoints() : returns the coordinates of the four node points of the
         !   quadrilateral source panel whose center is indexed by i,j
 
         type(WallType), intent(in) :: Wall
@@ -82,7 +82,7 @@ contains
         p3 = Wall%pnodes(i+1 + (j  )*(NumWP1+1),1:3)
         p4 = Wall%pnodes(i   + (j  )*(NumWP1+1),1:3)
 
-    end subroutine nodepoints_from_ij_local
+    end subroutine ij_local_to_nodepoints
 
 
 end module wallgeom
