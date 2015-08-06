@@ -11,9 +11,9 @@ module wallsystem
     implicit none
 
     ! wallsystem geometry
-    integer                     :: Nwalls             ! number of walls
-    integer                     :: NumWP_total        ! total number of wall panels
-    integer                     :: NumNodes_total     ! total number of nodes
+    integer           :: Nwalls              ! number of walls
+    integer           :: NumWP_total         ! total number of wall panels
+    integer           :: NumWPNodes_total    ! total number of nodes
 
     ! concatenated source panel geometry
     real, allocatable :: W1Vec(:,:)
@@ -27,44 +27,62 @@ module wallsystem
     real, allocatable :: WRHS(:,:)
     real, allocatable :: WSource(:,:)
 
+    ! output for rev-averaged source strengths
+    real, allocatable :: WSourceOut(:)
+
     ! array to hold Walls
     type(WallType), allocatable :: Walls(:)
 
 contains
 
-    subroutine wallsystem_cns(NumWP_total)
+    subroutine wallsystem_cns()
 
-        ! wallsystem_cns() : allocate storage for the wallsystem, and initialize
-        !   the source panel strengths/RHS to zero
-        integer, intent(in) :: NumWP_total
-        integer             :: iw, vec_position
+        ! wallsystem_cns() : allocate storage for the wallsystem
 
+        integer :: iw, vp
+
+        ! set the number of walls
+        Nwalls = size(Walls)
+
+        ! count the number of panels and nodes
+        NumWP_total = 0
+        NumWPNodes_total = 0
+        do iw=1,Nwalls
+            NumWP_total = NumWP_total + Walls(iw)%NumWP
+            NumWPNodes_total = NumWPNodes_total + Walls(iw)%NumWPNodes
+        end do
+
+        ! allocate storage for the concatenated geometry arrays
         allocate(W1Vec(NumWP_total,3))
         allocate(W2Vec(NumWP_total,3))
         allocate(W3Vec(NumWP_total,3))
         allocate(WCPoints(NumWP_total,3))
 
+        ! allocate storage for the solution arrays
         allocate(WInf(NumWP_total,NumWP_total))
         allocate(WInfI(NumWP_total,NumWP_total))
         allocate(WRHS(NumWP_total,1))
         allocate(WSource(NumWP_total,1))
 
-        ! concatenate wall geometry into single long arrays
-        vec_position = 1
-        do iw=1,NWalls
-            W1Vec(vec_position:vec_position+Walls(iw)%NumWP,:)    = Walls(iw)%W1Vec
-            W2Vec(vec_position:vec_position+Walls(iw)%NumWP,:)    = Walls(iw)%W2Vec
-            W3Vec(vec_position:vec_position+Walls(iw)%NumWP,:)    = Walls(iw)%W3Vec
-            WCPoints(vec_position:vec_position+Walls(iw)%NumWP,:) = Walls(iw)%WCPoints
+        ! allocate storage for the rev-averaged output array
+        allocate(WSourceOut(NumWP_total))
 
-            vec_position = vec_position + Walls(iw)%NumWP
+        ! concatenate wall geometry into single long arrays
+        vp = 1
+        do iw=1,NWalls
+            W1Vec(   vp:vp+Walls(iw)%NumWP-1,:) = Walls(iw)%W1Vec
+            W2Vec(   vp:vp+Walls(iw)%NumWP-1,:) = Walls(iw)%W2Vec
+            W3Vec(   vp:vp+Walls(iw)%NumWP-1,:) = Walls(iw)%W3Vec
+            WCPoints(vp:vp+Walls(iw)%NumWP-1,:) = Walls(iw)%WCPoints
+
+            vp = vp + Walls(iw)%NumWP
         end do
 
         ! initialize source panel strengths and RHS to zero
         WSource(:,:) = 0.0
-        WRHS(:,:) = 0.0
+        WRHS(:,:)    = 0.0
 
-    end subroutine
+    end subroutine wallsystem_cns
 
 
     subroutine gen_influence_matrix()
@@ -184,7 +202,9 @@ contains
         integer             :: info
         real                :: quad(4,3)
 
+        ! initialize velocity to 0.0
         vel(:) = 0.0
+
         do i=1,NumWP_total
             ! get the node coordinates
             call ip_global_to_nodepoints(i,p1,p2,p3,p4)
@@ -298,7 +318,7 @@ contains
 
         ! set initial value fo NumWP_total
         NumWP_total = 0
-        NumNodes_total = 0
+        NumWPNodes_total = 0
 
         ! for each block (or each "wall panel")
         do m = 1,nblocks
@@ -313,16 +333,16 @@ contains
 
             ! add to the total number of wall panels
             NumWP_total = NumWP_total + npanels
-            NumNodes_total = NumNodes_total + nnodes
+            NumWPNodes_total = NumWPNodes_total + nnodes
 
             ! set some WallType variables
-            Walls(m)%NumWP1   = ni(m)-1
-            Walls(m)%NumWP2   = nj(m)-1
-            Walls(m)%NumWP    = npanels
-            Walls(m)%NumNodes = nnodes
+            Walls(m)%NumWP1     = ni(m)-1
+            Walls(m)%NumWP2     = nj(m)-1
+            Walls(m)%NumWP      = npanels
+            Walls(m)%NumWPNodes = nnodes
 
             ! call the wall constructor subroutine (allocator for internal wall variables)
-            Call wall_cns(Walls(m),npanels,nnodes)
+            Call wall_cns(Walls(m))
 
             ! loop through grid coordinates
             idx = 1

@@ -10,7 +10,7 @@ module wallgeom
         integer           :: NumWP1                   ! Number of wall panels in the 1-direction
         integer           :: NumWP2                   ! Number of wall panels in the 2-direction
         integer           :: NumWP                    ! Number of wall panels (on this particular wall)
-        integer           :: NumNodes                 ! Number of nodes (on this particula wall)
+        integer           :: NumWPNodes               ! Number of nodes (on this particula wall)
 
         real, allocatable :: WCPoints(:,:)            ! Panel center points (over radius)
         real, allocatable :: W1Vec(:,:)               ! Panel tangential vectors in the length direction
@@ -31,17 +31,20 @@ module wallgeom
 
 contains
 
-    subroutine wall_cns(Wall,NumWP,NumNodes)
+    subroutine wall_cns(Wall)
 
         ! Constructor for the arrays in this module
-        type(WallType) :: Wall
-        integer        :: WallInd,NumWP,NumNodes
+        type(WallType), intent(inout) :: Wall
+        integer        :: NumWP,NumWPNodes
+
+        NumWP      = Wall%NumWP
+        NumWPNodes = Wall%NumWPNodes
 
         allocate(Wall%WCPoints(NumWP,3))
         allocate(Wall%W1Vec(NumWP,3))
         allocate(Wall%W2Vec(NumWP,3))
         allocate(Wall%W3Vec(NumWP,3))
-        allocate(Wall%pnodes(NumNodes,3))
+        allocate(Wall%pnodes(NumWPNodes,3))
 
         allocate(Wall%WSource(NumWP,1))
 
