@@ -1,6 +1,8 @@
 subroutine WSolnSetup()
 
-    use wallsoln 
+    use util
+    use wallsoln
+    use wallsystem
 
     integer :: i, j, Self, IBCInd, BCRow
     integer :: INFO
@@ -11,57 +13,10 @@ subroutine WSolnSetup()
     if (GPFlag==1) then
 
         ! Setup wall self influence matrix 
-        do i=1,NumWP
-            do j=1,NumWP
-                if (j==i) then
-                    Self=1
-                else
-                    Self=0
-                end if
-
-                ! Rotation from global to panel i
-                R(1,1:3)=WXVec(i,1:3)
-                R(2,1:3)=WYVec(i,1:3)
-                R(3,1:3)=WZVec(i,1:3)
-
-                ! Calc influence in panel frame
-                dPG=WCPoints(j,1:3)-WCPoints(i,1:3)                         
-                Call CalcRotation3(R,dPG,Point,0)                     
-                Call RectSourceVel(Point,WPL(i),WPW(i),1.0,Self,WEdgeTol,0,dVel,dudx)
-
-                ! Rotate to global frame
-                Call CalcRotation3(R,dVel,dVelG,1)
-
-                ! Calc dot product of induced velocity with panel normal
-                WInCoeffN(j,i)=sum(dVelG*WZVec(j,1:3))
-            end do
-        end do
+        call gen_influence_matrix()
 
         ! Store wall solution matrix and inverse
-        WSMat=WInCoeffN
-
-        ! LAPACK => DGESV: Linear equation solution A*X=B where A(N,N) X(N,NRHS) B(N,NRHS)
-        ! Note that if NRHS = N, and B is the identity, X is the inverse of A...
-        ! Initialize inverse to the identity
-        WSMatI(:,:)=0.0
-        do i=1,NumWP
-            do j=1,NumWP
-                if (j==i) then
-                    WSMatI(i,j)=1.0 
-                end if
-            end do
-        end do
-
-        allocate(IPIV(NumWP)) ! allocation storage for pivot array
-        Call DGESV(NumWP,NumWP,WSMat,NumWP,IPIV,WSMatI,NumWP,INFO)
-        if (INFO>0) then
-            write(6,'(A)') 'Matrix inversion failed in WSolnSetup. Exiting...'
-            stop
-        end if
-
-        ! Initialize source strengths and RHS to zero
-        WSource(:,:)=0.0
-        WRHS(:,:)=0.0
+        call invert_influence_matrix()
 
     end if
 

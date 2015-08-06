@@ -1,15 +1,20 @@
 subroutine WGeomSetup() 
 
+    use wallgeom
+    use wallsystem
     use wallsoln 
     use pidef      
-    use util  
+    use util
+    use vecutils
 
     real :: PlaneExtent, dsMinFS, dsMaxFS, dsMinW, dsMaxW, dsC, dsOut, GCS, yPanFS, yPan
     real :: RC, C1, C2, dB, RU, C1U, C2U, dBU, RD, C1D, C2D, dBD, RW, C1W, C2W, dBW, B
     real :: P1(3), P2(3), P3(3), P4(3)
     real, allocatable :: xPanGP(:), zPanGP(:)
     real, allocatable :: xPanFS(:), zPanFS(:)       
-    integer :: Ind, NU, ND, NW      
+    integer :: Ind, NU, ND, NW
+
+    type(WallType) :: Wall
 
     ! Plane extent (over radius). To be applied in every direction around the turbine location...
     PlaneExtent=GPGridExtent
@@ -32,20 +37,34 @@ subroutine WGeomSetup()
             dsN=.1*abs(GPy) 
         end if
         dsC=max(dsMinW,min(dsMaxW,dsN))
+        
         ! Apply user specified grid scale factor
         dsC=dsC*GPGridSF
 
-        RC=30.0 ! Clustering ratio, must be >= 1 (Ex: 10 for 10x density at center of plane)
-        C1=1.0/(1.0+3.0/RC)
-        C2=3.0/RC*C1
-        dB=dsC/C2
-        NumWPx=ceiling(2.0*PlaneExtent/dB)
-        NumWPz=NumWPx
-        NumWP=NumWPx*NumWPz
+        RC     = 30.0                             ! Clustering ratio, must be >= 1 (Ex: 10 for 10x density at center of plane)
+        C1     = 1.0/(1.0+3.0/RC)
+        C2     = 3.0/RC*C1
+        dB     = dsC/C2
+
+        ! count number of panels
+        NumWPx = ceiling(2.0*PlaneExtent/dB)
+        NumWPz = NumWPx
+        NumWP  = NumWPx*NumWPz
+
+        ! allocate storage for a single wall 
+        allocate(Walls(1))
+
+        ! define some of the parameters of the wall
+        Wall%NumWP      = NumWP
+        Wall%NumWP1     = NumWPx
+        Wall%NumWP2     = NumWPz
+        Wall%NumWPNodes = (NumWPx+1)*(NumWPz+1)
+
+        ! call constructor for wall geometry
+        call wall_cns(Wall)
 
         ! Allocate local and global arrays
         allocate(xPanGP(NumWPx+1),zPanGP(NumWPz+1))
-        Call wallsoln_gp_cns()
 
         dB=2.0/real(NumWPx)
         do i=1,NumWPx+1
@@ -59,25 +78,45 @@ subroutine WGeomSetup()
         Ind=1
         do i=1,NumWPz
             do j=1,NumWPx
-                P1=[xPanGP(j),yPan,zPanGP(i)]       ! lower panel x, lower panel y corner point
-                P2=[xPanGP(j+1),yPan,zPanGP(i)]     ! pos panel x neighbor point
-                P3=[xPanGP(j),yPan,zPanGP(i+1)] ! pos panel y neighbor point
-                P4=[xPanGP(j+1),yPan,zPanGP(i+1)]   ! pos panel x, pos panel y neighbor point
-                WCPoints(Ind,1:3)=0.25*(P1+P2+P3+P4)    ! panel center
-                WXVec(Ind,1:3)=P2-P1        ! panel x tangential vector
-                WPL(Ind)=sqrt(sum(WXVec(Ind,1:3)**2))       ! panel x length
-                WXVec(Ind,1:3)=WXVec(Ind,1:3)/WPL(Ind)      ! normalize
-                WYVec(Ind,1:3)=P1-P3        ! panel y tangential vector, set so that panel normal will be in the domain inward direction
-                WPW(Ind)=sqrt(sum(WYVec(Ind,1:3)**2))       ! panel y length
-                WYVec(Ind,1:3)=WYVec(Ind,1:3)/WPW(Ind)      ! normalize
-                Call cross(WXVec(Ind,1),WXVec(Ind,2),WXVec(Ind,3),WYVec(Ind,1),WYVec(Ind,2),WYVec(Ind,3),WZVec(Ind,1),WZVec(Ind,2),WZVec(Ind,3))    ! panel normal vector   
-                WZVec(Ind,1:3)=WZVec(Ind,1:3)/sqrt(sum(WZVec(Ind,1:3)**2))      ! normalize 
+                
+                ! set up corners of panel
+                P1=[xPanGP(j)  ,yPan,zPanGP(i)]                ! lower panel x, lower panel y corner point
+                P2=[xPanGP(j+1),yPan,zPanGP(i)]                ! pos panel x neighbor point
+                P3=[xPanGP(j)  ,yPan,zPanGP(i+1)]              ! pos panel y neighbor point
+                P4=[xPanGP(j+1),yPan,zPanGP(i+1)]              ! pos panel x, pos panel y neighbor point
+
+                Wall%WCPoints(Ind,1:3)=0.25*(P1+P2+P3+P4)      ! panel center
+                
+                Wall%W1Vec(Ind,1:3)=(P2-P1)/mag3(P2-P1)        ! panel x tangential unit vector
+                Wall%W2Vec(Ind,1:3)=(P1-P3)/mag3(P1-P3)        ! panel y tangential unit vector, set so that panel normal will be in the domain inward direction
+
+                Call cross(Wall%W1Vec(Ind,1),Wall%W1Vec(Ind,2),Wall%W1Vec(Ind,3), &
+                           Wall%W2Vec(Ind,1),Wall%W2Vec(Ind,2),Wall%W2Vec(Ind,3), &
+                           Wall%W3Vec(Ind,1),Wall%W3Vec(Ind,2),Wall%W3Vec(Ind,3))    ! panel normal vector   
+                
+                Wall%W3Vec(Ind,1:3)=Wall%W3Vec(Ind,1:3)/mag3(Wall%W3Vec(Ind,1:3)**2)      ! normalize 
+                
+                Ind=Ind+1
+
+            end do
+        end do
+
+        ! set the wall point node locations
+        Ind=1
+        do i=1,NumWPz+1
+            do j=1,NumWPx+1
+                Wall%pnodes(Ind,1:3) = [xPanGP(j),yPan,zPanGP(i)]
                 Ind=Ind+1
             end do
         end do
 
-        ! Panel edge tolerance (needs to be less than 1/2 of the min panel dimension)
-        WEdgeTol=min(minval(WPL),minval(WPW))/10.0
+        ! call print_matrix_stdout(Wall%pnodes)
+        ! stop
+        ! get the wall
+        Walls(1) = Wall
+
+        ! build the concatenated wall system
+        call wallsystem_cns()
 
     end if
 

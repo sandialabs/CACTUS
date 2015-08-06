@@ -3,33 +3,20 @@ MODULE wallsoln
     ! Wall panel geometry and solution arrays
     ! Panel functions included...
 
+    use wallsystem
+
     ! Ground plane (rectangular source panel implementation)
 
-    integer :: GPFlag           ! Set to 1 to do ground plane calculation, otherwise 0
+    integer :: GPFlag          ! Set to 1 to do ground plane calculation, otherwise 0
 
-    real, allocatable :: WCPoints(:,:)  ! Panel center points (over radius)
-    real, allocatable :: WXVec(:,:)     ! Panel tangential vectors in the length direction
-    real, allocatable :: WYVec(:,:)     ! Panel tangential vectors in the width
-    real, allocatable :: WZVec(:,:)     ! Panel normal vectors
-    real, allocatable :: WPL(:)     ! Panel lengths (over radius)
-    real, allocatable :: WPW(:)     ! Panel widths (over radius)
-    real :: GPy             ! y location of ground plane (over radius)
-    real :: GPGridSF                        ! Grid scale factor (factor on default grid discretization level)       
-    real :: GPGridExtent        ! Distance ground plane extends in both directions from the origin
-    real :: WEdgeTol            ! Tolerance around panel edge in which to evaluate influence in special way (to avoid inf...)
-    integer :: NumWPx           ! Number of wall panels in the x direction
-    integer :: NumWPz                       ! Number of wall panels in the z direction
-    integer :: NumWP            ! Total number of wall panels    
-
-    real, allocatable :: WInCoeffN(:,:) ! Wall normal velocity self influence matrix
-    real, allocatable :: WSource(:,:)       ! Wall source density values (column vector) (non-dimensional, normalized by freestream velocity)
-    real, allocatable :: WSMat(:,:)     ! Wall solution matrix
-    real, allocatable :: WSMatI(:,:)    ! Inverse of the wall solution matrix
-    real, allocatable :: WRHS(:,:)      ! Right hand side vector for the wall solution
+    real    :: GPy             ! y location of ground plane (over radius)
+    real    :: GPGridSF        ! Grid scale factor (factor on default grid discretization level)       
+    real    :: GPGridExtent    ! Distance ground plane extends in both directions from the origin
+    real    :: WEdgeTol        ! Tolerance around panel edge in which to evaluate influence in special way (to avoid inf...)
+    integer :: NumWP           ! Total number of wall panels    
 
     ! Ground plane data output
     character(1000) :: GPOutHead = 'X/R (-),Y/R (-),Z/R (-),SourceDens/Uinf (-)'
-    real, allocatable :: WSourceOut(:)       ! Output buffer for wall source density values (non-dimensional, normalized by freestream velocity)
 
 
     ! Free surface (rectangular source panel implementation)
@@ -88,27 +75,6 @@ MODULE wallsoln
 
 
 CONTAINS
-
-    SUBROUTINE wallsoln_gp_cns()
-
-        ! Constructor for the arrays in this module
-
-        ! Ground plane              
-        allocate(WCPoints(NumWP,3))
-        allocate(WXVec(NumWP,3))
-        allocate(WYVec(NumWP,3))
-        allocate(WZVec(NumWP,3))
-        allocate(WPL(NumWP))
-        allocate(WPW(NumWP))
-        allocate(WInCoeffN(NumWP,NumWP))
-        allocate(WSource(NumWP,1))
-        allocate(WRHS(NumWP,1))
-        allocate(WSMat(NumWP,NumWP))
-        allocate(WSMatI(NumWP,NumWP))
-        ! Output              
-        allocate(WSourceOut(NumWP))   
-
-    End SUBROUTINE wallsoln_gp_cns
 
 
     SUBROUTINE wallsoln_fs_cns()
@@ -287,27 +253,13 @@ CONTAINS
 
         ! Calculate velocity induced by ground plane panels.
         ! Use CalcDer=1 to calc dudx
-        ! Note: the use of fortran 95 array math intrinsic functions (reshape, matmul) has been avoided to speed things up...
+
+        ! initialize to zero
         Vel(:)=0.0
 
-        do i=1,NumWP
+        ! compute the velocity from all panels in wallsystem
+        call wall_ind_vel(PointG,CalcDer,Vel,dudx)
 
-            ! Rotation from global to panel i
-            R(1,1:3)=WXVec(i,1:3)
-            R(2,1:3)=WYVec(i,1:3)
-            R(3,1:3)=WZVec(i,1:3)
-
-            ! Calc influence in panel frame
-            dPG=PointG-WCPoints(i,1:3)                            
-            Call CalcRotation3(R,dPG,Point,0)                        
-            Call RectSourceVel(Point,WPL(i),WPW(i),WSource(i,1),0,WEdgeTol,CalcDer,dVel,dudx)
-
-            ! Rotate to global frame
-            Call CalcRotation3(R,dVel,dVelG,1)                             
-
-            Vel=Vel+dVelG
-
-        end do
 
     End SUBROUTINE GPIndVel
 
@@ -369,26 +321,5 @@ CONTAINS
         end if
 
     End SUBROUTINE WallIndVel
-
-
-    SUBROUTINE CalcRotation3(R,VecI,VecO,Reverse)
-
-        real :: R(3,3), VecI(3), VecO(3)
-        integer :: Reverse
-
-        ! Apply rotation matrix R to VecI to get VecO
-        ! Reverse: 1 to use the transpose of R
-
-        if (Reverse == 0) then
-            VecO(1)=R(1,1)*VecI(1)+R(1,2)*VecI(2)+R(1,3)*VecI(3)
-            VecO(2)=R(2,1)*VecI(1)+R(2,2)*VecI(2)+R(2,3)*VecI(3)
-            VecO(3)=R(3,1)*VecI(1)+R(3,2)*VecI(2)+R(3,3)*VecI(3) 
-        else
-            VecO(1)=R(1,1)*VecI(1)+R(2,1)*VecI(2)+R(3,1)*VecI(3)
-            VecO(2)=R(1,2)*VecI(1)+R(2,2)*VecI(2)+R(3,2)*VecI(3)
-            VecO(3)=R(1,3)*VecI(1)+R(2,3)*VecI(2)+R(3,3)*VecI(3)                         
-        end if
-
-    End SUBROUTINE CalcRotation3
 
 End MODULE wallsoln
