@@ -262,7 +262,7 @@ contains
         iw = 1
         ip_local = ip_global
         do while (ip_local - Walls(iw)%NumWP > 0)
-            ip_local = ip_global - Walls(iw)%NumWP
+            ip_local = ip_local - Walls(iw)%NumWP
             iw = iw + 1
         end do
 
@@ -292,8 +292,9 @@ contains
 
 
     subroutine read_p3d_walls(WallMeshPath)
-        ! read_p3d_walls() : Read in a wall mesh from a Plot3d grid file.
-        !   Grid data from each block is loaded into a Wall type.
+        ! read_p3d_walls() : Read in a 2-D wall mesh from a Plot3d grid file.
+        !   Grid data from each block is loaded into a type(Wall), an array of which is stored
+        !   as Walls(:).
         !
         ! WallMeshPath (input) : Path to file containing a multi-block structured mesh.
     
@@ -323,7 +324,7 @@ contains
         ! for each block (or each "wall panel")
         do m = 1,nblocks
             if (nk(m) > 1) then
-                write(*,*) "Error in read_p3d_walls(): Wall dimension in 3rd direction is > 1 -- wall is a volume, not a wall!"
+                write(*,*) "Error in read_p3d_walls(): Wall dimension in 3rd direction is > 1 -- mesh is a volume, not a wall!"
                 stop
             end if
 
