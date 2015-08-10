@@ -22,10 +22,10 @@ module wallsystem
     real, allocatable :: WCPoints(:,:)
 
     ! wallsystem solution
-    real, allocatable :: WInf(:,:)                     ! influence matrix
-    real, allocatable :: WInfI(:,:)
-    real, allocatable :: WRHS(:,:)
-    real, allocatable :: WSource(:,:)
+    real, allocatable :: WInf(:,:)                     ! global influence matrix
+    real, allocatable :: WInfI(:,:)                    ! inverse of the global influence matrix
+    real, allocatable :: WRHS(:,:)                     ! global right hand side vector for wall solution
+    real, allocatable :: WSource(:,:)                  ! global wall strengths
 
     ! output for rev-averaged source strengths
     real, allocatable :: WSourceOut(:)
@@ -182,11 +182,11 @@ contains
     end subroutine invert_influence_matrix
 
 
-    subroutine wall_ind_vel(point,calcder,vel,dudx)
+    subroutine wall_ind_vel(p,calcder,vel,dudx)
 
         ! wall_ind_vel() : calculates the velocity induced by all the wall panels at a point
         
-        real, intent(in)    :: point(3)
+        real, intent(in)    :: p(3)
         integer, intent(in) :: calcder
         
         real, intent(out)   :: vel(3), dudx
@@ -194,7 +194,7 @@ contains
         ! temporary variables
         real                :: R(3,3)
         integer             :: i
-        real                :: p(3), p_center(3)
+        real                :: p_center(3)
         real                :: p1(3), p2(3), p3(3), p4(3) 
         real                :: p_plane(3), p1_plane(3), p2_plane(3), p3_plane(3), p4_plane(3)
         real                :: dvel(3), dvel_global(3)
@@ -214,11 +214,11 @@ contains
             R(2,1:3) = W2Vec(i,1:3)
             R(3,1:3) = W3Vec(i,1:3)
 
-            ! get the relative position of the panel centers (outer-inner)
-            p        = point ! the point of interest
+            ! get the center of the ith panel
             p_center = WCPoints(i,1:3)
 
             ! rotate the point locations to the local panel plane
+            ! (relative to the panel center)
             Call calcrotation3(R,p -p_center,p_plane ,0)
             Call calcrotation3(R,p1-p_center,p1_plane,0)
             Call calcrotation3(R,p2-p_center,p2_plane,0)
@@ -349,15 +349,15 @@ contains
             
             do j=1,nj(m)-1
                 do i=1,ni(m)-1
-                    ! get cell corners (ordered clockwise from lowest i,j)
+                    ! get cell corners (ordered clockwise from lowest i,j when viewed from behind panel)
                     p1 = [x(i  ,j  ,k,m), y(i  ,j  ,k,m), z(i  ,j  ,k,m)]
                     p2 = [x(i+1,j  ,k,m), y(i+1,j  ,k,m), z(i+1,j  ,k,m)]
                     p3 = [x(i+1,j+1,k,m), y(i+1,j+1,k,m), z(i+1,j+1,k,m)]
                     p4 = [x(i  ,j+1,k,m), y(i  ,j+1,k,m), z(i  ,j+1,k,m)]
 
                     Walls(m)%WCPoints(idx,1:3) = 0.25*(p1+p2+p3+p4)                                ! panel center
-                    Walls(m)%W1Vec(idx,1:3)    = (p2-p1)/sqrt(sum((p2-p1)**2))                     ! panel 1-tangential vector
-                    Walls(m)%W2Vec(idx,1:3)    = (p4-p1)/sqrt(sum((p4-p1)**2))                     ! panel 2-tangential vector
+                    Walls(m)%W1Vec(idx,1:3)    = (p2-p1)/mag3(p2-p1)                     ! panel 1-tangential vector
+                    Walls(m)%W2Vec(idx,1:3)    = (p4-p1)/mag3(p4-p1)                     ! panel 2-tangential vector
 
                     ! compute panel normal vector
                     Call cross(Walls(m)%W1Vec(idx,1),Walls(m)%W1Vec(idx,2),Walls(m)%W1Vec(idx,3),&
