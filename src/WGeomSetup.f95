@@ -76,25 +76,23 @@ subroutine WGeomSetup()
 
         ! Ordered list of panels going through x, then stepping y, repeat
         Ind=1
-        do i=1,NumWPz
-            do j=1,NumWPx
-                
-                ! set up corners of panel
-                P1=[xPanGP(j)  ,yPan,zPanGP(i)]                ! lower panel x, lower panel y corner point
-                P2=[xPanGP(j+1),yPan,zPanGP(i)]                ! pos panel x neighbor point
-                P3=[xPanGP(j)  ,yPan,zPanGP(i+1)]              ! pos panel y neighbor point
-                P4=[xPanGP(j+1),yPan,zPanGP(i+1)]              ! pos panel x, pos panel y neighbor point
+        do j=1,NumWPx
+            do i=1,NumWPz
+
+                ! get cell corners (ordered clockwise from lowest i,j when viewed from behind panel
+                P1=[xPanGP(j  ),yPan,zPanGP(i  )]              ! lower panel x, lower panel y corner point
+                P2=[xPanGP(j  ),yPan,zPanGP(i+1)]              ! pos panel x neighbor point
+                P3=[xPanGP(j+1),yPan,zPanGP(i+1)]              ! pos panel y neighbor point
+                P4=[xPanGP(j+1),yPan,zPanGP(i  )]              ! pos panel x, pos panel y neighbor point
 
                 Wall%WCPoints(Ind,1:3)=0.25*(P1+P2+P3+P4)      ! panel center
                 
                 Wall%W1Vec(Ind,1:3)=(P2-P1)/mag3(P2-P1)        ! panel x tangential unit vector
-                Wall%W2Vec(Ind,1:3)=(P1-P3)/mag3(P1-P3)        ! panel y tangential unit vector, set so that panel normal will be in the domain inward direction
+                Wall%W2Vec(Ind,1:3)=(P4-P1)/mag3(P4-P1)        ! panel y tangential unit vector, set so that panel normal will be in the domain inward direction
 
                 Call cross(Wall%W1Vec(Ind,1),Wall%W1Vec(Ind,2),Wall%W1Vec(Ind,3), &
                            Wall%W2Vec(Ind,1),Wall%W2Vec(Ind,2),Wall%W2Vec(Ind,3), &
-                           Wall%W3Vec(Ind,1),Wall%W3Vec(Ind,2),Wall%W3Vec(Ind,3))    ! panel normal vector   
-                
-                Wall%W3Vec(Ind,1:3)=Wall%W3Vec(Ind,1:3)/mag3(Wall%W3Vec(Ind,1:3)**2)      ! normalize 
+                           Wall%W3Vec(Ind,1),Wall%W3Vec(Ind,2),Wall%W3Vec(Ind,3))    ! panel unit normal vector   
                 
                 Ind=Ind+1
 
@@ -103,15 +101,13 @@ subroutine WGeomSetup()
 
         ! set the wall point node locations
         Ind=1
-        do i=1,NumWPz+1
-            do j=1,NumWPx+1
+        do j=1,NumWPx+1
+            do i=1,NumWPz+1
                 Wall%pnodes(Ind,1:3) = [xPanGP(j),yPan,zPanGP(i)]
                 Ind=Ind+1
             end do
         end do
 
-        ! call print_matrix_stdout(Wall%pnodes)
-        ! stop
         ! get the wall
         Walls(1) = Wall
 
