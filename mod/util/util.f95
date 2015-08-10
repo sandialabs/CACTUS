@@ -134,4 +134,39 @@ CONTAINS
     
     End SUBROUTINE file_to_stdout
 
+
+    ! DEBUGGING FUNCTIONS !
+    subroutine print_matrix_file(matrix,filename)
+        real, allocatable :: matrix(:,:)
+        character(80) :: filename
+
+        open(27,file=filename)
+        do i=1,size(matrix,dim=1)
+            write(27,*) matrix(i,:)
+        end do
+        close(27)
+    end subroutine print_matrix_file
+
+
+    subroutine print_matrix_stdout(matrix)
+        real, allocatable :: matrix(:,:)
+        integer :: iounit
+
+        do i=1,size(matrix,dim=1)
+            write(*,*) matrix(i,:)
+        end do
+    end subroutine print_matrix_stdout
+
+
+    subroutine print_vec3array(vec3array)
+        real, allocatable :: vec3array(:,:)
+        integer :: i
+        
+        do i=1,size(vec3array,dim=1)
+            write(*,*) vec3array(i,:3)
+        end do
+
+    end subroutine print_vec3array
+
+
 End MODULE Util
