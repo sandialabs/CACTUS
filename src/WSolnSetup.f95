@@ -10,7 +10,11 @@ subroutine WSolnSetup()
     real :: R(3,3), Point(3), dPG(3), dVel(3), dVelG(3), dudx
 
 
+    ! Set up ground plane system
     if (GPFlag==1) then
+
+        !! This assumes WGeomSetup() has already been called, and that the ground plane has been configured
+        !  as a wall system of one wall.
 
         ! Setup wall self influence matrix 
         call gen_influence_matrix()
@@ -21,6 +25,23 @@ subroutine WSolnSetup()
     end if
 
 
+    ! Set up generic wall system
+    if (WallFlag==1) then
+
+        !! This assumes that the wall geometry has already been loaded as a wall system of one wall.
+
+        ! Setup wall self influence matrix 
+        write(*,*) 'Generating wall influence matrix.'
+        call gen_influence_matrix()
+
+        ! Store wall solution matrix and inverse
+        write(*,*) 'Inverting wall influence matrix.'
+        call invert_influence_matrix()
+
+    end if
+
+
+    ! Set up free surface system
     if (FSFlag==1) then
 
         ! Setup free surface self influence matrix 

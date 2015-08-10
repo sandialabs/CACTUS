@@ -1,11 +1,11 @@
 subroutine WGeomSetup() 
 
+    use util
+    use vecutils
     use wallgeom
     use wallsystem
     use wallsoln 
-    use pidef      
-    use util
-    use vecutils
+    use pidef
 
     real :: PlaneExtent, dsMinFS, dsMaxFS, dsMinW, dsMaxW, dsC, dsOut, GCS, yPanFS, yPan
     real :: RC, C1, C2, dB, RU, C1U, C2U, dBU, RD, C1D, C2D, dBD, RW, C1W, C2W, dBW, B
@@ -110,6 +110,14 @@ subroutine WGeomSetup()
 
         ! get the wall
         Walls(1) = Wall
+
+        ! build the concatenated wall system
+        call wallsystem_cns()
+
+    end if
+
+
+    if (WallFlag == 1) then
 
         ! build the concatenated wall system
         call wallsystem_cns()

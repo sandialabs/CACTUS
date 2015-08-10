@@ -15,8 +15,9 @@ MODULE wallsoln
     real    :: WEdgeTol        ! Tolerance around panel edge in which to evaluate influence in special way (to avoid inf...)
     integer :: NumWP           ! Total number of wall panels    
 
-    ! Ground plane data output
-    character(1000) :: GPOutHead = 'X/R (-),Y/R (-),Z/R (-),SourceDens/Uinf (-)'
+
+    ! Wall System
+    integer :: WallFlag        ! Set to 1 to do wall calculation, otherwise 0
 
 
     ! Free surface (rectangular source panel implementation)
@@ -75,7 +76,6 @@ MODULE wallsoln
 
 
 CONTAINS
-
 
     SUBROUTINE wallsoln_fs_cns()
 
@@ -248,9 +248,6 @@ CONTAINS
         real :: PointG(3), Vel(3), dudx
         integer :: CalcDer
 
-        integer :: i
-        real :: R(3,3), Point(3), dPG(3), dVel(3), dVelG(3)
-
         ! Calculate velocity induced by ground plane panels.
         ! Use CalcDer=1 to calc dudx
 
@@ -262,6 +259,24 @@ CONTAINS
 
 
     End SUBROUTINE GPIndVel
+
+
+    SUBROUTINE WPIndVel(PointG,CalcDer,Vel,dudx)
+
+        real :: PointG(3), Vel(3), dudx
+        integer :: CalcDer
+
+        ! Calculate velocity induced by ground plane panels.
+        ! Use CalcDer=1 to calc dudx
+
+        ! initialize to zero
+        Vel(:)=0.0
+
+        ! compute the velocity from all panels in wallsystem
+        call wall_ind_vel(PointG,CalcDer,Vel,dudx)
+
+
+    End SUBROUTINE WPIndVel
 
 
     SUBROUTINE FSIndVel(PointG,CalcDer,Vel,dudx)
@@ -301,17 +316,23 @@ CONTAINS
 
     SUBROUTINE WallIndVel(PointG,Vel)
 
-        real :: PointG(3), Vel(3)
-
-        real :: dVel(3), dudx
-
         ! Calculate velocity induced by all wall panels being used in the calculation
         ! Note: the use of fortran 95 array math intrinsic functions (reshape, matmul) has been avoided to speed things up...
+
+        real, intent(in) :: PointG(3)
+        real, intent(out) :: Vel(3)
+
+        real :: dVel(3), dudx
 
         Vel(:)=0.0
 
         if (GPFlag == 1) then
             Call GPIndVel(PointG,0,dVel,dudx)
+            Vel=Vel+dVel
+        end if
+
+        if (WallFlag == 1) then
+            Call WPIndVel(PointG,0,dVel,dudx)
             Vel=Vel+dVel
         end if
 

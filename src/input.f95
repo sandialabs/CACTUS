@@ -17,7 +17,8 @@ SUBROUTINE input(ErrFlag)
     use wakedata
     use time
     use wallgeom
-    use wallsoln 
+    use wallsoln
+    use wallsystem
     use regtest
     use output 
     use tower
@@ -45,7 +46,7 @@ SUBROUTINE input(ErrFlag)
     integer :: WLI(InBufferNumWL)     ! wake line index buffer
 
     ! Namelist input file declaration
-    NAMELIST/ConfigInputs/RegTFlag,GPFlag,FSFlag,nr,convrg,nti,iut,iWall,ivtxcor,VCRFB,VCRFT,VCRFS,ifc,convrgf,nric,ntif,iutf,ixterm,xstop, &
+    NAMELIST/ConfigInputs/RegTFlag,GPFlag,WallFlag,FSFlag,nr,convrg,nti,iut,iWall,ivtxcor,VCRFB,VCRFT,VCRFS,ifc,convrgf,nric,ntif,iutf,ixterm,xstop, &
         Incompr,DSFlag,PRFlag, &
         k1pos,k1neg,GPGridSF,GPGridExtent,FSGridSF,TSFilFlag,ntsf
 
@@ -53,7 +54,7 @@ SUBROUTINE input(ErrFlag)
         hAG,dFS,rho,vis,tempr,hBLRef,slex,Cdpar,CTExcrM, &
         WLI,Igust,gustamp,gusttime,gustX0, &
         Itower,tower_Npts,tower_x,tower_ybot,tower_ytop,tower_D,tower_CD, &
-        LoadWalls,WallMeshPath
+        WallMeshPath
 
     NAMELIST/ConfigOutputs/Output_ELFlag,Output_DSFlag,WallOutFlag,DiagOutFlag, &
         WakeElementOutFlag,WakeElementOutIntervalTimesteps,WakeElementOutStartTimestep,WakeElementOutEndTimestep, &
@@ -64,6 +65,7 @@ SUBROUTINE input(ErrFlag)
     ! Default ConfigInputs 
     RegTFlag   = 0 
     GPFlag     = 0
+    WallFlag   = 0 ! Flag for reading in arbitrary wall geometries
     FSFlag     = 0    
     TSFilFlag  = 0
     ntsf       = 3
@@ -108,7 +110,6 @@ SUBROUTINE input(ErrFlag)
     tower_ytop = 0.0
     tower_D    = 0.05
     tower_CD   = 1.0
-    LoadWalls  = 0
     
     ! output options
     Output_ELFlag      = 0 
@@ -236,7 +237,30 @@ SUBROUTINE input(ErrFlag)
     KTF=1.0/real(ntsf)
 
     ! Read in wall geometry
-    if (LoadWalls == 1) Call read_p3d_walls(WallMeshPath)
+    if (WallFlag == 1) then
+
+        if (WallFlag == 1 .and. GPFlag == 1) then
+            write(*,*) 'Error: WallFlag and GPFlag cannot both be set to 1!'
+        end if
+
+        write(*,'(A,A)') 'Reading walls from: ', WallMeshPath
+        call read_p3d_walls(WallMeshPath)
+
+        write(*,*) 'Summary of Wall Mesh'
+        write(*,*) '--------------------------'
+        write(*,*) 'Total walls:  ', Nwalls
+        write(*,*) 'Total panels: ', NumWP_total
+
+        do iw=1,NWalls
+            write(*,*) 'Wall ', iw
+            write(*,*) '    Dimensions:   ', Walls(iw)%NumWP1, ' x ', Walls(iw)%NumWP2 
+            write(*,*) '    Total Panels: ', Walls(iw)%NumWP
+            write(*,*) ''
+        end do
+        
+        write(*,*) ''
+
+    end if
 
     ! Airfoil Data Tables: Read CL, CD, CM vs AOA from data files
     ! Format Example:

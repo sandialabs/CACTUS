@@ -5,6 +5,7 @@ subroutine UpdateWall()
     use wallsoln
     use wallsystem
     use regtest 
+    use util
 
     integer :: ygcErr, i, IBCInd
     real :: Point(3), dVel(3), NVelSum, TVelSum, dUdX, dUdXSum                                                              
@@ -12,7 +13,7 @@ subroutine UpdateWall()
     ! If this is a wall update timestep...                                                               
     if (nt == nsWall) then                                                               
 
-        if (GPFlag == 1) then
+        if (GPFlag == 1 .or. WallFlag == 1) then
             ! Ground plane                                                               
 
             ! Calculate the velocities at wall panels from wake (including bound vorticity), and freestream. 
@@ -70,6 +71,15 @@ subroutine UpdateWall()
                     if (GPFlag == 1) then
                         Point=[FSCPPoints(i,1),FSCPPoints(i,2),FSCPPoints(i,3)]
                         Call GPIndVel(Point,0,dVel,dUdX)
+
+                        NVelSum=NVelSum+sum(FSCZVec(i,1:3)*dVel)
+                        TVelSum=TVelSum+sum(FSCXVec(i,1:3)*dVel)
+                    end if
+
+                    ! Calc wall induced velocity
+                    if (WallFlag == 1) then
+                        Point=[FSCPPoints(i,1),FSCPPoints(i,2),FSCPPoints(i,3)]
+                        Call WPIndVel(Point,0,dVel,dUdX)
 
                         NVelSum=NVelSum+sum(FSCZVec(i,1:3)*dVel)
                         TVelSum=TVelSum+sum(FSCXVec(i,1:3)*dVel)
