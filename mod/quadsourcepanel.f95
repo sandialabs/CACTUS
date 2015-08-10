@@ -6,7 +6,7 @@ module quadsourcepanel
 
     implicit none
 
-    real, parameter :: rp_far_multiplier = 10.0    ! multiplier for far-field threshold (far-field if rp > rp_far_multplier*lc)
+    real, parameter :: rp_far_multiplier = 6.0    ! multiplier for far-field threshold (far-field if rp > rp_far_multplier*lc)
     real, parameter :: ztol              = 1.0e-7  ! threshold for distance from plane
     real, parameter :: edgetol           = 1.0e-7  ! threshold for distance from edge
     real, parameter :: eps               = 1.0e-7  ! small value to avoid taking log(0) in quadsourcevel_full
@@ -49,8 +49,9 @@ contains
         real, intent(out)    :: vel(3), dudx
         integer, intent(out) :: info
         real                 :: p1r(3), p2r(3), p3r(3), p4r(3)
-        real                 :: pc(3), rp, lc, sz
-        integer              :: nedgesnear
+        real                 :: pc(3), rp, lc               
+        integer              :: sz                         ! sign of z
+        integer              :: nedgesnear                 ! number of edges near
         real                 :: quad_points(4,3)
 
         ! reverse the points!
@@ -67,9 +68,9 @@ contains
         ! compute panel center coordinates
         pc = 0.25*(p1r+p2r+p3r+p4r)
 
-        ! compute panel characteristic length  as average length of 4 sides
-        lc = 0.25*(mag3(p2r-p1r) + mag3(p3r-p2r) + mag3(p4r-p3r) + mag3(p1r-p4r))
-
+        ! compute panel characteristic radius as half of the average length of two diagonals
+        lc = 0.25*(mag3(p3r-p1r) + mag3(p4r-p2r))
+        
         ! compute |r| (distance from point to panel center)
         rp = mag3(p-pc)
 
@@ -279,10 +280,10 @@ contains
         if (a4 <= 0) a4 = eps
         
         ! compute induced velocities
-        vel(1) = sigma/(4*pi)*((y2-y1)/d12 *log(a1) + &
-                               (y3-y2)/d23 *log(a2) + &
-                               (y4-y3)/d34 *log(a3) + &
-                               (y1-y4)/d41 *log(a4) )
+        vel(1) = sigma/(4*pi)*((y2-y1)/d12 * log(a1) + &
+                               (y3-y2)/d23 * log(a2) + &
+                               (y4-y3)/d34 * log(a3) + &
+                               (y1-y4)/d41 * log(a4) )
 
         vel(2) = sigma/(4*pi)*((x1-x2)/d12 * log(a1) + &
                                (x2-x3)/d23 * log(a2) + &
@@ -313,19 +314,9 @@ contains
         real :: pc(3), a(3), b(3), c(3), d(3)
         real :: area
         real :: rp_squared
-        real :: xp,yp,zp,xc,yc,zc
 
         ! compute panel center coordinates
         pc = 0.25*(p1+p2+p3+p4)
-
-        ! breakout
-        xp = p(1)
-        yp = p(2)
-        zp = p(3)
-
-        xc = pc(1)
-        yc = pc(2)
-        zc = pc(3)
 
         ! compute |r|**2 (distance from point to panel center)
         rp_squared = sum((p-pc)**2)
@@ -340,9 +331,7 @@ contains
         area = 0.5*mag3(cross3(b+c,a+b))
 
         ! compute induced velocities
-        vel(1) = sigma/(4*pi) * area * (xp-xc)/rp_squared**(1.5)
-        vel(2) = sigma/(4*pi) * area * (yp-yc)/rp_squared**(1.5)
-        vel(3) = sigma/(4*pi) * area * (zp-zc)/rp_squared**(1.5)
+        vel = sigma/(4*pi) * area * (p-pc)/rp_squared**(1.5)
 
         ! derivative w.r.t. x
         if (calcder == 1) then
