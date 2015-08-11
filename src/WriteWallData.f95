@@ -35,7 +35,7 @@ SUBROUTINE WriteWallData()
     end if
 
     ! Output ground plane source density
-    if (GPFlag == 1 .or. WallFlag == 1) then
+    if (GPFlag == 1 .or. WPFlag == 1) then
         
         !! write file to Tecplot Finite Element structured, cell-centered data format
         write(nt_str,'(I0)') nt

@@ -214,7 +214,7 @@ PROGRAM CACTUS
     end if
 
     ! Set first wall update timestep
-    if (GPFlag == 1 .or. WallFlag == 1 .or. FSFlag == 1) then
+    if (GPFlag == 1 .or. WPFlag == 1 .or. FSFlag == 1) then
         nsWall=1
     end if
 
@@ -239,7 +239,7 @@ PROGRAM CACTUS
     delt=2.0*pi/nti ! change in theta per timestep
 
     ! Setup wall geometry and solution if necessary
-    if (GPFlag == 1 .OR. WallFlag == 1 .OR. FSFlag == 1) then
+    if (GPFlag == 1 .OR. WPFlag == 1 .OR. FSFlag == 1) then
         ! Wall Geometry setup
         Call WGeomSetup()
 
@@ -399,7 +399,7 @@ PROGRAM CACTUS
             CALL UpdateStrutLoads()
 
             ! Update influence on wall RHS and calc new wall panel strengths
-            if (GPFlag == 1 .OR. WallFlag == 1 .or. FSFlag == 1) then
+            if (GPFlag == 1 .OR. WPFlag == 1 .or. FSFlag == 1) then
                 Call UpdateWall() 
             end if
 

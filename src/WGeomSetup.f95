@@ -117,7 +117,7 @@ subroutine WGeomSetup()
     end if
 
 
-    if (WallFlag == 1) then
+    if (WPFlag == 1) then
 
         ! build the concatenated wall system
         call wallsystem_cns()

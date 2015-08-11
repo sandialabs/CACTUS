@@ -26,7 +26,7 @@ subroutine WSolnSetup()
 
 
     ! Set up generic wall system
-    if (WallFlag==1) then
+    if (WPFlag==1) then
 
         !! This assumes that the wall geometry has already been loaded as a wall system of one wall.
 

@@ -17,7 +17,7 @@ MODULE wallsoln
 
 
     ! Wall System
-    integer :: WallFlag        ! Set to 1 to do wall calculation, otherwise 0
+    integer :: WPFlag        ! Set to 1 to do wall calculation, otherwise 0
 
 
     ! Free surface (rectangular source panel implementation)
@@ -331,7 +331,7 @@ CONTAINS
             Vel=Vel+dVel
         end if
 
-        if (WallFlag == 1) then
+        if (WPFlag == 1) then
             Call WPIndVel(PointG,0,dVel,dudx)
             Vel=Vel+dVel
         end if

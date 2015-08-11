@@ -46,7 +46,7 @@ SUBROUTINE input(ErrFlag)
     integer :: WLI(InBufferNumWL)     ! wake line index buffer
 
     ! Namelist input file declaration
-    NAMELIST/ConfigInputs/RegTFlag,GPFlag,WallFlag,FSFlag,nr,convrg,nti,iut,iWall,ivtxcor,VCRFB,VCRFT,VCRFS,ifc,convrgf,nric,ntif,iutf,ixterm,xstop, &
+    NAMELIST/ConfigInputs/RegTFlag,GPFlag,WPFlag,FSFlag,nr,convrg,nti,iut,iWall,ivtxcor,VCRFB,VCRFT,VCRFS,ifc,convrgf,nric,ntif,iutf,ixterm,xstop, &
         Incompr,DSFlag,PRFlag, &
         k1pos,k1neg,GPGridSF,GPGridExtent,FSGridSF,TSFilFlag,ntsf
 
@@ -65,7 +65,7 @@ SUBROUTINE input(ErrFlag)
     ! Default ConfigInputs 
     RegTFlag   = 0 
     GPFlag     = 0
-    WallFlag   = 0 ! Flag for reading in arbitrary wall geometries
+    WPFlag   = 0 ! Flag for reading in arbitrary wall geometries
     FSFlag     = 0    
     TSFilFlag  = 0
     ntsf       = 3
@@ -237,10 +237,10 @@ SUBROUTINE input(ErrFlag)
     KTF=1.0/real(ntsf)
 
     ! Read in wall geometry
-    if (WallFlag == 1) then
+    if (WPFlag == 1) then
 
-        if (WallFlag == 1 .and. GPFlag == 1) then
-            write(*,*) 'Error: WallFlag and GPFlag cannot both be set to 1!'
+        if (WPFlag == 1 .and. GPFlag == 1) then
+            write(*,*) 'Error: WPFlag and GPFlag cannot both be set to 1!'
         end if
 
         write(*,'(A,A)') 'Reading walls from: ', WallMeshPath

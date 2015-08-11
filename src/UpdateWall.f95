@@ -13,7 +13,7 @@ subroutine UpdateWall()
     ! If this is a wall update timestep...                                                               
     if (nt == nsWall) then                                                               
 
-        if (GPFlag == 1 .or. WallFlag == 1) then
+        if (GPFlag == 1 .or. WPFlag == 1) then
             ! Ground plane                                                               
 
             ! Calculate the velocities at wall panels from wake (including bound vorticity), and freestream. 
@@ -80,7 +80,7 @@ subroutine UpdateWall()
                     end if
 
                     ! Calc wall induced velocity
-                    if (WallFlag == 1) then
+                    if (WPFlag == 1) then
                         Point=[FSCPPoints(i,1),FSCPPoints(i,2),FSCPPoints(i,3)]
                         Call WPIndVel(Point,0,dVel,dUdX)
 
