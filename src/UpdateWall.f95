@@ -18,6 +18,8 @@ subroutine UpdateWall()
 
             ! Calculate the velocities at wall panels from wake (including bound vorticity), and freestream. 
             ! Update wall RHS and calc new panel source strengths
+
+!$omp parallel do private(i, dVel, NVelSum, dUdX) 
             do i=1,NumWP_total
 
                 ! Calculate freestream velocity at panel locations normal to panel
@@ -40,6 +42,7 @@ subroutine UpdateWall()
                 WRHS(i,1)=-NVelSum
 
             end do
+!$omp end parallel do
 
             ! Calc new wall panel source strengths
             WSource=matmul(WInfI,WRHS)
