@@ -59,7 +59,8 @@ SUBROUTINE input(ErrFlag)
     NAMELIST/ConfigOutputs/Output_ELFlag,Output_DSFlag,WallOutFlag,DiagOutFlag, &
         WakeElementOutFlag,WakeElementOutIntervalTimesteps,WakeElementOutStartTimestep,WakeElementOutEndTimestep, &
         WakeGridOutFlag,WakeGridOutIntervalTimesteps,WakeGridOutStartTimestep,WakeGridOutEndTimestep, & 
-        nxgrid,nygrid,nzgrid,xgridL,ygridL,zgridL,xgridU,ygridU,zgridU
+        nxgrid,nygrid,nzgrid,xgridL,ygridL,zgridL,xgridU,ygridU,zgridU, &
+        WallOutIntervalTimesteps,WallOutStartTimestep,WallOutEndTimestep
 
 
     ! Default ConfigInputs 
@@ -136,9 +137,15 @@ SUBROUTINE input(ErrFlag)
     WakeElementOutStartTimestep     =  1       ! write wake element data starting at first timestep
     WakeElementOutEndTimestep       = -1       ! stop writing wake element data at the last timestep
     
-    WakeGridOutIntervalTimesteps   =  5       ! write wake plane data every 5 timesteps
-    WakeGridOutStartTimestep       =  1       ! write wake plane data starting at first timestep
-    WakeGridOutEndTimestep         = -1       ! stop writing wake plane data at the last timestep
+    WakeGridOutIntervalTimesteps    =  5       ! write wake grid data every 5 timesteps
+    WakeGridOutStartTimestep        =  1       ! write wake grid data starting at first timestep
+    WakeGridOutEndTimestep          = -1       ! stop writing wake grid data at the last timestep
+
+    ! Wall Output Frequency
+    WallOutIntervalTimesteps        =  5       ! write wall data every 5 timesteps
+    WallOutStartTimestep            =  1       ! write wall data starting at first timestep
+    WallOutEndTimestep              = -1       ! stop writing wall data at the last timestep
+
 
     ! Namelist input
     read(4, nml=ConfigInputs)

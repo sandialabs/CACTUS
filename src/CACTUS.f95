@@ -434,9 +434,14 @@ PROGRAM CACTUS
                 end if
             end if
 
-            ! Write current wall data for viewing in Matlab
+            ! Write wall system/ground plane data
             if (WallOutFlag > 0) then
-                Call WriteWallData()
+                ! Write wake grid data
+                if ((NT >= WallOutStartTimestep) .AND. (NT < WallOutEndTimestep .OR. WallOutEndTimestep == -1)) then
+                    if (MOD(NT-1, WallOutIntervalTimesteps) == 0) then
+                        Call WriteWallData()
+                    end if
+                end if
             end if
 
             ! State Updates ----  
