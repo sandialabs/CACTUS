@@ -41,7 +41,7 @@ SUBROUTINE WriteWallData()
     if (GPFlag == 1 .or. WPFlag == 1) then
         
         ! write file to Tecplot Finite Element structured, cell-centered data format
-        write(nt_str,'(I0)') nt
+        write(nt_str,'(I5.5)') nt
         filename=trim(FNBase)//'_WPData_'//trim(nt_str)//'.tp'
         open(17, file=filename)
 
