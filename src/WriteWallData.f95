@@ -16,8 +16,11 @@ SUBROUTINE WriteWallData()
     integer :: ip1, ip2, ip3, ip4
     character(80) :: filename
     character(10) :: iw_str, nt_str
+    character(80) :: var_string, varlocation_string             ! string to contain variable information for TecPlot output file
+    real :: vel_center(3)
     real :: TVel, dH 
     real, allocatable :: TVelIFS(:,:)   
+    real :: dummy
 
     ! Setup
     if (NT==1) then
@@ -37,21 +40,46 @@ SUBROUTINE WriteWallData()
     ! Output ground plane source density
     if (GPFlag == 1 .or. WPFlag == 1) then
         
-        !! write file to Tecplot Finite Element structured, cell-centered data format
+        ! write file to Tecplot Finite Element structured, cell-centered data format
         write(nt_str,'(I0)') nt
         filename=trim(FNBase)//'_WPData_'//trim(nt_str)//'.tp'
         open(17, file=filename)
 
-        !! write header
+        ! set header string
+        if (WallOutFlag == 2) then
+            var_string = 'VARIABLES=X, Y, Z, "sigma", "u", "v", "w"'
+        else
+            var_string = 'VARIABLES=X, Y, Z, "sigma"'
+        end if
+
+        ! write header
         write(17,*) 'TITLE="wall panel source strengths"'
-        write(17,*) 'VARIABLES=X, Y, Z, "sigma"'
+        write(17,*) var_string
 
         ip_global=1
         do iw=1,Nwalls
-            !! write each wall as a zone, specifying cellcentered data for sigma
-            write(17,'(A,I0,A,I0,A,I0,A,E13.7,A)') 'ZONE I=', Walls(iw)%NumWP1+1, & 
+
+            ! set the cell-centered VARLOCATION variable appropriately
+            if (WallOutFlag == 2) then
+                var_string = 'VARLOCATION=([4,5,6,7]=CELLCENTERED)'
+            else
+                var_string = 'VARLOCATION=([4]=CELLCENTERED)'
+            end if
+            
+            ! write each wall as a zone, specifying cellcentered data for sigma
+            write(17,'(A,I0,A,I0,A,I0,A,E13.7,A,A)') 'ZONE I=', Walls(iw)%NumWP1+1, & 
                                                       ', J=', Walls(iw)%NumWP2+1, &
-                                                      ', K=1, T="WP', iw, '", SOLUTIONTIME=', TimeN, ', DATAPACKING=BLOCK, VARLOCATION=([4]=CELLCENTERED) '
+                                                      ', K=1, T="WP', iw, '", SOLUTIONTIME=', TimeN, ', DATAPACKING=BLOCK, ', var_string
+
+            ! if WallOutFlag == 2 (verbose wall data), then compute and write out the velocities -- can be expensive
+            if (WallOutFlag == 2) then
+                !! compute the velocities at the center of each source panel on the iw'th wall
+                do i=1,Walls(iw)%NumWP
+                    call CalcIndVel(NT,ntTerm,NBE,NB,NE, &
+                        Walls(iw)%WCPoints(i,1),Walls(iw)%WCPoints(i,2),Walls(iw)%WCPoints(i,3), &
+                        Walls(iw)%vel_centers(i,1),Walls(iw)%vel_centers(i,2),Walls(iw)%vel_centers(i,3))
+                end do
+            end if
 
             ! write x of nodes
             do i=1,Walls(iw)%NumWPNodes
@@ -76,6 +104,24 @@ SUBROUTINE WriteWallData()
                 write(17,'(E13.7, " ",$)') WSource(ip, 1)
             end do
             write(17,*) ""
+
+            !! if WallOutFlag == 2 (verbose wall data), write velocities at panel centers 
+            if (WallOutFlag == 2) then
+                ! u
+                do i=1,Walls(iw)%NumWP
+                    write(17,'(E13.7, " ",$)') Walls(iw)%vel_centers(i,1)
+                end do
+
+                ! v
+                do i=1,Walls(iw)%NumWP
+                    write(17,'(E13.7, " ",$)') Walls(iw)%vel_centers(i,2)
+                end do
+
+                ! w
+                do i=1,Walls(iw)%NumWP
+                    write(17,'(E13.7, " ",$)') Walls(iw)%vel_centers(i,3)
+                end do
+            end if
 
             ! advance the global panel index
             ip_global = ip_global+Walls(iw)%NumWP

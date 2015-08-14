@@ -22,10 +22,8 @@ module wallgeom
         real, allocatable :: WSource(:,:)             ! Wall source density values (column vector) (non-dimensional, normalized by freestream velocity)
         
         ! wall velocities (for output)
-        real, allocatable :: u(:)                     ! u velocity over Uinf
-        real, allocatable :: v(:)                     ! v velocity over Uinf
-        real, allocatable :: w(:)                     ! w velocity over Uinf
-        real, allocatable :: ur(:)                    ! velocity mag over Uinf
+        real, allocatable :: vel_centers(:,:)          ! velocity vector over Uinf
+        
 
     end type WallType
 
@@ -48,10 +46,7 @@ contains
 
         allocate(Wall%WSource(NumWP,1))
 
-        allocate(Wall%u(NumWP))
-        allocate(Wall%v(NumWP))
-        allocate(Wall%w(NumWP))
-        allocate(Wall%ur(NumWP))
+        allocate(Wall%vel_centers(NumWP,3))
 
     end subroutine wall_cns
 

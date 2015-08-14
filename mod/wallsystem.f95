@@ -27,9 +27,6 @@ module wallsystem
     real, allocatable :: WRHS(:,:)                     ! global right hand side vector for wall solution
     real, allocatable :: WSource(:,:)                  ! global wall strengths
 
-    ! output for rev-averaged source strengths
-    real, allocatable :: WSourceOut(:)
-
     ! array to hold Walls
     type(WallType), allocatable :: Walls(:)
 
@@ -63,9 +60,6 @@ contains
         allocate(WInfI(NumWP_total,NumWP_total))
         allocate(WRHS(NumWP_total,1))
         allocate(WSource(NumWP_total,1))
-
-        ! allocate storage for the rev-averaged output array
-        allocate(WSourceOut(NumWP_total))
 
         ! concatenate wall geometry into single long arrays
         vp = 1
