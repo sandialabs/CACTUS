@@ -111,16 +111,20 @@ SUBROUTINE WriteWallData()
                 do i=1,Walls(iw)%NumWP
                     write(17,'(E13.7, " ",$)') Walls(iw)%vel_centers(i,1)
                 end do
+                write(17,*) ""
+
 
                 ! v
                 do i=1,Walls(iw)%NumWP
                     write(17,'(E13.7, " ",$)') Walls(iw)%vel_centers(i,2)
                 end do
+                write(17,*) ""
 
                 ! w
                 do i=1,Walls(iw)%NumWP
                     write(17,'(E13.7, " ",$)') Walls(iw)%vel_centers(i,3)
                 end do
+                write(17,*) ""
             end if
 
             ! advance the global panel index
