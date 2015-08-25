@@ -9,6 +9,7 @@ subroutine WSolnSetup()
     integer, allocatable :: IPIV(:)
     real :: R(3,3), Point(3), dPG(3), dVel(3), dVelG(3), dudx
 
+    real :: t0,t1 ! cpu time variables for matrix inversion
 
     ! Set up ground plane system
     if (GPFlag==1) then
@@ -17,10 +18,18 @@ subroutine WSolnSetup()
         !  as a wall system of one wall.
 
         ! Setup wall self influence matrix 
+        write(*,*) 'Generating wall influence matrix...'
+        call cpu_time(t0)
         call gen_influence_matrix()
+        call cpu_time(t1)
+        print '("Time to generate influence matrix = ",f15.3," seconds.")',t1-t0
 
         ! Store wall solution matrix and inverse
+        write(*,*) 'Inverting wall influence matrix...'
+        call cpu_time(t0)
         call invert_influence_matrix()
+        call cpu_time(t1)
+        print '("Time to generate influence matrix = ",f15.3," seconds.")',t1-t0
 
     end if
 
@@ -31,12 +40,18 @@ subroutine WSolnSetup()
         !! This assumes that the wall geometry has already been loaded as a wall system of one wall.
 
         ! Setup wall self influence matrix 
-        write(*,*) 'Generating wall influence matrix.'
+        write(*,*) 'Generating wall influence matrix...'
+        call cpu_time(t0)
         call gen_influence_matrix()
+        call cpu_time(t1)
+        print '("Time to generate influence matrix = ",f15.3," seconds.")',t1-t0
 
         ! Store wall solution matrix and inverse
-        write(*,*) 'Inverting wall influence matrix.'
+        write(*,*) 'Inverting wall influence matrix...'
+        call cpu_time(t0)
         call invert_influence_matrix()
+        call cpu_time(t1)
+        print '("Time to generate influence matrix = ",f15.3," seconds.")',t1-t0
 
     end if
 
