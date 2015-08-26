@@ -3,6 +3,7 @@ subroutine WSolnSetup()
     use util
     use wallsoln
     use wallsystem
+!$  use omp_lib
 
     integer :: i, j, Self, IBCInd, BCRow
     integer :: INFO
@@ -20,15 +21,19 @@ subroutine WSolnSetup()
         ! Setup wall self influence matrix 
         write(*,*) 'Generating wall influence matrix...'
         call cpu_time(t0)
+!$      t0 = omp_get_wtime()
         call gen_influence_matrix()
         call cpu_time(t1)
+!$      t1 = omp_get_wtime()
         print '("Time to generate influence matrix = ",f15.3," seconds.")',t1-t0
 
         ! Store wall solution matrix and inverse
         write(*,*) 'Inverting wall influence matrix...'
         call cpu_time(t0)
+!$      t0 = omp_get_wtime()
         call invert_influence_matrix()
         call cpu_time(t1)
+!$      t1 = omp_get_wtime()
         print '("Time to generate influence matrix = ",f15.3," seconds.")',t1-t0
 
     end if
@@ -42,15 +47,19 @@ subroutine WSolnSetup()
         ! Setup wall self influence matrix 
         write(*,*) 'Generating wall influence matrix...'
         call cpu_time(t0)
+!$      t0 = omp_get_wtime()
         call gen_influence_matrix()
         call cpu_time(t1)
+!$      t1 = omp_get_wtime()
         print '("Time to generate influence matrix = ",f15.3," seconds.")',t1-t0
 
         ! Store wall solution matrix and inverse
         write(*,*) 'Inverting wall influence matrix...'
         call cpu_time(t0)
+!$      t0 = omp_get_wtime()
         call invert_influence_matrix()
         call cpu_time(t1)
+!$      t1 = omp_get_wtime()
         print '("Time to generate influence matrix = ",f15.3," seconds.")',t1-t0
 
     end if

@@ -97,6 +97,7 @@ contains
         integer :: selfinfluence
 
         ! compute the influence matrix
+!$omp parallel do private(jp_global,selfinfluence,R,p1,p2,p3,p4,p,p_center,p_plane,p1_plane,p2_plane,p3_plane,p4_plane,vel,temp,info,vel_global) 
         do ip_global=1,NumWP_total
             do jp_global=1,NumWP_total
 
@@ -137,6 +138,7 @@ contains
 
             end do
         end do
+!$omp end parallel do
 
     end subroutine gen_influence_matrix
 

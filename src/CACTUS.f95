@@ -72,6 +72,7 @@ PROGRAM CACTUS
     use output
     use tower
     use fnames
+!$  use omp_lib
 
     !IMPLICIT NONE !JCM: eventually...      
 
@@ -84,7 +85,7 @@ PROGRAM CACTUS
     real :: NLTol
     real :: CPAve_last
 
-!$  integer :: nthreads, tid, omp_get_num_threads, omp_get_thread_num
+!$  integer :: nthreads, tid
 
     write(*,*) 'Starting CACTUS Execution.'
     write(*,*) '--------------------------'
