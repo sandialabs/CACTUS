@@ -39,7 +39,7 @@ SUBROUTINE EndRev()
     Output_RevData(1,9)=TorqueAve
 
     ! Write to revolution average data csv file
-    OPEN(9, FILE=RevOutputFN, ACCESS='append')
+    OPEN(9, FILE=RevOutputFN, POSITION='append')
     Call csvwrite(9,Output_RevHead,Output_RevData,0,1)
     CLOSE(9)
     

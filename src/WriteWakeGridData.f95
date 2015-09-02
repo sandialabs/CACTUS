@@ -16,7 +16,7 @@ SUBROUTINE WriteWakeGridData()
     character(len=10) :: nt_str
  
     ! Open file for writing - a new file at each timestep
-    write(nt_str,'(I0)') nt
+    write(nt_str,'(I5.5)') nt
     WakeDefOutputFN=trim(FNBase)//'_WakeDefData_'//trim(nt_str)//'.csv'
     OPEN(13, FILE=WakeDefOutputFN)
     write(13,'(A)') trim(GridVelOutHead)

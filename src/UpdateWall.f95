@@ -3,7 +3,9 @@ subroutine UpdateWall()
     use configr
     use blade
     use wallsoln
+    use wallsystem
     use regtest 
+    use util
 
     integer :: ygcErr, i, IBCInd
     real :: Point(3), dVel(3), NVelSum, TVelSum, dUdX, dUdXSum                                                              
@@ -11,36 +13,39 @@ subroutine UpdateWall()
     ! If this is a wall update timestep...                                                               
     if (nt == nsWall) then                                                               
 
-        if (GPFlag == 1) then
+        if (GPFlag == 1 .or. WPFlag == 1) then
             ! Ground plane                                                               
 
             ! Calculate the velocities at wall panels from wake (including bound vorticity), and freestream. 
             ! Update wall RHS and calc new panel source strengths
-            do i=1,NumWP
 
-                ! Calculate freestream velocity at panel locations
+!$omp parallel do private(i, dVel, NVelSum, dUdX) 
+            do i=1,NumWP_total
+
+                ! Calculate freestream velocity at panel locations normal to panel
                 CALL CalcFreestream(WCPoints(i,1),WCPoints(i,2)&
                      &,WCPoints(i,3),dVel(1),dVel(2),dVel(3),ygcErr)                                    
-                NVelSum=sum(WZVec(i,1:3)*dVel)                                                          
+                NVelSum=sum(W3Vec(i,1:3)*dVel)                                                          
 
-                ! Calc wake induced velocity at wall panel locations                                                                            
+                ! Calc wake induced velocity at wall panel locations normal to panel
                 CALL BladeIndVel(NT,ntTerm,NBE,NB,NE,WCPoints(i,1),WCPoints(i,2),WCPoints(i,3),dVel(1),dVel(2),dVel(3),dUdX,0,0)                    
-                NVelSum=NVelSum+sum(WZVec(i,1:3)*dVel)
+                NVelSum=NVelSum+sum(W3Vec(i,1:3)*dVel)
 
-                ! Calc FS induced velocity
+                ! Calc FS induced velocity normal to panel
                 if (FSFlag == 1) then
                     Point=[WCPoints(i,1),WCPoints(i,2),WCPoints(i,3)]
                     Call FSIndVel(Point,0,dVel,dUdX)
-                    NVelSum=NVelSum+sum(WZVec(i,1:3)*dVel)
+                    NVelSum=NVelSum+sum(W3Vec(i,1:3)*dVel)
                 end if
 
                 ! Set RHS 
                 WRHS(i,1)=-NVelSum
 
             end do
+!$omp end parallel do
 
             ! Calc new wall panel source strengths
-            WSource=matmul(WSMatI,WRHS)
+            WSource=matmul(WInfI,WRHS)
 
         end if
 
@@ -69,6 +74,16 @@ subroutine UpdateWall()
                     if (GPFlag == 1) then
                         Point=[FSCPPoints(i,1),FSCPPoints(i,2),FSCPPoints(i,3)]
                         Call GPIndVel(Point,0,dVel,dUdX)
+
+                        NVelSum=NVelSum+sum(FSCZVec(i,1:3)*dVel)
+                        TVelSum=TVelSum+sum(FSCXVec(i,1:3)*dVel)
+                    end if
+
+                    ! Calc wall induced velocity
+                    if (WPFlag == 1) then
+                        Point=[FSCPPoints(i,1),FSCPPoints(i,2),FSCPPoints(i,3)]
+                        Call WPIndVel(Point,0,dVel,dUdX)
+
                         NVelSum=NVelSum+sum(FSCZVec(i,1:3)*dVel)
                         TVelSum=TVelSum+sum(FSCXVec(i,1:3)*dVel)
                     end if

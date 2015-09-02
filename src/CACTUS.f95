@@ -72,6 +72,7 @@ PROGRAM CACTUS
     use output
     use tower
     use fnames
+!$  use omp_lib
 
     !IMPLICIT NONE !JCM: eventually...      
 
@@ -84,7 +85,7 @@ PROGRAM CACTUS
     real :: NLTol
     real :: CPAve_last
 
-!$  integer :: nthreads, tid, omp_get_num_threads, omp_get_thread_num
+!$  integer :: nthreads, tid
 
     write(*,*) 'Starting CACTUS Execution.'
     write(*,*) '--------------------------'
@@ -187,12 +188,6 @@ PROGRAM CACTUS
 
     ! Optional wall model output
     if (WallOutFlag > 0) then
-        if (GPFlag == 1) then
-            GPOutputFN=trim(FNBase)//'_GPData.csv'
-            OPEN(14, FILE=GPOutputFN)
-            write(14,'(A)') trim(GPOutHead)
-        end if
-
         if (FSFlag == 1) then
             FSOutputFN=trim(FNBase)//'_FSData.csv'
             OPEN(15, FILE=FSOutputFN)
@@ -220,7 +215,7 @@ PROGRAM CACTUS
     end if
 
     ! Set first wall update timestep
-    if (GPFlag == 1 .OR. FSFlag == 1) then
+    if (GPFlag == 1 .or. WPFlag == 1 .or. FSFlag == 1) then
         nsWall=1
     end if
 
@@ -245,7 +240,7 @@ PROGRAM CACTUS
     delt=2.0*pi/nti ! change in theta per timestep
 
     ! Setup wall geometry and solution if necessary
-    if (GPFlag == 1 .OR. FSFlag == 1) then
+    if (GPFlag == 1 .OR. WPFlag == 1 .OR. FSFlag == 1) then
         ! Wall Geometry setup
         Call WGeomSetup()
 
@@ -405,7 +400,7 @@ PROGRAM CACTUS
             CALL UpdateStrutLoads()
 
             ! Update influence on wall RHS and calc new wall panel strengths
-            if (GPFlag == 1 .OR. FSFlag == 1) then
+            if (GPFlag == 1 .OR. WPFlag == 1 .or. FSFlag == 1) then
                 Call UpdateWall() 
             end if
 
@@ -419,7 +414,6 @@ PROGRAM CACTUS
                 ! Use machine level time step output (norm. time, revolution, torque coeff., power coeff.)
                 write(6,'(A)') 'Norm. Time, Theta (rad), Revolution, Torque Coeff., Power Coeff.'
                 write(6,'(2E13.5,F8.0,2E13.5)') Output_TSData(1,1),Output_TSData(1,2),Output_TSData(1,3),Output_TSData(1,4),Output_TSData(1,5)
-                write(6,'(A,F13.2)') 'Farthest Moving Particle (R): ', dmax
             end if
 
             ! Write current wake data
@@ -441,9 +435,14 @@ PROGRAM CACTUS
                 end if
             end if
 
-            ! Write current wall data for viewing in Matlab
+            ! Write wall system/ground plane data
             if (WallOutFlag > 0) then
-                Call WriteWallData()
+                ! Write wake grid data
+                if ((NT >= WallOutStartTimestep) .AND. (NT < WallOutEndTimestep .OR. WallOutEndTimestep == -1)) then
+                    if (MOD(NT-1, WallOutIntervalTimesteps) == 0) then
+                        Call WriteWallData()
+                    end if
+                end if
             end if
 
             ! State Updates ----  

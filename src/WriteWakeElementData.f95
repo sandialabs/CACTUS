@@ -15,7 +15,7 @@ SUBROUTINE WriteWakeElementData()
     character(len=10) :: nt_str
 
     ! Optional wake element data output
-    write(nt_str,'(I0)') nt
+    write(nt_str,'(I5.5)') nt
     WakeOutputFN=trim(FNBase)//'_WakeData_'//trim(nt_str)//'.csv'
     OPEN(12, FILE=WakeOutputFN)
     write(12,'(A)') trim(WakeOutHead)

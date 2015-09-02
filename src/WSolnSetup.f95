@@ -1,69 +1,71 @@
 subroutine WSolnSetup()
 
-    use wallsoln 
+    use util
+    use wallsoln
+    use wallsystem
+!$  use omp_lib
 
     integer :: i, j, Self, IBCInd, BCRow
     integer :: INFO
     integer, allocatable :: IPIV(:)
     real :: R(3,3), Point(3), dPG(3), dVel(3), dVelG(3), dudx
 
+    real :: t0,t1 ! cpu time variables for matrix inversion
 
+    ! Set up ground plane system
     if (GPFlag==1) then
 
+        !! This assumes WGeomSetup() has already been called, and that the ground plane has been configured
+        !  as a wall system of one wall.
+
         ! Setup wall self influence matrix 
-        do i=1,NumWP
-            do j=1,NumWP
-                if (j==i) then
-                    Self=1
-                else
-                    Self=0
-                end if
-
-                ! Rotation from global to panel i
-                R(1,1:3)=WXVec(i,1:3)
-                R(2,1:3)=WYVec(i,1:3)
-                R(3,1:3)=WZVec(i,1:3)
-
-                ! Calc influence in panel frame
-                dPG=WCPoints(j,1:3)-WCPoints(i,1:3)                         
-                Call CalcRotation3(R,dPG,Point,0)                     
-                Call RectSourceVel(Point,WPL(i),WPW(i),1.0,Self,WEdgeTol,0,dVel,dudx)
-
-                ! Rotate to global frame
-                Call CalcRotation3(R,dVel,dVelG,1)                      
-                WInCoeffN(j,i)=sum(dVelG*WZVec(j,1:3))
-            end do
-        end do
+        write(*,*) 'Generating wall influence matrix...'
+        call cpu_time(t0)
+!$      t0 = omp_get_wtime()
+        call gen_influence_matrix()
+        call cpu_time(t1)
+!$      t1 = omp_get_wtime()
+        print '("Time to generate influence matrix = ",f15.3," seconds.")',t1-t0
 
         ! Store wall solution matrix and inverse
-        WSMat=WInCoeffN
-
-        ! LAPACK => DGESV: Linear equation solution A*X=B where A(N,N) X(N,NRHS) B(N,NRHS)
-        ! Note that if NRHS = N, and B is the identity, X is the inverse of A...
-        ! Initialize inverse to the identity
-        WSMatI(:,:)=0.0
-        do i=1,NumWP
-            do j=1,NumWP
-                if (j==i) then
-                    WSMatI(i,j)=1.0 
-                end if
-            end do
-        end do
-
-        allocate(IPIV(NumWP)) ! allocation storage for pivot array
-        Call DGESV(NumWP,NumWP,WSMat,NumWP,IPIV,WSMatI,NumWP,INFO)
-        if (INFO>0) then
-            write(6,'(A)') 'Matrix inversion failed in WSolnSetup. Exiting...'
-            stop
-        end if
-
-        ! Initialize source strengths and RHS to zero
-        WSource(:,:)=0.0
-        WRHS(:,:)=0.0
+        write(*,*) 'Inverting wall influence matrix...'
+        call cpu_time(t0)
+!$      t0 = omp_get_wtime()
+        call invert_influence_matrix()
+        call cpu_time(t1)
+!$      t1 = omp_get_wtime()
+        print '("Time to generate influence matrix = ",f15.3," seconds.")',t1-t0
 
     end if
 
 
+    ! Set up generic wall system
+    if (WPFlag==1) then
+
+        !! This assumes that the wall geometry has already been loaded as a wall system of one wall.
+
+        ! Setup wall self influence matrix 
+        write(*,*) 'Generating wall influence matrix...'
+        call cpu_time(t0)
+!$      t0 = omp_get_wtime()
+        call gen_influence_matrix()
+        call cpu_time(t1)
+!$      t1 = omp_get_wtime()
+        print '("Time to generate influence matrix = ",f15.3," seconds.")',t1-t0
+
+        ! Store wall solution matrix and inverse
+        write(*,*) 'Inverting wall influence matrix...'
+        call cpu_time(t0)
+!$      t0 = omp_get_wtime()
+        call invert_influence_matrix()
+        call cpu_time(t1)
+!$      t1 = omp_get_wtime()
+        print '("Time to generate influence matrix = ",f15.3," seconds.")',t1-t0
+
+    end if
+
+
+    ! Set up free surface system
     if (FSFlag==1) then
 
         ! Setup free surface self influence matrix 

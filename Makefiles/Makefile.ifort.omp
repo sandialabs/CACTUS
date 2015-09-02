@@ -18,7 +18,7 @@ INC = $(wildcard $(SRCDIR)/*.inc)
 # for debugging, debug flag and detailed runtime error checking. 
 #FLAGS = -g -CB -r8 
 # standard compiler optimization. also uses MKL library instead of lapack/blas
-FLAGS = -O2 -r8 -mkl:sequential
+FLAGS = -O2 -r8 -openmp -mkl 
 # No compiler optimization
 #FLAGS = -r8
 

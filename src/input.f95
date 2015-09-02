@@ -16,7 +16,9 @@ SUBROUTINE input(ErrFlag)
     use vortex
     use wakedata
     use time
-    use wallsoln 
+    use wallgeom
+    use wallsoln
+    use wallsystem
     use regtest
     use output 
     use tower
@@ -37,28 +39,34 @@ SUBROUTINE input(ErrFlag)
         
 
     ! Temp buffers
+    
     character(MaxReadLine) :: AFDPath(InBufferNumSectionTables) ! Airfoil section data path      
+    character(MaxReadLine) :: WallMeshPath ! Wall mesh file path      
+
     integer :: WLI(InBufferNumWL)     ! wake line index buffer
 
     ! Namelist input file declaration
-    NAMELIST/ConfigInputs/RegTFlag,GPFlag,FSFlag,nr,convrg,nti,iut,iWall,ivtxcor,VCRFB,VCRFT,VCRFS,ifc,convrgf,nric,ntif,iutf,ixterm,xstop, &
+    NAMELIST/ConfigInputs/RegTFlag,GPFlag,WPFlag,FSFlag,nr,convrg,nti,iut,iWall,ivtxcor,VCRFB,VCRFT,VCRFS,ifc,convrgf,nric,ntif,iutf,ixterm,xstop, &
         Incompr,DSFlag,PRFlag, &
         k1pos,k1neg,GPGridSF,GPGridExtent,FSGridSF,TSFilFlag,ntsf
 
     NAMELIST/CaseInputs/jbtitle,GeomFilePath,RPM,Ut,nSect,AFDPath, &
         hAG,dFS,rho,vis,tempr,hBLRef,slex,Cdpar,CTExcrM, &
         WLI,Igust,gustamp,gusttime,gustX0, &
-        Itower,tower_Npts,tower_x,tower_ybot,tower_ytop,tower_D,tower_CD
+        Itower,tower_Npts,tower_x,tower_ybot,tower_ytop,tower_D,tower_CD, &
+        WallMeshPath
 
     NAMELIST/ConfigOutputs/Output_ELFlag,Output_DSFlag,WallOutFlag,DiagOutFlag, &
         WakeElementOutFlag,WakeElementOutIntervalTimesteps,WakeElementOutStartTimestep,WakeElementOutEndTimestep, &
         WakeGridOutFlag,WakeGridOutIntervalTimesteps,WakeGridOutStartTimestep,WakeGridOutEndTimestep, & 
-        nxgrid,nygrid,nzgrid,xgridL,ygridL,zgridL,xgridU,ygridU,zgridU
+        nxgrid,nygrid,nzgrid,xgridL,ygridL,zgridL,xgridU,ygridU,zgridU, &
+        WallOutIntervalTimesteps,WallOutStartTimestep,WallOutEndTimestep
 
 
     ! Default ConfigInputs 
     RegTFlag   = 0 
     GPFlag     = 0
+    WPFlag   = 0 ! Flag for reading in arbitrary wall geometries
     FSFlag     = 0    
     TSFilFlag  = 0
     ntsf       = 3
@@ -129,9 +137,15 @@ SUBROUTINE input(ErrFlag)
     WakeElementOutStartTimestep     =  1       ! write wake element data starting at first timestep
     WakeElementOutEndTimestep       = -1       ! stop writing wake element data at the last timestep
     
-    WakeGridOutIntervalTimesteps   =  5       ! write wake plane data every 5 timesteps
-    WakeGridOutStartTimestep       =  1       ! write wake plane data starting at first timestep
-    WakeGridOutEndTimestep         = -1       ! stop writing wake plane data at the last timestep
+    WakeGridOutIntervalTimesteps    =  5       ! write wake grid data every 5 timesteps
+    WakeGridOutStartTimestep        =  1       ! write wake grid data starting at first timestep
+    WakeGridOutEndTimestep          = -1       ! stop writing wake grid data at the last timestep
+
+    ! Wall Output Frequency
+    WallOutIntervalTimesteps        =  5       ! write wall data every 5 timesteps
+    WallOutStartTimestep            =  1       ! write wall data starting at first timestep
+    WallOutEndTimestep              = -1       ! stop writing wall data at the last timestep
+
 
     ! Namelist input
     read(4, nml=ConfigInputs)
@@ -228,6 +242,32 @@ SUBROUTINE input(ErrFlag)
 
     ! Timestep filter setup
     KTF=1.0/real(ntsf)
+
+    ! Read in wall geometry
+    if (WPFlag == 1) then
+
+        if (WPFlag == 1 .and. GPFlag == 1) then
+            write(*,*) 'Error: WPFlag and GPFlag cannot both be set to 1!'
+        end if
+
+        write(*,'(A,A)') 'Reading walls from: ', WallMeshPath
+        call read_p3d_walls(WallMeshPath)
+
+        write(*,*) 'Summary of Wall Mesh'
+        write(*,*) '--------------------------'
+        write(*,*) 'Total walls:  ', Nwalls
+        write(*,*) 'Total panels: ', NumWP_total
+
+        do iw=1,NWalls
+            write(*,*) 'Wall ', iw
+            write(*,*) '    Dimensions:   ', Walls(iw)%NumWP1, ' x ', Walls(iw)%NumWP2 
+            write(*,*) '    Total Panels: ', Walls(iw)%NumWP
+            write(*,*) ''
+        end do
+        
+        write(*,*) ''
+
+    end if
 
     ! Airfoil Data Tables: Read CL, CD, CM vs AOA from data files
     ! Format Example:
