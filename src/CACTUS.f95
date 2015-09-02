@@ -72,6 +72,7 @@ PROGRAM CACTUS
     use output
     use tower
     use fnames
+    use probesystem
 !$  use omp_lib
 
     !IMPLICIT NONE !JCM: eventually...      
@@ -441,6 +442,16 @@ PROGRAM CACTUS
                 if ((NT >= WallOutStartTimestep) .AND. (NT < WallOutEndTimestep .OR. WallOutEndTimestep == -1)) then
                     if (MOD(NT-1, WallOutIntervalTimesteps) == 0) then
                         Call WriteWallData()
+                    end if
+                end if
+            end if
+
+            ! Write probe data
+            if (ProbeFlag > 0) then
+                ! Write wake grid data
+                if ((NT >= ProbeOutStartTimestep) .AND. (NT < ProbeOutEndTimestep .OR. ProbeOutEndTimestep == -1)) then
+                    if (MOD(NT-1, ProbeOutIntervalTimesteps) == 0) then
+                        call write_probes() ! in probesystem module
                     end if
                 end if
             end if
