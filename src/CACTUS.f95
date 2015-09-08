@@ -73,6 +73,7 @@ PROGRAM CACTUS
     use tower
     use fnames
     use probesystem
+    use compiler
 !$  use omp_lib
 
     !IMPLICIT NONE !JCM: eventually...      
@@ -88,8 +89,13 @@ PROGRAM CACTUS
 
 !$  integer :: nthreads, tid
 
-    write(*,*) 'Starting CACTUS Execution.'
-    write(*,*) '--------------------------'
+    write(*,'(A)') 'Starting CACTUS Execution.'
+    write(*,'(A)') '--------------------------'
+
+    ! print compiler info to stdout
+    call print_compiler_info()
+    write(*,*) ''
+
 
     ! Alert the user if OpenMP is enabled.
 !$  write(*,*) 'OpenMP is Enabled.'

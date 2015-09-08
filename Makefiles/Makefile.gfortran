@@ -16,11 +16,11 @@ OBJMODUTILf95 = $(SRCMODUTILf95:%.f95=%.o)
 INC = $(wildcard $(SRCDIR)/*.inc) 
 
 # for debugging, debug flag and detailed runtime error checking. 
-#FLAGS = -g -fbounds-check -fdefault-real-8 -ffree-line-length-0
+#FLAGS = -g -fbounds-check -fdefault-real-8 -ffree-line-length-0 -cpp
 # standard compiler optimization
-FLAGS = -O2 -fdefault-real-8 -ffree-line-length-0
+FLAGS = -O2 -fdefault-real-8 -ffree-line-length-0 -cpp
 # No compiler optimization
-#FLAGS = -fdefault-real-8 -ffree-line-length-0
+#FLAGS = -fdefault-real-8 -ffree-line-length-0 -cpp
 
 # includes in SRCDIR, .mod files in MODDIR
 OPT = -I$(SRCDIR) -I$(MODDIR) -I$(MODUTILDIR)  $(FLAGS)
