@@ -22,6 +22,7 @@ SUBROUTINE input(ErrFlag)
     use regtest
     use output 
     use tower
+    use probesystem
     
 
     integer, parameter :: InBufferNumSectionTables = 1000
@@ -41,7 +42,9 @@ SUBROUTINE input(ErrFlag)
     ! Temp buffers
     
     character(MaxReadLine) :: AFDPath(InBufferNumSectionTables) ! Airfoil section data path      
-    character(MaxReadLine) :: WallMeshPath ! Wall mesh file path      
+    character(MaxReadLine) :: WallMeshPath ! Wall mesh file path
+    character(MaxReadLine) :: ProbeSpecPath ! Wall mesh file path      
+   
 
     integer :: WLI(InBufferNumWL)     ! wake line index buffer
 
@@ -60,7 +63,8 @@ SUBROUTINE input(ErrFlag)
         WakeElementOutFlag,WakeElementOutIntervalTimesteps,WakeElementOutStartTimestep,WakeElementOutEndTimestep, &
         WakeGridOutFlag,WakeGridOutIntervalTimesteps,WakeGridOutStartTimestep,WakeGridOutEndTimestep, & 
         nxgrid,nygrid,nzgrid,xgridL,ygridL,zgridL,xgridU,ygridU,zgridU, &
-        WallOutIntervalTimesteps,WallOutStartTimestep,WallOutEndTimestep
+        WallOutIntervalTimesteps,WallOutStartTimestep,WallOutEndTimestep, &
+        ProbeFlag,ProbeOutIntervalTimesteps,ProbeOutStartTimestep,ProbeOutEndTimestep,ProbeSpecPath
 
 
     ! Default ConfigInputs 
@@ -120,6 +124,7 @@ SUBROUTINE input(ErrFlag)
     WakeElementOutFlag = 0 
     WakeGridOutFlag    = 0 
     WallOutFlag        = 0
+    ProbeFlag          = 0
 
     ! wake grid output default parameters
     nxgrid =    1
@@ -147,7 +152,10 @@ SUBROUTINE input(ErrFlag)
     WallOutStartTimestep            =  1       ! write wall data starting at first timestep
     WallOutEndTimestep              = -1       ! stop writing wall data at the last timestep
 
-
+    ! Probe Output Frequency
+    ProbeOutIntervalTimesteps       =  1
+    ProbeOutStartTimestep           =  1
+    ProbeOutEndTimestep             = -1
     ! Namelist input
     read(4, nml=ConfigInputs)
     read(4, nml=CaseInputs)
@@ -269,6 +277,16 @@ SUBROUTINE input(ErrFlag)
         write(*,*) ''
 
     end if
+
+    ! Read in probe data
+    if (ProbeFlag == 1) then
+        ! Read probe data from file
+        call read_probes(ProbeSpecPath)
+
+        ! Write headers for the probe output files
+        call write_probe_headers()
+    end if
+
 
     ! Airfoil Data Tables: Read CL, CD, CM vs AOA from data files
     ! Format Example:
