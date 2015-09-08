@@ -34,7 +34,7 @@ subroutine WSolnSetup()
         call invert_influence_matrix()
         call cpu_time(t1)
 !$      t1 = omp_get_wtime()
-        print '("Time to generate influence matrix = ",f15.3," seconds.")',t1-t0
+        print '("Time to invert influence matrix = ",f15.3," seconds.")',t1-t0
 
     end if
 
