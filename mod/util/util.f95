@@ -1,10 +1,10 @@
-MODULE util
+module util
 
     ! Utilities used in other modules and elsewhere in the code
 
-CONTAINS
+contains
 
-    SUBROUTINE cross(ax,ay,az,bx,by,bz,cx,cy,cz)
+    subroutine cross(ax,ay,az,bx,by,bz,cx,cy,cz)
 
         real ax,ay,az,bx,by,bz,cx,cy,cz
 
@@ -12,7 +12,7 @@ CONTAINS
         cy = az*bx - ax*bz
         cz = ax*by - ay*bx
 
-    End SUBROUTINE cross
+    end subroutine cross
 
 
     subroutine QuatRot(vx,vy,vz,Theta,nRx,nRy,nRz,Ox,Oy,Oz,vRx,vRy,vRz)
@@ -66,7 +66,7 @@ CONTAINS
     end subroutine QuatRot
 
 
-    SUBROUTINE csvwrite(FID,Header,Data,WriteHead,NRows)
+    subroutine csvwrite(FID,Header,Data,WriteHead,NRows)
 
         integer :: FID, WriteHead, NRows
         character(10000) :: Header
@@ -100,11 +100,11 @@ CONTAINS
             end do
         end do
 
-        Return
+        return
 10      format(E13.7,',',$)
-    End SUBROUTINE Csvwrite
+    end subroutine Csvwrite
 
-    SUBROUTINE file_to_stdout(filename)
+    subroutine file_to_stdout(filename)
     ! file_to_stdout() : Read a file in and write it's output to stdout.
     !   (Useful for appending input files to the output)
 
@@ -132,7 +132,7 @@ CONTAINS
     ! close file
     close(30)
 
-    End SUBROUTINE file_to_stdout
+    end subroutine file_to_stdout
 
 
     ! DEBUGGING FUNCTIONS !
@@ -169,4 +169,4 @@ CONTAINS
     end subroutine print_vec3array
 
 
-End MODULE Util
+end module Util

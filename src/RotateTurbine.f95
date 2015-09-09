@@ -1,4 +1,4 @@
-SUBROUTINE RotateTurbine
+subroutine RotateTurbine
 
     use configr
     use element
@@ -20,4 +20,4 @@ SUBROUTINE RotateTurbine
     end do
 
     return
-end SUBROUTINE RotateTurbine
+end subroutine RotateTurbine

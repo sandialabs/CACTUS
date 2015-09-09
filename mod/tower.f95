@@ -1,4 +1,4 @@
-MODULE tower
+module tower
 
   implicit none
 
@@ -12,9 +12,9 @@ MODULE tower
 
   real, allocatable, dimension(:) :: tower_y, tower_Vx
 
-CONTAINS
+contains
 
-  SUBROUTINE setup_tower
+  subroutine setup_tower
 
     implicit none
 
@@ -35,7 +35,7 @@ CONTAINS
 
     theta0 = 0.5 * tower_CD * tower_D
 
-  END SUBROUTINE setup_tower
+  end subroutine setup_tower
 
 
   FUNCTION interp_tower_Vx(y)
@@ -55,7 +55,7 @@ CONTAINS
        End If
     End Do
 
-    Return
+    return
 
   END FUNCTION interp_tower_Vx
 
@@ -69,12 +69,12 @@ CONTAINS
 
     If (x .LE. tower_x) Then
        wake_defect_velocity = 0.0
-       Return
+       return
     End If
 
     If ((y .LT. tower_ybot) .OR. (y .GT. tower_ytop)) Then
        wake_defect_velocity = 0.0
-       Return
+       return
     End If
 
 
@@ -92,8 +92,8 @@ CONTAINS
        wake_defect_velocity = 0.9 * Vx_tow
     end if
 
-    Return
+    return
 
   END FUNCTION wake_defect_velocity
 
-END MODULE tower
+end module tower

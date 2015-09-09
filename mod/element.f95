@@ -1,4 +1,4 @@
-MODULE element
+module element
 
     ! Blade element geometry data
 
@@ -86,10 +86,10 @@ MODULE element
     real :: CFy_B ! Fy coefficient due to all blades
     real :: CFz_B ! Fz coefficient due to all blades
 
-CONTAINS
+contains
 
 
-    SUBROUTINE blade_geom_cns(BInd,NElem)
+    subroutine blade_geom_cns(BInd,NElem)
 
         implicit none
 
@@ -121,10 +121,10 @@ CONTAINS
         allocate(Blades(BInd)%EAreaR(NElem))
         allocate(Blades(BInd)%iSect(NElem))
 
-    End SUBROUTINE blade_geom_cns
+    end subroutine blade_geom_cns
 
 
-    SUBROUTINE element_cns(MaxSegEnds,MaxSegEndPerBlade)
+    subroutine element_cns(MaxSegEnds,MaxSegEndPerBlade)
 
         implicit none
 
@@ -156,10 +156,10 @@ CONTAINS
         allocate(eChord(MaxSegEnds))
         allocate(iSect(MaxSegEnds))
 
-    End SUBROUTINE element_cns
+    end subroutine element_cns
 
 
-    SUBROUTINE RotateBlade(BNum,delt,nrx,nry,nrz,px,py,pz)
+    subroutine RotateBlade(BNum,delt,nrx,nry,nrz,px,py,pz)
 
         implicit none
 
@@ -199,10 +199,10 @@ CONTAINS
         Call CalcBEGeom(BNum)
 
 
-    End SUBROUTINE RotateBlade
+    end subroutine RotateBlade
 
 
-    SUBROUTINE CalcBEGeom(BNum)
+    subroutine CalcBEGeom(BNum)
 
         implicit none
 
@@ -285,7 +285,7 @@ CONTAINS
             eChord(nej)=eArea(nej)/sEM
 
         end do
-    End SUBROUTINE CalcBEGeom
+    end subroutine CalcBEGeom
 
 
-End MODULE element
+end module element

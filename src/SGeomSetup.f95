@@ -1,4 +1,4 @@
-SUBROUTINE SGeomSetup()
+subroutine SGeomSetup()
 
     use parameters
 
@@ -52,4 +52,4 @@ SUBROUTINE SGeomSetup()
     end do
 
     return
-end SUBROUTINE SGeomSetup
+end subroutine SGeomSetup

@@ -1,4 +1,4 @@
-SUBROUTINE CalcFreestream(xElem,yElem,zElem,u,v,w,ygcErr)
+subroutine CalcFreestream(xElem,yElem,zElem,u,v,w,ygcErr)
 
     use shear
     use configr
@@ -22,7 +22,7 @@ SUBROUTINE CalcFreestream(xElem,yElem,zElem,u,v,w,ygcErr)
         v = 0.0
         w = 0.0
         !Write(*,'(F15.8)') u
-        Return
+        return
     end if
 
     if ((yElem+ygc) <= 0.0) then
@@ -47,8 +47,8 @@ SUBROUTINE CalcFreestream(xElem,yElem,zElem,u,v,w,ygcErr)
        !If (Vxtower .GT. .001) Write(20,'(F20.12)') u+Vxtower, u
     end if
 
-    Return
-End SUBROUTINE CalcFreestream
+    return
+end subroutine CalcFreestream
 
 
 REAL FUNCTION IECGustVel(time,x)
@@ -70,6 +70,6 @@ REAL FUNCTION IECGustVel(time,x)
         IECGustVel = 1.0
     end if
 
-    Return
+    return
 
 End FUNCTION IECGustVel

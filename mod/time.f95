@@ -1,4 +1,4 @@
-MODULE time
+module time
 
     ! Info about program real time usage
 
@@ -8,4 +8,4 @@ MODULE time
     real :: dtime           ! Delta time over this rev
     real :: etime           ! Elapsed time from begining at end of this rev
 
-End MODULE time
+end module time

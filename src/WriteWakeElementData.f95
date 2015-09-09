@@ -1,4 +1,4 @@
-SUBROUTINE WriteWakeElementData()
+subroutine WriteWakeElementData()
 
     ! Write wake element positions and velocity
 
@@ -43,5 +43,5 @@ SUBROUTINE WriteWakeElementData()
     ! close the output file
     CLOSE(12)
 
-    Return
-End SUBROUTINE WriteWakeElementData
+    return
+end subroutine WriteWakeElementData

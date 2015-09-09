@@ -1,4 +1,4 @@
-SUBROUTINE UpdateBladeVel(IFLG)
+subroutine UpdateBladeVel(IFLG)
 
     use configr
     use blade
@@ -82,5 +82,5 @@ SUBROUTINE UpdateBladeVel(IFLG)
 
     end do
 
-    RETURN
-END SUBROUTINE UpdateBladeVel
+    return
+end subroutine UpdateBladeVel

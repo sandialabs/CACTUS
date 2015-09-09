@@ -1,4 +1,4 @@
-SUBROUTINE WriteWakeGridData()
+subroutine WriteWakeGridData()
 
     ! Write wake grid data
 
@@ -69,5 +69,5 @@ SUBROUTINE WriteWakeGridData()
     ! close the output file
     CLOSE(13)
 
-    Return
-End SUBROUTINE WriteWakeGridData
+    return
+end subroutine WriteWakeGridData

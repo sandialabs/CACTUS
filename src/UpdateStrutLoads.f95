@@ -1,4 +1,4 @@
-SUBROUTINE UpdateStrutLoads()
+subroutine UpdateStrutLoads()
 
     use strut
     use configr
@@ -156,5 +156,5 @@ SUBROUTINE UpdateStrutLoads()
 
     end do
 
-    Return
-End SUBROUTINE UpdateStrutLoads
+    return
+end subroutine UpdateStrutLoads

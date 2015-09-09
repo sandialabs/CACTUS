@@ -1,4 +1,4 @@
-MODULE output
+module output
 
     ! Arrays to be output to csv data files
 
@@ -38,9 +38,9 @@ MODULE output
     integer :: Output_LBRow                                 ! Rows of element row output
     real, allocatable :: Output_LBData(:,:)                 ! Diagnostic data for each timestep
 
-CONTAINS
+contains
 
-    SUBROUTINE output_cns(MaxSeg, MaxBlades, MaxStruts, DSFlag)
+    subroutine output_cns(MaxSeg, MaxBlades, MaxStruts, DSFlag)
 
         ! Constructor for the arrays in this module
 
@@ -71,6 +71,6 @@ CONTAINS
         end if
 
 
-    End SUBROUTINE output_cns
+    end subroutine output_cns
 
-End MODULE output
+end module output

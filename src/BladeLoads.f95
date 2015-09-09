@@ -1,4 +1,4 @@
-SUBROUTINE BladeLoads(NLTol,iConv)
+subroutine BladeLoads(NLTol,iConv)
 
     use parameters
     use pidef
@@ -180,5 +180,5 @@ SUBROUTINE BladeLoads(NLTol,iConv)
     ! CTR_B=CTR_B + - CTExcr
     CP_B=CP_B - CTExcr*ut
 
-    Return
-End SUBROUTINE BladeLoads
+    return
+end subroutine BladeLoads

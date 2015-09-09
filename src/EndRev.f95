@@ -1,4 +1,4 @@
-SUBROUTINE EndRev()
+subroutine EndRev()
 
     use util
     use configr
@@ -50,5 +50,5 @@ SUBROUTINE EndRev()
     CFySum=0.0
     CFzSum=0.0
 
-    Return
-End SUBROUTINE EndRev
+    return
+end subroutine EndRev

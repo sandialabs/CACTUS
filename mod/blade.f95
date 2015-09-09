@@ -1,4 +1,4 @@
-MODULE blade
+module blade
 
     ! Blade data
 
@@ -28,9 +28,9 @@ MODULE blade
     integer :: ntsf                 ! Number of timesteps over which the bound vorticity is filtered smooth (if TSFilFlag = 1)
     real    :: KTF
 
-CONTAINS
+contains
 
-    SUBROUTINE blade_cns(MaxSegEnds)
+    subroutine blade_cns(MaxSegEnds)
 
         ! Constructor - allocates memory for arrays containing element induced velocities on all blades
 
@@ -52,9 +52,9 @@ CONTAINS
         allocate(WFSB(MaxSegEnds))
 
 
-    End SUBROUTINE blade_cns
+    end subroutine blade_cns
 
-    SUBROUTINE UpdateAOALast(ne)
+    subroutine UpdateAOALast(ne)
 
         integer :: ne
         integer :: k
@@ -65,9 +65,9 @@ CONTAINS
             AOA_Last(k)=AOA(k)
         end do
 
-    End SUBROUTINE UpdateAOALast
+    end subroutine UpdateAOALast
 
-    SUBROUTINE UpdateTSFilter(ne)
+    subroutine UpdateTSFilter(ne)
 
         integer :: ne
         integer :: k
@@ -78,6 +78,6 @@ CONTAINS
             GB(k)=KTF*GB_Raw(k) + (1.0-KTF)*GB(k)
         end do
 
-    End SUBROUTINE UpdateTSFilter
+    end subroutine UpdateTSFilter
 
-End MODULE blade
+end module blade

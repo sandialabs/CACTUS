@@ -1,4 +1,4 @@
-SUBROUTINE WriteWallData()
+subroutine WriteWallData()
 
     ! Write wall data outputs
 
@@ -226,5 +226,5 @@ SUBROUTINE WriteWallData()
 
     end if
 
-    Return
-End SUBROUTINE WriteWallData
+    return
+end subroutine WriteWallData

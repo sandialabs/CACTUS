@@ -1,4 +1,4 @@
-SUBROUTINE bsload(nElem,IsBE,alpha,alpha5,alpha75,adotnorm,Re,umach,ur,CL,CD,CM25,CLCirc,CN,CT,Fx,Fy,Fz,te)
+subroutine bsload(nElem,IsBE,alpha,alpha5,alpha75,adotnorm,Re,umach,ur,CL,CD,CM25,CLCirc,CN,CT,Fx,Fy,Fz,te)
 
     use element
     use blade
@@ -131,5 +131,5 @@ SUBROUTINE bsload(nElem,IsBE,alpha,alpha5,alpha75,adotnorm,Re,umach,ur,CL,CD,CM2
     CALL cross(xe-RotPX,ye-RotPY,ze-RotPZ,Fx,Fy,Fz,TRx,TRy,TRz)
     te=(TRx*RotX+TRy*RotY+TRz*RotZ)+MS*(sxe*RotX+sye*RotY+sze*RotZ)
 
-    Return
-End SUBROUTINE bsload
+    return
+end subroutine bsload

@@ -5,9 +5,9 @@ Module fnames
     integer :: nargin, FNLength, status, DecInd
     character(80) :: InputFN, SFOutputFN, RevOutputFN, TSOutputFN, ELOutputFN, RegOutputFN, WakeOutputFN, WakeDefOutputFN, GPOutputFN, FSOutputFN, DSOutputFN, FNBase
 
-CONTAINS
+contains
 
-    SUBROUTINE get_FNBase()
+    subroutine get_FNBase()
         logical :: back
 
         Call get_command_argument(1,InputFN,FNLength,status)
@@ -20,6 +20,6 @@ CONTAINS
             FNBase=FNBase(1:(DecInd-1))
         end if
 
-    End SUBROUTINE get_FNBase
+    end subroutine get_FNBase
 
 End Module fnames

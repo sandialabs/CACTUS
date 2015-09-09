@@ -1,4 +1,4 @@
-SUBROUTINE shedvor()
+subroutine shedvor()
 
     use configr
     use blade
@@ -44,5 +44,5 @@ SUBROUTINE shedvor()
         end do
     end do
 
-    RETURN
-END SUBROUTINE shedvor
+    return
+end subroutine shedvor

@@ -1,4 +1,4 @@
-SUBROUTINE SetBoundWake()
+subroutine SetBoundWake()
 
     use configr
     use element
@@ -21,4 +21,4 @@ SUBROUTINE SetBoundWake()
 
 
     return
-end SUBROUTINE SetBoundWake
+end subroutine SetBoundWake

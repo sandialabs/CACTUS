@@ -1,4 +1,4 @@
-SUBROUTINE InputGeom(FN)
+subroutine InputGeom(FN)
 
     use element
     use strut
@@ -257,5 +257,5 @@ SUBROUTINE InputGeom(FN)
     ! Close input file
     close(15)
 
-    Return
-End SUBROUTINE InputGeom
+    return
+end subroutine InputGeom

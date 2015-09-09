@@ -1,4 +1,4 @@
-SUBROUTINE input(ErrFlag)
+subroutine input(ErrFlag)
 
     use parameters
 
@@ -466,9 +466,9 @@ SUBROUTINE input(ErrFlag)
 
     end do
 
-    Return
+    return
 601 format(' ','***airfoil section specified for blade segment ',i2,' is illegal. set to airfoil section 1***')
-End SUBROUTINE input
+end subroutine input
 
 
 

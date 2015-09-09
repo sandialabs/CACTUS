@@ -1,4 +1,4 @@
-SUBROUTINE UpdateTowerVelocity()
+subroutine UpdateTowerVelocity()
 
   use tower
   use configr
@@ -22,6 +22,6 @@ SUBROUTINE UpdateTowerVelocity()
   End Do
 
 
-  Return
+  return
 
-End SUBROUTINE UpdateTowerVelocity
+end subroutine UpdateTowerVelocity

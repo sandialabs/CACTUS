@@ -1,4 +1,4 @@
-SUBROUTINE AeroCoeffs(nElem,alpha75,alpha5,Re,wPNorm,adotnorm,umach,SectInd,IsBE,CL,CD,CN,CT,CLCirc,CM25)
+subroutine AeroCoeffs(nElem,alpha75,alpha5,Re,wPNorm,adotnorm,umach,SectInd,IsBE,CL,CD,CN,CT,CLCirc,CM25)
 
     use airfoil
     use dystl
@@ -64,5 +64,5 @@ SUBROUTINE AeroCoeffs(nElem,alpha75,alpha5,Re,wPNorm,adotnorm,umach,SectInd,IsBE
     CL=CN*cos(alpha5)-CT*sin(alpha5)
     CD=CN*sin(alpha5)+CT*cos(alpha5)
 
-    Return
-End SUBROUTINE AeroCoeffs
+    return
+end subroutine AeroCoeffs

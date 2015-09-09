@@ -1,4 +1,4 @@
-SUBROUTINE LB_DynStall(nElem,CLstat,CDstat,alphaL,alpha5,umach,Re,SectInd,CL,CD)
+subroutine LB_DynStall(nElem,CLstat,CDstat,alphaL,alpha5,umach,Re,SectInd,CL,CD)
 
     use airfoil
     use dystl
@@ -114,5 +114,5 @@ SUBROUTINE LB_DynStall(nElem,CLstat,CDstat,alphaL,alpha5,umach,Re,SectInd,CL,CD)
     CL=CLF+dCLv
     CD=CDstat+dCDF+dCDv
 
-    Return
-End SUBROUTINE LB_DynStall
+    return
+end subroutine LB_DynStall

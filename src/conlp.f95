@@ -1,4 +1,4 @@
-SUBROUTINE conlp()
+subroutine conlp()
 
     use configr
     use blade
@@ -53,5 +53,5 @@ SUBROUTINE conlp()
         end do
     end if
 
-    Return
-End SUBROUTINE conlp
+    return
+end subroutine conlp

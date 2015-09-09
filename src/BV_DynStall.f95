@@ -1,4 +1,4 @@
-SUBROUTINE BV_DynStall(nElem,CLstat,CDstat,alpha,adotnorm,umach,Re,SectInd,CL,CD)
+subroutine BV_DynStall(nElem,CLstat,CDstat,alpha,adotnorm,umach,Re,SectInd,CL,CD)
 
     use airfoil
     use dystl
@@ -139,5 +139,5 @@ SUBROUTINE BV_DynStall(nElem,CLstat,CDstat,alpha,adotnorm,umach,Re,SectInd,CL,CD
     BV_alrefL=alrefL*condeg
     BV_alrefD=alrefD*condeg
 
-    Return
-End SUBROUTINE BV_DynStall
+    return
+end subroutine BV_DynStall

@@ -1,4 +1,4 @@
-MODULE iecgust
+module iecgust
 
     ! Parameters defining IEC Gust
 
@@ -9,4 +9,4 @@ MODULE iecgust
     real :: gustT                 ! Non-dimensional gust timescale (T*Uinf/Rmax)
     real :: gustX0                ! Starting position of the gust upstream (# rotor radii)
 
-End MODULE iecgust
+end module iecgust

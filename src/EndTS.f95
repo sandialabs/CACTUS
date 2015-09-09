@@ -1,4 +1,4 @@
-SUBROUTINE EndTS()
+subroutine EndTS()
 
     use util
     use configr
@@ -74,5 +74,5 @@ SUBROUTINE EndTS()
         Reg_CPOut=CP
     end if
 
-    Return
-End SUBROUTINE EndTS
+    return
+end subroutine EndTS

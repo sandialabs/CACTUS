@@ -1,4 +1,4 @@
-MODULE regtest
+module regtest
 
     ! Regression test outputs
 
@@ -16,4 +16,4 @@ MODULE regtest
     real :: Reg_MaxWS               ! max wall source value
     real :: Reg_MaxWVM              ! max velocity mag in first wake shed
 
-End MODULE regtest
+end module regtest

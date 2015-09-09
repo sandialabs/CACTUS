@@ -1,4 +1,4 @@
-MODULE airfoil
+module airfoil
 
     ! Airfoil section data
 
@@ -29,9 +29,9 @@ MODULE airfoil
     real, allocatable :: CLCritPData(:,:)
     real, allocatable :: CLCritNData(:,:)
 
-CONTAINS
+contains
 
-    SUBROUTINE airfoil_cns(MaxAOAVals,MaxReVals,MaxAirfoilSect)
+    subroutine airfoil_cns(MaxAOAVals,MaxReVals,MaxAirfoilSect)
 
      ! Constructor for the arrays in this module
 
@@ -54,10 +54,10 @@ CONTAINS
         allocate(CLCritPData(MaxReVals,MaxAirfoilSect))
         allocate(CLCritNData(MaxReVals,MaxAirfoilSect))
 
-    End SUBROUTINE airfoil_cns
+    end subroutine airfoil_cns
 
 
-    SUBROUTINE intp(RE,ALPHA,CL,CD,CM25,KK)
+    subroutine intp(RE,ALPHA,CL,CD,CM25,KK)
 
         real :: RE, ALPHA, CL, CD, CM25
         integer :: KK
@@ -158,10 +158,10 @@ CONTAINS
         CD=CDA(1)+XRE*(CDA(2)-CDA(1))
         CM25=CM25A(1)+XRE*(CM25A(2)-CM25A(1))
 
-    END SUBROUTINE intp
+    end subroutine intp
 
 
-    Subroutine CalcBVStallAOALim(Re,SectInd,alssp,alssn)
+    subroutine CalcBVStallAOALim(Re,SectInd,alssp,alssn)
 
         ! Get stall AOA limits for BV model from airfoil data
         integer :: SectInd
@@ -212,10 +212,10 @@ CONTAINS
         alssp=alstlp(iLB,SectInd)+xRE*(alstlp(iUB,SectInd)-alstlp(iLB,SectInd))
         alssn=alstln(iLB,SectInd)+xRE*(alstln(iUB,SectInd)-alstln(iLB,SectInd))
 
-    End Subroutine CalcBVStallAOALim
+    end subroutine CalcBVStallAOALim
 
 
-    Subroutine CalcLBStallAOALim(Re,SectInd,CLa,CLCritP,CLCritN)
+    subroutine CalcLBStallAOALim(Re,SectInd,CLa,CLCritP,CLCritN)
 
         ! Get stall data for LB model from airfoil data
         integer :: SectInd
@@ -267,5 +267,5 @@ CONTAINS
         CLCritP=CLCritPData(iLB,SectInd)+xRE*(CLCritPData(iUB,SectInd)-CLCritPData(iLB,SectInd))
         CLCritN=CLCritNData(iLB,SectInd)+xRE*(CLCritNData(iUB,SectInd)-CLCritNData(iLB,SectInd))
 
-    End Subroutine CalcLBStallAOALim
-End MODULE airfoil
+    end subroutine CalcLBStallAOALim
+end module airfoil

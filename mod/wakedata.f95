@@ -1,4 +1,4 @@
-MODULE wakedata
+module wakedata
 
     implicit none
 
@@ -46,9 +46,9 @@ MODULE wakedata
     integer :: ntcount
 
 
-CONTAINS
+contains
 
-    SUBROUTINE wakedata_cns()
+    subroutine wakedata_cns()
 
      ! Constructor for the arrays in this module
 
@@ -109,6 +109,6 @@ CONTAINS
             end do
         end do
 
-    End SUBROUTINE wakedata_cns
+    end subroutine wakedata_cns
 
-End MODULE wakedata
+end module wakedata

@@ -85,5 +85,5 @@ subroutine VorIVel(VFlag,CalcDer,G,X1,Y1,Z1,X2,Y2,Z2,XP,YP,ZP,UP,VP,WP,DUDX)
         DUDX = DUDX+CCAX*DVFDX
     end if
 
-    RETURN
-END subroutine VorIVel
+    return
+end subroutine VorIVel

@@ -1,4 +1,4 @@
-SUBROUTINE BladeIndVel(NT,ntTerm,NBE,NB,NE,XP,YP,ZP,UP,VP,WP,DUDX,Mode,CalcDer)
+subroutine BladeIndVel(NT,ntTerm,NBE,NB,NE,XP,YP,ZP,UP,VP,WP,DUDX,Mode,CalcDer)
 
     use blade
     use wake
@@ -87,5 +87,5 @@ SUBROUTINE BladeIndVel(NT,ntTerm,NBE,NB,NE,XP,YP,ZP,UP,VP,WP,DUDX,Mode,CalcDer)
 
     end if
 
-    RETURN
-END SUBROUTINE BladeIndVel
+    return
+end subroutine BladeIndVel

@@ -1,4 +1,4 @@
-MODULE wallsoln
+module wallsoln
 
     ! Wall panel geometry and solution arrays
     ! Panel functions included...
@@ -75,9 +75,9 @@ MODULE wallsoln
     integer :: OutIterFS                     ! timestep iteration on final revolution on which to write FS output
 
 
-CONTAINS
+contains
 
-    SUBROUTINE wallsoln_fs_cns()
+    subroutine wallsoln_fs_cns()
 
         ! Free surface
         allocate(FSCPoints(NumFSP,3))
@@ -103,10 +103,10 @@ CONTAINS
         allocate(FSVT(NumFSCP,NFSRHSAve))
         allocate(FSVTAve(NumFSCP,1))
 
-    End SUBROUTINE wallsoln_fs_cns
+    end subroutine wallsoln_fs_cns
 
 
-    SUBROUTINE RectSourceVel(Point,L,Wth,Source,SelfInfluence,EdgeTol,CalcDer,Vel,dudx)
+    subroutine RectSourceVel(Point,L,Wth,Source,SelfInfluence,EdgeTol,CalcDer,Vel,dudx)
 
         ! Calculate velocity induced by a rectangular source panel
 
@@ -240,28 +240,10 @@ CONTAINS
             end if
         end if
 
-    End SUBROUTINE RectSourceVel
+    end subroutine RectSourceVel
 
 
-    SUBROUTINE GPIndVel(PointG,CalcDer,Vel,dudx)
-
-        real :: PointG(3), Vel(3), dudx
-        integer :: CalcDer
-
-        ! Calculate velocity induced by ground plane panels.
-        ! Use CalcDer=1 to calc dudx
-
-        ! initialize to zero
-        Vel(:)=0.0
-
-        ! compute the velocity from all panels in wallsystem
-        call wall_ind_vel(PointG,CalcDer,Vel,dudx)
-
-
-    End SUBROUTINE GPIndVel
-
-
-    SUBROUTINE WPIndVel(PointG,CalcDer,Vel,dudx)
+    subroutine GPIndVel(PointG,CalcDer,Vel,dudx)
 
         real :: PointG(3), Vel(3), dudx
         integer :: CalcDer
@@ -276,10 +258,28 @@ CONTAINS
         call wall_ind_vel(PointG,CalcDer,Vel,dudx)
 
 
-    End SUBROUTINE WPIndVel
+    end subroutine GPIndVel
 
 
-    SUBROUTINE FSIndVel(PointG,CalcDer,Vel,dudx)
+    subroutine WPIndVel(PointG,CalcDer,Vel,dudx)
+
+        real :: PointG(3), Vel(3), dudx
+        integer :: CalcDer
+
+        ! Calculate velocity induced by ground plane panels.
+        ! Use CalcDer=1 to calc dudx
+
+        ! initialize to zero
+        Vel(:)=0.0
+
+        ! compute the velocity from all panels in wallsystem
+        call wall_ind_vel(PointG,CalcDer,Vel,dudx)
+
+
+    end subroutine WPIndVel
+
+
+    subroutine FSIndVel(PointG,CalcDer,Vel,dudx)
 
         real :: PointG(3), Vel(3), dudx
         integer :: CalcDer
@@ -311,10 +311,10 @@ CONTAINS
 
         end do
 
-    End SUBROUTINE FSIndVel
+    end subroutine FSIndVel
 
 
-    SUBROUTINE WallIndVel(PointG,Vel)
+    subroutine WallIndVel(PointG,Vel)
 
         ! Calculate velocity induced by all wall panels being used in the calculation
         ! Note: the use of fortran 95 array math intrinsic functions (reshape, matmul) has been avoided to speed things up...
@@ -341,6 +341,6 @@ CONTAINS
             Vel=Vel+dVel
         end if
 
-    End SUBROUTINE WallIndVel
+    end subroutine WallIndVel
 
-End MODULE wallsoln
+end module wallsoln

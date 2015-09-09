@@ -1,4 +1,4 @@
-SUBROUTINE UpdateWakeVel()
+subroutine UpdateWakeVel()
 
     use configr
     use blade
@@ -58,5 +58,5 @@ SUBROUTINE UpdateWakeVel()
         end do
     end if
 
-    RETURN
-END SUBROUTINE UpdateWakeVel
+    return
+end subroutine UpdateWakeVel

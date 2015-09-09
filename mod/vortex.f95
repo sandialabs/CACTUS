@@ -1,4 +1,4 @@
-MODULE vortex
+module vortex
 
     ! Vortex core model parameters for trailing and spanwise wake elements
 
@@ -12,4 +12,4 @@ MODULE vortex
     real :: vCutOffRad       ! cut-off radius (for bound/trailing/spanwise cores)
 
 
-End MODULE vortex
+end module vortex

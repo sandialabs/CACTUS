@@ -1,4 +1,4 @@
-MODULE wake
+module wake
 
     ! Wake data
 
@@ -26,9 +26,9 @@ MODULE wake
     real, allocatable :: VO(:,:)            ! Last lattice point y velocity for each wake point
     real, allocatable :: WO(:,:)            ! Last lattice point z velocity for each wake point
 
-CONTAINS
+contains
 
-    SUBROUTINE wake_cns(MaxWakeNodes, MaxSegEnds)
+    subroutine wake_cns(MaxWakeNodes, MaxSegEnds)
 
         ! Constructor - allocates memory for arrays
 
@@ -49,6 +49,6 @@ CONTAINS
         allocate(VO(MaxWakeNodes,MaxSegEnds))
         allocate(WO(MaxWakeNodes,MaxSegEnds))
 
-    End SUBROUTINE wake_cns
+    end subroutine wake_cns
 
-End MODULE wake
+end module wake

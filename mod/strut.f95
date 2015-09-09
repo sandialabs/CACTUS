@@ -1,4 +1,4 @@
-MODULE strut
+module strut
 
     ! Strut geometry and loads outputs
 
@@ -75,10 +75,10 @@ MODULE strut
     real :: CFz_S ! Fz coefficient due to all struts
 
 
-CONTAINS
+contains
 
 
-    SUBROUTINE strut_comp_cns(SInd,NElem)
+    subroutine strut_comp_cns(SInd,NElem)
 
         implicit none
 
@@ -106,10 +106,10 @@ CONTAINS
         allocate(Struts(SInd)%ur(NElem))
         allocate(Struts(SInd)%Cd0(NElem))
 
-    End SUBROUTINE strut_comp_cns
+    end subroutine strut_comp_cns
 
 
-    SUBROUTINE RotateStrut(SNum,delt,nrx,nry,nrz,px,py,pz)
+    subroutine RotateStrut(SNum,delt,nrx,nry,nrz,px,py,pz)
 
         implicit none
 
@@ -133,10 +133,10 @@ CONTAINS
         Call CalcSEGeom(SNum)
 
 
-    End SUBROUTINE RotateStrut
+    end subroutine RotateStrut
 
 
-    SUBROUTINE CalcSEGeom(SNum)
+    subroutine CalcSEGeom(SNum)
 
         implicit none
 
@@ -170,10 +170,10 @@ CONTAINS
         end do
 
 
-    End SUBROUTINE CalcSEGeom
+    end subroutine CalcSEGeom
 
 
-    SUBROUTINE StrutElemCoeffs(SInd,EInd)
+    subroutine StrutElemCoeffs(SInd,EInd)
 
         implicit none
 
@@ -203,6 +203,6 @@ CONTAINS
         Struts(SInd)%Cd0(EInd) = (1.0-Fblend) * Cdlam + Fblend * Cdturb ! Profile drag coefficient
 
 
-    End SUBROUTINE StrutElemCoeffs
+    end subroutine StrutElemCoeffs
 
-End MODULE strut
+end module strut

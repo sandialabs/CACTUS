@@ -1,4 +1,4 @@
-SUBROUTINE WriteRegTOutput(Flag)
+subroutine WriteRegTOutput(Flag)
 
     use regtest
 
@@ -20,5 +20,5 @@ SUBROUTINE WriteRegTOutput(Flag)
         write(7,'(E13.5)') Reg_MaxWVM
     end if
 
-    Return
-End SUBROUTINE WriteRegTOutput
+    return
+end subroutine WriteRegTOutput

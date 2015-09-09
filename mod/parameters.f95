@@ -1,4 +1,4 @@
-MODULE parameters
+module parameters
 
     ! Sizes for arrays
 
@@ -11,4 +11,4 @@ MODULE parameters
     integer :: MaxWakeNodes                             ! Max number of points in wake for an element (MaxRevs * MaxTimeStepPerRev)
     integer :: MaxNLIters                               ! Max iterations to perform in converging non linear component of blade element system
 
-End MODULE parameters
+end module parameters

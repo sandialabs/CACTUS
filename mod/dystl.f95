@@ -1,4 +1,4 @@
-MODULE dystl
+module dystl
 
     ! Dynamic stall data
 
@@ -56,9 +56,9 @@ MODULE dystl
     integer :: Logic_W(NLBL) = [1,1,1,1,1,3,2,1,1]             ! Logic weights for logic checksum
 
 
-CONTAINS
+contains
 
-    SUBROUTINE dystl_cns(MaxAirfoilSect, MaxReVals, MaxSegEnds)
+    subroutine dystl_cns(MaxAirfoilSect, MaxReVals, MaxSegEnds)
 
         ! Constructor for the arrays in this module
 
@@ -98,9 +98,9 @@ CONTAINS
         allocate(LB_LogicOutputs(MaxSegEnds,NLBL))
         LB_LogicOutputs(:,:)=0!CM
 
-    End SUBROUTINE dystl_cns
+    end subroutine dystl_cns
 
-    SUBROUTINE dystl_init_LB()
+    subroutine dystl_init_LB()
 
         ! Initialize LB model
         dp(:) = 0.0
@@ -115,16 +115,16 @@ CONTAINS
 
         LB_LogicOutputs(:,:)=0
 
-    End SUBROUTINE dystl_init_LB
+    end subroutine dystl_init_LB
 
-    SUBROUTINE dystl_init_BV()
+    subroutine dystl_init_BV()
 
         BV_DynamicFlagL(:)=0
         BV_DynamicFlagD(:)=0
 
-    End SUBROUTINE dystl_init_BV
+    end subroutine dystl_init_BV
 
-    SUBROUTINE LB_EvalIdealCL(AOA,AOA0,CLa,RefFlag,CLID)
+    subroutine LB_EvalIdealCL(AOA,AOA0,CLa,RefFlag,CLID)
 
         ! AOA inputs in radians
         ! AOA0 is zero lift AOA
@@ -165,9 +165,9 @@ CONTAINS
             end if
         end if
 
-    End SUBROUTINE LB_EvalIdealCL
+    end subroutine LB_EvalIdealCL
 
-    SUBROUTINE Force180(a)
+    subroutine Force180(a)
 
         real :: a
 
@@ -178,9 +178,9 @@ CONTAINS
             a=a+2.0*pi
         end if
 
-    End SUBROUTINE Force180
+    end subroutine Force180
 
-    SUBROUTINE LB_UpdateStates(nb,nbe)
+    subroutine LB_UpdateStates(nb,nbe)
 
         ! Update states for the LB model
         ! Note dynstall should be included eventually in an expanded blade module, at which point it would have
@@ -329,9 +329,9 @@ CONTAINS
 
         end do
 
-    End SUBROUTINE LB_UpdateStates
+    end subroutine LB_UpdateStates
 
-    SUBROUTINE LB_LogicChecksum(nElem,LBCheck)
+    subroutine LB_LogicChecksum(nElem,LBCheck)
 
         integer :: LBCheck, nElem
         integer :: Loop
@@ -343,6 +343,6 @@ CONTAINS
             LBCheck=LBCheck+LB_LogicOutputs(nElem,Loop)*Logic_W(Loop)
         end do
 
-    End SUBROUTINE LB_LogicChecksum
+    end subroutine LB_LogicChecksum
 
-End MODULE dystl
+end module dystl

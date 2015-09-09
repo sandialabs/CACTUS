@@ -1,4 +1,4 @@
-MODULE configr
+module configr
 
     ! Configuration data
 
@@ -85,4 +85,4 @@ MODULE configr
     real :: CFySum
     real :: CFzSum
 
-End MODULE configr
+end module configr
