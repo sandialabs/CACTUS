@@ -23,7 +23,7 @@ contains
 
 #if defined(__GFORTRAN__)
         COMPILER_VER = __VERSION__
-        write(*,'(A)') "Compiled with GNU Fortran ", COMPILER_VER
+        write(*,'(A,A)') "Compiled with GNU Fortran version: ", COMPILER_VER
 #elif defined(__INTEL_COMPILER)
         COMPILER_VER = xstr(__INTEL_COMPILER)
         write(*,'(A,A,".",A)') "Compiled with Intel Fortran version: ", COMPILER_VER(1:2), COMPILER_VER(3:4)
@@ -37,6 +37,15 @@ contains
         write(*,'(A)') "Intel MKL enabled."
 !dec$endif
 #endif
+
+    ! print the Git version (VERSION must be defined via Makefile macro and defined 
+    ! with compiler flag -DVERSION='')
+#if defined(VERSION)
+        write(*,'(A,A)') "Git version: ", VERSION
+#else
+        write(*,'(A)') "Git version: unknown"
+#endif
+
     end subroutine print_compiler_info
 
 

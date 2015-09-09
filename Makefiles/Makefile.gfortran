@@ -13,14 +13,17 @@ SRCMODf95 = $(wildcard $(MODDIR)/*.f95)
 OBJMODf95 = $(SRCMODf95:%.f95=%.o)
 SRCMODUTILf95 = $(wildcard $(MODUTILDIR)/*.f95)
 OBJMODUTILf95 = $(SRCMODUTILf95:%.f95=%.o)
-INC = $(wildcard $(SRCDIR)/*.inc) 
+INC = $(wildcard $(SRCDIR)/*.inc)
+
+# generate a Git version string
+GIT_VERSION := $(shell git describe --abbrev=4 --dirty --always --tags)
 
 # for debugging, debug flag and detailed runtime error checking. 
 #FLAGS = -g -fbounds-check -fdefault-real-8 -ffree-line-length-0 -cpp
 # standard compiler optimization
-FLAGS = -O2 -fdefault-real-8 -ffree-line-length-0 -cpp
+FLAGS = -O2 -fdefault-real-8 -ffree-line-length-0 -cpp -DVERSION=\"$(GIT_VERSION)\"
 # No compiler optimization
-#FLAGS = -fdefault-real-8 -ffree-line-length-0 -cpp
+#FLAGS = -fdefault-real-8 -ffree-line-length-0 -cpp -DVERSION=\"$(GIT_VERSION)\"
 
 # includes in SRCDIR, .mod files in MODDIR
 OPT = -I$(SRCDIR) -I$(MODDIR) -I$(MODUTILDIR)  $(FLAGS)

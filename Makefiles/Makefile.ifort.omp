@@ -15,12 +15,15 @@ SRCMODUTILf95 = $(wildcard $(MODUTILDIR)/*.f95)
 OBJMODUTILf95 = $(SRCMODUTILf95:%.f95=%.o)
 INC = $(wildcard $(SRCDIR)/*.inc) 
 
+# generate a Git version string
+GIT_VERSION := $(shell git describe --abbrev=4 --dirty --always --tags)
+
 # for debugging, debug flag and detailed runtime error checking. 
 #FLAGS = -g -CB -r8 -fpp
 # standard compiler optimization. also uses MKL library instead of lapack/blas
-FLAGS = -O2 -r8 -openmp -mkl -fpp
+FLAGS = -O2 -r8 -openmp -mkl -fpp -DVERSION=\"$(GIT_VERSION)\"
 # No compiler optimization
-#FLAGS = -r8 -openmp -mkl -fpp
+#FLAGS = -r8 -openmp -mkl -fpp -DVERSION=\"$(GIT_VERSION)\"
 
 # includes in SRCDIR, .mod files in MODDIR
 OPT = -I$(SRCDIR) -I$(MODDIR) -I$(MODUTILDIR) $(FLAGS)
