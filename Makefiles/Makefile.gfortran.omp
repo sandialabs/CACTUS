@@ -20,7 +20,7 @@ INC = $(wildcard $(SRCDIR)/*.inc)
 # standard compiler optimization
 FLAGS = -O2 -fdefault-real-8 -ffree-line-length-0 -fopenmp -cpp
 # No compiler optimization
-#FLAGS = -fdefault-real-8 -ffree-line-length-0 -cpp
+#FLAGS = -fdefault-real-8 -ffree-line-length-0 -fopenmp -cpp
 
 # includes in SRCDIR, .mod files in MODDIR
 OPT = -I$(SRCDIR) -I$(MODDIR) -I$(MODUTILDIR)  $(FLAGS)

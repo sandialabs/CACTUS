@@ -20,7 +20,7 @@ INC = $(wildcard $(SRCDIR)/*.inc)
 # standard compiler optimization. also uses MKL library instead of lapack/blas
 FLAGS = -O2 -r8 -openmp -mkl -fpp
 # No compiler optimization
-#FLAGS = -r8 -fpp
+#FLAGS = -r8 -openmp -mkl -fpp
 
 # includes in SRCDIR, .mod files in MODDIR
 OPT = -I$(SRCDIR) -I$(MODDIR) -I$(MODUTILDIR) $(FLAGS)
