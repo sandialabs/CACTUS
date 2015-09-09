@@ -133,11 +133,6 @@ PROGRAM CACTUS
     TSOutputFN=trim(FNBase)//'_TimeData.csv'
     ELOutputFN=trim(FNBase)//'_ElementData.csv'
 
-    ! Pi definition
-    pi = 4.0*atan(1.0)
-    conrad = pi/180.0
-    condeg = 180.0/pi
-
     ! Namelist input file
     OPEN(4, FILE= InputFN)
 
