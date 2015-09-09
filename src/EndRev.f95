@@ -1,4 +1,4 @@
-SUBROUTINE EndRev()    
+SUBROUTINE EndRev()
 
     use util
     use configr
@@ -42,7 +42,7 @@ SUBROUTINE EndRev()
     OPEN(9, FILE=RevOutputFN, POSITION='append')
     Call csvwrite(9,Output_RevHead,Output_RevData,0,1)
     CLOSE(9)
-    
+
     ! Reset rev average sums
     CPSum=0.0
     CTRSum=0.0
@@ -50,5 +50,5 @@ SUBROUTINE EndRev()
     CFySum=0.0
     CFzSum=0.0
 
-    Return                                                              
+    Return
 End SUBROUTINE EndRev

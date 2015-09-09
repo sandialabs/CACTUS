@@ -13,7 +13,7 @@ module probesystem
     integer :: ProbeOutEndTimestep           ! timestep at which to end writing probe data
 
     type ProbeType
-        
+
         real          :: p(3)      ! probe location
         real          :: vel(3)    ! probe velocity (at a single instant)
         real          :: vel_fs(3) ! probe free-stream velocity (at a single instant)
@@ -56,7 +56,7 @@ contains
         !   x2 y2 z2
         !   ...
         !   EOF
-        
+
         integer i
         integer, parameter           :: iounit = 20
         character(len=*), intent(in) :: probespec_filename ! Probe specification filename
@@ -103,9 +103,9 @@ contains
 
             ! write probe location
             write(probe_iounit,'(A)') trim(probe_file_header)
-            write(probe_iounit,'(E13.7,",",$)') probes(probe_num)%p(1) 
+            write(probe_iounit,'(E13.7,",",$)') probes(probe_num)%p(1)
             write(probe_iounit,'(E13.7,",",$)') probes(probe_num)%p(2)          ! probe location
-            write(probe_iounit,'(E13.7,","  )') probes(probe_num)%p(3) 
+            write(probe_iounit,'(E13.7,","  )') probes(probe_num)%p(3)
 
             ! write probe data header
             write(probe_iounit,'(A)') trim(probe_data_header)
@@ -133,7 +133,7 @@ contains
 
            ! open file for writing
             open(probe_iounit, file=probe%output_filename, POSITION='append')
-    
+
             ! compute velocity at probe location
             call compute_probe_vel(probe)
 

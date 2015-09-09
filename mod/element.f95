@@ -7,8 +7,8 @@ MODULE element
     implicit none
 
     ! Blade geometry input structure
-    ! JCM: Currently used only to store input geometry file data and blade loads outputs. Should eventually 
-    ! replace the arrays below that are used for the internal calculation, similar to the strut module. This will 
+    ! JCM: Currently used only to store input geometry file data and blade loads outputs. Should eventually
+    ! replace the arrays below that are used for the internal calculation, similar to the strut module. This will
     ! require a change to the blade/element/wake iterators throughout the entire code...
     type BladeType
         ! blade geometry
@@ -48,9 +48,9 @@ MODULE element
 
     type(BladeType), allocatable :: Blades(:)   ! Input blade geometry
 
-    real, allocatable :: xBE(:)     ! X location for each blade segment end (quarter chord)     
-    real, allocatable :: yBE(:)     ! Y location for each blade segment end (quarter chord)     
-    real, allocatable :: zBE(:)     ! Z location for each blade segment end (quarter chord) 
+    real, allocatable :: xBE(:)     ! X location for each blade segment end (quarter chord)
+    real, allocatable :: yBE(:)     ! Y location for each blade segment end (quarter chord)
+    real, allocatable :: zBE(:)     ! Z location for each blade segment end (quarter chord)
 
     real, allocatable :: txBE(:)     ! Tangential X for each blade segment end
     real, allocatable :: tyBE(:)     ! Tangential Y for each blade segment end
@@ -58,21 +58,21 @@ MODULE element
 
     real, allocatable :: CtoR(:)     ! Chord to radius ratio for each blade segment end
 
-    real, allocatable :: xBC(:)             ! X location for each blade segment center (quarter chord)         
-    real, allocatable :: yBC(:)             ! Y location for each blade segment center (quarter chord)         
-    real, allocatable :: zBC(:)             ! Z location for each blade segment center (quarter chord)  
+    real, allocatable :: xBC(:)             ! X location for each blade segment center (quarter chord)
+    real, allocatable :: yBC(:)             ! Y location for each blade segment center (quarter chord)
+    real, allocatable :: zBC(:)             ! Z location for each blade segment center (quarter chord)
 
     real :: dSGeom                          ! Geometry discretization level used in vortex core calculation
-    real :: CrRef                           ! Ref chord to radius ratio     
+    real :: CrRef                           ! Ref chord to radius ratio
     real, allocatable :: nxBC(:)        ! Normal X for each blade segment
     real, allocatable :: nyBC(:)        ! Normal Y for each blade segment
-    real, allocatable :: nzBC(:)        ! Normal Z for each blade segment 
-    real, allocatable :: txBC(:)        ! Tangential X for each blade segment   
-    real, allocatable :: tyBC(:)        ! Tangential Y for each blade segment   
-    real, allocatable :: tzBC(:)        ! Tangential Z for each blade segment   
-    real, allocatable :: sxBC(:)        ! Spanwise X for each blade segment     
-    real, allocatable :: syBC(:)        ! Spanwise Y for each blade segment     
-    real, allocatable :: szBC(:)        ! Spanwise Z for each blade segment 
+    real, allocatable :: nzBC(:)        ! Normal Z for each blade segment
+    real, allocatable :: txBC(:)        ! Tangential X for each blade segment
+    real, allocatable :: tyBC(:)        ! Tangential Y for each blade segment
+    real, allocatable :: tzBC(:)        ! Tangential Z for each blade segment
+    real, allocatable :: sxBC(:)        ! Spanwise X for each blade segment
+    real, allocatable :: syBC(:)        ! Spanwise Y for each blade segment
+    real, allocatable :: szBC(:)        ! Spanwise Z for each blade segment
     ! JCM: note CircSign could be made a function of blade not element with the new geometry spec, or eliminated as it is a function of FlipN
     real, allocatable :: CircSign(:)        ! Direction of segment circulation on wake grid at positive lift
     real, allocatable :: eArea(:)       ! Element area to radius ratio for each element
@@ -98,13 +98,13 @@ CONTAINS
         integer :: BInd, NElem
 
         Blades(BInd)%NElem=NElem
-        allocate(Blades(BInd)%QCx(NElem+1))    
-        allocate(Blades(BInd)%QCy(NElem+1)) 
-        allocate(Blades(BInd)%QCz(NElem+1)) 
-        allocate(Blades(BInd)%tx(NElem+1)) 
-        allocate(Blades(BInd)%ty(NElem+1)) 
+        allocate(Blades(BInd)%QCx(NElem+1))
+        allocate(Blades(BInd)%QCy(NElem+1))
+        allocate(Blades(BInd)%QCz(NElem+1))
+        allocate(Blades(BInd)%tx(NElem+1))
+        allocate(Blades(BInd)%ty(NElem+1))
         allocate(Blades(BInd)%tz(NElem+1))
-        allocate(Blades(BInd)%CtoR(NElem+1)) 
+        allocate(Blades(BInd)%CtoR(NElem+1))
         allocate(Blades(BInd)%PEx(NElem))
         allocate(Blades(BInd)%PEy(NElem))
         allocate(Blades(BInd)%PEz(NElem))
@@ -119,7 +119,7 @@ CONTAINS
         allocate(Blades(BInd)%sEz(NElem))
         allocate(Blades(BInd)%ECtoR(NElem))
         allocate(Blades(BInd)%EAreaR(NElem))
-        allocate(Blades(BInd)%iSect(NElem))         
+        allocate(Blades(BInd)%iSect(NElem))
 
     End SUBROUTINE blade_geom_cns
 
@@ -141,20 +141,20 @@ CONTAINS
         allocate(CtoR(MaxSegEnds))
         allocate(xBC(MaxSegEnds))
         allocate(yBC(MaxSegEnds))
-        allocate(zBC(MaxSegEnds))              
-        allocate(nxBC(MaxSegEnds))      
-        allocate(nyBC(MaxSegEnds))      
-        allocate(nzBC(MaxSegEnds))      
-        allocate(txBC(MaxSegEnds))      
-        allocate(tyBC(MaxSegEnds))      
-        allocate(tzBC(MaxSegEnds))      
-        allocate(sxBC(MaxSegEnds))      
-        allocate(syBC(MaxSegEnds))      
+        allocate(zBC(MaxSegEnds))
+        allocate(nxBC(MaxSegEnds))
+        allocate(nyBC(MaxSegEnds))
+        allocate(nzBC(MaxSegEnds))
+        allocate(txBC(MaxSegEnds))
+        allocate(tyBC(MaxSegEnds))
+        allocate(tzBC(MaxSegEnds))
+        allocate(sxBC(MaxSegEnds))
+        allocate(syBC(MaxSegEnds))
         allocate(szBC(MaxSegEnds))
-        allocate(CircSign(MaxSegEnds))                          
-        allocate(eArea(MaxSegEnds)) 
-        allocate(eChord(MaxSegEnds))            
-        allocate(iSect(MaxSegEnds))              
+        allocate(CircSign(MaxSegEnds))
+        allocate(eArea(MaxSegEnds))
+        allocate(eChord(MaxSegEnds))
+        allocate(iSect(MaxSegEnds))
 
     End SUBROUTINE element_cns
 
@@ -164,7 +164,7 @@ CONTAINS
         implicit none
 
         integer :: BNum
-        real :: delt,nrx,nry,nrz,px,py,pz 
+        real :: delt,nrx,nry,nrz,px,py,pz
         integer :: nbe, j, nei, nej
         real :: vrx,vry,vrz,VMag
 
@@ -177,14 +177,14 @@ CONTAINS
 
         nei=1+(BNum-1)*(nbe+1)
 
-        do j=0,nbe   
-            nej=nei+j ! element index 
+        do j=0,nbe
+            nej=nei+j ! element index
 
             ! Blade end locations (quarter chord). xBE(MaxSegEnds)
             Call QuatRot(xBE(nej),yBE(nej),zBE(nej),delt,nrx,nry,nrz,px,py,pz,vrx,vry,vrz)
-            xBE(nej)=vrx                                       
-            yBE(nej)=vry                                                                                              
-            zBE(nej)=vrz 
+            xBE(nej)=vrx
+            yBE(nej)=vry
+            zBE(nej)=vrz
 
             ! Tangent vectors
             Call QuatRot(txBE(nej),tyBE(nej),tzBE(nej),delt,nrx,nry,nrz,px,py,pz,vrx,vry,vrz)

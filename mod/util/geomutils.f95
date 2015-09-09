@@ -1,12 +1,12 @@
 module geomutils
 
     ! module geomutils : functions for querying 2-D and 3-D geometries
-    
+
     implicit none
 
     private
     public dist_point_to_segment_2d, is_point_in_quad
-    
+
 contains
 
      function dist_point_to_segment_2d(x,y,x1,y1,x2,y2)
@@ -19,7 +19,7 @@ contains
         !   x,y         : the coordinates of the point
         !
         !   Output:
-        !   ======= 
+        !   =======
         !   x1,y1,x2,y2 : the start and end points of the line segment
         !
 
@@ -34,7 +34,7 @@ contains
             write(*,*) 'Error in dist_point_to_segment_2d : Points are coincident!'
             stop
         end if
-        
+
         dx = x2-x1
         dy = y2-y1
 
@@ -73,7 +73,7 @@ contains
         real, intent(in)   :: p_list(4,3)
         real, intent(in)   :: p(3)
         logical            :: is_point_in_quad
-        
+
         integer, parameter :: nsides = 4
         real               :: p1(3), p2(3)
         real               :: xinters
@@ -93,7 +93,7 @@ contains
                             xinters = (p(2)-p1(2))*(p2(1)-p1(1))/(p2(2)-p1(2)) + p1(1)
                             if (p1(1) == p2(1) .or. p(1) <= xinters) then
                                 counter = counter + 1
-                            end if  
+                            end if
                         end if
                     end if
                 end if

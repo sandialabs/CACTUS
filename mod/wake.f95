@@ -6,7 +6,7 @@ MODULE wake
     real, allocatable :: GT(:,:)            ! Trailing wake (streamwise) vorticity
     real, allocatable :: GS(:,:)            ! Shed wake (spanwise) vorticity
 
-    ! Wake location data 
+    ! Wake location data
     real, allocatable :: X(:,:)             ! X position
     real, allocatable :: Y(:,:)             ! Y position
     real, allocatable :: Z(:,:)             ! Z position
@@ -31,7 +31,7 @@ CONTAINS
     SUBROUTINE wake_cns(MaxWakeNodes, MaxSegEnds)
 
         ! Constructor - allocates memory for arrays
-        
+
         integer :: MaxWakeNodes, MaxSegEnds
 
         allocate(GT(MaxWakeNodes,MaxSegEnds))
@@ -47,7 +47,7 @@ CONTAINS
         allocate(WFS(MaxWakeNodes,MaxSegEnds))
         allocate(UO(MaxWakeNodes,MaxSegEnds))
         allocate(VO(MaxWakeNodes,MaxSegEnds))
-        allocate(WO(MaxWakeNodes,MaxSegEnds))    
+        allocate(WO(MaxWakeNodes,MaxSegEnds))
 
     End SUBROUTINE wake_cns
 

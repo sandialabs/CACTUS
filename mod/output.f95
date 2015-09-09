@@ -28,11 +28,11 @@ MODULE output
     real, allocatable :: Output_ELData(:,:)                 ! Element loads data for each timestep
 
     ! Dynamic stall diagnostic output
-    integer :: Output_DSType 
+    integer :: Output_DSType
     character(10000) :: Output_BVHead = 'Normalized Time (-),Theta (rad),Blade,Element,Rev,alpha (deg),adotnorm (-),alrefL (deg),alrefD (deg),DynamicFlagL,DynamicFlagD'
     integer :: Output_NBVOut = 11                           ! Number of BV diagnostic outputs
     integer :: Output_BVRow                                 ! Rows of element row output
-    real, allocatable :: Output_BVData(:,:)                 ! Diagnostic data for each timestep   
+    real, allocatable :: Output_BVData(:,:)                 ! Diagnostic data for each timestep
     character(10000) :: Output_LBHead = 'Normalized Time (-),Theta (rad),Blade,Element,Rev,L1,L2,L3,L4,L5,L6,L7,L8,L9,Check'
     integer :: Output_NLBOut = 15                           ! Number of LB diagnostic outputs
     integer :: Output_LBRow                                 ! Rows of element row output
@@ -52,10 +52,10 @@ CONTAINS
         Output_NTSOut=8+4*MaxBlades+4*MaxStruts
         allocate(Output_TSData(1,Output_NTSOut))
         do i=1,MaxBlades
-            Output_TSHead=trim(Output_TSHead)//','//trim(Output_TSHeadBlade)  
+            Output_TSHead=trim(Output_TSHead)//','//trim(Output_TSHeadBlade)
         end do
         do i=1,MaxStruts
-            Output_TSHead=trim(Output_TSHead)//','//trim(Output_TSHeadStrut)  
+            Output_TSHead=trim(Output_TSHead)//','//trim(Output_TSHeadStrut)
         end do
 
         if (Output_ELFlag == 1) then

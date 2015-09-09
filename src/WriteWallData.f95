@@ -1,10 +1,10 @@
-SUBROUTINE WriteWallData()   
+SUBROUTINE WriteWallData()
 
     ! Write wall data outputs
 
     use fnames
     use wallgeom
-    use wallsoln 
+    use wallsoln
     use wallsystem
     use configr
 
@@ -18,8 +18,8 @@ SUBROUTINE WriteWallData()
     character(10) :: iw_str, nt_str
     character(80) :: var_string, varlocation_string             ! string to contain variable information for TecPlot output file
     real :: vel_center(3)
-    real :: TVel, dH 
-    real, allocatable :: TVelIFS(:,:)   
+    real :: TVel, dH
+    real, allocatable :: TVelIFS(:,:)
     real :: dummy
 
     ! Setup
@@ -33,13 +33,13 @@ SUBROUTINE WriteWallData()
 
     end if
 
-    if (irev == nr) then    
-        OutCount=OutCount+1 
+    if (irev == nr) then
+        OutCount=OutCount+1
     end if
 
     ! Output ground plane source density
     if (GPFlag == 1 .or. WPFlag == 1) then
-        
+
         ! write file to Tecplot Finite Element structured, cell-centered data format
         write(nt_str,'(I5.5)') nt
         filename=trim(FNBase)//'_WPData_'//trim(nt_str)//'.tp'
@@ -65,9 +65,9 @@ SUBROUTINE WriteWallData()
             else
                 var_string = 'VARLOCATION=([4]=CELLCENTERED)'
             end if
-            
+
             ! write each wall as a zone, specifying cellcentered data for sigma
-            write(17,'(A,I0,A,I0,A,I0,A,E13.7,A,A)') 'ZONE I=', Walls(iw)%NumWP1+1, & 
+            write(17,'(A,I0,A,I0,A,I0,A,E13.7,A,A)') 'ZONE I=', Walls(iw)%NumWP1+1, &
                                                       ', J=', Walls(iw)%NumWP2+1, &
                                                       ', K=1, T="WP', iw, '", SOLUTIONTIME=', TimeN, ', DATAPACKING=BLOCK, ', var_string
 
@@ -105,7 +105,7 @@ SUBROUTINE WriteWallData()
             end do
             write(17,*) ""
 
-            !! if WallOutFlag == 2 (verbose wall data), write velocities at panel centers 
+            !! if WallOutFlag == 2 (verbose wall data), write velocities at panel centers
             if (WallOutFlag == 2) then
                 ! u
                 do i=1,Walls(iw)%NumWP
@@ -197,7 +197,7 @@ SUBROUTINE WriteWallData()
             ! Write on appropriate iter
             if (OutCount == OutIterFS) then
 
-                ! Calc tangential velocity induced by free surface 
+                ! Calc tangential velocity induced by free surface
                 allocate(TVelIFS(NumFSCP,1))
                 TVelIFS=matmul(FSInCoeffT,FSSource)
 
@@ -211,9 +211,9 @@ SUBROUTINE WriteWallData()
                     dH=0.5*FnR**2*(1-TVel**2)
 
                     ! Write
-                    write(15,'(E13.7,",",$)') FSCPPoints(i,1) 
-                    write(15,'(E13.7,",",$)') FSCPPoints(i,2) 
-                    write(15,'(E13.7,",",$)') FSCPPoints(i,3) 
+                    write(15,'(E13.7,",",$)') FSCPPoints(i,1)
+                    write(15,'(E13.7,",",$)') FSCPPoints(i,2)
+                    write(15,'(E13.7,",",$)') FSCPPoints(i,3)
                     write(15,'(E13.7,",",$)') TVel
                     ! Dont suppress carriage return on last column
                     write(15,'(E13.7)') dH

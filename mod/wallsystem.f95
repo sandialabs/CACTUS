@@ -84,7 +84,7 @@ contains
         ! gen_influence_matrix() : Generates the influence matrix WInf(:,:) for the wall system.
 
         real    :: p(3), p_center(3)
-        real    :: p1(3), p2(3), p3(3), p4(3) 
+        real    :: p1(3), p2(3), p3(3), p4(3)
         real    :: p_plane(3), p1_plane(3), p2_plane(3), p3_plane(3), p4_plane(3)
 
         real    :: vel(3), temp
@@ -97,7 +97,7 @@ contains
         integer :: selfinfluence
 
         ! compute the influence matrix
-!$omp parallel do private(jp_global,selfinfluence,R,p1,p2,p3,p4,p,p_center,p_plane,p1_plane,p2_plane,p3_plane,p4_plane,vel,temp,info,vel_global) 
+!$omp parallel do private(jp_global,selfinfluence,R,p1,p2,p3,p4,p,p_center,p_plane,p1_plane,p2_plane,p3_plane,p4_plane,vel,temp,info,vel_global)
         do ip_global=1,NumWP_total
             do jp_global=1,NumWP_total
 
@@ -131,7 +131,7 @@ contains
 
                 ! Rotate back to global frame
                 Call CalcRotation3(R,vel,vel_global,1)
-                
+
                 ! Calc dot product of induced velocity with the point of interest panel normal
                 ! WInf(jp_global,ip_global) = sum(vel_global*W3Vec(ip_global,1:3))
                 WInf(ip_global,jp_global) = sum(vel_global*W3Vec(ip_global,1:3))
@@ -162,7 +162,7 @@ contains
         do i=1,NumWP_total
             do j=1,NumWP_total
                 if (j==i) then
-                    WInfI(i,j) = 1.0 
+                    WInfI(i,j) = 1.0
                 end if
             end do
         end do
@@ -181,17 +181,17 @@ contains
     subroutine wall_ind_vel(p,calcder,vel,dudx)
 
         ! wall_ind_vel() : calculates the velocity induced by all the wall panels at a point
-        
+
         real, intent(in)    :: p(3)
         integer, intent(in) :: calcder
-        
+
         real, intent(out)   :: vel(3), dudx
-        
+
         ! temporary variables
         real                :: R(3,3)
         integer             :: i
         real                :: p_center(3)
-        real                :: p1(3), p2(3), p3(3), p4(3) 
+        real                :: p1(3), p2(3), p3(3), p4(3)
         real                :: p_plane(3), p1_plane(3), p2_plane(3), p3_plane(3), p4_plane(3)
         real                :: dvel(3), dvel_global(3)
         real                :: sigma
@@ -271,13 +271,13 @@ contains
 
         integer, intent(in) :: ip_global
         real, intent(out)   :: p1(3), p2(3), p3(3), p4(3)
-        
+
         integer             :: iw, ip_local
         integer             :: i_panel, j_panel
 
         ! get the wall number, iw
         call ip_global_to_iwip_local(ip_global,iw,ip_local)
-        
+
         ! get the local panel indices, i_panel & j_panel
         call ip_local_to_ij_panel(Walls(iw),ip_local,i_panel,j_panel)
 
@@ -293,7 +293,7 @@ contains
         !   as Walls(:).
         !
         ! WallMeshPath (input) : Path to file containing a multi-block structured mesh.
-    
+
         character(len=*), intent(in) :: WallMeshPath
         integer                      :: nblocks
         integer, allocatable         :: ni(:), nj(:), nk(:)
@@ -343,7 +343,7 @@ contains
 
             ! loop through grid coordinates
             idx = 1
-            
+
             do j=1,nj(m)-1
                 do i=1,ni(m)-1
                     ! get cell corners (ordered clockwise from lowest i,j when viewed from behind panel)
@@ -359,7 +359,7 @@ contains
                     ! compute panel normal vector
                     Call cross(Walls(m)%W1Vec(idx,1),Walls(m)%W1Vec(idx,2),Walls(m)%W1Vec(idx,3),&
                                Walls(m)%W2Vec(idx,1),Walls(m)%W2Vec(idx,2),Walls(m)%W2Vec(idx,3),&
-                               Walls(m)%W3Vec(idx,1),Walls(m)%W3Vec(idx,2),Walls(m)%W3Vec(idx,3))    
+                               Walls(m)%W3Vec(idx,1),Walls(m)%W3Vec(idx,2),Walls(m)%W3Vec(idx,3))
 
                     idx = idx + 1
                 end do

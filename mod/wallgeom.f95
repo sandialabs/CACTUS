@@ -17,13 +17,13 @@ module wallgeom
         real, allocatable :: W2Vec(:,:)               ! Panel tangential vectors in the width direction
         real, allocatable :: W3Vec(:,:)               ! Panel normal vectors
         real, allocatable :: pnodes(:,:)              ! Panel node locations (x,y,z)
-        
+
         ! wall strength
         real, allocatable :: WSource(:,:)             ! Wall source density values (column vector) (non-dimensional, normalized by freestream velocity)
-        
+
         ! wall velocities (for output)
         real, allocatable :: vel_centers(:,:)          ! velocity vector over Uinf
-        
+
 
     end type WallType
 
@@ -53,11 +53,11 @@ contains
 
     subroutine ip_local_to_ij_panel(Wall,ip_local,i,j)
         ! ip_local_to_ij_panel() : returns the i,j index of the panel with "flat" index given by ip_local
-        
+
         type(WallType), intent(in) :: Wall
         integer, intent(in)        :: ip_local
         integer, intent(out)       :: i,j
-        
+
         i = mod(ip_local-1,Wall%NumWP1) + 1
         j = (ip_local-1)/Wall%NumWP1    + 1 ! forced to integer
 

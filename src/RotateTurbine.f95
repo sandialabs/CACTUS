@@ -1,13 +1,13 @@
 SUBROUTINE RotateTurbine
 
-    use configr       
+    use configr
     use element
     use blade
-    use strut       
+    use strut
 
     ! Updates current turbine geometry
 
-    ! Rotate turbine axis of rotation and origin if necessary...                                                         
+    ! Rotate turbine axis of rotation and origin if necessary...
 
     ! Rotate blades
     do i=1,nb
@@ -19,5 +19,5 @@ SUBROUTINE RotateTurbine
         Call RotateStrut(i,delt,RotX,RotY,RotZ,RotPX,RotPY,RotPZ)
     end do
 
-    return                                                            
+    return
 end SUBROUTINE RotateTurbine

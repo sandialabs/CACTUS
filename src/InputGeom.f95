@@ -2,13 +2,13 @@ SUBROUTINE InputGeom(FN)
 
     use element
     use strut
-    use varscale 
-    use configr    
+    use varscale
+    use configr
 
     implicit none
 
-    integer, parameter :: MaxReadLine = 1000    
-    character(MaxReadLine) :: FN    ! path to geometry input file 
+    integer, parameter :: MaxReadLine = 1000
+    character(MaxReadLine) :: FN    ! path to geometry input file
 
     integer :: NElem, i
     character(MaxReadLine) :: ReadLine
@@ -102,7 +102,7 @@ SUBROUTINE InputGeom(FN)
 
     ! Allocate struts struct
     if (NStrut>0) then
-        allocate(Struts(NStrut))     
+        allocate(Struts(NStrut))
     end if
 
     ! Read blade data
@@ -129,19 +129,19 @@ SUBROUTINE InputGeom(FN)
         read(ReadLine(index(ReadLine,':')+1:),*) Blades(i)%QCy(1:NElem+1)
 
         read(15,'(A)') ReadLine
-        read(ReadLine(index(ReadLine,':')+1:),*) Blades(i)%QCz(1:NElem+1)  
+        read(ReadLine(index(ReadLine,':')+1:),*) Blades(i)%QCz(1:NElem+1)
 
         read(15,'(A)') ReadLine
-        read(ReadLine(index(ReadLine,':')+1:),*) Blades(i)%tx(1:NElem+1)                      
+        read(ReadLine(index(ReadLine,':')+1:),*) Blades(i)%tx(1:NElem+1)
 
         read(15,'(A)') ReadLine
-        read(ReadLine(index(ReadLine,':')+1:),*) Blades(i)%ty(1:NElem+1) 
+        read(ReadLine(index(ReadLine,':')+1:),*) Blades(i)%ty(1:NElem+1)
 
         read(15,'(A)') ReadLine
-        read(ReadLine(index(ReadLine,':')+1:),*) Blades(i)%tz(1:NElem+1) 
+        read(ReadLine(index(ReadLine,':')+1:),*) Blades(i)%tz(1:NElem+1)
 
         read(15,'(A)') ReadLine
-        read(ReadLine(index(ReadLine,':')+1:),*) Blades(i)%CtoR(1:NElem+1) 
+        read(ReadLine(index(ReadLine,':')+1:),*) Blades(i)%CtoR(1:NElem+1)
 
         read(15,'(A)') ReadLine
         read(ReadLine(index(ReadLine,':')+1:),*) Blades(i)%PEx(1:NElem)
@@ -186,7 +186,7 @@ SUBROUTINE InputGeom(FN)
         read(ReadLine(index(ReadLine,':')+1:),*) Blades(i)%EAreaR(1:NElem)
 
         read(15,'(A)') ReadLine
-        read(ReadLine(index(ReadLine,':')+1:),*) Blades(i)%iSect(1:NElem) 
+        read(ReadLine(index(ReadLine,':')+1:),*) Blades(i)%iSect(1:NElem)
 
     end do
 
@@ -254,7 +254,7 @@ SUBROUTINE InputGeom(FN)
 
     end do
 
-    ! Close input file 
+    ! Close input file
     close(15)
 
     Return

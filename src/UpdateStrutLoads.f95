@@ -1,4 +1,4 @@
-SUBROUTINE UpdateStrutLoads()  
+SUBROUTINE UpdateStrutLoads()
 
     use strut
     use configr
@@ -21,7 +21,7 @@ SUBROUTINE UpdateStrutLoads()
     CTR_S=0.0
     CFx_S=0.0
     CFy_S=0.0
-    CFz_S=0.0                          
+    CFz_S=0.0
 
     do i=1,NStrut
 
@@ -33,7 +33,7 @@ SUBROUTINE UpdateStrutLoads()
         Struts(i)%CFz=0.0
 
         NElem=Struts(i)%NElem
-        do j=1,NElem 
+        do j=1,NElem
 
             xs=Struts(i)%PEx(j)
             ys=Struts(i)%PEy(j)
@@ -42,7 +42,7 @@ SUBROUTINE UpdateStrutLoads()
             ! Freestream velocity at strut location
             Call CalcFreestream(xs,ys,zs,uFSs,vFSs,wFSs,ygcerr)
 
-            ! Blade velocity due to rotation                                                      
+            ! Blade velocity due to rotation
             CALL CalcBladeVel(wRotX,wRotY,wRotZ,xs,ys,zs,uBlade,vBlade,wBlade)
 
             ! Induced velocity at strut element
@@ -65,13 +65,13 @@ SUBROUTINE UpdateStrutLoads()
             ! Calculate strut element coeffs
             Call StrutElemCoeffs(i,j)
 
-            ! Drag coeff vector from this strut element, re-referenced to full turbine scale 
+            ! Drag coeff vector from this strut element, re-referenced to full turbine scale
             ! (D/(1/2*rho*Uinf^2*At)
             Delem = Struts(i)%Cd0(j) * Struts(i)%EAreaR(j) / at * ur**2
             Fx=Delem*uTot/ur
             Fy=Delem*vTot/ur
             Fz=Delem*wTot/ur
-            ! Corresponding torque coeff. (T/(1/2*rho*Uinf^2*At*R)) 
+            ! Corresponding torque coeff. (T/(1/2*rho*Uinf^2*At*R))
             CALL cross(xs-RotPX,ys-RotPY,zs-RotPZ,Fx,Fy,Fz,TRx,TRy,TRz)
             te=(TRx*RotX+TRy*RotY+TRz*RotZ)
 
@@ -99,13 +99,13 @@ SUBROUTINE UpdateStrutLoads()
             !Cdj = 0.0112  ! t/c_avg = 0.165
             !Cdj = 0.0535  ! t/c_avg = 0.24
             Cdj = Cdj + Cdpar  ! Additional user-specified parasitic drag
-            ! Drag coeff vector, re-referenced to full turbine scale 
+            ! Drag coeff vector, re-referenced to full turbine scale
             ! (D/(1/2*rho*Uinf^2*At)
             Djunc = Cdj * carea / at * ur**2
             Fx=Djunc*uTot/ur
             Fy=Djunc*vTot/ur
             Fz=Djunc*wTot/ur
-            ! Corresponding torque coeff. (T/(1/2*rho*Uinf^2*At*R)) 
+            ! Corresponding torque coeff. (T/(1/2*rho*Uinf^2*At*R))
             CALL cross(xj-RotPX,yj-RotPY,zj-RotPZ,Fx,Fy,Fz,TRx,TRy,TRz)
             te=(TRx*RotX+TRy*RotY+TRz*RotZ)
             ! Add to strut output
@@ -130,13 +130,13 @@ SUBROUTINE UpdateStrutLoads()
             !Cdj = 0.0112  ! t/c_avg = 0.165
             !Cdj = 0.0535  ! t/c_avg = 0.24
             Cdj = Cdj + Cdpar  ! Additional user-specified parasitic drag
-            ! Drag coeff vector, re-referenced to full turbine scale 
+            ! Drag coeff vector, re-referenced to full turbine scale
             ! (D/(1/2*rho*Uinf^2*At)
             Djunc = Cdj * carea / at * ur**2
             Fx=Djunc*uTot/ur
             Fy=Djunc*vTot/ur
             Fz=Djunc*wTot/ur
-            ! Corresponding torque coeff. (T/(1/2*rho*Uinf^2*At*R)) 
+            ! Corresponding torque coeff. (T/(1/2*rho*Uinf^2*At*R))
             CALL cross(xj-RotPX,yj-RotPY,zj-RotPZ,Fx,Fy,Fz,TRx,TRy,TRz)
             te=(TRx*RotX+TRy*RotY+TRz*RotZ)
             ! Add to strut output

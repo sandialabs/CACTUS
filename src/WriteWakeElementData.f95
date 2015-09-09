@@ -1,14 +1,14 @@
-SUBROUTINE WriteWakeElementData() 
+SUBROUTINE WriteWakeElementData()
 
     ! Write wake element positions and velocity
 
     use wakedata
     use blade
     use wake
-    use wallsoln 
+    use wallsoln
     use configr
     use fnames
-    
+
     implicit none
 
     integer :: tCount, tCountMax, wcount, node_id

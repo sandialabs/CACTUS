@@ -1,12 +1,12 @@
 module plot3d
-    
+
     ! plot3d : subroutines for reading plot3d mesh data
 
     implicit none
 
     private
     public read_p3d_multiblock
-    
+
     integer, parameter :: IOunit = 20
 
 contains
@@ -58,7 +58,7 @@ contains
 
         ! read number of blocks
         read(IOunit,*) nblocks
-        
+
         ! allocate for the dimensions of the mesh blocks
         allocate(ni(nblocks))
         allocate(nj(nblocks))
@@ -77,7 +77,7 @@ contains
         allocate(x(nimax,njmax,nkmax,nblocks))
         allocate(y(nimax,njmax,nkmax,nblocks))
         allocate(z(nimax,njmax,nkmax,nblocks))
-        
+
         ! read in data for each block
         do  m=1,nblocks
             do k=1,nk(m)

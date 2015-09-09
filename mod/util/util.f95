@@ -4,9 +4,9 @@ MODULE util
 
 CONTAINS
 
-    SUBROUTINE cross(ax,ay,az,bx,by,bz,cx,cy,cz) 
+    SUBROUTINE cross(ax,ay,az,bx,by,bz,cx,cy,cz)
 
-        real ax,ay,az,bx,by,bz,cx,cy,cz 
+        real ax,ay,az,bx,by,bz,cx,cy,cz
 
         cx = ay*bz - az*by
         cy = az*bx - ax*bz
@@ -26,7 +26,7 @@ CONTAINS
         ! %
         ! % vR: Rotated vector
 
-        real :: vx,vy,vz,Theta,nRx,nRy,nRz,Ox,Oy,Oz,vRx,vRy,vRz     
+        real :: vx,vy,vz,Theta,nRx,nRy,nRz,Ox,Oy,Oz,vRx,vRy,vRz
 
         real :: p(4,1), pR(4,1), q(4), qbar(4), nRMag, vOx, vOy, vOz
         real :: QL(4,4), QbarR(4,4)
@@ -101,14 +101,14 @@ CONTAINS
         end do
 
         Return
-10      format(E13.7,',',$) 
+10      format(E13.7,',',$)
     End SUBROUTINE Csvwrite
 
     SUBROUTINE file_to_stdout(filename)
     ! file_to_stdout() : Read a file in and write it's output to stdout.
     !   (Useful for appending input files to the output)
 
-    integer, parameter :: max_linewidth = 1000    
+    integer, parameter :: max_linewidth = 1000
     character(80) :: filename
     integer :: reason
 
@@ -131,7 +131,7 @@ CONTAINS
 
     ! close file
     close(30)
-    
+
     End SUBROUTINE file_to_stdout
 
 
@@ -161,7 +161,7 @@ CONTAINS
     subroutine print_vec3array(vec3array)
         real, allocatable :: vec3array(:,:)
         integer :: i
-        
+
         do i=1,size(vec3array,dim=1)
             write(*,*) vec3array(i,:3)
         end do

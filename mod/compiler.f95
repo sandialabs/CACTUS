@@ -15,7 +15,7 @@ module compiler
     character(80) :: COMPILER_STRING, COMPILER_VER
 
 contains
-    
+
 
     subroutine print_compiler_info()
 
@@ -38,7 +38,7 @@ contains
 !dec$endif
 #endif
 
-    ! print the Git version (VERSION must be defined via Makefile macro and defined 
+    ! print the Git version (VERSION must be defined via Makefile macro and defined
     ! with compiler flag -DVERSION='')
 #if defined(VERSION)
         write(*,'(A,A)') "Git version: ", VERSION

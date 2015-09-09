@@ -1,5 +1,5 @@
 SUBROUTINE UpdateTowerVelocity()
-  
+
   use tower
   use configr
 
@@ -12,7 +12,7 @@ SUBROUTINE UpdateTowerVelocity()
   Do i = 1,tower_Npts
 
      ! Freestream velocity at tower location
-     Call CalcFreestream(tower_x,tower_y(i),0.0,uFSt,vFSt,wFSt,ygcerr)  
+     Call CalcFreestream(tower_x,tower_y(i),0.0,uFSt,vFSt,wFSt,ygcerr)
 
      ! Induced velocity at tower location
      Call CalcIndVel(NT,ntTerm,NBE,NB,NE,tower_x,tower_y(i),0.0,utow,vtow,wtow)

@@ -1,4 +1,4 @@
-SUBROUTINE BGeomSetup() 
+SUBROUTINE BGeomSetup()
 
     use parameters
 
@@ -85,5 +85,5 @@ SUBROUTINE BGeomSetup()
 
     end do
 
-    return                                                            
+    return
 end SUBROUTINE BGeomSetup

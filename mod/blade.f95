@@ -6,7 +6,7 @@ MODULE blade
     real, allocatable :: GB(:)              ! Bound vorticity
     real, allocatable :: OGB(:)             ! Old bound vorticity (previous time step)
     real, allocatable :: GB_Raw(:)          ! Raw (pre-filter) bound vorticity
-    real, allocatable :: AOA(:)             ! AOA on blade elements    
+    real, allocatable :: AOA(:)             ! AOA on blade elements
     real, allocatable :: AOA_Last(:)        ! Last value of AOA on blade elements
 
     real, allocatable :: UIWake(:)          ! Velocity induced at blade from wake
@@ -24,9 +24,9 @@ MODULE blade
     real, allocatable :: WFSB(:)             ! Lattice point z velocity for each element end lattice point
 
     ! Timestep filter
-    integer :: TSFilFlag            ! 1 to enable timestep filtering, 0 for no filtering (default) 
+    integer :: TSFilFlag            ! 1 to enable timestep filtering, 0 for no filtering (default)
     integer :: ntsf                 ! Number of timesteps over which the bound vorticity is filtered smooth (if TSFilFlag = 1)
-    real    :: KTF                
+    real    :: KTF
 
 CONTAINS
 
@@ -36,11 +36,11 @@ CONTAINS
 
         integer :: MaxSegEnds
 
-        allocate(GB(MaxSegEnds))            
+        allocate(GB(MaxSegEnds))
         allocate(OGB(MaxSegEnds))
         allocate(GB_Raw(MaxSegEnds))
-        allocate(AOA(MaxSegEnds))   
-        allocate(AOA_Last(MaxSegEnds))   
+        allocate(AOA(MaxSegEnds))
+        allocate(AOA_Last(MaxSegEnds))
         allocate(UIWake(MaxSegEnds))
         allocate(VIWake(MaxSegEnds))
         allocate(WIWake(MaxSegEnds))
@@ -50,7 +50,7 @@ CONTAINS
         allocate(UFSB(MaxSegEnds))
         allocate(VFSB(MaxSegEnds))
         allocate(WFSB(MaxSegEnds))
-           
+
 
     End SUBROUTINE blade_cns
 
@@ -61,8 +61,8 @@ CONTAINS
 
         ! Save last AOA values for each element
 
-        do k=1,ne                                                                                                             
-            AOA_Last(k)=AOA(k)                                                         
+        do k=1,ne
+            AOA_Last(k)=AOA(k)
         end do
 
     End SUBROUTINE UpdateAOALast
@@ -74,8 +74,8 @@ CONTAINS
 
         ! Update filtered bound vorticity (filtered smooth over approx. ntsf timesteps using a first order discrete filter)
 
-        do k=1,ne                                                                                                             
-            GB(k)=KTF*GB_Raw(k) + (1.0-KTF)*GB(k)                                                        
+        do k=1,ne
+            GB(k)=KTF*GB_Raw(k) + (1.0-KTF)*GB(k)
         end do
 
     End SUBROUTINE UpdateTSFilter

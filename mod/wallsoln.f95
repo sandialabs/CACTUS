@@ -10,10 +10,10 @@ MODULE wallsoln
     integer :: GPFlag          ! Set to 1 to do ground plane calculation, otherwise 0
 
     real    :: GPy             ! y location of ground plane (over radius)
-    real    :: GPGridSF        ! Grid scale factor (factor on default grid discretization level)       
+    real    :: GPGridSF        ! Grid scale factor (factor on default grid discretization level)
     real    :: GPGridExtent    ! Distance ground plane extends in both directions from the origin
     real    :: WEdgeTol        ! Tolerance around panel edge in which to evaluate influence in special way (to avoid inf...)
-    integer :: NumWP           ! Total number of wall panels    
+    integer :: NumWP           ! Total number of wall panels
 
 
     ! Wall System
@@ -62,14 +62,14 @@ MODULE wallsoln
     integer, allocatable :: FSBCRow(:)       ! Row index of BC equation in solution matrix for each colocation point (if CP has BC, 0 otherwise)
 
     ! Free surface data output
-    character(1000) :: FSOutHead = 'X/R (-),Y/R (-),Z/R (-),U/Uinf (-),dH/R (-)'    
+    character(1000) :: FSOutHead = 'X/R (-),Y/R (-),Z/R (-),U/Uinf (-),dH/R (-)'
     real, allocatable :: FSVT(:,:)          ! Right hand side vector for the FS solution (list for running average)
-    real, allocatable :: FSVTAve(:,:)       ! Average right hand side vector for the FS solution (over approx 1 revolution)         
+    real, allocatable :: FSVTAve(:,:)       ! Average right hand side vector for the FS solution (over approx 1 revolution)
 
     ! Wall update interval
-    integer :: iWall                         ! Wall update interval (number of timesteps)  
+    integer :: iWall                         ! Wall update interval (number of timesteps)
 
-    ! Output function params       
+    ! Output function params
     integer :: WallOutFlag                   ! Output wall panel data
     integer :: OutCount                      ! global counter for wall output function
     integer :: OutIterFS                     ! timestep iteration on final revolution on which to write FS output
@@ -79,7 +79,7 @@ CONTAINS
 
     SUBROUTINE wallsoln_fs_cns()
 
-        ! Free surface                
+        ! Free surface
         allocate(FSCPoints(NumFSP,3))
         allocate(FSXVec(NumFSP,3))
         allocate(FSYVec(NumFSP,3))
@@ -123,7 +123,7 @@ CONTAINS
         ! Note: the use of fortran 95 array math intrinsic functions (reshape, matmul) has been avoided to speed things up...
 
         real :: Point(3), L, Wth, Source, EdgeTol
-        integer :: SelfInfluence, CalcDer 
+        integer :: SelfInfluence, CalcDer
 
         real :: Vel(3), dudx
 
@@ -134,7 +134,7 @@ CONTAINS
         ! Define pi
         pi = 4.0*atan(1.0)
 
-        R2=sum(Point**2)           
+        R2=sum(Point**2)
         R2P=((L/2.0+EdgeTol)**2+(Wth/2.0+EdgeTol)**2+EdgeTol**2)
 
         if (SelfInfluence==1) then
@@ -183,7 +183,7 @@ CONTAINS
                 Rp1=sqrt(sum(dP1**2))
                 Rp2=sqrt(sum(dP2**2))
                 Rp3=sqrt(sum(dP3**2))
-                Rp4=sqrt(sum(dP4**2))                           
+                Rp4=sqrt(sum(dP4**2))
 
                 h1=dP1(1)*dP1(2)
                 h2=dP2(1)*dP2(2)
@@ -197,7 +197,7 @@ CONTAINS
                 Vel=[u,v,w]
                 if (CalcDer==1) then
                     dudx=Source/(2.0*pi)*Wth*((dP1(1)/Rp1+dP2(1)/Rp2)/((Rp1+Rp2-Wth)*(Rp1+Rp2+Wth)) - (dP3(1)/Rp3+dP4(1)/Rp4)/((Rp3+Rp4-Wth)*(Rp3+Rp4+Wth)))
-                else 
+                else
                     dudx=0.0
                 end if
             end if
@@ -211,7 +211,7 @@ CONTAINS
             Rp1=sqrt(sum(dP1**2))
             Rp2=sqrt(sum(dP2**2))
             Rp3=sqrt(sum(dP3**2))
-            Rp4=sqrt(sum(dP4**2))  
+            Rp4=sqrt(sum(dP4**2))
 
             h1=dP1(1)*dP1(2)
             h2=dP2(1)*dP2(2)
@@ -300,12 +300,12 @@ CONTAINS
             R(3,1:3)=FSZVec(i,1:3)
 
             ! Calc influence in panel frame
-            dPG=PointG-FSCPoints(i,1:3)                            
-            Call CalcRotation3(R,dPG,Point,0)                        
+            dPG=PointG-FSCPoints(i,1:3)
+            Call CalcRotation3(R,dPG,Point,0)
             Call RectSourceVel(Point,FSPL(i),FSPW(i),FSSource(i,1),0,FSEdgeTol,CalcDer,dVel,dudx)
 
             ! Rotate to global frame
-            Call CalcRotation3(R,dVel,dVelG,1)                             
+            Call CalcRotation3(R,dVel,dVelG,1)
 
             Vel=Vel+dVelG
 

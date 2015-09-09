@@ -1,4 +1,4 @@
-SUBROUTINE input(ErrFlag) 
+SUBROUTINE input(ErrFlag)
 
     use parameters
 
@@ -6,7 +6,7 @@ SUBROUTINE input(ErrFlag)
     use element
     use blade
     use wake
-    use strut       
+    use strut
     use varscale
     use shear
     use iecgust
@@ -20,31 +20,31 @@ SUBROUTINE input(ErrFlag)
     use wallsoln
     use wallsystem
     use regtest
-    use output 
+    use output
     use tower
     use probesystem
-    
+
 
     integer, parameter :: InBufferNumSectionTables = 1000
     integer, parameter :: InBufferNumWL = 1000
-    integer, parameter :: MaxReadLine = 1000    
-    integer, parameter :: MaxTempAOA = 1000   
+    integer, parameter :: MaxReadLine = 1000
+    integer, parameter :: MaxTempAOA = 1000
 
     integer i, ii, jj, kk
     integer ErrFlag
     logical NotDone, NotBlank
     character(MaxReadLine) :: ReadLine
-    character(MaxReadLine) :: GeomFilePath    ! path to geometry input file 
+    character(MaxReadLine) :: GeomFilePath    ! path to geometry input file
     integer :: CI, EOF
     real :: temp, temp1(MaxTempAOA,4)
-        
+
 
     ! Temp buffers
-    
-    character(MaxReadLine) :: AFDPath(InBufferNumSectionTables) ! Airfoil section data path      
+
+    character(MaxReadLine) :: AFDPath(InBufferNumSectionTables) ! Airfoil section data path
     character(MaxReadLine) :: WallMeshPath ! Wall mesh file path
-    character(MaxReadLine) :: ProbeSpecPath ! Wall mesh file path      
-   
+    character(MaxReadLine) :: ProbeSpecPath ! Wall mesh file path
+
 
     integer :: WLI(InBufferNumWL)     ! wake line index buffer
 
@@ -61,21 +61,21 @@ SUBROUTINE input(ErrFlag)
 
     NAMELIST/ConfigOutputs/Output_ELFlag,Output_DSFlag,WallOutFlag,DiagOutFlag, &
         WakeElementOutFlag,WakeElementOutIntervalTimesteps,WakeElementOutStartTimestep,WakeElementOutEndTimestep, &
-        WakeGridOutFlag,WakeGridOutIntervalTimesteps,WakeGridOutStartTimestep,WakeGridOutEndTimestep, & 
+        WakeGridOutFlag,WakeGridOutIntervalTimesteps,WakeGridOutStartTimestep,WakeGridOutEndTimestep, &
         nxgrid,nygrid,nzgrid,xgridL,ygridL,zgridL,xgridU,ygridU,zgridU, &
         WallOutIntervalTimesteps,WallOutStartTimestep,WallOutEndTimestep, &
         ProbeFlag,ProbeOutIntervalTimesteps,ProbeOutStartTimestep,ProbeOutEndTimestep,ProbeSpecPath
 
 
-    ! Default ConfigInputs 
-    RegTFlag   = 0 
+    ! Default ConfigInputs
+    RegTFlag   = 0
     GPFlag     = 0
     WPFlag   = 0 ! Flag for reading in arbitrary wall geometries
-    FSFlag     = 0    
+    FSFlag     = 0
     TSFilFlag  = 0
     ntsf       = 3
-    nSect      = 1  
-    ifc        = 0   
+    nSect      = 1
+    ifc        = 0
     nr         = 10
     convrg     = -1
     convrgf    = -1
@@ -86,21 +86,21 @@ SUBROUTINE input(ErrFlag)
     ixterm     = 0
     xstop      = 5.0
     iut        = 0
-    iWall      = 0       
-    iutf       = 0 
+    iWall      = 0
+    iutf       = 0
     nric       =-1
-    VCRFB      = 1.0       
+    VCRFB      = 1.0
     VCRFT      = 1.0
-    VCRFS      = 1.0       
-    WLI(:)     = 0 ! all set to 0      
+    VCRFS      = 1.0
+    WLI(:)     = 0 ! all set to 0
     hAG        = 0.0
-    dFS        = 0.0                                                          
-    Incompr    = 0                        
+    dFS        = 0.0
+    Incompr    = 0
     Cdpar      = 0.0
     CTExcrM    = 0.0
     DSFlag     = 1
     PRFlag     = 1
-    k1pos      = 1.0                      
+    k1pos      = 1.0
     k1neg      = 0.5
     GPGridSF   = 1.0
     GPGridExtent = 10.0
@@ -116,13 +116,13 @@ SUBROUTINE input(ErrFlag)
     tower_ytop = 0.0
     tower_D    = 0.05
     tower_CD   = 1.0
-    
+
     ! output options
-    Output_ELFlag      = 0 
+    Output_ELFlag      = 0
     Output_DSFlag      = 0
     DiagOutFlag        = 0
-    WakeElementOutFlag = 0 
-    WakeGridOutFlag    = 0 
+    WakeElementOutFlag = 0
+    WakeGridOutFlag    = 0
     WallOutFlag        = 0
     ProbeFlag          = 0
 
@@ -130,7 +130,7 @@ SUBROUTINE input(ErrFlag)
     nxgrid =    1
     nygrid =  100
     nzgrid =  100
-    
+
     xgridL =  0.0
     xgridU =  0.0
     ygridL = -2.0     ! default grid is a ([-2.0,2.0],[-2.0,2.0]) 100x100 x-normal grid at x=0.0
@@ -142,7 +142,7 @@ SUBROUTINE input(ErrFlag)
     WakeElementOutIntervalTimesteps =  5       ! write wake element data every 5 timesteps
     WakeElementOutStartTimestep     =  1       ! write wake element data starting at first timestep
     WakeElementOutEndTimestep       = -1       ! stop writing wake element data at the last timestep
-    
+
     WakeGridOutIntervalTimesteps    =  5       ! write wake grid data every 5 timesteps
     WakeGridOutStartTimestep        =  1       ! write wake grid data starting at first timestep
     WakeGridOutEndTimestep          = -1       ! stop writing wake grid data at the last timestep
@@ -176,10 +176,10 @@ SUBROUTINE input(ErrFlag)
     MaxSegPerBlade = nbe
     MaxSegEndPerBlade = MaxSegPerBlade+1
     MaxSegEnds = MaxSegEndPerBlade*MaxBlades
-    MaxSeg = MaxSegPerBlade*MaxBlades 
- 
- 
-    MaxStruts = NStrut     
+    MaxSeg = MaxSegPerBlade*MaxBlades
+
+
+    MaxStruts = NStrut
     ! Airfoil Data
     MaxAirfoilSect = nSect
     MaxReVals = 20
@@ -187,20 +187,20 @@ SUBROUTINE input(ErrFlag)
     ! Wake advancement
     MaxRevs = nr
     MaxTimeStepPerRev = nti
-    MaxWakeNodes = MaxRevs * MaxTimeStepPerRev   
+    MaxWakeNodes = MaxRevs * MaxTimeStepPerRev
     ! Non-linear convergence iteration
     MaxNLIters = 10
     ! Outputs
-    MaxTimeSteps = MaxRevs * MaxTimeStepPerRev       
+    MaxTimeSteps = MaxRevs * MaxTimeStepPerRev
     ! Wake outputs
-    NWakeInd=0       
+    NWakeInd=0
     NotDone=.TRUE.
     i=1
-    do while (NotDone .AND. i<=MaxSeg)   
+    do while (NotDone .AND. i<=MaxSeg)
         if (WLI(i) == 0) then
             NWakeInd=NWakeInd+1
         else
-            NotDone=.FALSE. 
+            NotDone=.FALSE.
         end if
         i=i+1
     end do
@@ -208,16 +208,16 @@ SUBROUTINE input(ErrFlag)
     ! Array construction
     CALL blade_cns(MaxSegEnds)
     CALL wake_cns(MaxWakeNodes,MaxSegEnds)
-    CALL element_cns(MaxSegEnds,MaxSegEndPerBlade)     
+    CALL element_cns(MaxSegEnds,MaxSegEndPerBlade)
     CALL airfoil_cns(MaxAOAVals,MaxReVals,MaxAirfoilSect)
     CALL wakedata_cns()
     CALL dystl_cns(MaxAirfoilSect,MaxReVals,MaxSegEnds)
-    CALL output_cns(MaxSeg,MaxBlades,MaxStruts,DSFlag)       
+    CALL output_cns(MaxSeg,MaxBlades,MaxStruts,DSFlag)
 
-    ! Write from buffer...    
+    ! Write from buffer...
 
-   !  WakeLineInd(1:NWakeInd)=WLI(1:NWakeInd)      
-    WakeLineInd = (/ (I, I = 1, MaxSeg) /) 
+   !  WakeLineInd(1:NWakeInd)=WLI(1:NWakeInd)
+    WakeLineInd = (/ (I, I = 1, MaxSeg) /)
     ! write(*,'(A)') WakeLineInd
 
     ! Set ground plane location for wall solution
@@ -227,11 +227,11 @@ SUBROUTINE input(ErrFlag)
     FSy=dFS/Rmax
     g=32.174  ! gravity, ft/s^2
     A=Rmax*(2.0*pi*rpm/60.0)**2/g   ! Accel ratio: w^2*R/g
-    FnR=sqrt(A/ut**2)   ! Froude number based on turbine radius  FnR=Uinf/sqrt(g*R) 
+    FnR=sqrt(A/ut**2)   ! Froude number based on turbine radius  FnR=Uinf/sqrt(g*R)
 
     ! Normalize ground shear inputs
-    yref = hBLRef/Rmax  ! location of boundary layer edge (U/Uinf = 99% maybe) normalized to radius... 
-    ygc  = hAG/Rmax   ! Ground clearance normalized to radius  
+    yref = hBLRef/Rmax  ! location of boundary layer edge (U/Uinf = 99% maybe) normalized to radius...
+    ygc  = hAG/Rmax   ! Ground clearance normalized to radius
 
     ! Floor the tip speed ratio to the next lowest int
     ! and use this as the default update interval...
@@ -269,11 +269,11 @@ SUBROUTINE input(ErrFlag)
 
         do iw=1,NWalls
             write(*,*) 'Wall ', iw
-            write(*,*) '    Dimensions:   ', Walls(iw)%NumWP1, ' x ', Walls(iw)%NumWP2 
+            write(*,*) '    Dimensions:   ', Walls(iw)%NumWP1, ' x ', Walls(iw)%NumWP2
             write(*,*) '    Total Panels: ', Walls(iw)%NumWP
             write(*,*) ''
         end do
-        
+
         write(*,*) ''
 
     end if
@@ -303,16 +303,16 @@ SUBROUTINE input(ErrFlag)
     ! LB Dyn. Stall Model - Negative Critical Lift Coeff.: -1.3
     ! AOA (deg) CL CD Cm
     ! ... ... ... ...
-    ! 
+    !
     ! Reynolds Number: 5e6
-    ! ...                 
+    ! ...
     do kk = 1, nsect
 
         ! Open input file for this section
         open(15, file=AFDPath(kk))
         EOF=0
 
-        ! Find title block 
+        ! Find title block
         NotDone=.TRUE.
         do while (NotDone)
             read(15,'(A)') ReadLine
@@ -329,14 +329,14 @@ SUBROUTINE input(ErrFlag)
             aftitle(kk) = 'No Title'
         end if
         read(15,'(A)') ReadLine
-        read(ReadLine(index(ReadLine,':')+1:),*) tc(kk) 
+        read(ReadLine(index(ReadLine,':')+1:),*) tc(kk)
         read(15,'(A)') ReadLine
         read(ReadLine(index(ReadLine,':')+1:),*) alzer(kk)
         alzer(kk)=alzer(kk)*conrad
         read(15,'(A)') ReadLine
-        read(ReadLine(index(ReadLine,':')+1:),*) camb(kk)                            
+        read(ReadLine(index(ReadLine,':')+1:),*) camb(kk)
 
-        ! Reverse camber direction if desired                                  
+        ! Reverse camber direction if desired
         if (camb(kk) == 1) then
             alzer(kk) = -alzer(kk)
         end if
@@ -351,34 +351,34 @@ SUBROUTINE input(ErrFlag)
             end if
         end do
 
-        ! Read data for each Re value 
-        i=0                                                                
-        do while (EOF >= 0  .AND. (i < MaxReVals)) 
+        ! Read data for each Re value
+        i=0
+        do while (EOF >= 0  .AND. (i < MaxReVals))
 
             i=i+1
-            ! Read Re and dyn. stall data                                
+            ! Read Re and dyn. stall data
             read(ReadLine(index(ReadLine,':')+1:),*) TRE(i,kk)
-            read(15,'(A)') ReadLine                          
+            read(15,'(A)') ReadLine
             read(ReadLine(index(ReadLine,':')+1:),*) alstlp(i,kk)
             alstlp(i,kk)=alstlp(i,kk)*conrad
-            read(15,'(A)') ReadLine                          
+            read(15,'(A)') ReadLine
             read(ReadLine(index(ReadLine,':')+1:),*) alstln(i,kk)
             alstln(i,kk)=alstln(i,kk)*conrad
-            read(15,'(A)') ReadLine                          
+            read(15,'(A)') ReadLine
             read(ReadLine(index(ReadLine,':')+1:),*) CLaData(i,kk)
-            read(15,'(A)') ReadLine                          
+            read(15,'(A)') ReadLine
             read(ReadLine(index(ReadLine,':')+1:),*) CLCritPData(i,kk)
-            read(15,'(A)') ReadLine                          
+            read(15,'(A)') ReadLine
             read(ReadLine(index(ReadLine,':')+1:),*) CLCritNData(i,kk)
 
             ! Reverse camber direction if desired
             if (camb(kk) == 1) then
                 temp = alstlp(i,kk)
                 alstlp(i,kk) = -alstln(i,kk)
-                alstln(i,kk) = -temp   
+                alstln(i,kk) = -temp
                 temp = CLCritPData(i,kk)
                 CLCritPData(i,kk) = -CLCritNData(i,kk)
-                CLCritNData(i,kk) = -temp 
+                CLCritNData(i,kk) = -temp
             end if
 
             ! Read AOA data
@@ -402,8 +402,8 @@ SUBROUTINE input(ErrFlag)
                         ErrFlag=1
                         NotDone=.FALSE.
                     else
-                        ii=ii+1                        
-                        read(ReadLine,*) ta(ii,i,kk),tcl(ii,i,kk),tcd(ii,i,kk),tcm(ii,i,kk) 
+                        ii=ii+1
+                        read(ReadLine,*) ta(ii,i,kk),tcl(ii,i,kk),tcd(ii,i,kk),tcm(ii,i,kk)
                     end if
                 else
                     NotDone=.FALSE.
@@ -418,9 +418,9 @@ SUBROUTINE input(ErrFlag)
             end if
 
             ! Reverse camber direction if desired
-            if(camb(kk) == 1) then       
+            if(camb(kk) == 1) then
                 do ii = 1, ntbl(i,kk)
-                    temp1(ii,1) = ta(ii,i,kk) 
+                    temp1(ii,1) = ta(ii,i,kk)
                     temp1(ii,2) = tcl(ii,i,kk)
                     temp1(ii,3) = tcd(ii,i,kk)
                     temp1(ii,4) = tcm(ii,i,kk)
@@ -466,8 +466,8 @@ SUBROUTINE input(ErrFlag)
 
     end do
 
-    Return                                                                              
-601 format(' ','***airfoil section specified for blade segment ',i2,' is illegal. set to airfoil section 1***')                        
+    Return
+601 format(' ','***airfoil section specified for blade segment ',i2,' is illegal. set to airfoil section 1***')
 End SUBROUTINE input
 
 

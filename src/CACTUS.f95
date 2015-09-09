@@ -1,6 +1,6 @@
 ! Copyright (c) 2013, Sandia Corporation.  Under the terms of Contract
 ! DE-AC04-94AL85000 with Sandia Corporation, the U.S. Government retains
-! certain rights in this software. 
+! certain rights in this software.
 
 ! Redistribution and use in source and binary forms, with or without
 ! modification, are permitted provided that the following conditions are
@@ -41,11 +41,11 @@ PROGRAM CACTUS
     !  et al.)
     !
     ! -----------
-    ! Notes: 
+    ! Notes:
     !   Command line inputs:
     !    FILENAME: Full name of the input namelist file, if
     !              located in the calling directory. Full path otherwise.
-    !  
+    !
     ! Note that all internal variables are normalized. Velocity
     !  variables are normalized by freestream velocity, distance
     !  variables are normalized by reference radius, velocity
@@ -76,7 +76,7 @@ PROGRAM CACTUS
     use compiler
 !$  use omp_lib
 
-    !IMPLICIT NONE !JCM: eventually...      
+    !IMPLICIT NONE !JCM: eventually...
 
     integer :: ErrFlag
     logical :: FinalConv
@@ -114,7 +114,7 @@ PROGRAM CACTUS
     ! Check for correct number of command line arguments
     nargin=command_argument_count()
     if (nargin < 1) then
-        write(6,'(A)') 'Please call the program with the name of the input file on the command line. Ex. CACTUS INPUTFILE.in' 
+        write(6,'(A)') 'Please call the program with the name of the input file on the command line. Ex. CACTUS INPUTFILE.in'
         stop
     end if
 
@@ -131,28 +131,28 @@ PROGRAM CACTUS
     SFOutputFN=trim(FNBase)//'_Param.csv'
     RevOutputFN=trim(FNBase)//'_RevData.csv'
     TSOutputFN=trim(FNBase)//'_TimeData.csv'
-    ELOutputFN=trim(FNBase)//'_ElementData.csv'  
+    ELOutputFN=trim(FNBase)//'_ElementData.csv'
 
     ! Pi definition
     pi = 4.0*atan(1.0)
-    conrad = pi/180.0                                                  
-    condeg = 180.0/pi 
+    conrad = pi/180.0
+    condeg = 180.0/pi
 
-    ! Namelist input file                                                       
-    OPEN(4, FILE= InputFN)                                     
+    ! Namelist input file
+    OPEN(4, FILE= InputFN)
 
-    ! Output files                                                      
-    OPEN(8, FILE=SFOutputFN) 
+    ! Output files
+    OPEN(8, FILE=SFOutputFN)
     OPEN(9, FILE=RevOutputFN)
     OPEN(10, FILE=TSOutputFN)
 
-    ! Initialize iteration parameters                                                       
+    ! Initialize iteration parameters
     irev=0
     nt = 0
     Theta=0.0
     TimeN=0.0
-    ntTerm=1 
-    NLTol=1.0e-04                                                      
+    ntTerm=1
+    NLTol=1.0e-04
     CPAve_last=0.0
     CPSum=0.0
     CTRSum=0.0
@@ -160,11 +160,11 @@ PROGRAM CACTUS
     CFySum=0.0
     CFzSum=0.0
 
-    ! Error flags                                                                                                                                                                  
+    ! Error flags
     ilxtp=0
     iuxtp=0
 
-    ! Read inputs    
+    ! Read inputs
     ErrFlag = 0
     CALL input(ErrFlag)
     if (ErrFlag == 1) then
@@ -177,13 +177,13 @@ PROGRAM CACTUS
 
     ! Write headers on standard output files
     Call csvwrite(8,Output_SFHead,Output_SFData,1,0)
-    Call csvwrite(9,Output_RevHead,Output_RevData,1,0) 
+    Call csvwrite(9,Output_RevHead,Output_RevData,1,0)
     Call csvwrite(10,Output_TSHead,Output_TSData,1,0)
 
-    ! Simple output for regression testing        
-    if (RegTFlag == 1) then      
+    ! Simple output for regression testing
+    if (RegTFlag == 1) then
         RegOutputFN=trim(FNBase)//'_RegData.out'
-        OPEN(7, FILE= RegOutputFN,  FORM= 'FORMATTED' )  
+        OPEN(7, FILE= RegOutputFN,  FORM= 'FORMATTED' )
         Call WriteRegTOutput(0)
     end if
 
@@ -226,7 +226,7 @@ PROGRAM CACTUS
         nsWall=1
     end if
 
-    ! Blade and strut geometry setup. 
+    ! Blade and strut geometry setup.
     ! Global axes: x is oriented with the nominal freestream flow direction, y is in the vertically upward direction (opposite gravity),
     ! z direction from RHR (to the right when looking in the streamwise direction).
     CALL BGeomSetup()
@@ -242,7 +242,7 @@ PROGRAM CACTUS
 
     ! Set normalized turbine rotation rate
     wRotX=ut*RotX
-    wRotY=ut*RotY  
+    wRotY=ut*RotY
     wRotZ=ut*RotZ
     delt=2.0*pi/nti ! change in theta per timestep
 
@@ -256,14 +256,14 @@ PROGRAM CACTUS
     end if
 
     ! Normalization parameters for geometry and performance outputs
-    romega=2.0*pi*Rmax*rpm/60.0                                       
-    uinf=romega/ut 
-    DT=DelT/ut                                      ! normalized simulation timestep (dt*Uinf/Rmax)      
+    romega=2.0*pi*Rmax*rpm/60.0
+    uinf=romega/ut
+    DT=DelT/ut                                      ! normalized simulation timestep (dt*Uinf/Rmax)
 
     gustT = gusttime * uinf / Rmax
     gustA = gustamp / uinf
 
-    rem=rho*uinf*Rmax/vis                                          
+    rem=rho*uinf*Rmax/vis
 
     if (Incompr .eq. 1) then            ! incompressible/compressible flow switch (used by dynamic stall model)
         Minf = 0.0
@@ -271,26 +271,26 @@ PROGRAM CACTUS
         Minf=uinf/sqrt(1.4*1716.0*(tempr+459.6))
     end if
 
-    ! Setup vortex core radius for bound vorticity based on max chord, and for trailing and spanwise wake based on 
+    ! Setup vortex core radius for bound vorticity based on max chord, and for trailing and spanwise wake based on
     ! temporal and spatial discretization levels, respectively.
     if (ivtxcor > 0) then
         vRad_B = CrRef*VCRFB
         vRad_T = dSGeom*VCRFT
         dSWake = delt*(1.0+1.0/max(ut,1.0))   ! representative wake discretization size (wake line at Rmax in Uinf freestream)
-        vRad_S = dSWake*VCRFS       
+        vRad_S = dSWake*VCRFS
     else
-        vRad_B = 0.0         
-        vRad_T = 0.0  
+        vRad_B = 0.0
+        vRad_T = 0.0
         vRad_S = 0.0
     end if
-    vRad2_B = vRad_B*vRad_B                             
+    vRad2_B = vRad_B*vRad_B
     vRad2_T = vRad_T*vRad_T
     vRad2_S = vRad_S*vRad_S
 
-    areat=at*Rmax**2                                ! frontal area (at is (frontal area) / Rmax^2 ) 
-    dynpress=rho/2.0*uinf**2                        ! dynamic pressure        
+    areat=at*Rmax**2                                ! frontal area (at is (frontal area) / Rmax^2 )
+    dynpress=rho/2.0*uinf**2                        ! dynamic pressure
     forcec=dynpress*areat                           ! force coeff normalization
-    torquec=dynpress*areat*Rmax                     ! torque coeff normalization                         
+    torquec=dynpress*areat*Rmax                     ! torque coeff normalization
     powerc=rho/2.0*areat*romega**3*0.7457/550.      ! normalization for power coeff using tip speed (kp), with conversion from lb-ft/s to kW. (Used to write output)
 
     ! Write flow properties output
@@ -304,18 +304,18 @@ PROGRAM CACTUS
     Output_SFData(1,8)=dynpress     ! dynamic pressure
     Output_SFData(1,9)=ut           ! tip speed ratio
     Output_SFData(1,10)=rem         ! machine Reynolds number based on U and Rmax
-    Output_SFData(1,11)=FnR         ! Froude number based on radius 
+    Output_SFData(1,11)=FnR         ! Froude number based on radius
     Call csvwrite(8,Output_SFHead,Output_SFData,0,1)
 
     ! close parameter file for writing
     CLOSE(8)
-    
-    ! Initialize needed arrays                             
-    do i=1,ne                                                      
-        gs(1,i)=0.0   
-        gb(i)=0.0                                                    
-        ogb(i)=0.0 
-        AOA(i)=0.0                                                                                                                                                             
+
+    ! Initialize needed arrays
+    do i=1,ne
+        gs(1,i)=0.0
+        gb(i)=0.0
+        ogb(i)=0.0
+        AOA(i)=0.0
     end do
     Call UpdateAOALast(ne)
 
@@ -327,26 +327,26 @@ PROGRAM CACTUS
     end if
 
     ! CPU time markers
-    Call cpu_time(t0)                                                                                                           
+    Call cpu_time(t0)
 !$  t0 = omp_get_wtime()
-    Time1=t0                                                                             
+    Time1=t0
 
     write(*,*) 'Simulation Status'
     write(*,*) '--------------------------'
 
-    ! Do revolutions until convergence or MaxRevs    
-    ContinueRevs = .TRUE.   
-    FinalConv = .FALSE.             
-    do while (ContinueRevs)  
+    ! Do revolutions until convergence or MaxRevs
+    ContinueRevs = .TRUE.
+    FinalConv = .FALSE.
+    do while (ContinueRevs)
 
         ! Increment revolution counter
-        irev=irev+1                                                                                              
+        irev=irev+1
 
         ! Do timesteps
-        do i=1,nti    
+        do i=1,nti
 
             ! Increment nt (total time step counter)
-            nt=nt+1  
+            nt=nt+1
 
             ! Write diagnostic info to stdout if requested
             if (DiagOutFlag == 1) then
@@ -354,28 +354,28 @@ PROGRAM CACTUS
             end if
 
             ! Set new wake element locations
-            ! JCM: can move this function into expanded blade module when created...                                                                 
-            CALL SetBoundWake()        
+            ! JCM: can move this function into expanded blade module when created...
+            CALL SetBoundWake()
 
-            ! Fixed-point iteration to converge non-linear system consisting of 
+            ! Fixed-point iteration to converge non-linear system consisting of
             ! blade element bound vorticity (potentially non linear with local AOA),
             ! and its own effect on local AOA. Wake remains constant during this iteration...
             iflg=0
-            iter=0 
+            iter=0
             ContinueNL=.TRUE.
-            do while (ContinueNL) 
+            do while (ContinueNL)
 
-                ! Increment iterations                                                
-                iter=iter+1 
+                ! Increment iterations
+                iter=iter+1
 
-                ! Initialize bound vorticity iteration:                                                      
-                ! On first iteration, calc influence of all elements on blade AOA. On subsequent iterations of the bound vorticity, 
+                ! Initialize bound vorticity iteration:
+                ! On first iteration, calc influence of all elements on blade AOA. On subsequent iterations of the bound vorticity,
                 ! only recalculate the bound vorticity component...
-                if (iflg == 0) then 
-                    CALL UpdateBladeVel(iflg) 
+                if (iflg == 0) then
+                    CALL UpdateBladeVel(iflg)
                     iflg=1
                 else
-                    CALL UpdateBladeVel(iflg) 
+                    CALL UpdateBladeVel(iflg)
                 end if
 
                 If (Itower.EQ.1) Call UpdateTowerVelocity() !JCM: Matt to add this function...
@@ -387,20 +387,20 @@ PROGRAM CACTUS
                 end if
 
                 ! Calculate blade loads and bound vorticity
-                ! JCM: can move this function into expanded blade module when created...                                                           
-                CALL BladeLoads(NLTol,iConv)                                                  
+                ! JCM: can move this function into expanded blade module when created...
+                CALL BladeLoads(NLTol,iConv)
 
-                if ((iConv == 0) .OR. (iter == MaxNLIters)) then   
-                    ContinueNL=.FALSE.      
+                if ((iConv == 0) .OR. (iter == MaxNLIters)) then
+                    ContinueNL=.FALSE.
                 end if
 
             end do
 
-            if (iConv == 1) then                                      
+            if (iConv == 1) then
                 ! Non-linear iteration didn't converge. Write final output and exit.
-                WRITE(6,610)                                                  
-                CALL WriteFinalOutput()   
-                stop                                                       
+                WRITE(6,610)
+                CALL WriteFinalOutput()
+                stop
             end if
 
             ! Update strut loads
@@ -408,7 +408,7 @@ PROGRAM CACTUS
 
             ! Update influence on wall RHS and calc new wall panel strengths
             if (GPFlag == 1 .OR. WPFlag == 1 .or. FSFlag == 1) then
-                Call UpdateWall() 
+                Call UpdateWall()
             end if
 
             ! Write output ----
@@ -462,29 +462,29 @@ PROGRAM CACTUS
                 end if
             end if
 
-            ! State Updates ----  
+            ! State Updates ----
 
-            ! Update current wake convection velocities (excluding wake to be shed from the current blade)                                                                    
+            ! Update current wake convection velocities (excluding wake to be shed from the current blade)
             CALL UpdateWakeVel()      ! Use all wake points to update the wake node velocities
 
             ! Convect the wake (including wake to be shed from the current blade location)
-            CALL conlp()                                                                      
+            CALL conlp()
 
             ! Update bound vorticity timestep filter (used to reject grid scale temporal modes)
             if (TSFilFlag == 1) then
                 Call UpdateTSFilter(ne)
             end if
 
-            ! Shed new wake                         
-            CALL shedvor()  
+            ! Shed new wake
+            CALL shedvor()
 
-            ! Update states for the LB dynamic stall model, if used   
-            if (DSFlag == 2) then                                 
-                Call LB_UpdateStates(nb,nbe)   
+            ! Update states for the LB dynamic stall model, if used
+            if (DSFlag == 2) then
+                Call LB_UpdateStates(nb,nbe)
             end if
 
             ! Update last AOA values
-            Call UpdateAOALast(ne)                                   
+            Call UpdateAOALast(ne)
 
             ! Rotate turbine geometry
             Call RotateTurbine
@@ -501,11 +501,11 @@ PROGRAM CACTUS
                 end if
             end if
 
-        end do ! Time steps 
+        end do ! Time steps
 
         ! Calculate revolution average performance
-        CPAve_last=CPAve                                                                                                                                
-        CALL EndRev()                                          
+        CPAve_last=CPAve
+        CALL EndRev()
 
         ! Write diagnostic info to stdout if requested
         if (DiagOutFlag == 1) then
@@ -538,28 +538,28 @@ PROGRAM CACTUS
                     ContinueRevs = .FALSE.
                 else
                     FinalConv = .TRUE.
-                    ! Reset params for final convergence: Set higher (final) number of time steps, and associated wake update iteration period and 
-                    ! more stringent convergence level (*f values) for final convergence                                                      
-                    nti=ntif                                                                                  
-                    iut=iutf 
+                    ! Reset params for final convergence: Set higher (final) number of time steps, and associated wake update iteration period and
+                    ! more stringent convergence level (*f values) for final convergence
+                    nti=ntif
+                    iut=iutf
                     ! If wake update interval set to a negative number, set next wake update iteration to -1 (no wake velocity updates will be performed).
                     ! Otherwise, restart wake updates on next iteration.
                     if (iut < 0) then
                         nsw=-1
                     else
-                        nsw=nt+1        
+                        nsw=nt+1
                     end if
-                    convrg=convrgf 
+                    convrg=convrgf
                     delt=2.0*pi/nti
                     DT=DelT/ut
                 end if
             end if
         end if
 
-    end do ! Revs                                                         
+    end do ! Revs
 
     ! Write output
-    CALL WriteFinalOutput()    
+    CALL WriteFinalOutput()
 
-610 FORMAT('0','***** NON-LINEAR ITERATION LOOP DID NOT CONVERGE IN 10 ITERATIONS. PROGRAM TERMINATED. *****')                                                    
+610 FORMAT('0','***** NON-LINEAR ITERATION LOOP DID NOT CONVERGE IN 10 ITERATIONS. PROGRAM TERMINATED. *****')
 End PROGRAM CACTUS

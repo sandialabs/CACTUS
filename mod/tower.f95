@@ -17,11 +17,11 @@ CONTAINS
   SUBROUTINE setup_tower
 
     implicit none
-    
+
     integer :: i
 
     Allocate(tower_y(tower_Npts), tower_Vx(tower_Npts))
-    
+
 
     If (tower_Npts .LE. 1) Then
        Write(*,'(''Inadequate number of tower points.'')')
@@ -63,7 +63,7 @@ CONTAINS
   FUNCTION wake_defect_velocity(x,y,z)
 
     implicit none
-    
+
     real :: x, y, z, wake_defect_velocity
     real :: W, xi, Vx_tow, u0, f_wake
 
@@ -85,13 +85,13 @@ CONTAINS
     !Write(20,'(F20.12)') Vx_tow
     u0 = W0_wake * sqrt(theta0/(x-tower_x )) * Vx_tow ! max velocity
     !  defect at this x location
-    f_wake = exp(-alpha_wake * xi * xi) ! non-dimensional velocity defect    
+    f_wake = exp(-alpha_wake * xi * xi) ! non-dimensional velocity defect
     wake_defect_velocity = u0 * f_wake ! dimensional velocity defect
 
     if (wake_defect_velocity .GT. 0.9 * Vx_tow) then
        wake_defect_velocity = 0.9 * Vx_tow
     end if
-    
+
     Return
 
   END FUNCTION wake_defect_velocity

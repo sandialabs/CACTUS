@@ -10,7 +10,7 @@ module quadsourcepanel
     real, parameter :: ztol              = 1.0e-7  ! threshold for distance from plane
     real, parameter :: edgetol           = 1.0e-7  ! threshold for distance from edge
     real, parameter :: eps               = 1.0e-7  ! small value to avoid taking log(0) in quadsourcevel_full
-    
+
     private quadsourcevel_full, quadsourcevel_farfield, reverse_point_order
     public quadsourcevel
 
@@ -42,14 +42,14 @@ contains
         !                     4 - point is on plane inside quad  (uv computed, w=sigma/2)
         !                     5 - mid-field (full solution)
         !                     6 - far-field (point approximation)
-        !                     
+        !
 
         real, intent(in)     :: p(3), p1(3), p2(3), p3(3), p4(3), sigma
         integer, intent(in)  :: selfinfluence, calcder
         real, intent(out)    :: vel(3), dudx
         integer, intent(out) :: info
         real                 :: p1r(3), p2r(3), p3r(3), p4r(3)
-        real                 :: pc(3), rp, lc               
+        real                 :: pc(3), rp, lc
         integer              :: sz                         ! sign of z
         integer              :: nedgesnear                 ! number of edges near
         real                 :: quad_points(4,3)
@@ -64,13 +64,13 @@ contains
             write(*,*) "Error: Quadrilateral source panel does not sit on a panel-local xy-plane (z must be ~ 0 for all 4 corners)!"
             stop
         end if
-        
+
         ! compute panel center coordinates
         pc = 0.25*(p1r+p2r+p3r+p4r)
 
         ! compute panel characteristic radius as half of the average length of two diagonals
         lc = 0.25*(mag3(p3r-p1r) + mag3(p4r-p2r))
-        
+
         ! compute |r| (distance from point to panel center)
         rp = mag3(p-pc)
 
@@ -83,10 +83,10 @@ contains
         if (selfinfluence == 1) then
             ! if computing induced velocity of panel at its own center
             vel = [0.0, 0.0, sz*sigma/2.0]
-            
+
             if (calcder == 1) then
                 !! todo: add in the derivative computation
-                ! dudx = 
+                ! dudx =
             else
                 dudx = 0.0
             end if
@@ -96,7 +96,7 @@ contains
 
         else
             ! near/mid/far field
-            
+
             if (rp > rp_far_multiplier*lc) then
                 ! far field (point solution)
                 Call quadsourcevel_farfield(p,p1r,p2r,p3r,p4r,sigma,calcder,vel,dudx)
@@ -125,7 +125,7 @@ contains
                         info = 1
 
                     else if (nedgesnear == 2) then
-                        ! point is 
+                        ! point is
                         ! panel adjacent to 3 other panels, average the induced w-velocity with 4 panels
                         vel(3) = 0.125*sigma
 
@@ -161,7 +161,7 @@ contains
 
                             ! set info flag
                             info = 4
-                            
+
                         else
                             ! if the point is outside the polygon, the w-velocity is 0.0
                             vel(3) = 0.0
@@ -187,7 +187,7 @@ contains
 
 
     subroutine quadsourcevel_full(p,p1,p2,p3,p4,sigma,calcder,vel,dudx)
-        
+
         ! quadsourcevel_full() : full form of the quadrilateral source panel induced velocity calculation
 
         real, intent(in)    :: p1(3), p2(3), p3(3), p4(3), p(3), sigma
@@ -196,7 +196,7 @@ contains
 
         real                :: x1,y1,z1,x2,y2,z2,x3,y3,z3,x4,y4,z4
         real                :: xp,yp,zp
-        
+
         ! intermediate values
         real                :: d12,d23,d34,d41
         real                :: m12,m23,m34,m41
@@ -245,7 +245,7 @@ contains
         r1 = ((xp-x1)**2 + (yp-y1)**2 + zp**2)**0.5
         r2 = ((xp-x2)**2 + (yp-y2)**2 + zp**2)**0.5
         r3 = ((xp-x3)**2 + (yp-y3)**2 + zp**2)**0.5
-        r4 = ((xp-x4)**2 + (yp-y4)**2 + zp**2)**0.5 
+        r4 = ((xp-x4)**2 + (yp-y4)**2 + zp**2)**0.5
 
         e1 = (xp-x1)**2 + zp**2
         e2 = (xp-x2)**2 + zp**2
@@ -273,12 +273,12 @@ contains
         w7 = (m41*e4-h4)/(zp*r4)
         w8 = (m41*e1-h1)/(zp*r1)
 
-        ! check for bad values of a,b,c,d, which can lead to 
+        ! check for bad values of a,b,c,d, which can lead to
         if (a1 <= 0) a1 = eps
         if (a2 <= 0) a2 = eps
         if (a3 <= 0) a3 = eps
         if (a4 <= 0) a4 = eps
-        
+
         ! compute induced velocities
         vel(1) = sigma/(4*pi)*((y2-y1)/d12 * log(a1) + &
                                (y3-y2)/d23 * log(a2) + &
@@ -342,7 +342,7 @@ contains
 
 
     subroutine reverse_point_order(p1,p2,p3,p4,p1r,p2r,p3r,p4r)
-        
+
         ! reverse_points() : reverses the ordering of four points given by p1,p2,p3,p4
 
         real, intent(in) :: p1(3), p2(3), p3(3), p4(3)
@@ -351,7 +351,7 @@ contains
 
         temp1 = p1
         temp2 = p2
-        
+
         p1r = p4
         p2r = p3
         p3r = temp2

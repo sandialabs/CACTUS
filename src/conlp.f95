@@ -1,4 +1,4 @@
-SUBROUTINE conlp()     
+SUBROUTINE conlp()
 
     use configr
     use blade
@@ -8,10 +8,10 @@ SUBROUTINE conlp()
 
     ! Calculate the convection of shed vortex lattice points
 
-    NT1=NT-1                                                          
-    do I=1,NE                                                      
-        if (NT > 1) then                                           
-            do J=ntTerm,NT1                                                                                         
+    NT1=NT-1
+    do I=1,NE
+        if (NT > 1) then
+            do J=ntTerm,NT1
 
                 if (iut == 1) then
                     ! Temporally "upwinded" calculation for the velocity to use in
@@ -31,9 +31,9 @@ SUBROUTINE conlp()
         end if
 
         ! Use straight integration for newest wake points for which there is no old data
-        X(NT,I)=X(NT,I)+(U(NT,I)+UFS(NT,I))*DT                                  
-        Y(NT,I)=Y(NT,I)+(V(NT,I)+VFS(NT,I))*DT                                        
-        Z(NT,I)=Z(NT,I)+(W(NT,I)+WFS(NT,I))*DT                                        
+        X(NT,I)=X(NT,I)+(U(NT,I)+UFS(NT,I))*DT
+        Y(NT,I)=Y(NT,I)+(V(NT,I)+VFS(NT,I))*DT
+        Z(NT,I)=Z(NT,I)+(W(NT,I)+WFS(NT,I))*DT
     end do
 
     ! If ixterm is 1, update ntTerm as the farthest index in the wake that has at least one point below XSTOP
@@ -41,17 +41,17 @@ SUBROUTINE conlp()
         NotDone = .true.
         do while (NotDone .AND. ntTerm < NT1)
             ! Check
-            do I=1,NE                                                      
+            do I=1,NE
                 if (X(ntTerm,I) < XSTOP) then
-                    NotDone=.false.  
+                    NotDone=.false.
                 end if
             end do
 
             if (NotDone) then
-                ntTerm=ntTerm+1 
+                ntTerm=ntTerm+1
             end if
         end do
     end if
 
-    Return                   
+    Return
 End SUBROUTINE conlp

@@ -1,24 +1,24 @@
-SUBROUTINE SetBoundWake() 
+SUBROUTINE SetBoundWake()
 
-    use configr       
+    use configr
     use element
     use blade
     use wake
 
     ! Set new wake element positions
-    do i=1,nb                                                      
+    do i=1,nb
 
-        nei=1+(i-1)*(nbe+1)                                               
+        nei=1+(i-1)*(nbe+1)
 
         ! Blade element end locations (quarter chord).
-        do j=0,nbe   
+        do j=0,nbe
             nej=nei+j ! element index
-            x(nt,nej)=xBE(nej)                                           
-            y(nt,nej)=yBE(nej)                                                                                            
-            z(nt,nej)=zBE(nej)   
+            x(nt,nej)=xBE(nej)
+            y(nt,nej)=yBE(nej)
+            z(nt,nej)=zBE(nej)
         end do
     end do
 
 
-    return                                                            
+    return
 end SUBROUTINE SetBoundWake

@@ -18,7 +18,7 @@ subroutine WSolnSetup()
         !! This assumes WGeomSetup() has already been called, and that the ground plane has been configured
         !  as a wall system of one wall.
 
-        ! Setup wall self influence matrix 
+        ! Setup wall self influence matrix
         write(*,*) 'Generating wall influence matrix...'
         call cpu_time(t0)
 !$      t0 = omp_get_wtime()
@@ -44,7 +44,7 @@ subroutine WSolnSetup()
 
         !! This assumes that the wall geometry has already been loaded as a wall system of one wall.
 
-        ! Setup wall self influence matrix 
+        ! Setup wall self influence matrix
         write(*,*) 'Generating wall influence matrix...'
         call cpu_time(t0)
 !$      t0 = omp_get_wtime()
@@ -68,7 +68,7 @@ subroutine WSolnSetup()
     ! Set up free surface system
     if (FSFlag==1) then
 
-        ! Setup free surface self influence matrix 
+        ! Setup free surface self influence matrix
         do i=1,NumFSP
             do j=1,NumFSCP
                 ! Rotation from global to panel i
@@ -77,12 +77,12 @@ subroutine WSolnSetup()
                 R(3,1:3)=FSZVec(i,1:3)
 
                 ! Calc influence in panel frame
-                dPG=FSCPPoints(j,1:3)-FSCPoints(i,1:3)                         
-                Call CalcRotation3(R,dPG,Point,0)                     
+                dPG=FSCPPoints(j,1:3)-FSCPoints(i,1:3)
+                Call CalcRotation3(R,dPG,Point,0)
                 Call RectSourceVel(Point,FSPL(i),FSPW(i),1.0,0,FSEdgeTol,1,dVel,dudx)
 
                 ! Rotate to global frame
-                Call CalcRotation3(R,dVel,dVelG,1)                      
+                Call CalcRotation3(R,dVel,dVelG,1)
                 FSInCoeffN(j,i)=sum(dVelG*FSCZVec(j,1:3))
                 FSInCoeffT(j,i)=sum(dVelG*FSCXVec(j,1:3))
                 FSInCoeffdUdX(j,i)=dudx
@@ -90,9 +90,9 @@ subroutine WSolnSetup()
         end do
 
         ! Create free surface solution matrix and inverse
-        if (UseFSWall) then 
+        if (UseFSWall) then
             ! Wall solution matrix
-            FSSMat=FSInCoeffN 
+            FSSMat=FSInCoeffN
         else
             ! Free surface solution matrix
             FSSMat(1:NumFSCP,1:NumFSP)=FSInCoeffN-(FnR**2)*FSInCoeffdUdX
@@ -114,7 +114,7 @@ subroutine WSolnSetup()
         do i=1,NumFSP
             do j=1,NumFSP
                 if (j==i) then
-                    FSSMatI(i,j)=1.0    
+                    FSSMatI(i,j)=1.0
                 end if
             end do
         end do

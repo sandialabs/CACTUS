@@ -1,26 +1,26 @@
 SUBROUTINE WriteWakeGridData()
 
     ! Write wake grid data
-    
+
     use wakedata
     use blade
     use wake
-    use wallsoln 
+    use wallsoln
     use configr
     use fnames
-    
+
     implicit none
-    
+
     real :: xnode, ynode, znode
     integer :: ygcErr
     character(len=10) :: nt_str
- 
+
     ! Open file for writing - a new file at each timestep
     write(nt_str,'(I5.5)') nt
     WakeDefOutputFN=trim(FNBase)//'_WakeDefData_'//trim(nt_str)//'.csv'
     OPEN(13, FILE=WakeDefOutputFN)
     write(13,'(A)') trim(GridVelOutHead)
-    
+
     !! Compute wake data on specified cartesian grid
     ! Compute blade, wake, and wall induced streamwise velocity deficit
     do zcount=1,nzgrid
@@ -53,9 +53,9 @@ SUBROUTINE WriteWakeGridData()
             do xcount=1,nxgrid
                 ! Write to file
                 write(13,'(E13.7,",",$)') TimeN                            ! Normalized simulation time (t*Uinf/Rmax)
-                write(13,'(E13.7,",",$)') XGrid(xcount,ycount,zcount) 
+                write(13,'(E13.7,",",$)') XGrid(xcount,ycount,zcount)
                 write(13,'(E13.7,",",$)') YGrid(xcount,ycount,zcount)      ! grid node locations
-                write(13,'(E13.7,",",$)') ZGrid(xcount,ycount,zcount) 
+                write(13,'(E13.7,",",$)') ZGrid(xcount,ycount,zcount)
                 write(13,'(E13.7,",",$)') VXInd(xcount,ycount,zcount)
                 write(13,'(E13.7,",",$)') VYInd(xcount,ycount,zcount)      ! induced velocities
                 write(13,'(E13.7,",",$)') VZInd(xcount,ycount,zcount)

@@ -5,14 +5,14 @@ MODULE wakedata
     ! Wake visualization data for WriteWakeData
 
     integer :: WakeElementOutFlag, WakeGridOutFlag
-    integer, allocatable :: WakeLineInd(:) 
-    integer :: NWakeInd     
+    integer, allocatable :: WakeLineInd(:)
+    integer :: NWakeInd
     character(1000) :: WakeOutHead = 'Normalized Time (-),Node ID,Origin Node,X/R (-),Y/R (-),Z/R (-),U/Uinf (-),V/Uinf (-),W/Uinf (-)'
 
     ! Wake deficit calculation on a grid
     character(1000) :: GridVelOutHead = 'Normalized Time (-),X/R (-),Y/R (-),Z/R (-),U/Uinf (-),V/Uinf (-),W/Uinf (-),Ufs/Uinf (-),Vfs/Uinf (-),Wfs/Uinf (-)'
 
-    ! number of grid elements in each direction    
+    ! number of grid elements in each direction
     integer :: nxgrid
     integer :: nygrid
     integer :: nzgrid
@@ -26,15 +26,15 @@ MODULE wakedata
     real :: zgridU
 
     ! grid spacing
-    real :: dxgrid, dygrid, dzgrid       
+    real :: dxgrid, dygrid, dzgrid
 
     ! arrays holding grid locations
-    real, allocatable :: XGrid(:,:,:) 
-    real, allocatable :: YGrid(:,:,:) 
-    real, allocatable :: ZGrid(:,:,:) 
-    real, allocatable :: VXInd(:,:,:) 
-    real, allocatable :: VYInd(:,:,:) 
-    real, allocatable :: VZInd(:,:,:) 
+    real, allocatable :: XGrid(:,:,:)
+    real, allocatable :: YGrid(:,:,:)
+    real, allocatable :: ZGrid(:,:,:)
+    real, allocatable :: VXInd(:,:,:)
+    real, allocatable :: VYInd(:,:,:)
+    real, allocatable :: VZInd(:,:,:)
     real, allocatable :: UfsGrid(:,:,:)
     real, allocatable :: VfsGrid(:,:,:)
     real, allocatable :: WfsGrid(:,:,:)
@@ -52,18 +52,18 @@ CONTAINS
 
      ! Constructor for the arrays in this module
 
-        allocate(WakeLineInd(NWakeInd))     
+        allocate(WakeLineInd(NWakeInd))
 
         ! Wake deficit output, horizontal plane
         allocate(XGrid(nxgrid,nygrid,nzgrid))
         allocate(YGrid(nxgrid,nygrid,nzgrid))
         allocate(ZGrid(nxgrid,nygrid,nzgrid))
-        allocate(VXInd(nxgrid,nygrid,nzgrid))    
-        allocate(VYInd(nxgrid,nygrid,nzgrid)) 
+        allocate(VXInd(nxgrid,nygrid,nzgrid))
+        allocate(VYInd(nxgrid,nygrid,nzgrid))
         allocate(VZInd(nxgrid,nygrid,nzgrid))
-        allocate(UfsGrid(nxgrid,nygrid,nzgrid))    
-        allocate(VfsGrid(nxgrid,nygrid,nzgrid)) 
-        allocate(WfsGrid(nxgrid,nygrid,nzgrid))       
+        allocate(UfsGrid(nxgrid,nygrid,nzgrid))
+        allocate(VfsGrid(nxgrid,nygrid,nzgrid))
+        allocate(WfsGrid(nxgrid,nygrid,nzgrid))
 
         !! Set up grid for induced velocity output
 
