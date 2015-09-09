@@ -40,7 +40,7 @@
 
 	! Airfoil section data
 	nSect 	= 1
-	AFDPath	= '../../Airfoil_Section_Data/NACA_0015.dat'
+	AFDPath	= '../Airfoil_Section_Data/NACA_0015.dat'
 		
 /End
 
