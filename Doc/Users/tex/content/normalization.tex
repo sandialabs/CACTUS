@@ -1,0 +1,30 @@
+%!TEX root = ../User Guide.tex
+\chapter{Normalization parameters}
+Some definitions of parameters used in normalize CACTUS input and output parameters are given in \Cref{tbl:normalization_parameters}.
+
+\begin{table}[!htbp]
+\centering
+\caption{Parameters used for non-dimensionalization.}
+\label{tbl:normalization_parameters}
+\begin{tabular}{p{0.20\textwidth}p{0.70\textwidth}}
+\toprule
+Variable          & Description \\
+\midrule
+$\rho$            & Fluid density \\
+$U_\infty$        & Freestream fluid flow speed \\
+$A_T$             & Turbine reference area. Typically this reference area is chosen to be the projected frontal area of the volume swept by the rotor. \\
+$R$               & Turbine reference radius \\
+$\omega$          & Turbine rotation rate \\
+$U_\textrm{local}$& Fluid flow speed local to an element. \\
+$U_\textrm{tip}$  & Turbine tip speed. Defined as $U_\textrm{tip} = \omega R$. \\
+$c$               & Element chord length \\
+$A_E$             & Element planform area \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+In general, most parameters have been normalized at the machine scale. Unless otherwise noted in the input and output descriptions below, the force, torque, and power coefficients are normalized as:
+
+$$ C_F = \frac{F}{\frac{1}{2} \rho U_\infty^2 A_T} $$
+$$ C_T = \frac{T}{\frac{1}{2} \rho U_\infty^2 A_T R} $$
+$$ C_P = \frac{P}{\frac{1}{2} \rho U_\infty^3 A_T} $$

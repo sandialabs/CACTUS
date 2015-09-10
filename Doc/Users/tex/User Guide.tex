@@ -1,0 +1,110 @@
+% !TEX TS-program = pdflatex
+% !TEX encoding = UTF-8 Unicode
+
+% Example of the Memoir class, an alternative to the default LaTeX classes such as article and book, with many added features built into the class itself.
+
+%\documentclass[12pt,a4paper]{memoir} % for a long document
+\documentclass[12pt,a4paper,article]{memoir} % for a short document
+\usepackage[utf8]{inputenc} % set input encoding to utf8
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{longtable}
+\usepackage{cleveref}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{color}
+\usepackage{booktabs}
+\usepackage[table]{xcolor} % to highlight table rows
+\usepackage{url} % for typesetting file paths
+
+% Don't forget to read the Memoir manual: memman.pdf
+
+\definecolor{highlightcolor}{rgb}{.95,.95,1.0} % highlight color for table rows
+\definecolor{lstcolor}{rgb}{.95,.95,0.95} % background color for listings
+
+% set the options for listing
+\sbox0{\small\ttfamily A}
+\edef\mybasewidth{\the\wd0 }
+\lstset{
+    basicstyle=\small\ttfamily,% print whole listing small
+    columns=fixed,
+    basewidth=\mybasewidth,
+    breaklines=true, % break lines
+    postbreak=\raisebox{0ex}[0ex][0ex]{\ensuremath{\color{red}\hookrightarrow\space}}, % add a red arrow at new broken line
+    backgroundcolor=\color{lstcolor},
+    framexleftmargin=6pt,
+    framextopmargin=6pt,
+    framexbottommargin=6pt, 
+    frame=tb, framerule=0pt,
+    }
+\newsavebox\lstbox
+
+% set up appendix
+\renewcommand*{\cftappendixname}{Appendix\space}
+
+% set up command to stretch table height
+\newcommand{\ra}[1]{\renewcommand{\arraystretch}{#1}} 
+
+%%% Examples of Memoir customization
+%%% enable, disable or adjust these as desired
+
+%%% PAGE DIMENSIONS
+% Set up the paper to be as close as possible to both A4 & letter:
+\settrimmedsize{11in}{210mm}{*} % letter = 11in tall; a4 = 210mm wide
+\setlength{\trimtop}{0pt}
+\setlength{\trimedge}{\stockwidth}
+\addtolength{\trimedge}{-\paperwidth}
+\settypeblocksize{22cm}{16cm}{*}
+\setulmargins{*}{*}{*} % 50pt upper margins
+\setlrmargins{*}{*}{1} % set the margins to be equal
+\checkandfixthelayout
+
+% This is from memman.pdf
+
+%%% ToC (table of contents) APPEARANCE
+\maxtocdepth{subsection} % include subsections
+\renewcommand{\cftchapterpagefont}{}
+\renewcommand{\cftchapterfont}{}     % no bold!
+
+%%% HEADERS & FOOTERS
+\pagestyle{ruled} % try also: empty , plain , headings , ruled , Ruled , companion
+
+%%% CHAPTERS
+\chapterstyle{hangnum} % try also: default , section , hangnum , companion , article, demo
+
+\renewcommand{\chaptitlefont}{\Huge\sffamily\raggedright} % set sans serif chapter title font
+\renewcommand{\chapnumfont}{\Huge\sffamily\raggedright} % set sans serif chapter number font
+
+%%% SECTIONS
+\hangsecnum % hang the section numbers into the margin to match \chapterstyle{hangnum}
+\maxsecnumdepth{subsection} % number subsections
+
+\setsecheadstyle{\Large\sffamily\raggedright} % set sans serif section font
+\setsubsecheadstyle{\large\sffamily\raggedright} % set sans serif subsection font
+
+%% END Memoir customization
+
+%%% BEGIN DOCUMENT
+\begin{document}
+
+% set bib style
+\bibliographystyle{plain}
+
+% render titlepage
+\input{./content/titlepage.tex}
+
+\tableofcontents* % the asterisk means that the contents itself isn't put into the ToC
+
+\cleartorecto % new page before the first chapter
+\ra{1.3} % set the table row spacing for all chapters
+\input{./content/introduction.tex}
+\input{./content/normalization.tex}
+\input{./content/input_description.tex}
+\input{./content/output_description.tex}
+\input{./content/details.tex}
+
+\bibliography{refs}
+\appendix
+\input{./content/appendix.tex}
+
+\end{document}
