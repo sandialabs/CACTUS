@@ -2,6 +2,200 @@
 \chapter{Input files}
 This section describes the namelist, geometry, and airfoil data input files required by CACTUS. CACTUS is run from the command line with the path to the namelist input file passed as the only argument. The geometry input file and the airfoil data table files are referenced in the namelist input file.
 
+\section{CACTUS namelist input}
+This section describes the FORTRAN namelist input file for CACTUS. There are two namelist groups in the input file, \path{\&ConfigInputs} and \path{\&CaseInputs}. The parameters that can be input in each group are given in the tables below. Parameters not specified in the namelist input are left at the indicated default values. The parameters listed in bold font below are the parameters most commonly specified in an input file (with the rest being left at default values). 
+\subsection{Input configuration}
+
+\begin{longtable}{p{0.20\textwidth}p{0.70\textwidth}}
+\caption{Available input configuration options in the \texttt{\&ConfigInputs} namelist.} \label{tbl:configinputs} \\
+\multicolumn{2}{c} {\emph{Regression testing}}  \\ \toprule
+Variable name & Description \\ \midrule
+\path{RegTFlag}             & Set to 1 to perform a regression test (two iterations, generates \path{_RegData.out} output file), 0 for normal operation (default). \\
+\bottomrule
+\\
+\multicolumn{2}{c} {\emph{Wall calculation}}  \\ \toprule
+Variable name & Description \\ \midrule
+\path{GPFlag}               & Set to 1 to use a ground plane, 0 otherwise (default 0). \\ 
+\path{FSFlag}               & Set to 1 to use a free surface, 0 otherwise (default 0). \\ 
+\path{GPGridSF}             & Factor on default ground plane grid spacing (default 1). \\ 
+\path{FSGridSF}             & Factor on default free surface near-field grid spacing (default 1). \\ 
+\path{GPGridExtent}         & Distance the ground plane will extend from the turbine location. Measured in rotor radii. (default 10.0) \\ 
+\path{WPFlag}               & Set to 1 to use a wall geometry read in from file, 0 otherwise (default 0). \\
+\bottomrule
+\\
+\multicolumn{2}{c} {\emph{Calculation inputs}}  \\ \toprule
+Variable name & Description \\ \midrule
+\path{nr}                   & Number of revolutions to perform (default 10) \\ 
+\path{nti}                  & Number of time steps per revolution (default 20) \\ 
+\path{convrg}               & Convergence level for the revolution average power coefficient. Iteration will finish before nr revs if this level is hit. Input -1 to skip convergence check (default). \\ 
+\path{iut}                  & Number of iterations between wake convection velocity updates. If set to zero, the interval will be calculated automatically. If negative, wake convection velocities will be left at the values calculated at the time the wake element is created (no wake convection velocity updates). \\ 
+\path{iWall}                & Number of iterations between wall model updates (if wall calculation is active). \\ 
+\path{TSFilFlag}            & Flag to enable timestep filtering. Set to 1 to enable filtering of the blade bound vorticity smooth over ntsf timesteps (often needed for stability when blade chord to radius ratio is high). Set to 0 for no filtering (default). \\ 
+\path{ntsf}                 & Number of timesteps over which the blade bound vorticity is filtered smooth when \path{TSFilFlag} = 1 (default 3). \\ 
+\path{ivtxcor}              & Flag to specify the finite vortex core model to use. Input 1 for constant vorticity in the core (default). Input 2 to use linear radial vorticity distribution in core. Input 0 to turn off core model. \\ 
+\path{vcrfb}                & Factor on nominal bound vortex core radius used if \path{ivtxcor = 1} (default 1). Nominal bound vortex core radius is specified by the maximum blade chord value input in the turbine geometry specification. \\ 
+\path{vcrft}                & Factor on nominal trailing wake vortex core radius used if \path{ivtxcor = 1} (default 1). Nominal trailing wake vortex core radius is specified by the maximum blade element span value input in the turbine geometry specification. \\ 
+\path{vcrfs}                & Factor on nominal spanwise wake vortex core radius used if \path{ivtxcor = 1} (default 1). Nominal spanwise wake vortex core radius is calculated from a reference distance between spanwise wake lines given the temporal discretization level used. \\ 
+\path{vcutoffrad}           & Cutoff radius used for vortex induced velocity calculation (default \num{1.0e-7}). \\ 
+\path{Incompr}              & 1 to ignore any compressibility effects in models, 0 to include compressibility effects (default). \\ 
+\path{ifc}                  & 1 to use final convergence step, 0 to not (default). If selected, the temporal discretization level is refined once/if initial convergence is reached before nr revolutions have been performed. \\ 
+\path{nric}                 & Revolution number after which to switch to final convergence, if initial convergence level has not yet been achieved. Input -1 to skip this check (default). \\ 
+\path{ntif}                 & Final number of time steps per revolution. This value will replace \path{nti} during final convergence. Input -1 to leave \path{ntif = nti} (default). \\ 
+\path{convrgf}              & Final convergence level. This level will replace \path{convrg} during final convergence. Input -1 to skip final convergence check (default). \\ 
+\path{iutf}                 & Final number of iterations between wake updates. This value will replace \path{iut} during final convergence. Default behavior is the same as \path{iut}. \\ 
+\path{ixterm}               & 1 to ignore wake points beyond $x/R =$ \path{xstop}, 0 to use all wake points (default). \\ 
+\path{xstop}                & If \path{ixterm = 1}, defines $x/R$ beyond which wake points are ignored (default 5) \\ 
+\bottomrule
+\\
+\multicolumn{2}{c} {\emph{Unsteady aerodynamics}}  \\ \midrule Variable name & Description \\ \midrule
+\path{DSFlag}               & 0 for no dynamic stall, 1 for Modified Boeing-Vertol model (default), 2 for Leishman-Beddoes model. \\ 
+\path{PRFlag}               & 0 for no element pitch rate aerodynamic effects, 1 to include these effects (default). \\ 
+\bottomrule
+\end{longtable}
+
+\subsection{Case inputs}
+
+\begin{longtable}{p{0.20\textwidth}p{0.70\textwidth}}
+\caption{Available input configuration options in the \texttt{\&CaseInputs} namelist.} \label{tbl:caseinputs} \\
+\multicolumn{2}{c} {\emph{Operation point inputs}}  \\ \toprule
+Variable name & Description \\ \midrule
+\path{RPM}         & Rotor rotation rate (revs per minute). \\
+\path{Ut}          & Tip speed ratio with freestream flow speed ($U_\textrm{tip}/U_\infty$) \\
+\path{rho}         & Density (\si{slug/ft^3}) \\
+\path{vis}         & Dynamic viscosity (\si{slug/(ft.s)}) \\
+\path{tempr}       & Temperature (\si{\Fahrenheit}) \\
+\path{hBLRef}      & Height above ground of the effective freestream to be used in ground shear layer model (ft). \\
+\path{slex}        & Exponent for ground shear layer model (Ex. 1/2 for parabolic laminar BL model, 1/7 turbulent approx., 0 for constant freestream). \\
+\path{hAG}         & Height above ground at turbine geometry origin point (\si{ft}). Note that the ground plane is assumed to be oriented with its normal vector in the +$y$ direction. \\
+\path{dFS}          & Depth below un-deflected free surface of the turbine geometry origin point (\si{ft}). Only used if free surface calculation is active. Note that the un-deflected free surface is assumed to be oriented with its normal vector in the +$y$ direction. \\
+\path{igust}        & 1 to activate sinusoidal gust model, 0 to use nominal constant freestream model (default). The sinusoidal gust perturbation is modeled per the IEC 61400-1 Wind Turbine Design Standard. \\
+\path{gustamp}     & Amplitude of sinusoidal gust perturbation (m/s) used if \path{igust} = 1. \\
+\path{gusttime}    & Timescale of sinusoidal gust perturbation (s) used if \path{igust} = 1. \\
+\path{gustX0}      & Starting x location of the gust divided by reference radius (location where perturbation is zero at initial simulation time). Used if igust = 1. \\
+\path{itower}      & 1 to activate the tower wake model, 0 otherwise (default). This model adds an empirically defined viscous wake deficit to the nominal freestream to model the presence of the support tower. The model currently assumes this tower to be oriented along the y-axis. \\
+\path{tower_Npts}  & Number of elements used to represent the tower (default 10). \path{itower} = 1. \\
+\path{tower_x}     & Tower location x coordinate divided by reference radius. Used if \path{itower} = 1. \\
+\path{tower_ybot}  & Lower tower y coordinate divided by reference radius. Used if \path{itower} = 1. \\
+\path{tower_ytop}  & Upper tower y coordinate divided by reference radius. Used if \path{itower} = 1. \\
+\path{tower_D}     & Tower diameter divided by reference radius. Used if \path{itower} = 1. \\
+\path{tower_CD}    & Tower 2D sectional drag coefficient based on tower diameter (default 1.0). Used if \path{itower} = 1. \\
+\bottomrule
+\\
+\multicolumn{2}{c} {\emph{Geometry and airfoil data}}  \\ \toprule
+Variable name & Description \\ \midrule
+\path{GeomFilePath} & (string in single quotes) Path to turbine geometry input file. \\
+\path{nSect}        & Number of airfoil section data tables to use (default 1). \\
+\path{AFDPath}      & (string in single quotes) Array (comma separated) of section data file path strings (size=nsect). \\
+\path{AFDPath}      & (string in single quotes) Array (comma separated) of section data file path strings (size=nsect). \\
+\path{WallMeshPath} & (string in single quotes) Path to wall mesh file in Plot3D format. Only read if \path{WallFlag} = 1. \\
+\bottomrule
+\\
+\multicolumn{2}{c} {\emph{Other parameters}}  \\ \toprule
+Variable name & Description \\ \midrule
+\path{Jbtitle}     & (string in single quotes) Job title. \\
+\path{CDPar}       & Additional parasitic interference drag coefficient based on ``chord area'' (chord squared) to be applied to the blade/strut interference drag calculation (default 0). \\
+\path{CTExcrM}     & Additional machine level excrescence torque coefficient, specified by $C_{T,\textrm{ExcrM}} = T_\textrm{ExcrM}/\frac{1}{rho} U_\textrm{tip}^2 R^3$ (default 0). \\
+
+\bottomrule
+\end{longtable}
+
+\subsection{Output configuration}
+\begin{longtable}{p{0.45\textwidth}p{0.45\textwidth}}
+\caption{Available input configuration options in the \texttt{\&ConfigOutputs} namelist.} \label{tbl:configoutputs} \\
+\toprule
+Variable name & Description \\ \midrule
+\path{DiagOutFlag}                     & 1 to output diagnostic info to standard output device each iteration, 0 to omit this output (default). \\
+\path{Output_ELFlag}                  & 1 to output full detail element loads .csv file, 0 to omit this output (default) \\
+\path{Output_DSFlag}                  & 1 to output dynamic stall data, 0 to omit this output (default). \\
+\path{WakeElementOutFlag}              & 1 to output wake element locations, 0 to omit this output (default). \\
+\path{WakeElementOutIntervalTimesteps} & Number of timesteps in between wake element outputs. 5 by default. \\
+\path{WakeElementOutStartTimestep}     & Start timestep for wake element output. 1 for first timestep (default). \\
+\path{WakeElementOutEndTimestep}       & End timestep for wake element output, -1 to output until last timestep (default) \\
+\path{WakeGridOutFlag}                 & 1 to output induced velocity on a 3-D Cartesian grid, 0 to omit this output (default). \\
+\path{WakeGridOutIntervalTimesteps}    & Number of timesteps in between wake grid outputs. 5 by default. \\
+\path{WakeGridOutStartTimestep}        & Start timestep for wake grid output. 1 for first timestep (default). \\
+\path{WakeGridOutEndTimestep}          & End timestep for wake grid output, -1 to output until last timestep (default) \\
+\path{nxgrid, nygrid, nzgrid}          & Number of grid elements in each (x,y,z-) direction. (1, 100, 100) by default. \\
+\path{xgridL, xgridU, ygridL, ygridU, zgridL, zgridU}                 & Extents of Cartesian grid to calculate induced velocity on. Defaults are: (-0.0, 0.0), (-2.0, 2.0), (-2.0, 2.0) \\
+\path{WallOutFlag}                     & 1 to output ground plane/wall panel strengths, 2 to also output velocities at panel centers. 0 for no output (default). \\
+\path{WallOutIntervalTimesteps}        & Number of timesteps in between wake grid outputs. 1 by default. \\
+\path{WallOutStartTimestep}            & Start timestep for wake grid output. 1 for first timestep (default). \\
+\path{WallOutEndTimestep}              & End timestep for wake grid output, -1 to output until last timestep (default) \\
+\bottomrule
+\end{longtable}
+
+\subsection{Example namelist input file}
+A file format example is given below. This example can also be found in \path{./Test/TestCase2/TestVAWT.in} in the CACTUS repository.
+
+\begin{lstlisting}{!htbp}
+&ConfigInputs
+    GPFlag  = 0
+    nr  = 10
+    nti     = 16
+    convrg  = .0001
+    iut = 0
+    
+    ifc = 0
+    ixterm  = 0
+
+    ntif    = 16
+    iutf    = 1
+    nric    = 9
+    convrgf = .0001
+/End
+
+&CaseInputs
+    jbtitle = 'Test VAWT'  
+
+    rho     = .002378  
+    vis     = .3739E-6                                   
+        tempr   = 60.0 
+    hBLRef  = 56.57
+    slex    = 0.0
+    hAG     = 15.0
+                                            
+    RPM     = 52.0
+    Ut  = 5.0   
+
+    ! Turbine geometry
+    GeomFilePath='../TestGeom/TestVAWT.geom'
+
+    ! Airfoil section data
+    nSect   = 1
+AFDPath = '../../Airfoil_Section_Data/NACA_0015.dat' 
+/End
+
+&ConfigOutputs 
+    DiagOutFlag=1
+    Output_ELFlag=1
+    WakeElementOutFlag = 1
+    WakeGridOutFlag = 1
+
+    ! Start output at the 100th timestep
+    WakeGridOutStartTimestep = 100
+
+    ! Stop output at the last timestep  
+    WakeGridOutStartTimestep = -1
+    
+    ! Output wake velocities on every timestep
+    WakeGridOutIntervalTimesteps = 1
+
+    ! Output a 12x40x40 grid
+    ! (12 y-z planes at every 1.0 x, from -1.0 to 10.0 
+    nxgrid = 12
+    nygrid = 40
+    nzgrid = 40
+
+    xgridL = -1.0
+    xgridU = 10.0
+    ygridL = -2.0
+    ygridU = 2.0
+    zgridL = -2.0
+    zgridU = 2.0
+/End
+\end{lstlisting}
+
+
 \section{Geometry input file}
 This section describes the CACTUS turbine geometry input file format, and the tools provided for generating an input file for a generic turbine configuration. CACTUS considers the turbine rotor to be comprised of lifting-line blades and optional support struts. Both blades and struts are decomposed into elements. The primary difference between the two is that the strut elements do not shed a free vortex wake and use simplified empirical models for element loads.
 
@@ -21,13 +215,13 @@ The header section of the input geoemtry file provides global information about 
 \begin{tabular}{p{0.20\textwidth}p{0.70\textwidth}}
 \toprule
 Variable name & Description \\ \midrule
-\texttt{NBlade} & Number of blades. \\
-\texttt{NStrut} & Number of struts. \\
-\texttt{RotN}   & Turbine rotation axis normal vector ($x,y,z$ values). \\
-\texttt{RotP}   & Turbine rotation origin point ($x,y,z$ values). \\
-\texttt{RefAR}  & Turbine reference area (for force/torque/power normalization) divided by reference radius squared. \\
-\texttt{RefR}   & Turbine reference radius (reference length dimension) for scaling dimensional output values (ft). Corresponds to the reference radius used to normalize all geometry inputs below. \\
-\texttt{Type}   & String indicating the turbine geometry generation function used to create this file. This line is for reference only, and is not used internally in CACTUS. \\
+\path{NBlade} & Number of blades. \\
+\path{NStrut} & Number of struts. \\
+\path{RotN}   & Turbine rotation axis normal vector ($x,y,z$ values). \\
+\path{RotP}   & Turbine rotation origin point ($x,y,z$ values). \\
+\path{RefAR}  & Turbine reference area (for force/torque/power normalization) divided by reference radius squared. \\
+\path{RefR}   & Turbine reference radius (reference length dimension) for scaling dimensional output values (ft). Corresponds to the reference radius used to normalize all geometry inputs below. \\
+\path{Type}   & String indicating the turbine geometry generation function used to create this file. This line is for reference only, and is not used internally in CACTUS. \\
 \bottomrule \\
 \end{tabular}
 \end{table}
@@ -41,31 +235,31 @@ Note that the direction of the element normal vector defines the sign of the flo
 \caption[Parameters in the blade section of the geometry input file.]{Parameters in the blade section of the geometry input file. Independent (non-derived) quantities required for geometry creation scripts are highlighted.} \label{tbl:geometry_input_params_blade} \\
 \toprule
 Variable name & Description \\ \midrule
-\texttt{Blade [i]} & Header indicating the blade number index. This line is for reference only, and is not used internally in CACTUS. \\
-\rowcolor{highlightcolor}\texttt{NElem}   & Number of elements. \\
-\rowcolor{highlightcolor}\texttt{FlipN}   & Set to 1 to flip the element normal direction, 0 otherwise. Nominal element normal direction in CACTUS is calculated to align with the cross product of the blade tangent vector and the quarter-chord line direction. \\
-\rowcolor{highlightcolor}\texttt{QCx}     & Blade quarter-chord line x coordinates at element ends divided by reference radius (\texttt{NElem} + 1 values). \\
-\rowcolor{highlightcolor}\texttt{QCy}     & Blade quarter-chord line y coordinates at element ends divided by reference radius (\texttt{NElem} + 1 values). \\
-\rowcolor{highlightcolor}\texttt{QCz}     & Blade quarter-chord line z coordinates at element ends divided by reference radius (\texttt{NElem} + 1 values). \\
-\rowcolor{highlightcolor}\texttt{tx}      & Blade unit tangent vector (rearward chord line direction) $x$-component at element ends (\texttt{NElem} + 1 values). \\
-\rowcolor{highlightcolor}\texttt{ty}      & Blade unit tangent vector (rearward chord line direction) $y$-component at element ends (\texttt{NElem} + 1 values). \\
-\rowcolor{highlightcolor}\texttt{tz}      & Blade unit tangent vector (rearward chord line direction) $z$-component at element ends (\texttt{NElem} + 1 values). \\
-\rowcolor{highlightcolor}\texttt{CtoR}    & Blade chord to turbine reference radius ratio at element ends (\texttt{NElem} + 1 values). \\
-\texttt{PEx}     & Element center $x$-coordinate divided by reference radius (\texttt{NElem} values). \\
-\texttt{PEy}     & Element center $y$-coordinate divided by reference radius (\texttt{NElem} values). \\
-\texttt{PEz}     & Element center $z$-coordinate divided by reference radius (\texttt{NElem} values). \\
-\texttt{tEx}     & Element unit tangent vector (rearward chord line direction) $x$-component (\texttt{NElem} values). \\
-\texttt{tEy}     & Element unit tangent vector (rearward chord line direction) $y$-component (\texttt{NElem} values). \\
-\texttt{tEz}     & Element unit tangent vector (rearward chord line direction) $z$-component (\texttt{NElem} values). \\
-\texttt{nEx}     & Element unit normal vector $x$-component (\texttt{NElem} values). \\
-\texttt{nEy}     & Element unit normal vector $y$-component (\texttt{NElem} values). \\
-\texttt{nEz}     & Element unit normal vector $z$-component (\texttt{NElem} values). \\
-\texttt{sEx}     & Element unit spanwise vector $x$-component (\texttt{NElem} values). \\
-\texttt{sEy}     & Element unit spanwise vector $y$-component (\texttt{NElem} values). \\
-\texttt{sEz}     & Element unit spanwise vector $z$-component (\texttt{NElem} values). \\
-\texttt{ECtoR}   & Element chord to turbine reference radius ratio (\texttt{NElem}  values). \\
-\texttt{EAreaR}  & Element area divided by turbine reference radius squared (\texttt{NElem} values). \\
-\texttt{iSect}   & Index of the foil section data to be applied to each element (\texttt{NElem} values). This index corresponds to the order in which the foil section data table files are supplied in the namelist input file. \\ \bottomrule
+\path{Blade [i]} & Header indicating the blade number index. This line is for reference only, and is not used internally in CACTUS. \\
+\rowcolor{highlightcolor}\path{NElem}   & Number of elements. \\
+\rowcolor{highlightcolor}\path{FlipN}   & Set to 1 to flip the element normal direction, 0 otherwise. Nominal element normal direction in CACTUS is calculated to align with the cross product of the blade tangent vector and the quarter-chord line direction. \\
+\rowcolor{highlightcolor}\path{QCx}     & Blade quarter-chord line x coordinates at element ends divided by reference radius (\path{NElem} + 1 values). \\
+\rowcolor{highlightcolor}\path{QCy}     & Blade quarter-chord line y coordinates at element ends divided by reference radius (\path{NElem} + 1 values). \\
+\rowcolor{highlightcolor}\path{QCz}     & Blade quarter-chord line z coordinates at element ends divided by reference radius (\path{NElem} + 1 values). \\
+\rowcolor{highlightcolor}\path{tx}      & Blade unit tangent vector (rearward chord line direction) $x$-component at element ends (\path{NElem} + 1 values). \\
+\rowcolor{highlightcolor}\path{ty}      & Blade unit tangent vector (rearward chord line direction) $y$-component at element ends (\path{NElem} + 1 values). \\
+\rowcolor{highlightcolor}\path{tz}      & Blade unit tangent vector (rearward chord line direction) $z$-component at element ends (\path{NElem} + 1 values). \\
+\rowcolor{highlightcolor}\path{CtoR}    & Blade chord to turbine reference radius ratio at element ends (\path{NElem} + 1 values). \\
+\path{PEx}     & Element center $x$-coordinate divided by reference radius (\path{NElem} values). \\
+\path{PEy}     & Element center $y$-coordinate divided by reference radius (\path{NElem} values). \\
+\path{PEz}     & Element center $z$-coordinate divided by reference radius (\path{NElem} values). \\
+\path{tEx}     & Element unit tangent vector (rearward chord line direction) $x$-component (\path{NElem} values). \\
+\path{tEy}     & Element unit tangent vector (rearward chord line direction) $y$-component (\path{NElem} values). \\
+\path{tEz}     & Element unit tangent vector (rearward chord line direction) $z$-component (\path{NElem} values). \\
+\path{nEx}     & Element unit normal vector $x$-component (\path{NElem} values). \\
+\path{nEy}     & Element unit normal vector $y$-component (\path{NElem} values). \\
+\path{nEz}     & Element unit normal vector $z$-component (\path{NElem} values). \\
+\path{sEx}     & Element unit spanwise vector $x$-component (\path{NElem} values). \\
+\path{sEy}     & Element unit spanwise vector $y$-component (\path{NElem} values). \\
+\path{sEz}     & Element unit spanwise vector $z$-component (\path{NElem} values). \\
+\path{ECtoR}   & Element chord to turbine reference radius ratio (\path{NElem}  values). \\
+\path{EAreaR}  & Element area divided by turbine reference radius squared (\path{NElem} values). \\
+\path{iSect}   & Index of the foil section data to be applied to each element (\path{NElem} values). This index corresponds to the order in which the foil section data table files are supplied in the namelist input file. \\ \bottomrule
  
 \end{longtable}
 
@@ -78,25 +272,25 @@ There should be a separate strut data block for each strut in the turbine rotor.
 \caption[Parameters in the strut section of the geometry input file.]{Parameters in the strut section of the geometry input file. Independent (non-derived) quantities required for geometry creation scripts are highlighted.} \label{tbl:geometry_input_params_strut} \\
 \toprule
 Variable name & Description \\ \midrule
-\texttt{Strut [i]} & Header indicating the strut number index. This line is for reference only, and is not used internally in CACTUS. \\
-\rowcolor{highlightcolor}\texttt{NElem}   & Number of elements. \\
-\rowcolor{highlightcolor}\texttt{TtoC}    & Strut thickness to chord ratio (single value, assumed constant over strut). \\
-\rowcolor{highlightcolor}\texttt{MCx}     & Strut mid-chord $x$-coordinate at element ends divided by reference radius (\texttt{NElem} + 1 values). \\
-\rowcolor{highlightcolor}\texttt{MCy}     & Strut mid-chord $y$-coordinate at element ends divided by reference radius (\texttt{NElem} + 1 values). \\
-\rowcolor{highlightcolor}\texttt{MCz}     & Strut mid-chord $z$-coordinate at element ends divided by reference radius (\texttt{NElem} + 1 values). \\
-\rowcolor{highlightcolor}\texttt{CtoR}    & Strut chord to turbine reference radius ratio at element ends (\texttt{NElem} + 1 values). \\
-\texttt{PEx}     & Element center $x$-coordinate divided by reference radius (\texttt{NElem} values). \\
-\texttt{PEy}     & Element center $y$-coordinate divided by reference radius (\texttt{NElem} values). \\
-\texttt{PEz}     & Element center $z$-coordinate divided by reference radius (\texttt{NElem} values). \\
-\texttt{sEx}     & Element unit spanwise vector $x$-component (\texttt{NElem} values). \\
-\texttt{sEy}     & Element unit spanwise vector $y$-component (\texttt{NElem} values). \\
-\texttt{sEz}     & Element unit spanwise vector $z$-component (\texttt{NElem} values). \\
-\texttt{ECtoR}   & Element chord to turbine reference radius ratio (\texttt{NElem} values). \\
-\texttt{EAreaR}  & Element area divided by turbine reference radius squared (\texttt{NElem} values). \\
-\rowcolor{highlightcolor}\texttt{BIndS}   & Index of the blade to which the first strut element connects. Used for blade-strut interference drag calculation. Set to zero if start element connected to rotor shaft. \\
-\rowcolor{highlightcolor}\texttt{EIndS}   & Index of the element on the above blade at which the first strut element connects. Used for blade-strut interference drag calculation. Set to zero if first element connected to rotor shaft. \\
-\rowcolor{highlightcolor}\texttt{BIndE}   & Index of the blade to which the last strut element connects. Used for blade-strut interference drag calculation. Set to zero if last element is connected to rotor shaft. \\
-\rowcolor{highlightcolor}\texttt{EIndE}   & Index of the element on the above blade to which the last strut element connects. Used for blade-strut interference drag calculation. Set to zero if last element is connected to rotor shaft. \\
+\path{Strut [i]} & Header indicating the strut number index. This line is for reference only, and is not used internally in CACTUS. \\
+\rowcolor{highlightcolor}\path{NElem}   & Number of elements. \\
+\rowcolor{highlightcolor}\path{TtoC}    & Strut thickness to chord ratio (single value, assumed constant over strut). \\
+\rowcolor{highlightcolor}\path{MCx}     & Strut mid-chord $x$-coordinate at element ends divided by reference radius (\path{NElem} + 1 values). \\
+\rowcolor{highlightcolor}\path{MCy}     & Strut mid-chord $y$-coordinate at element ends divided by reference radius (\path{NElem} + 1 values). \\
+\rowcolor{highlightcolor}\path{MCz}     & Strut mid-chord $z$-coordinate at element ends divided by reference radius (\path{NElem} + 1 values). \\
+\rowcolor{highlightcolor}\path{CtoR}    & Strut chord to turbine reference radius ratio at element ends (\path{NElem} + 1 values). \\
+\path{PEx}     & Element center $x$-coordinate divided by reference radius (\path{NElem} values). \\
+\path{PEy}     & Element center $y$-coordinate divided by reference radius (\path{NElem} values). \\
+\path{PEz}     & Element center $z$-coordinate divided by reference radius (\path{NElem} values). \\
+\path{sEx}     & Element unit spanwise vector $x$-component (\path{NElem} values). \\
+\path{sEy}     & Element unit spanwise vector $y$-component (\path{NElem} values). \\
+\path{sEz}     & Element unit spanwise vector $z$-component (\path{NElem} values). \\
+\path{ECtoR}   & Element chord to turbine reference radius ratio (\path{NElem} values). \\
+\path{EAreaR}  & Element area divided by turbine reference radius squared (\path{NElem} values). \\
+\rowcolor{highlightcolor}\path{BIndS}   & Index of the blade to which the first strut element connects. Used for blade-strut interference drag calculation. Set to zero if start element connected to rotor shaft. \\
+\rowcolor{highlightcolor}\path{EIndS}   & Index of the element on the above blade at which the first strut element connects. Used for blade-strut interference drag calculation. Set to zero if first element connected to rotor shaft. \\
+\rowcolor{highlightcolor}\path{BIndE}   & Index of the blade to which the last strut element connects. Used for blade-strut interference drag calculation. Set to zero if last element is connected to rotor shaft. \\
+\rowcolor{highlightcolor}\path{EIndE}   & Index of the element on the above blade to which the last strut element connects. Used for blade-strut interference drag calculation. Set to zero if last element is connected to rotor shaft. \\
 \bottomrule
 \end{longtable}
 
@@ -203,13 +397,13 @@ Strut 2:
 
 \subsection{Geometry creation tools}
 \label{sec:geomery_creation_tools}
-A set of MATLAB tools has been created to allow the user to generate a CACTUS geometry input file for an arbitrary turbine rotor. This set of MATLAB scripts is located in the \path{./CreateGeom/} folder in the CACTUS source code directory. Note that these scripts should also run without modification under GNU Octave (a free software package that mimics much of the basic MATLAB syntax), with the possible exception of the plotting functions in the script \texttt{PlotTurbineGeom.m}.
+A set of MATLAB tools has been created to allow the user to generate a CACTUS geometry input file for an arbitrary turbine rotor. This set of MATLAB scripts is located in the \path{./CreateGeom/} folder in the CACTUS source code directory. Note that these scripts should also run without modification under GNU Octave (a free software package that mimics much of the basic MATLAB syntax), with the possible exception of the plotting functions in the script \path{PlotTurbineGeom.m}.
 
-The script \texttt{CreateTurbine.m} generates an empty turbine geometry structure and optionally fills it out with data for a parameterized generic turbine type. See the comments at the top of the file for details. The user can then modify the data in the created geometry structure as necessary to represent their particular problem. When defining blade and strut geometry, the user should first fill out the \emph{independent} fields (highlighted in \Cref{tbl:geometry_input_params_blade,tbl:geometry_input_params_strut}), and then use the scripts \texttt{CalcBEGeom.m} and \texttt{CalcSEGeom.m} to fill out the blade and strut element geometry fields.
+The script \path{CreateTurbine.m} generates an empty turbine geometry structure and optionally fills it out with data for a parameterized generic turbine type. See the comments at the top of the file for details. The user can then modify the data in the created geometry structure as necessary to represent their particular problem. When defining blade and strut geometry, the user should first fill out the \emph{independent} fields (highlighted in \Cref{tbl:geometry_input_params_blade,tbl:geometry_input_params_strut}), and then use the scripts \path{CalcBEGeom.m} and \path{CalcSEGeom.m} to fill out the blade and strut element geometry fields.
 
-Once the turbine geometry structure has been finalized, the script \texttt{WriteTurbineGeom.m} will create the CACTUS geometry input file. The script \texttt{ReadTurbineGeom.m} will read an existing CACTUS geometry input file and create a corresponding geometry structure in MATLAB for further modification.
+Once the turbine geometry structure has been finalized, the script \path{WriteTurbineGeom.m} will create the CACTUS geometry input file. The script \path{ReadTurbineGeom.m} will read an existing CACTUS geometry input file and create a corresponding geometry structure in MATLAB for further modification.
 
-The script \texttt{PlotTurbineGeom.m} will plot the geometry contained in a turbine geometry structure at a particular phase angle of rotation around the turbine rotation axis. The plotting functions in this script have not been verified to work in GNU Octave.
+The script \path{PlotTurbineGeom.m} will plot the geometry contained in a turbine geometry structure at a particular phase angle of rotation around the turbine rotation axis. The plotting functions in this script have not been verified to work in GNU Octave.
 
 An example script that creates and plots turbine rotor geometry for a vertical axis wind turbine is provided in \Cref{sec:example_geometry_script}.
 
@@ -227,10 +421,10 @@ Airfoil data is split into a header section, described in \Cref{tbl:airfoil_inpu
 \begin{tabular}{p{0.20\textwidth}p{0.70\textwidth}}
 \toprule
 Variable name & Description \\ \midrule
-\texttt{Title}                    & Title for this foil data table. For reference only; not used internally in CACTUS. \\
-\texttt{Thickness to Chord Ratio} & Thickness to chord ratio for this foil section. \\
-\texttt{Zero Lift AOA}            & Angle of attack (\si{\deg}) at zero lift for this section. \\
-\texttt{Reverse Camber Direction} & Set to 1 to reverse the orientation of a non-symmetric foil with respect to the normal vector of the blade element section to which it is applied. \\
+\path{Title}                    & Title for this foil data table. For reference only; not used internally in CACTUS. \\
+\path{Thickness to Chord Ratio} & Thickness to chord ratio for this foil section. \\
+\path{Zero Lift AOA}            & Angle of attack (\si{\deg}) at zero lift for this section. \\
+\path{Reverse Camber Direction} & Set to 1 to reverse the orientation of a non-symmetric foil with respect to the normal vector of the blade element section to which it is applied. \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -244,9 +438,9 @@ Variable name & Description \\ \midrule
 \begin{tabular}{p{0.20\textwidth}p{0.70\textwidth}}
 \toprule
 Variable name & Description \\ \midrule
-\texttt{BV Dyn. Stall Model}           &  The Boeing-Vertol dynamic stall model uses reference angle of attack values to switch from a steady attached flow state to a dynamic stalled state. While these are denoted as ``stall'' AOA values, they should be set back from the foil stall AOA such that the lift coefficient is still fairly linear with AOA at this point. Generally, a value 50 - 75\% of the way between the zero lift AOA and the stall AOA works well. \\
-\texttt{LB Dyn. Stall Model}           & The Leishman-Beddoes dynamic stall model uses a reference lift slope and a critical lift coefficient value to indicate the onset of leading edge stall. The critical lift coefficient value should be approximately equal to the value of lift coefficient that would have been obtained at the foil stall AOA, had the lift coefficient remained linear with AOA (with slope given by the reference lift coefficient slope). \\
-\texttt{Force and Moment Coefficients} & Foil force and moment coefficient data at angle of attack from -180 \si{\deg} to 180 \si{\deg}. (AOA, lift coefficient, drag coefficient, pitching moment coefficient about the 25\% chord point). \\
+\path{BV Dyn. Stall Model}           &  The Boeing-Vertol dynamic stall model uses reference angle of attack values to switch from a steady attached flow state to a dynamic stalled state. While these are denoted as ``stall'' AOA values, they should be set back from the foil stall AOA such that the lift coefficient is still fairly linear with AOA at this point. Generally, a value 50 - 75\% of the way between the zero lift AOA and the stall AOA works well. \\
+\path{LB Dyn. Stall Model}           & The Leishman-Beddoes dynamic stall model uses a reference lift slope and a critical lift coefficient value to indicate the onset of leading edge stall. The critical lift coefficient value should be approximately equal to the value of lift coefficient that would have been obtained at the foil stall AOA, had the lift coefficient remained linear with AOA (with slope given by the reference lift coefficient slope). \\
+\path{Force and Moment Coefficients} & Foil force and moment coefficient data at angle of attack from -180 \si{\deg} to 180 \si{\deg}. (AOA, lift coefficient, drag coefficient, pitching moment coefficient about the 25\% chord point). \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -273,188 +467,26 @@ Reynolds Number: 5e6
 ... 
 \end{lstlisting}
 
-\section{CACTUS namelist input}
-This section describes the FORTRAN namelist input file for CACTUS. There are two namelist groups in the input file, \texttt{\&ConfigInputs} and \texttt{\&CaseInputs}. The parameters that can be input in each group are given in the tables below. Parameters not specified in the namelist input are left at the indicated default values. The parameters listed in bold font below are the parameters most commonly specified in an input file (with the rest being left at default values). 
-\subsection{Input configuration}
 
-\begin{longtable}{p{0.20\textwidth}p{0.70\textwidth}}
-\caption{Available input configuration options in the \texttt{\&ConfigInputs} namelist.} \label{tbl:configinputs} \\
-\multicolumn{2}{c} {\emph{Regression testing}}  \\ \toprule
-Variable name & Description \\ \midrule
-\texttt{RegTFlag}             & Set to 1 to perform a regression test (two iterations, generates \texttt{\_RegData.out} output file), 0 for normal operation (default). \\
-\bottomrule
-\\
-\multicolumn{2}{c} {\emph{Wall calculation}}  \\ \toprule
-Variable name & Description \\ \midrule
-\texttt{GPFlag}               & Set to 1 to use a ground plane, 0 otherwise (default 0). \\ 
-\texttt{FSFlag}               & Set to 1 to use a free surface, 0 otherwise (default 0). \\ 
-\texttt{GPGridSF}             & Factor on default ground plane grid spacing (default 1). \\ 
-\texttt{FSGridSF}             & Factor on default free surface near-field grid spacing (default 1). \\ 
-\texttt{GPGridExtent}         & Distance the ground plane will extend from the turbine location. Measured in rotor radii. (default 10.0) \\ 
-\bottomrule
-\\
-\multicolumn{2}{c} {\emph{Calculation inputs}}  \\ \toprule
-Variable name & Description \\ \midrule
-\texttt{nr}                   & Number of revolutions to perform (default 10) \\ 
-\texttt{nti}                  & Number of time steps per revolution (default 20) \\ 
-\texttt{convrg}               & Convergence level for the revolution average power coefficient. Iteration will finish before nr revs if this level is hit. Input -1 to skip convergence check (default). \\ 
-\texttt{iut}                  & Number of iterations between wake convection velocity updates. If set to zero, the interval will be calculated automatically. If negative, wake convection velocities will be left at the values calculated at the time the wake element is created (no wake convection velocity updates). \\ 
-\texttt{iWall}                & Number of iterations between wall model updates (if wall calculation is active). \\ 
-\texttt{TSFilFlag}            & Flag to enable timestep filtering. Set to 1 to enable filtering of the blade bound vorticity smooth over ntsf timesteps (often needed for stability when blade chord to radius ratio is high). Set to 0 for no filtering (default). \\ 
-\texttt{ntsf}                 & Number of timesteps over which the blade bound vorticity is filtered smooth when \texttt{TSFilFlag} = 1 (default 3). \\ 
-\texttt{ivtxcor}              & Flag to specify the finite vortex core model to use. Input 1 for constant velocity in the core (default). Input 2 to use linear radial velocity distribution in core. Input 0 to turn off core model. \\ 
-\texttt{vcrfb}                & Factor on nominal bound vortex core radius used if \texttt{ivtxcor = 1} (default 1). Nominal bound vortex core radius is specified by the maximum blade chord value input in the turbine geometry specification. \\ 
-\texttt{vcrft}                & Factor on nominal trailing wake vortex core radius used if \texttt{ivtxcor = 1} (default 1). Nominal trailing wake vortex core radius is specified by the maximum blade element span value input in the turbine geometry specification. \\ 
-\texttt{vcrfs}                & Factor on nominal spanwise wake vortex core radius used if \texttt{ivtxcor = 1} (default 1). Nominal spanwise wake vortex core radius is calculated from a reference distance between spanwise wake lines given the temporal discretization level used. \\ 
-\texttt{Incompr}              & 1 to ignore any compressibility effects in models, 0 to include compressibility effects (default). \\ 
-\texttt{ifc}                  & 1 to use final convergence step, 0 to not (default). If selected, the temporal discretization level is refined once/if initial convergence is reached before nr revolutions have been performed. \\ 
-\texttt{nric}                 & Revolution number after which to switch to final convergence, if initial convergence level has not yet been achieved. Input -1 to skip this check (default). \\ 
-\texttt{ntif}                 & Final number of time steps per revolution. This value will replace \texttt{nti} during final convergence. Input -1 to leave \texttt{ntif = nti} (default). \\ 
-\texttt{convrgf}              & Final convergence level. This level will replace \texttt{convrg} during final convergence. Input -1 to skip final convergence check (default). \\ 
-\texttt{iutf}                 & Final number of iterations between wake updates. This value will replace \texttt{iut} during final convergence. Default behavior is the same as \texttt{iut}. \\ 
-\texttt{ixterm}               & 1 to ignore wake points beyond $x/R =$ \texttt{xstop}, 0 to use all wake points (default). \\ 
-\texttt{xstop}                & If \texttt{ixterm = 1}, defines $x/R$ beyond which wake points are ignored (default 5) \\ 
-\bottomrule
-\\
-\multicolumn{2}{c} {\emph{Unsteady aerodynamics}}  \\ \midrule Variable name & Description \\ \midrule
-\texttt{DSFlag}               & 0 for no dynamic stall, 1 for Modified Boeing-Vertol model (default), 2 for Leishman-Beddoes model. \\ 
-\texttt{PRFlag}               & 0 for no element pitch rate aerodynamic effects, 1 to include these effects (default). \\ 
-\bottomrule
-\end{longtable}
+\section{Wall input file}
+If \path{WPFlag} = 1, CACTUS will include the influence of a specified wall geometry. The wall geometry must be generated externally; the path to this wall geometry is specified with the \path{WallMeshPath} namelist variable.
 
-\subsection{Case inputs}
+The wall mesh file is a multi-block, formatted (ASCII), Plot3d structured mesh. More details on the Plot3d file format can be found at \path{http://www.grc.nasa.gov/WWW/wind/valid/plot3d.html}. Each block contains one structured mesh, and thus complex wall geometries can be specified with a single mesh file. The normals of each cell defined by the node locations must face inward toward the domain in which the wake elements lie. The format of this file is demonstrated in \Cref{listing:plot3d_file_example}. For inspection, this file format may easily be read in by ParaView.
 
-\begin{longtable}{p{0.20\textwidth}p{0.70\textwidth}}
-\caption{Available input configuration options in the \texttt{\&CaseInputs} namelist.} \label{tbl:caseinputs} \\
-\multicolumn{2}{c} {\emph{Operation point inputs}}  \\ \toprule
-Variable name & Description \\ \midrule
-\texttt{RPM}         & Rotor rotation rate (revs per minute). \\
-\texttt{Ut}          & Tip speed ratio with freestream flow speed ($U_\textrm{tip}/U_\infty$) \\
-\texttt{rho}         & Density (\si{slug/ft^3}) \\
-\texttt{vis}         & Dynamic viscosity (\si{slug/(ft.s)}) \\
-\texttt{tempr}       & Temperature (\si{\Fahrenheit}) \\
-\texttt{hBLRef}      & Height above ground of the effective freestream to be used in ground shear layer model (ft). \\
-\texttt{slex}        & Exponent for ground shear layer model (Ex. 1/2 for parabolic laminar BL model, 1/7 turbulent approx., 0 for constant freestream). \\
-\texttt{hAG}         & Height above ground at turbine geometry origin point (\si{ft}). Note that the ground plane is assumed to be oriented with its normal vector in the +$y$ direction. \\
-\texttt{dFS}          & Depth below un-deflected free surface of the turbine geometry origin point (\si{ft}). Only used if free surface calculation is active. Note that the un-deflected free surface is assumed to be oriented with its normal vector in the +$y$ direction. \\
-\texttt{igust}        & 1 to activate sinusoidal gust model, 0 to use nominal constant freestream model (default). The sinusoidal gust perturbation is modeled per the IEC 61400-1 Wind Turbine Design Standard. \\
-\texttt{gustamp}     & Amplitude of sinusoidal gust perturbation (m/s) used if \texttt{igust} = 1. \\
-\texttt{gusttime}    & Timescale of sinusoidal gust perturbation (s) used if \texttt{igust} = 1. \\
-\texttt{gustX0}      & Starting x location of the gust divided by reference radius (location where perturbation is zero at initial simulation time). Used if igust = 1. \\
-\texttt{itower}      & 1 to activate the tower wake model, 0 otherwise (default). This model adds an empirically defined viscous wake deficit to the nominal freestream to model the presence of the support tower. The model currently assumes this tower to be oriented along the y-axis. \\
-\texttt{tower\_Npts}  & Number of elements used to represent the tower (default 10). \texttt{itower} = 1. \\
-\texttt{tower\_x}     & Tower location x coordinate divided by reference radius. Used if \texttt{itower} = 1. \\
-\texttt{tower\_ybot}  & Lower tower y coordinate divided by reference radius. Used if \texttt{itower} = 1. \\
-\texttt{tower\_ytop}  & Upper tower y coordinate divided by reference radius. Used if \texttt{itower} = 1. \\
-\texttt{tower\_D}     & Tower diameter divided by reference radius. Used if \texttt{itower} = 1. \\
-\texttt{tower\_CD}    & Tower 2D sectional drag coefficient based on tower diameter (default 1.0). Used if \texttt{itower} = 1. \\
-\bottomrule
-\\
-\multicolumn{2}{c} {\emph{Geometry and airfoil data}}  \\ \toprule
-Variable name & Description \\ \midrule
-\texttt{GeomFilePath} & (string in single quotes) Path to turbine geometry input file. \\
-\texttt{nSect}        & Number of airfoil section data tables to use (default 1) \\
-\texttt{AFDPath}      & (string in single quotes) Array (comma separated) of section data file path strings (size=nsect). \\
-\bottomrule
-\\
-\multicolumn{2}{c} {\emph{Other parameters}}  \\ \toprule
-Variable name & Description \\ \midrule
-\texttt{Jbtitle}     & (string in single quotes) Job title. \\
-\texttt{CDPar}       & Additional parasitic interference drag coefficient based on ``chord area'' (chord squared) to be applied to the blade/strut interference drag calculation (default 0). \\
-\texttt{CTExcrM}     & Additional machine level excrescence torque coefficient, specified by $C_{T,\textrm{ExcrM}} = T_\textrm{ExcrM}/\frac{1}{rho} U_tip^2 R^3$ (default 0). \\
-
-\bottomrule
-\end{longtable}
-
-\subsection{Output configuration}
-\begin{longtable}{p{0.45\textwidth}p{0.45\textwidth}}
-\caption{Available input configuration options in the \texttt{\&ConfigOutputs} namelist.} \label{tbl:configoutputs} \\
-\toprule
-Variable name & Description \\ \midrule
-\texttt{DiagOutFlag}                     & 1 to output diagnostic info to standard output device each iteration, 0 to omit this output (default). \\
-\texttt{Output\_ELFlag}                  & 1 to output full detail element loads .csv file, 0 to omit this output (default) \\
-\texttt{Output\_DSFlag}                  & 1 to output dynamic stall data, 0 to omit this output (default). \\
-\texttt{WallOutFlag}                     & 1 to output wall panel data (averaged over the last revolution), 0 to omit this output (default). \\
-\texttt{WakeElementOutFlag}              & 1 to output wake element locations, 0 to omit this output (default). \\
-\texttt{WakeElementOutIntervalTimesteps} & Number of timesteps in between wake element outputs. 5 by default. \\
-\texttt{WakeElementOutStartTimestep}     & Start timestep for wake element output. 1 for first timestep (default). \\
-\texttt{WakeElementOutEndTimestep}       & End timestep for wake element output, -1 to output until last timestep (default) \\
-\texttt{WakeGridOutFlag}                 & 1 to output induced velocity on a 3-D Cartesian grid, 0 to omit this output (default). \\
-\texttt{WakeGridOutIntervalTimesteps}    & Number of timesteps in between wake grid outputs. 5 by default. \\
-\texttt{WakeGridOutStartTimestep}        & Start timestep for wake grid output. 1 for first timestep (default). \\
-\texttt{WakeGridOutEndTimestep}          & End timestep for wake grid output, -1 to output until last timestep (default) \\
-\texttt{nxgrid, nygrid, nzgrid}          & Number of grid elements in each (x,y,z-) direction. (1, 100, 100) by default. \\
-\texttt{xgridL, xgridU, ygridL, ygridU, zgridL, zgridU}                 & Extents of Cartesian grid to calculate induced velocity on. Defaults are: (-0.0, 0.0), (-2.0, 2.0), (-2.0, 2.0) \\
-\bottomrule
-\end{longtable}
-
-\subsection{Example namelist input file}
-A file format example is given below. This example can also be found in \path{./Test/TestCase2/TestVAWT.in} in the CACTUS repository.
-
-\begin{lstlisting}{!htbp}
-&ConfigInputs
-    GPFlag  = 0
-    nr  = 10
-    nti     = 16
-    convrg  = .0001
-    iut = 0
-    
-    ifc = 0
-    ixterm  = 0
-
-    ntif    = 16
-    iutf    = 1
-    nric    = 9
-    convrgf = .0001
-/End
-
-&CaseInputs
-    jbtitle = 'Test VAWT'  
-
-    rho     = .002378  
-    vis     = .3739E-6                                   
-        tempr   = 60.0 
-    hBLRef  = 56.57
-    slex    = 0.0
-    hAG     = 15.0
-                                            
-    RPM     = 52.0
-    Ut  = 5.0   
-
-    ! Turbine geometry
-    GeomFilePath='../TestGeom/TestVAWT.geom'
-
-    ! Airfoil section data
-    nSect   = 1
-AFDPath = '../../Airfoil_Section_Data/NACA_0015.dat' 
-/End
-
-&ConfigOutputs 
-    DiagOutFlag=1
-    Output_ELFlag=1
-    WakeElementOutFlag = 1
-    WakeGridOutFlag = 1
-
-    ! Start output at the 100th timestep
-    WakeGridOutStartTimestep = 100
-
-    ! Stop output at the last timestep  
-    WakeGridOutStartTimestep = -1
-    
-    ! Output wake velocities on every timestep
-    WakeGridOutIntervalTimesteps = 1
-
-    ! Output a 12x40x40 grid
-    ! (12 y-z planes at every 1.0 x, from -1.0 to 10.0 
-    nxgrid = 12
-    nygrid = 40
-    nzgrid = 40
-
-    xgridL = -1.0
-    xgridU = 10.0
-    ygridL = -2.0
-    ygridU = 2.0
-    zgridL = -2.0
-    zgridU = 2.0
-/End
+\begin{lstlisting}[label=listing:plot3d_file_example,caption=Example file format for a multi-block Plot3d mesh file.]
+[nblocks]
+[nx] [ny] [nz]
+[x_1]
+[x_2]
+...
+[x_nx]
+[y_1]
+[y_2]
+...
+[y_ny]
+[z_1]
+[z_2]
+...
+[z_nz]
+EOF
 \end{lstlisting}

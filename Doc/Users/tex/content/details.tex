@@ -5,7 +5,7 @@ OpenMP acceleration is enabled in the main Biot-Savart calculation loop as well 
 
 If OpenMP is enabled, CACTUS will write to standard out a few lines stating so. If CACTUS has not been compiled correctly with OpenMP flags and libraries, or if OpenMP is otherwise disabled, those lines about OpenMP will be omitted.
 
-If the number of threads displayed is less than the number of cores/threads available on the machine, check that the environment variable \texttt{OMP\_NUM\_THREADS} is correctly set.
+If the number of threads displayed is less than the number of cores/threads available on the machine, check that the environment variable \path{OMP_NUM_THREADS} is correctly set.
 
 \begin{lstlisting}[language=bash]
 [phil@localhost CACTUS-CK]$ ./bin/cactus 

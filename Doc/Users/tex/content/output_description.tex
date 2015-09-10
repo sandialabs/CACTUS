@@ -3,7 +3,7 @@
 By default, CACTUS will output rotor-integrated loads to a text file. CACTUS is capable of saving much more information, such as blade-integrated loads, blade element loads, wall panel data, field velocities, and the complete state of vortex filaments describing the wake. These outputs can be enabled through the appropriate input file flags, described in \Cref{tbl:configoutputs}. This section describes the format of the various output files.
 
 \section{Revolution-averaged rotor-integrated loads}
-CACTUS writes revolution-averaged rotor-integrated loads for each revolution to the comma delimited file \texttt{\_RevData.csv}. The output columns of this file are described in \Cref{tbl:output_vars_rev}.
+CACTUS writes revolution-averaged rotor-integrated loads for each revolution to the comma delimited file \path{_RevData.csv}. The output columns of this file are described in \Cref{tbl:output_vars_rev}.
 
 \begin{table}[!htbp]
 \centering
@@ -12,21 +12,21 @@ CACTUS writes revolution-averaged rotor-integrated loads for each revolution to 
 \begin{tabular}{p{0.3\textwidth}p{0.6\textwidth}}
 \toprule
 Variable name & Description \\ \midrule
-\texttt{Rev}                    & Revolution number \\
-\texttt{Power Coeff. (-)}       & Revolution average machine power coefficient \\
-\texttt{Tip Power Coeff. (-)}   & Revolution average machine power coefficient normalized with $U_\textrm{tip}$ instead of $U_\infty$ \\
-\texttt{Torque Coeff. (-)}      & Revolution average torque coefficient \\
-\texttt{Fx Coeff. (-)}          & Revolution average $x$-component of force coefficient \\
-\texttt{Fy Coeff. (-)}          & Revolution average $y$-component of force coefficient \\
-\texttt{Fz Coeff. (-)}          & Revolution average $z$-component of force coefficient \\
-\texttt{Power (kW)}             & Revolution average machine power \\
-\texttt{Torque (ft-lbs)}        & Revolution average machine torque \\
+\path{Rev}                    & Revolution number \\
+\path{Power Coeff. (-)}       & Revolution average machine power coefficient \\
+\path{Tip Power Coeff. (-)}   & Revolution average machine power coefficient normalized with $U_\textrm{tip}$ instead of $U_\infty$ \\
+\path{Torque Coeff. (-)}      & Revolution average torque coefficient \\
+\path{Fx Coeff. (-)}          & Revolution average $x$-component of force coefficient \\
+\path{Fy Coeff. (-)}          & Revolution average $y$-component of force coefficient \\
+\path{Fz Coeff. (-)}          & Revolution average $z$-component of force coefficient \\
+\path{Power (kW)}             & Revolution average machine power \\
+\path{Torque (ft-lbs)}        & Revolution average machine torque \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 \section{Blade-integrated loads}
-If \texttt{Output\_ELFlag} = 1, blade-integrated loads are written at each to the comma delimited file \texttt{\_TimeData.csv}. The output columns of this file are described in \Cref{tbl:output_vars_time}.
+If \path{Output_ELFlag} = 1, blade-integrated loads are written at each to the comma delimited file \path{_TimeData.csv}. The output columns of this file are described in \Cref{tbl:output_vars_time}.
 
 \begin{table}[!htbp]
 \centering
@@ -35,28 +35,28 @@ If \texttt{Output\_ELFlag} = 1, blade-integrated loads are written at each to th
 \begin{tabular}{p{0.3\textwidth}p{0.6\textwidth}}
 \toprule
 Variable name & Description \\ \midrule
-\texttt{Normalized Time (-)}      & Normalized simulation time, $t_N=t U_\infty/R$ \\
-\texttt{Theta (rad)}              & Turbine rotational phase angle \\
-\texttt{Rev}                      & Revolution number \\
-\texttt{Torque Coeff (-)}         & Torque coefficient \\
-\texttt{Power Coeff (-)}          & Power coefficient \\
-\texttt{Fx Coeff. (-)}            & $x$-component of force coefficient \\
-\texttt{Fy Coeff. (-)}            & $y$-component of force coefficient \\
-\texttt{Fz Coeff. (-)}            & $z$-component of force coefficient \\
-\texttt{Blade Fx Coeff (-)}       & Contribution to $x$-component of force coefficient from blade \\
-\texttt{Blade Fy Coeff (-)}       & Contribution to $y$-component of force coefficient from blade \\
-\texttt{Blade Fz Coeff (-)}       & Contribution to $z$-component of force coefficient from blade \\
-\texttt{Blade Torque Coeff (-)}   & Contribution to torque coefficient from blade \\
-\texttt{Strut Fx Coeff (-)}       & Contribution to $x$-component of force coefficient from strut \\
-\texttt{Strut Fy Coeff (-)}       & Contribution to $y$-component of force coefficient from strut \\
-\texttt{Strut Fz Coeff (-)}       & Contribution to $z$-component of force coefficient from strut \\
-\texttt{Strut Torque Coeff (-)}   & Contribution to torque coefficient from strut \\
+\path{Normalized Time (-)}      & Normalized simulation time, $t_N=t U_\infty/R$ \\
+\path{Theta (rad)}              & Turbine rotational phase angle \\
+\path{Rev}                      & Revolution number \\
+\path{Torque Coeff (-)}         & Torque coefficient \\
+\path{Power Coeff (-)}          & Power coefficient \\
+\path{Fx Coeff. (-)}            & $x$-component of force coefficient \\
+\path{Fy Coeff. (-)}            & $y$-component of force coefficient \\
+\path{Fz Coeff. (-)}            & $z$-component of force coefficient \\
+\path{Blade Fx Coeff (-)}       & Contribution to $x$-component of force coefficient from blade \\
+\path{Blade Fy Coeff (-)}       & Contribution to $y$-component of force coefficient from blade \\
+\path{Blade Fz Coeff (-)}       & Contribution to $z$-component of force coefficient from blade \\
+\path{Blade Torque Coeff (-)}   & Contribution to torque coefficient from blade \\
+\path{Strut Fx Coeff (-)}       & Contribution to $x$-component of force coefficient from strut \\
+\path{Strut Fy Coeff (-)}       & Contribution to $y$-component of force coefficient from strut \\
+\path{Strut Fz Coeff (-)}       & Contribution to $z$-component of force coefficient from strut \\
+\path{Strut Torque Coeff (-)}   & Contribution to torque coefficient from strut \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 \section{Blade element loads}
-If \texttt{Output\_ELFlag} = 1, loads on the individual blade elements at each time step are written to the comma delimited file \texttt{\_ElementData.csv}. The output columns of this file are described in \Cref{tbl:output_vars_blade}.
+If \path{Output_ELFlag} = 1, loads on the individual blade elements at each time step are written to the comma delimited file \path{_ElementData.csv}. The output columns of this file are described in \Cref{tbl:output_vars_blade}.
 
 \begin{table}[!htbp]
 \centering
@@ -65,36 +65,46 @@ If \texttt{Output\_ELFlag} = 1, loads on the individual blade elements at each t
 \begin{tabular}{p{0.3\textwidth}p{0.6\textwidth}}
 \toprule
 Variable name & Description \\ \midrule
-\texttt{Normalized Time (-)} & Normalized simulation time, $t_N=t U_\infty/R$ \\
-\texttt{Theta (rad)}         & Turbine rotational phase angle \\
-\texttt{Blade}               & Blade number \\
-\texttt{Element}             & Element number \\
-\texttt{Rev}                 & Revolution number \\
-\texttt{AOA25 (deg)}         & Local flow angle of attack, defined at element quarter-chord location. \\
-\texttt{AOA50 (deg)}         & Reference 50\% chord flow angle of attack. Different from AOA25 when element is rotating in the local spanwise direction. \\
-\texttt{AOA75 (deg)}         & Reference 75\% chord flow angle of attack. Different from AOA25 when element is rotating in the local spanwise direction. \\
-\texttt{AdotNorm (-)}        & Normalized AOA rate  $\dot{\alpha}_\textrm{norm} = \dot{\alpha} c / 2 U_\textrm{loc}$ \\ 
-\texttt{Re (-)}              & Element Reynolds number based on element chord \\
-\texttt{Mach (-)}            & Element Mach number \\
-\texttt{Ur (-)}              & Local flow speed ratio with freestream, $U_r = U_\textrm{loc}/U_\infty$ \\ 
-\texttt{CL (-)}              & Element lift coefficient, $C_L=L/{\frac{1}{2} \rho U_\textrm{loc}^2 A_E}$ \\
-\texttt{CD (-)}              & Element drag coefficient, $C_D=D/{\frac{1}{2} \rho U_\textrm{loc}^2 A_E}$ \\
-\texttt{CM25 (-)}            & Element pitching moment coefficient about the quarter-chord location, $C_{M,25}=L/{\frac{1}{2} \rho U_\textrm{loc}^2 A_E c}$ \\
-\texttt{CLCirc (-)}          & Circulatory component of element lift coefficient, $C_{L,\textrm{circ}}={L_\textrm{circ}}/{\frac{1}{2} \rho U_\textrm{loc}^2}$ \\
-\texttt{CN (-)}              & Element normal force coefficient, $C_N = {N}/{\frac{1}{2} \rho U_\textrm{loc}^2 A_E}$ \\ 
-\texttt{CT (-)}              & Element tangential force coefficient, $C_T = {T}/{\frac{1}{2} \rho U_\textrm{loc}^2 A_E}$ \\
-\texttt{Fx (-)}              & Contribution to $x$-component of force coefficient from element \\
-\texttt{Fy (-)}              & Contribution to $y$-component of force coefficient from element \\
-\texttt{Fz (-)}              & Contribution to $z$-component of force coefficient from element \\
-\texttt{te (-)}              & Contribution to torque coefficient from element \\
+\path{Normalized Time (-)} & Normalized simulation time, $t_N=t U_\infty/R$ \\
+\path{Theta (rad)}         & Turbine rotational phase angle \\
+\path{Blade}               & Blade number \\
+\path{Element}             & Element number \\
+\path{Rev}                 & Revolution number \\
+\path{AOA25 (deg)}         & Local flow angle of attack, defined at element quarter-chord location. \\
+\path{AOA50 (deg)}         & Reference 50\% chord flow angle of attack. Different from AOA25 when element is rotating in the local spanwise direction. \\
+\path{AOA75 (deg)}         & Reference 75\% chord flow angle of attack. Different from AOA25 when element is rotating in the local spanwise direction. \\
+\path{AdotNorm (-)}        & Normalized AOA rate  $\dot{\alpha}_\textrm{norm} = \dot{\alpha} c / 2 U_\textrm{loc}$ \\ 
+\path{Re (-)}              & Element Reynolds number based on element chord \\
+\path{Mach (-)}            & Element Mach number \\
+\path{Ur (-)}              & Local flow speed ratio with freestream, $U_r = U_\textrm{loc}/U_\infty$ \\ 
+\path{CL (-)}              & Element lift coefficient, $C_L=L/{\frac{1}{2} \rho U_\textrm{loc}^2 A_E}$ \\
+\path{CD (-)}              & Element drag coefficient, $C_D=D/{\frac{1}{2} \rho U_\textrm{loc}^2 A_E}$ \\
+\path{CM25 (-)}            & Element pitching moment coefficient about the quarter-chord location, $C_{M,25}=L/{\frac{1}{2} \rho U_\textrm{loc}^2 A_E c}$ \\
+\path{CLCirc (-)}          & Circulatory component of element lift coefficient, $C_{L,\textrm{circ}}={L_\textrm{circ}}/{\frac{1}{2} \rho U_\textrm{loc}^2}$ \\
+\path{CN (-)}              & Element normal force coefficient, $C_N = {N}/{\frac{1}{2} \rho U_\textrm{loc}^2 A_E}$ \\ 
+\path{CT (-)}              & Element tangential force coefficient, $C_T = {T}/{\frac{1}{2} \rho U_\textrm{loc}^2 A_E}$ \\
+\path{Fx (-)}              & Contribution to $x$-component of force coefficient from element \\
+\path{Fy (-)}              & Contribution to $y$-component of force coefficient from element \\
+\path{Fz (-)}              & Contribution to $z$-component of force coefficient from element \\
+\path{te (-)}              & Contribution to torque coefficient from element \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\section{Wall output}
-If a wall calculation is being performed and \texttt{WallOutFlag} = 1, information about the wall is written to a comma delimited file appended with either \texttt{\_GPData.csv} for a ground plane calculation, or \texttt{\_FSData.csv} for a free surface calculation. The output columns of these files are described in \Cref{tbl:output_wall,tbl:output_free_surface}.
+\section{Ground plane, wall, and free surface output}
 
-\subsection{Wall source panel data}
+\subsection{Ground plane data}
+If either a ground plane calculation or wall calculation is being performed (\path{GPFlag} = 1 or \path{WPFlag} = 1), information about the wall may optionally be written to file. The verbosity of this output file is specified with the \path{WallOutFlag} namelist variable. If \path{WallOutFlag} = 1, the source panel strength is written to file. If \path{WallOutFlag} = 2, the induced velocities at each panel center are also computed and written to file.
+
+The interval of ground plane/wall data output may be controlled via the variables described in \Cref{tbl:configoutputs}.
+\begin{itemize}
+\item \path{WallOutIntervalTimesteps},
+\item \path{WallOutStartTimestep}, and
+\item \path{WallOutEndTimestep}
+\end{itemize}
+
+The ground plane/wall data output filenames have the format \path{[run name]_WPData_[timestep number].tp}. The files themselves use a TecPlot file format (finite-element structured mesh, cell-centered field data). The output fields are described in \Cref{tbl:output_wall,tbl:output_free_surface}. These files may be easily read in to ParaView for post-processing.
+
 \begin{table}[!htbp]
 \centering
 \caption{Wall outputs.}
@@ -102,15 +112,21 @@ If a wall calculation is being performed and \texttt{WallOutFlag} = 1, informati
 \begin{tabular}{p{0.3\textwidth}p{0.6\textwidth}}
 \toprule
 Variable name & Description \\ \midrule
-\texttt{X/R (-)}             & $x$-coordinate of the panel center normalized by $R$ \\
-\texttt{Y/R (-)}             & $y$-coordinate of the panel center normalized by $R$ \\
-\texttt{Z/R (-)}             & $z$-coordinate of the panel center normalized by $R$ \\
-\texttt{SourceDens/Uinf (-)} & Source density on the panel normalized by $U_\infty$ \\
+\path{X}             & $x$-coordinate of panel node normalized by $R$ \\
+\path{Y}             & $y$-coordinate of panel node normalized by $R$ \\
+\path{Z}             & $z$-coordinate of panel node normalized by $R$ \\
+\path{sigma (-)}     & Source density of the panel normalized by $U_\infty$ \\
+\path{u}             & $x$-velocity at the panel center normalized by $U_\infty$ \\
+\path{v}             & $y$-velocity at the panel center normalized by $U_\infty$ \\
+\path{w}             & $z$-velocity at the panel center normalized by $U_\infty$ \\
 \bottomrule
 \end{tabular}
 \end{table}
 
+
 \subsection{Free surface data}
+If a free surface calculation is being performed (\path{FSFlag} = 1), information about the free surface is automatically written to file. A single comma delimited file is written which contains the information described in \Cref{tbl:output_free_surface} \emph{averaged over the final revolution}.
+
 \begin{table}[!htbp]
 \centering
 \caption{Free surface outputs.}
@@ -118,21 +134,21 @@ Variable name & Description \\ \midrule
 \begin{tabular}{p{0.3\textwidth}p{0.6\textwidth}}
 \toprule
 Variable name & Description \\ \midrule
-\texttt{X/R (-)}    & $x$-coordinate of the panel center normalized by $R$ \\
-\texttt{Y/R (-)}    & $y$-coordinate of the panel center normalized by $R$ \\
-\texttt{Z/R (-)}    & $z$-coordinate of the panel center normalized by $R$ \\
-\texttt{U/Uinf (-)} & Wall tangential velocity (nominal freestream direction) normalized by $U_\infty$ \\
-\texttt{dH/R (-)}   & Free surface height (above un-deflected height) normalized by $R$ \\
+\path{X/R (-)}    & $x$-coordinate of the panel center normalized by $R$ \\
+\path{Y/R (-)}    & $y$-coordinate of the panel center normalized by $R$ \\
+\path{Z/R (-)}    & $z$-coordinate of the panel center normalized by $R$ \\
+\path{U/Uinf (-)} & Wall tangential velocity (nominal freestream direction) normalized by $U_\infty$ \\
+\path{dH/R (-)}   & Free surface height (above un-deflected height) normalized by $R$ \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 \section{Field velocities}
-If \texttt{WakeGridOutFlag = 1}, the induced velocity field on a Cartesian grid is computed and written to a file. This output data is split into multiple files, each file containing the field data at a single timestep.
+If \path{WakeGridOutFlag = 1}, the induced velocity field on a Cartesian grid is computed and written to a file. This output data is split into multiple files, each file containing the field data at a single timestep.
 
 This can add considerable time to the simulation, since the induced velocity due to every wake node must be calculated at every point in the specified Cartesian grid.
 
-The output filenames have the format \texttt{\_WakeDefData\_\string[timestep number\string].csv}.
+The output filenames have the format \path{[run name]_WallData_[timestep number].csv}.
 
 
 \begin{table}[!htbp]
@@ -142,26 +158,24 @@ The output filenames have the format \texttt{\_WakeDefData\_\string[timestep num
 \begin{tabular}{p{0.3\textwidth}p{0.6\textwidth}}
 \toprule
 Variable name & Description \\ \midrule
-\texttt{Normalized Time (-)} & Normalized simulation time, $t_N=t U_\infty/R$ \\
-\texttt{x/R (-)}             & $x$-coordinate of the data point normalized by $R$ \\
-\texttt{y/R (-)}             & $y$-coordinate of the data point normalized by $R$ \\
-\texttt{z/R (-)}             & $z$-coordinate of the data point normalized by $R$ \\
-\texttt{U/Uinf (-)}          & $x$-component of induced velocity              \\
-\texttt{V/Uinf (-)}          & $y$-component of induced velocity              \\
-\texttt{W/Uinf (-)}          & $z$-component of induced velocity              \\
-\texttt{Ufs/Uinf (-)}        & $x$-component of free-stream velocity          \\
-\texttt{Vfs/Uinf (-)}        & $y$-component of free-stream velocity          \\
-\texttt{Wfs/Uinf (-)}        & $z$-component of free-stream velocity          \\
+\path{Normalized Time (-)} & Normalized simulation time, $t_N=t U_\infty/R$ \\
+\path{x/R (-)}             & $x$-coordinate of the data point normalized by $R$ \\
+\path{y/R (-)}             & $y$-coordinate of the data point normalized by $R$ \\
+\path{z/R (-)}             & $z$-coordinate of the data point normalized by $R$ \\
+\path{U/Uinf (-)}          & $x$-component of induced velocity              \\
+\path{V/Uinf (-)}          & $y$-component of induced velocity              \\
+\path{W/Uinf (-)}          & $z$-component of induced velocity              \\
+\path{Ufs/Uinf (-)}        & $x$-component of free-stream velocity          \\
+\path{Vfs/Uinf (-)}        & $y$-component of free-stream velocity          \\
+\path{Wfs/Uinf (-)}        & $z$-component of free-stream velocity          \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 \section{Vortex filament data}
-If \texttt{WakeElementOutFlag} = 1, information about each vortex filament is written to a file. This output data is split into multiple files, each file containing the filament data at a single timestep.
+If \path{WakeElementOutFlag} = 1, information about each vortex filament is written to a file. This output data is split into multiple files, each file containing the filament data at a single timestep. Output data is defined at the endpoints of the vortex filaments.
 
-Data output is specified at the endpoints of the vortex filaments, rather than at the centers of each filament.
-
-The output filenames have the format \texttt{\string[run name\string]\_WakeData\_\string[timestep number\string].csv}.
+The output filenames have the format \path{[run name]_WakeData_[timestep number].csv}.
 
 \begin{table}
 \centering
@@ -170,15 +184,15 @@ The output filenames have the format \texttt{\string[run name\string]\_WakeData\
 \begin{tabular}{p{0.3\textwidth}p{0.6\textwidth}}
 \toprule
 Variable name & Description \\ \midrule
-\texttt{Normalized Time (-)} & Normalized simulation time, $t_N=t U_\infty/R$ \\
-\texttt{Node ID}             & A unique ID given to each distinct filament node (useful for tracing a particle's path in time) \\
-\texttt{Origin Node}         & ID of the element node from which this filament was generated \\
-\texttt{x/R (-)}             & $x$-coordinate of the data point normalized by $R$ \\
-\texttt{y/R (-)}             & $y$-coordinate of the data point normalized by $R$ \\
-\texttt{z/R (-)}             & $z$-coordinate of the data point normalized by $R$ \\
-\texttt{U/Uinf (-)}          & $x$-component of induced velocity              \\
-\texttt{V/Uinf (-)}          & $y$-component of induced velocity              \\
-\texttt{W/Uinf (-)}          & $z$-component of induced velocity              \\
+\path{Normalized Time (-)} & Normalized simulation time, $t_N=t U_\infty/R$ \\
+\path{Node ID}             & A unique ID given to each distinct filament node (useful for tracing a particle's path in time) \\
+\path{Origin Node}         & ID of the element node from which this filament was generated \\
+\path{x/R (-)}             & $x$-coordinate of the data point normalized by $R$ \\
+\path{y/R (-)}             & $y$-coordinate of the data point normalized by $R$ \\
+\path{z/R (-)}             & $z$-coordinate of the data point normalized by $R$ \\
+\path{U/Uinf (-)}          & $x$-component of induced velocity              \\
+\path{V/Uinf (-)}          & $y$-component of induced velocity              \\
+\path{W/Uinf (-)}          & $z$-component of induced velocity              \\
 \bottomrule
 \end{tabular}
 \end{table}
