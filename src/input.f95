@@ -49,7 +49,7 @@ subroutine input(ErrFlag)
     integer :: WLI(InBufferNumWL)     ! wake line index buffer
 
     ! Namelist input file declaration
-    NAMELIST/ConfigInputs/RegTFlag,GPFlag,WPFlag,FSFlag,nr,convrg,nti,iut,iWall,ivtxcor,VCRFB,VCRFT,VCRFS,ifc,convrgf,nric,ntif,iutf,ixterm,xstop, &
+    NAMELIST/ConfigInputs/RegTFlag,GPFlag,WPFlag,FSFlag,nr,convrg,nti,iut,iWall,ivtxcor,VCRFB,VCRFT,VCRFS,vCutOffRad,ifc,convrgf,nric,ntif,iutf,ixterm,xstop, &
         Incompr,DSFlag,PRFlag, &
         k1pos,k1neg,GPGridSF,GPGridExtent,FSGridSF,TSFilFlag,ntsf
 
