@@ -3,3 +3,5 @@ CM/
 *.mod
 *~
 *.DS_Store
+Thumbs.db
+~*.docx
