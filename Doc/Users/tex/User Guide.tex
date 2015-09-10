@@ -3,10 +3,10 @@
 
 % Example of the Memoir class, an alternative to the default LaTeX classes such as article and book, with many added features built into the class itself.
 
-%\documentclass[12pt,a4paper]{memoir} % for a long document
-\documentclass[12pt,a4paper,article]{memoir} % for a short document
+\documentclass[12pt,a4paper,oneside]{memoir} % for a long document
+% \documentclass[12pt,a4paper,article]{memoir} % for a short document
 \usepackage[utf8]{inputenc} % set input encoding to utf8
-\usepackage{hyperref}
+\usepackage[hidelinks]{hyperref}
 \usepackage{listings}
 \usepackage{longtable}
 \usepackage{cleveref}
@@ -16,6 +16,7 @@
 \usepackage{booktabs}
 \usepackage[table]{xcolor} % to highlight table rows
 \usepackage{url} % for typesetting file paths
+\usepackage{siunitx} % for units
 
 % Don't forget to read the Memoir manual: memman.pdf
 
@@ -31,12 +32,13 @@
     basewidth=\mybasewidth,
     breaklines=true, % break lines
     postbreak=\raisebox{0ex}[0ex][0ex]{\ensuremath{\color{red}\hookrightarrow\space}}, % add a red arrow at new broken line
-    backgroundcolor=\color{lstcolor},
-    framexleftmargin=6pt,
-    framextopmargin=6pt,
-    framexbottommargin=6pt, 
-    frame=tb, framerule=0pt,
-    }
+    backgroundcolor=\color{lstcolor}, % background color of listing box
+    framexleftmargin=6pt, % padding
+    framextopmargin=6pt, % padding
+    framexrightmargin=6pt, % padding
+    framexbottommargin=6pt, % padding
+    frame=tb, framerule=0pt, % padding
+}
 \newsavebox\lstbox
 
 % set up appendix
@@ -44,6 +46,9 @@
 
 % set up command to stretch table height
 \newcommand{\ra}[1]{\renewcommand{\arraystretch}{#1}} 
+
+% set up command for degree fahrehnheit
+\DeclareSIUnit\Fahrenheit{\degree F}
 
 %%% Examples of Memoir customization
 %%% enable, disable or adjust these as desired
@@ -64,7 +69,7 @@
 %%% ToC (table of contents) APPEARANCE
 \maxtocdepth{subsection} % include subsections
 \renewcommand{\cftchapterpagefont}{}
-\renewcommand{\cftchapterfont}{}     % no bold!
+% \renewcommand{\cftchapterfont}{}     % no bold!
 
 %%% HEADERS & FOOTERS
 \pagestyle{ruled} % try also: empty , plain , headings , ruled , Ruled , companion
@@ -93,7 +98,9 @@
 % render titlepage
 \input{./content/titlepage.tex}
 
-\tableofcontents* % the asterisk means that the contents itself isn't put into the ToC
+\tableofcontents % the asterisk means that the contents itself isn't put into the ToC
+\listoffigures
+\listoftables
 
 \cleartorecto % new page before the first chapter
 \ra{1.3} % set the table row spacing for all chapters
