@@ -25,8 +25,8 @@ Variable name & Description \\ \midrule
 \end{tabular}
 \end{table}
 
-\section{Temporal blade-integrated loads}
-Performance data for each time step are written to a comma delimited file appended with \texttt{\_TimeData.csv}.
+\section{Blade-integrated loads}
+If \texttt{Output\_ELFlag} = 1, blade-integrated loads are written at each to the comma delimited file \texttt{\_TimeData.csv}. The output columns of this file are described in \Cref{tbl:output_vars_time}.
 
 \begin{table}[!htbp]
 \centering
@@ -56,7 +56,7 @@ Variable name & Description \\ \midrule
 \end{table}
 
 \section{Blade element loads}
-When \texttt{Output\_ELFlag} is set to 1 in the namelist input file, element loads data for each time step are written to a comma delimited file appended with \texttt{\_ElementData.csv}.
+If \texttt{Output\_ELFlag} = 1, loads on the individual blade elements at each time step are written to the comma delimited file \texttt{\_ElementData.csv}. The output columns of this file are described in \Cref{tbl:output_vars_blade}.
 
 \begin{table}[!htbp]
 \centering
@@ -92,7 +92,7 @@ Variable name & Description \\ \midrule
 \end{table}
 
 \section{Wall output}
-When a wall calculation is being performed and WallOutFlag is set to 1 in the namelist input file, summary output data for the wall calculation is written to a comma delimited file appended with either \texttt{\_GPData.csv} for a ground plane calculation, or \texttt{\_FSData.csv} for a free surface calculation.
+If a wall calculation is being performed and \texttt{WallOutFlag} = 1, information about the wall is written to a comma delimited file appended with either \texttt{\_GPData.csv} for a ground plane calculation, or \texttt{\_FSData.csv} for a free surface calculation. The output columns of these files are described in \Cref{tbl:output_wall,tbl:output_free_surface}.
 
 \subsection{Wall source panel data}
 \begin{table}[!htbp]
@@ -128,15 +128,12 @@ Variable name & Description \\ \midrule
 \end{table}
 
 \section{Field velocities}
-If \texttt{WakeGridOutFlag = 1} the induced velocity field on a Cartesian grid is computed and written to a file. This output data is split into multiple files, each file containing the field data at a single timestep, since long simulations with a high resolution 3-D Cartesian grid would produce very large output files.
+If \texttt{WakeGridOutFlag = 1}, the induced velocity field on a Cartesian grid is computed and written to a file. This output data is split into multiple files, each file containing the field data at a single timestep.
 
-This computation can add considerable time to the simulation, since the induced velocity is calculated at every point in the specified Cartesian grid.
+This can add considerable time to the simulation, since the induced velocity due to every wake node must be calculated at every point in the specified Cartesian grid.
 
-The output filenames take the following format:
+The output filenames have the format \texttt{\_WakeDefData\_\string[timestep number\string].csv}.
 
-\begin{lstlisting}
-[case name]_WakeDefData_[timestep number].csv
-\end{lstlisting}
 
 \begin{table}[!htbp]
 \centering
@@ -160,13 +157,11 @@ Variable name & Description \\ \midrule
 \end{table}
 
 \section{Vortex filament data}
-If WakeElementOutFlag = 1 information about each vortex filament is written to a file. This output data is split into multiple files, each file containing the vortex filament data at a single timestep.
-Note that the data output is specified at the endpoints of the vortex filaments, rather than at the centers of each filament.
-The output filenames take the following format:
+If \texttt{WakeElementOutFlag} = 1, information about each vortex filament is written to a file. This output data is split into multiple files, each file containing the filament data at a single timestep.
 
-\begin{lstlisting}
-[case name]_WakeData_[timestep number].csv
-\end{lstlisting}
+Data output is specified at the endpoints of the vortex filaments, rather than at the centers of each filament.
+
+The output filenames have the format \texttt{\string[run name\string]\_WakeData\_\string[timestep number\string].csv}.
 
 \begin{table}
 \centering
