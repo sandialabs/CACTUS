@@ -4,8 +4,8 @@ CACTUS (**C**ode for **A**xial and **C**ross-flow **TU**rbine **S**imulations), 
 - Modeling of general wall geometries
 - OpenMP acceleration of induced velocity calculations
 
-Contributors:
-Phillip Chiu (pchiu@sandia.gov)
+Contributors to this _branch_:
+- Phillip Chiu (pchiu@sandia.gov)
 
 ### Installation & Compilation
 Installation and compilation instructions can be found in `Doc/Install`
