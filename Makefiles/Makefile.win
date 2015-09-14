@@ -49,25 +49,36 @@ $(SRCDIR)WSolnSetup.obj
 OBJMODf95 =  \
 $(MODDIR)airfoil.obj \
 $(MODDIR)blade.obj \
+$(MODDIR)compiler.obj \
 $(MODDIR)configr.obj \
 $(MODDIR)dystl.obj \
 $(MODDIR)element.obj \
+$(MODDIR)fnames.obj \
 $(MODDIR)iecgust.obj \
 $(MODDIR)output.obj \
 $(MODDIR)parameters.obj \
 $(MODDIR)pidef.obj \
+$(MODDIR)probesystem.obj \
+$(MODDIR)quadsourcepanel.obj \
 $(MODDIR)regtest.obj \
 $(MODDIR)shear.obj \
 $(MODDIR)strut.obj \
 $(MODDIR)time.obj \
 $(MODDIR)tower.obj \
+$(MODDIR)uobj \
 $(MODDIR)varscale.obj \
 $(MODDIR)vortex.obj \
+$(MODDIR)wake.obj \
 $(MODDIR)wakedata.obj \
+$(MODDIR)wallgeom.obj \
 $(MODDIR)wallsoln.obj \
+$(MODDIR)wallsystem.obj
 
 OBJMODUTILf95 = \
-$(MODUTILDIR)util.obj
+$(MODUTILDIR)util.obj \
+$(MODUTILDIR)vecutils.obj \
+$(MODUTILDIR)geomutils.obj \
+$(MODUTILDIR)plot3d.obj
 
 # no such files
 #INC = $(wildcard $(SRCDIR)/*.inc)
