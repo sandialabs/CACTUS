@@ -6,6 +6,7 @@ CACTUS (**C**ode for **A**xial and **C**ross-flow **TU**rbine **S**imulations), 
 
 Contributors to this _branch_:
 - Phillip Chiu (pchiu@sandia.gov)
+- Christopher Kelley (clkelley@sandia.gov) - original wake output contributions
 
 ### Installation & Compilation
 Installation and compilation instructions can be found in `Doc/Install`
