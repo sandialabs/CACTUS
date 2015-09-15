@@ -11,15 +11,13 @@ Contributors to this _branch_:
 Installation and compilation instructions can be found in `Doc/Install`
 
 ### Directory Structure
-- `Airfoil_Section_Data`: Contains airfoil data tables.
 - `bin`: Executables are placed here.
-- `CreateGeom`: Contains MATLAB geometry creation scripts
 - `DAKOTA`: Contains DAKOTA Drivers and examples
-- `Doc`: Documentation: User's Manual, Install instructions, DAKOTA-CACTUS Manual, Papers
-- `Makefiles`: Contains MakeFiles for different compilers
+- `doc`: Documentation: User's Manual, Install instructions, DAKOTA-CACTUS Manual, Papers
+- `make`: Contains MakeFiles for different compilers
 - `mod`: Source Code -- modules & utilities
 - `src`: Source Code
-- `Test`: Contains several test cases
+- `test`: Contains several test cases
 
 ### Post-processing
 Tools for post-processing data from CACTUS simulations are available in the [CACTUS-tools ](https://github.com/whophil/CACTUS-tools) repository.
