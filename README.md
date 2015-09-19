@@ -9,7 +9,7 @@ Contributors to this _branch_:
 - Christopher Kelley (clkelley@sandia.gov) - original wake output contributions
 
 ### Installation & Compilation
-Installation and compilation instructions can be found in `Doc/Install`
+Installation and compilation instructions for Linux and Windows operating systems can be found in `Doc/Install`. CACTUS may also be compiled on Mac OS environments using GCC Fortran.
 
 ### Directory Structure
 - `bin`: Executables are placed here.
