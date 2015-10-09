@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VisualStudioProject ProjectCreator="Intel Fortran" Keyword="Console Application" Version="11.0" ProjectIdGuid="{2CECD596-E387-4116-85A0-1C3EE0DC9F5A}">
+	<Platforms>
+		<Platform Name="Win32"/></Platforms>
+	<Configurations>
+		<Configuration Name="Debug|Win32">
+				<Tool Name="VFFortranCompilerTool" SuppressStartupBanner="true" DebugInformationFormat="debugEnabled" Optimization="optimizeDisabled" WarnInterfaces="true" Traceback="true" BoundsCheck="true" StackFrameCheck="true" RuntimeLibrary="rtMultiThreadedDebug"/>
+				<Tool Name="VFLinkerTool" LinkIncremental="linkIncrementalNo" SuppressStartupBanner="true" GenerateDebugInformation="true" SubSystem="subSystemConsole"/>
+				<Tool Name="VFResourceCompilerTool"/>
+				<Tool Name="VFMidlTool" SuppressStartupBanner="true"/>
+				<Tool Name="VFCustomBuildTool"/>
+				<Tool Name="VFPreLinkEventTool"/>
+				<Tool Name="VFPreBuildEventTool"/>
+				<Tool Name="VFPostBuildEventTool"/>
+				<Tool Name="VFManifestTool" SuppressStartupBanner="true"/></Configuration>
+		<Configuration Name="Release|Win32" OutputDirectory="bin" IntermediateDirectory="bin">
+				<Tool Name="VFFortranCompilerTool" SuppressStartupBanner="true" RealKIND="realKIND8"/>
+				<Tool Name="VFLinkerTool" LinkIncremental="linkIncrementalNo" SuppressStartupBanner="true" SubSystem="subSystemConsole" AdditionalDependencies="LAPACK.lib BLAS.lib extras.lib MATGEN.lib"/>
+				<Tool Name="VFResourceCompilerTool"/>
+				<Tool Name="VFMidlTool" SuppressStartupBanner="true"/>
+				<Tool Name="VFCustomBuildTool"/>
+				<Tool Name="VFPreLinkEventTool"/>
+				<Tool Name="VFPreBuildEventTool"/>
+				<Tool Name="VFPostBuildEventTool"/>
+				<Tool Name="VFManifestTool" SuppressStartupBanner="true"/></Configuration></Configurations>
+	<Files>
+		<Filter Name="Header Files" Filter="fi;fd"/>
+		<Filter Name="Resource Files" Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe"/>
+		<Filter Name="Source Files" Filter="f90;for;f;fpp;ftn;def;odl;idl;f95">
+		<File RelativePath=".\src\AeroCoeffs.f95"/>
+		<File RelativePath=".\mod\airfoil.f95"/>
+		<File RelativePath=".\src\BGeomSetup.f95"/>
+		<File RelativePath=".\mod\blade.f95"/>
+		<File RelativePath=".\src\BladeIndVel.f95"/>
+		<File RelativePath=".\src\BladeLoads.f95"/>
+		<File RelativePath=".\src\bsload.f95"/>
+		<File RelativePath=".\src\BV_DynStall.f95"/>
+		<File RelativePath=".\src\CACTUS.f95"/>
+		<File RelativePath=".\src\CalcBladeVel.f95"/>
+		<File RelativePath=".\src\CalcFreestream.f95"/>
+		<File RelativePath=".\src\CalcIndVel.f95"/>
+		<File RelativePath=".\mod\configr.f95"/>
+		<File RelativePath=".\src\conlp.f95"/>
+		<File RelativePath=".\mod\dystl.f95"/>
+		<File RelativePath=".\mod\element.f95"/>
+		<File RelativePath=".\src\EndRev.f95"/>
+		<File RelativePath=".\src\EndTS.f95"/>
+		<File RelativePath=".\mod\iecgust.f95"/>
+		<File RelativePath=".\src\input.f95"/>
+		<File RelativePath=".\src\InputGeom.f95"/>
+		<File RelativePath=".\src\LB_DynStall.f95"/>
+		<File RelativePath=".\mod\output.f95"/>
+		<File RelativePath=".\mod\parameters.f95"/>
+		<File RelativePath=".\mod\pidef.f95"/>
+		<File RelativePath=".\mod\regtest.f95"/>
+		<File RelativePath=".\src\RotateTurbine.f95"/>
+		<File RelativePath=".\src\SetBoundWake.f95"/>
+		<File RelativePath=".\src\SGeomSetup.f95"/>
+		<File RelativePath=".\mod\shear.f95"/>
+		<File RelativePath=".\src\shedvor.f95"/>
+		<File RelativePath=".\mod\strut.f95"/>
+		<File RelativePath=".\mod\time.f95"/>
+		<File RelativePath=".\mod\tower.f95"/>
+		<File RelativePath=".\src\UpdateBladeVel.f95"/>
+		<File RelativePath=".\src\UpdateStrutLoads.f95"/>
+		<File RelativePath=".\src\UpdateTowerVelocity.f95"/>
+		<File RelativePath=".\src\UpdateWakeVel.f95"/>
+		<File RelativePath=".\src\UpdateWall.f95"/>
+		<File RelativePath=".\mod\util\util.f95"/>
+		<File RelativePath=".\mod\varscale.f95"/>
+		<File RelativePath=".\src\VorIVel.f95"/>
+		<File RelativePath=".\mod\vortex.f95"/>
+		<File RelativePath=".\mod\wakedata.f95"/>
+		<File RelativePath=".\mod\wallsoln.f95"/>
+		<File RelativePath=".\src\WGeomSetup.f95"/>
+		<File RelativePath=".\src\WriteFinalOutput.f95"/>
+		<File RelativePath=".\src\WriteRegTOutput.f95"/>
+		<File RelativePath=".\src\WriteWakeData.f95"/>
+		<File RelativePath=".\src\WriteWallData.f95"/>
+		<File RelativePath=".\src\WSolnSetup.f95"/></Filter></Files>
+	<Globals/></VisualStudioProject>
