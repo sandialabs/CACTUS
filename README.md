@@ -21,7 +21,7 @@ Installation and compilation instructions for Linux and Windows operating system
 - `test`: Contains several test cases
 
 ### Post-processing
-Tools for post-processing data from CACTUS simulations are available in the [CACTUS-tools ](https://github.com/whophil/CACTUS-tools) repository.
+Tools for post-processing data from CACTUS simulations are available in the [CACTUS-tools](https://github.com/whophil/CACTUS-tools) repository.
 
 ### References
 For details about the development of CACTUS, please see
