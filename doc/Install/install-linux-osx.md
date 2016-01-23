@@ -1,31 +1,32 @@
 Installation of CACTUS for Linux or Mac machines
 ================================================
 
-1. Uncompress the directory and put in desired location. From a terminal `cd` into the correct directory.
+1. Uncompress the directory and put in desired location. From a terminal `cd`
+   into `CACTUS/make`.
 2. Create the executable with Make (from a terminal):  
 
    For pgf95 compiler:  
    ```
-   make -f make/Makefile
+   make
    ```  
 
    For gfortran compiler:  
    ```
-   make -f make/Makefile.gfortran
+   make -f Makefile.gfortran
    ```  
 
    For ifort compiler:  
    ```
-   make -f make/Makefile.ifort
+   make -f Makefile.ifort
    ```  
 
    The executable will be called `cactus` and be located in the `bin` directory.
    Alternative makefiles must be used to enable OpenMP acceleration. For
    gfortran with OpenMP:  
    ```
-   make -f make/Makefile.gfortran.omp
+   make -f Makefile.gfortran.omp
    ```  
-   
+
    OpenMP makefiles for other compilers have not yet been written, but it should
    be easy to create them by adding the appropriate compiler flags.  
 
