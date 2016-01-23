@@ -15,7 +15,7 @@ Installation and compilation instructions for Linux and Windows operating system
 - `bin`: Executables are placed here.
 - `DAKOTA`: Contains DAKOTA Drivers and examples
 - `doc`: Documentation: User's Manual, Install instructions, DAKOTA-CACTUS Manual, Papers
-- `make`: Contains MakeFiles for different compilers
+- `make`: Contains Makefiles for different compilers
 - `mod`: Source Code -- modules & utilities
 - `src`: Source Code
 - `test`: Contains several test cases
