@@ -62,6 +62,10 @@ $(OBJf95):$(SRCDIR)%.o:$(SRCDIR)%.f95
 	$(COMPILER) $(OPT) -c $<
 	mv $(@F) ${SRCDIR}
 
+install:
+	mkdir -p $(HOME)/bin
+	ln -f $(BINDIR)/cactus $(HOME)/bin
+
 clean:
 	rm -f $(SRCDIR)/*.o
 	rm -f $(MODDIR)/*.o
