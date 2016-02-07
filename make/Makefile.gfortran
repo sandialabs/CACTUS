@@ -72,3 +72,4 @@ clean:
 	rm -f $(MODDIR)/*.mod
 	rm -f $(MODUTILDIR)/*.o
 	rm -f $(MODUTILDIR)/*.mod
+	rm $(HOME)/bin/cactus
