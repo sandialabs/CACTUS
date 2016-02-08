@@ -32,7 +32,9 @@ Installation of CACTUS for Linux or Mac machines
 
 3. Add the executable's location to your path so that you can call it by simply
    typing `cactus` on the terminal instead of the complete path. In Linux this
-   is generally done in the `~/.bashrc` file.  
+   is generally done in the `~/.bashrc` file. Alternatively, running
+   `make install` will copy the CACTUS executable to `$HOME/bin`, which should  
+   already be on the system path.
 
 4. Move into the `test/RegTest` directory and run the regression tests by
    executing `runreg.py` with the path to the CACTUS executable as an argument
