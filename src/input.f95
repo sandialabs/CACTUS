@@ -23,6 +23,7 @@ subroutine input(ErrFlag)
     use output
     use tower
     use probesystem
+    use fnames
 
 
     integer, parameter :: InBufferNumSectionTables = 1000
@@ -59,7 +60,7 @@ subroutine input(ErrFlag)
         Itower,tower_Npts,tower_x,tower_ybot,tower_ytop,tower_D,tower_CD, &
         WallMeshPath
 
-    NAMELIST/ConfigOutputs/Output_ELFlag,Output_DSFlag,WallOutFlag,DiagOutFlag, &
+    NAMELIST/ConfigOutputs/OutputPath,Output_ELFlag,Output_DSFlag,WallOutFlag,DiagOutFlag, &
         WakeElementOutFlag,WakeElementOutIntervalTimesteps,WakeElementOutStartTimestep,WakeElementOutEndTimestep, &
         WakeGridOutFlag,WakeGridOutIntervalTimesteps,WakeGridOutStartTimestep,WakeGridOutEndTimestep, &
         nxgrid,nygrid,nzgrid,xgridL,ygridL,zgridL,xgridU,ygridU,zgridU, &
@@ -118,6 +119,7 @@ subroutine input(ErrFlag)
     tower_CD   = 1.0
 
     ! output options
+    OutputPath         = 'output'
     Output_ELFlag      = 0
     Output_DSFlag      = 0
     DiagOutFlag        = 0
@@ -279,12 +281,9 @@ subroutine input(ErrFlag)
     end if
 
     ! Read in probe data
-    if (ProbeFlag == 1) then
+    if (ProbeFlag > 0) then
         ! Read probe data from file
         call read_probes(ProbeSpecPath)
-
-        ! Write headers for the probe output files
-        call write_probe_headers()
     end if
 
 
