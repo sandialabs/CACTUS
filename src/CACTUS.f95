@@ -74,6 +74,7 @@ program CACTUS
     use fnames
     use probesystem
     use compiler
+    use pathseparator
 !$  use omp_lib
 
     !IMPLICIT NONE !JCM: eventually...
@@ -127,20 +128,6 @@ program CACTUS
     Call file_to_stdout(InputFN)
     write(*,*) ''
 
-    ! Set the filenames for the output files
-    SFOutputFN=trim(FNBase)//'_Param.csv'
-    RevOutputFN=trim(FNBase)//'_RevData.csv'
-    TSOutputFN=trim(FNBase)//'_TimeData.csv'
-    ELOutputFN=trim(FNBase)//'_ElementData.csv'
-
-    ! Namelist input file
-    OPEN(4, FILE= InputFN)
-
-    ! Output files
-    OPEN(8, FILE=SFOutputFN)
-    OPEN(9, FILE=RevOutputFN)
-    OPEN(10, FILE=TSOutputFN)
-
     ! Initialize iteration parameters
     irev=0
     nt = 0
@@ -159,7 +146,10 @@ program CACTUS
     ilxtp=0
     iuxtp=0
 
-    ! Read inputs
+    ! Namelist input file
+    OPEN(4, FILE=InputFN)
+
+    ! Read inputs 
     ErrFlag = 0
     CALL input(ErrFlag)
     if (ErrFlag == 1) then
@@ -167,8 +157,56 @@ program CACTUS
         stop
     end if
 
-
     ! Setup output
+    ! get the path separator
+    call get_path_separator()
+
+    ! Set the filenames for the static-named output files
+    ! required outputs
+    SFOutputFN  = adjustl(trim(OutputPath))//path_separator//trim(FNBase)//'_Param.csv'
+    RevOutputFN = adjustl(trim(OutputPath))//path_separator//trim(FNBase)//'_RevData.csv'
+    TSOutputFN  = adjustl(trim(OutputPath))//path_separator//trim(FNBase)//'_TimeData.csv'
+
+    ! optional outputs
+    ELOutputFN  = adjustl(trim(OutputPath))//path_separator//trim(FNBase)//'_ElementData.csv'
+    FSOutputFN  = adjustl(trim(OutputPath))//path_separator//trim(FNBase)//'_FSData.csv'
+    RegOutputFN = adjustl(trim(OutputPath))//path_separator//trim(FNBase)//'_RegData.out'
+    DSOutputFN  = adjustl(trim(OutputPath))//path_separator//trim(FNBase)//'_DSData.csv'
+
+    ! set pathnames for files with dynamically-named output files
+    WakeGridOutputPath    = adjustl(trim(OutputPath))//path_separator//'field'
+    WakeElementOutputPath = adjustl(trim(OutputPath))//path_separator//'element'
+    WallOutputPath        = adjustl(trim(OutputPath))//path_separator//'wall'
+    ProbeOutputPath       = adjustl(trim(OutputPath))//path_separator//'probe'
+
+    ! Create output directories
+    ! Create the main output directory
+    call system('mkdir '//adjustl(trim(OutputPath)))
+
+    ! Field data
+    if (WakeGridOutFlag > 0) then
+        call system('mkdir '//WakeGridOutputPath)
+    end if
+
+    ! Wake element data
+    if (WakeElementOutFlag > 0) then
+        call system('mkdir '//adjustl(trim(WakeElementOutputPath)))
+    end if
+
+    ! Wall data
+    if (WallOutFlag > 0) then
+        call system('mkdir '//adjustl(trim(WallOutputPath)))
+    end if
+
+    ! Probe data
+    if (ProbeFlag > 0) then
+        call system('mkdir '//adjustl(trim(ProbeOutputPath)))
+    end if
+
+    ! Open output files
+    OPEN(8,  FILE=SFOutputFN)
+    OPEN(9,  FILE=RevOutputFN)
+    OPEN(10, FILE=TSOutputFN)
 
     ! Write headers on standard output files
     Call csvwrite(8,Output_SFHead,Output_SFData,1,0)
@@ -177,8 +215,7 @@ program CACTUS
 
     ! Simple output for regression testing
     if (RegTFlag == 1) then
-        RegOutputFN=trim(FNBase)//'_RegData.out'
-        OPEN(7, FILE= RegOutputFN,  FORM= 'FORMATTED' )
+        OPEN(7, FILE=RegOutputFN,  FORM= 'FORMATTED' )
         Call WriteRegTOutput(0)
     end if
 
@@ -188,10 +225,9 @@ program CACTUS
         Call csvwrite(11,Output_ELHead,Output_ELData,1,0)
     end if
 
-    ! Optional wall model output
+    ! Optional free surface output
     if (WallOutFlag > 0) then
         if (FSFlag == 1) then
-            FSOutputFN=trim(FNBase)//'_FSData.csv'
             OPEN(15, FILE=FSOutputFN)
             write(15,'(A)') trim(FSOutHead)
         end if
@@ -199,7 +235,6 @@ program CACTUS
 
     ! Optional dynamic stall diagnostic output
     if (Output_DSFlag == 1) then
-        DSOutputFN=trim(FNBase)//'_DSData.csv'
         OPEN(16, FILE=DSOutputFN)
         if (Output_DSType == 1) then
             Call csvwrite(16,Output_BVHead,Output_BVData,1,0)
@@ -452,7 +487,7 @@ program CACTUS
                 ! Write wake grid data
                 if ((NT >= ProbeOutStartTimestep) .AND. (NT < ProbeOutEndTimestep .OR. ProbeOutEndTimestep == -1)) then
                     if (MOD(NT-1, ProbeOutIntervalTimesteps) == 0) then
-                        call write_probes() ! in probesystem module
+                        call write_probes(ProbeOutputPath) ! in probesystem module
                     end if
                 end if
             end if
