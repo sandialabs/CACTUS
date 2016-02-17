@@ -3,6 +3,7 @@ module probesystem
     ! probe module for computing and writing velocities at a specified location
 
     use configr
+    use pathseparator
 
     implicit none
 
@@ -11,6 +12,9 @@ module probesystem
     integer :: ProbeOutIntervalTimesteps     ! interval between probe writes
     integer :: ProbeOutStartTimestep         ! timestep at which to start writing probe data
     integer :: ProbeOutEndTimestep           ! timestep at which to end writing probe data
+
+    ! probe output header flag
+    logical :: ProbeHeadersWritten = .False.
 
     type ProbeType
 
@@ -81,14 +85,16 @@ contains
     end subroutine read_probes
 
 
-    subroutine write_probe_headers()
+    subroutine write_probe_headers(probe_output_path)
 
-        ! write_probe_headers() : writes the headers for the probe output files
+        ! write_probe_headers() : writes the headers for the probe output files to the specified
+        !   probe_output_path
 
         integer                     :: probe_num
         character(10000), parameter :: probe_file_header='X/R (-),Y/R (-),Z/R (-)'
         character(10000), parameter :: probe_data_header='Normalized Time (-),U/Uinf (-),V/Uinf (-),W/Uinf (-),Ufs/Uinf (-),Vfs/Uinf (-),Wfs/Uinf (-)'
         character(80)               :: probe_num_str
+        character(80)               :: probe_output_path
 
         ! write header files
         do probe_num=1,nprobes
@@ -99,7 +105,7 @@ contains
             probes(probe_num)%output_filename = 'probe_'//trim(probe_num_str)//'.csv'
 
             ! open/write header/close file
-            open(probe_iounit, file=probes(probe_num)%output_filename)
+            open(probe_iounit, file=trim(adjustl(probe_output_path))//path_separator//probes(probe_num)%output_filename)
 
             ! write probe location
             write(probe_iounit,'(A)') trim(probe_file_header)
@@ -118,21 +124,29 @@ contains
     end subroutine write_probe_headers
 
 
-    subroutine write_probes()
+    subroutine write_probes(probe_output_path)
 
         ! write_probes() : Computes the velocity for all probes and writes the data to the
         !    corresponding probe output file.
 
         type(ProbeType) :: probe
         integer         :: probe_num
+        character(80)   :: probe_output_path
 
+        ! Write the headers to the probe output files if they haven't been written already
+        if (ProbeHeadersWritten .eqv. .False.) then
+            call write_probe_headers(probe_output_path)
+            ProbeHeadersWritten = .True.
+        end if
+
+        ! Write the probe data
         do probe_num=1,nprobes
 
             ! get the current probe
             probe = probes(probe_num)
 
-           ! open file for writing
-            open(probe_iounit, file=probe%output_filename, POSITION='append')
+            ! open file for writing
+            open(probe_iounit, file=trim(adjustl(probe_output_path))//path_separator//probe%output_filename, POSITION='append')
 
             ! compute velocity at probe location
             call compute_probe_vel(probe)
@@ -152,6 +166,5 @@ contains
         end do
 
     end subroutine write_probes
-
 
 end module probesystem
