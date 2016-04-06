@@ -10,7 +10,7 @@ including:
 - Modeling of general wall geometries
 - OpenMP acceleration of induced velocity calculations
 
-Contributors to this _branch_:
+Major contributors to this fork:
 
 - Phillip Chiu (pchiu@sandia.gov)
 - Christopher Kelley (clkelley@sandia.gov) - original wake output contributions
