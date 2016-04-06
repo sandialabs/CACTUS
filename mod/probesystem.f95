@@ -52,6 +52,7 @@ contains
     subroutine read_probes(probespec_filename)
         ! read_probes() : reads in the coordinates of probes from a file
         !   Coordinates should be formatted as
+        !   nprobes
         !   x1 y1 z1
         !   x2 y2 z2
         !   ...
