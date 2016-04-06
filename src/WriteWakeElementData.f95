@@ -8,6 +8,7 @@ subroutine WriteWakeElementData()
     use wallsoln
     use configr
     use fnames
+    use pathseparator
 
     implicit none
 
@@ -16,7 +17,7 @@ subroutine WriteWakeElementData()
 
     ! Optional wake element data output
     write(nt_str,'(I5.5)') nt
-    WakeOutputFN=trim(FNBase)//'_WakeData_'//trim(nt_str)//'.csv'
+    WakeOutputFN=adjustl(trim(WakeElementOutputPath))//path_separator//trim(FNBase)//'_WakeData_'//trim(nt_str)//'.csv'
     OPEN(12, FILE=WakeOutputFN)
     write(12,'(A)') trim(WakeOutHead)
 

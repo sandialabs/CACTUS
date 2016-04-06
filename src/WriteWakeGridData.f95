@@ -17,7 +17,7 @@ subroutine WriteWakeGridData()
 
     ! Open file for writing - a new file at each timestep
     write(nt_str,'(I5.5)') nt
-    WakeDefOutputFN=trim(FNBase)//'_WakeDefData_'//trim(nt_str)//'.csv'
+    WakeDefOutputFN=adjustl(trim(WakeGridOutputPath))//path_separator//trim(FNBase)//'_WakeDefData_'//trim(nt_str)//'.csv'
     OPEN(13, FILE=WakeDefOutputFN)
     write(13,'(A)') trim(GridVelOutHead)
 

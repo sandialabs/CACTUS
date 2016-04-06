@@ -1,9 +1,12 @@
 Module fnames
 
+    use pathseparator
+
     implicit none
 
     integer :: nargin, FNLength, status, DecInd
     character(80) :: InputFN, SFOutputFN, RevOutputFN, TSOutputFN, ELOutputFN, RegOutputFN, WakeOutputFN, WakeDefOutputFN, GPOutputFN, FSOutputFN, DSOutputFN, FNBase
+    character(255) :: OutputPath,WakeElementOutputPath,WallOutputPath,WakeGridOutputPath,ProbeOutputPath
 
 contains
 

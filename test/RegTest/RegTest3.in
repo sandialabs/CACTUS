@@ -44,5 +44,6 @@
 /End
 
 &ConfigOutputs
+	OutputPath = './'
 
 /End
