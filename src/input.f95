@@ -15,6 +15,7 @@ subroutine input(ErrFlag)
     use pidef
     use vortex
     use wakedata
+    use fielddata
     use time
     use wallgeom
     use wallsoln
@@ -213,6 +214,7 @@ subroutine input(ErrFlag)
     CALL element_cns(MaxSegEnds,MaxSegEndPerBlade)
     CALL airfoil_cns(MaxAOAVals,MaxReVals,MaxAirfoilSect)
     CALL wakedata_cns()
+    CALL fielddata_cns()
     CALL dystl_cns(MaxAirfoilSect,MaxReVals,MaxSegEnds)
     CALL output_cns(MaxSeg,MaxBlades,MaxStruts,DSFlag)
 
