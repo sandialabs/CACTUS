@@ -146,6 +146,7 @@ subroutine input(ErrFlag)
     WakeElementOutStartTimestep     =  1       ! write wake element data starting at first timestep
     WakeElementOutEndTimestep       = -1       ! stop writing wake element data at the last timestep
 
+    ! Field Output Frequency
     FieldOutIntervalTimesteps    =  5       ! write field data every 5 timesteps
     FieldOutStartTimestep        =  1       ! write field data starting at first timestep
     FieldOutEndTimestep          = -1       ! stop writing field data at the last timestep
