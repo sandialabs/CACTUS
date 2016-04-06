@@ -112,16 +112,16 @@ Variable name & Description \\ \midrule
 \path{WakeElementOutIntervalTimesteps} & Number of timesteps in between wake element outputs. 5 by default. \\
 \path{WakeElementOutStartTimestep}     & Start timestep for wake element output. 1 for first timestep (default). \\
 \path{WakeElementOutEndTimestep}       & End timestep for wake element output, -1 to output until last timestep (default) \\
-\path{WakeGridOutFlag}                 & 1 to output induced velocity on a 3-D Cartesian grid, 0 to omit this output (default). \\
-\path{WakeGridOutIntervalTimesteps}    & Number of timesteps in between wake grid outputs. 5 by default. \\
-\path{WakeGridOutStartTimestep}        & Start timestep for wake grid output. 1 for first timestep (default). \\
-\path{WakeGridOutEndTimestep}          & End timestep for wake grid output, -1 to output until last timestep (default) \\
+\path{FieldOutFlag}                 & 1 to output induced velocity on a 3-D Cartesian grid, 0 to omit this output (default). \\
+\path{FieldOutIntervalTimesteps}    & Number of timesteps in between field outputs. 5 by default. \\
+\path{FieldOutStartTimestep}        & Start timestep for field output. 1 for first timestep (default). \\
+\path{FieldOutEndTimestep}          & End timestep for field output, -1 to output until last timestep (default) \\
 \path{nxgrid, nygrid, nzgrid}          & Number of grid elements in each (x,y,z-) direction. (1, 100, 100) by default. \\
 \path{xgridL, xgridU, ygridL, ygridU, zgridL, zgridU}                 & Extents of Cartesian grid to calculate induced velocity on. Defaults are: (-0.0, 0.0), (-2.0, 2.0), (-2.0, 2.0) \\
 \path{WallOutFlag}                     & 1 to output ground plane/wall panel strengths, 2 to also output velocities at panel centers. 0 for no output (default). \\
-\path{WallOutIntervalTimesteps}        & Number of timesteps in between wake grid outputs. 1 by default. \\
-\path{WallOutStartTimestep}            & Start timestep for wake grid output. 1 for first timestep (default). \\
-\path{WallOutEndTimestep}              & End timestep for wake grid output, -1 to output until last timestep (default) \\
+\path{WallOutIntervalTimesteps}        & Number of timesteps in between wall outputs. 1 by default. \\
+\path{WallOutStartTimestep}            & Start timestep for wall output. 1 for first timestep (default). \\
+\path{WallOutEndTimestep}              & End timestep for wall output, -1 to output until last timestep (default) \\
 \bottomrule
 \end{longtable}
 
@@ -170,16 +170,16 @@ AFDPath = '../../Airfoil_Section_Data/NACA_0015.dat'
     DiagOutFlag=1
     Output_ELFlag=1
     WakeElementOutFlag = 1
-    WakeGridOutFlag = 1
+    FieldOutFlag = 1
 
     ! Start output at the 100th timestep
-    WakeGridOutStartTimestep = 100
+    FieldOutStartTimestep = 100
 
     ! Stop output at the last timestep  
-    WakeGridOutStartTimestep = -1
+    FieldOutStartTimestep = -1
     
     ! Output wake velocities on every timestep
-    WakeGridOutIntervalTimesteps = 1
+    FieldOutIntervalTimesteps = 1
 
     ! Output a 12x40x40 grid
     ! (12 y-z planes at every 1.0 x, from -1.0 to 10.0 
