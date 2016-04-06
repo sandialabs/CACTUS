@@ -2,7 +2,7 @@ subroutine WriteFieldData()
 
     ! Write field data
 
-    use wakedata
+    use fielddata
     use blade
     use wake
     use wallsoln
@@ -22,7 +22,7 @@ subroutine WriteFieldData()
     write(13,'(A)') trim(FieldOutHead)
 
     !! Compute wake data on specified cartesian grid
-    ! Compute blade, wake, and wall induced streamwise velocity deficit
+    ! Compute blade, wake, and wall induced velocity
     do zcount=1,nzgrid
 !$omp parallel do private(xcount,xnode,ynode,znode)
         do ycount=1,nygrid
@@ -47,7 +47,7 @@ subroutine WriteFieldData()
     end do
 
 
-    ! Output blade, wake, and wall induced streamwise velocity deficit
+    ! Output blade, wake, and wall induced velocity
     do zcount=1,nzgrid
         do ycount=1,nygrid
             do xcount=1,nxgrid
