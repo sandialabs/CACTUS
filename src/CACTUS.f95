@@ -65,6 +65,7 @@ program CACTUS
     use configr
     use pidef
     use vortex
+    use fielddata
     use wakedata
     use time
     use wallsoln
