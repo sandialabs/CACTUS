@@ -4,13 +4,13 @@ module wakedata
 
     ! Wake visualization data for WriteWakeData
 
-    integer :: WakeElementOutFlag, WakeGridOutFlag
+    integer :: WakeElementOutFlag, FieldOutFlag
     integer, allocatable :: WakeLineInd(:)
     integer :: NWakeInd
     character(1000) :: WakeOutHead = 'Normalized Time (-),Node ID,Origin Node,X/R (-),Y/R (-),Z/R (-),U/Uinf (-),V/Uinf (-),W/Uinf (-)'
 
-    ! Wake deficit calculation on a grid
-    character(1000) :: GridVelOutHead = 'Normalized Time (-),X/R (-),Y/R (-),Z/R (-),U/Uinf (-),V/Uinf (-),W/Uinf (-),Ufs/Uinf (-),Vfs/Uinf (-),Wfs/Uinf (-)'
+    ! Velocity calculation on a grid
+    character(1000) :: FieldOutHead = 'Normalized Time (-),X/R (-),Y/R (-),Z/R (-),U/Uinf (-),V/Uinf (-),W/Uinf (-),Ufs/Uinf (-),Vfs/Uinf (-),Wfs/Uinf (-)'
 
     ! number of grid elements in each direction
     integer :: nxgrid

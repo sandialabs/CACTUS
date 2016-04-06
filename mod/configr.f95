@@ -37,9 +37,9 @@ module configr
     integer :: WakeElementOutStartTimestep                 ! Revolution number at which to start writing wake data
     integer :: WakeElementOutEndTimestep                   ! Revolution number at which to stop writing wake data
 
-    integer :: WakeGridOutIntervalTimesteps                ! Number of revolutions between writing wake data
-    integer :: WakeGridOutStartTimestep                    ! Revolution number at which to start writing wake data
-    integer :: WakeGridOutEndTimestep                      ! Revolution number at which to stop writing wake data
+    integer :: FieldOutIntervalTimesteps                ! Number of revolutions between writing wake data
+    integer :: FieldOutStartTimestep                    ! Revolution number at which to start writing wake data
+    integer :: FieldOutEndTimestep                      ! Revolution number at which to stop writing wake data
 
     integer :: WallOutIntervalTimesteps                    ! Number of revolutions between writing wall data
     integer :: WallOutStartTimestep                        ! Revolution number at which to start writing wall data

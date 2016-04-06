@@ -174,7 +174,7 @@ program CACTUS
     DSOutputFN  = adjustl(trim(OutputPath))//path_separator//trim(FNBase)//'_DSData.csv'
 
     ! set pathnames for files with dynamically-named output files
-    WakeGridOutputPath    = adjustl(trim(OutputPath))//path_separator//'field'
+    FieldOutputPath    = adjustl(trim(OutputPath))//path_separator//'field'
     WakeElementOutputPath = adjustl(trim(OutputPath))//path_separator//'element'
     WallOutputPath        = adjustl(trim(OutputPath))//path_separator//'wall'
     ProbeOutputPath       = adjustl(trim(OutputPath))//path_separator//'probe'
@@ -184,8 +184,8 @@ program CACTUS
     call system('mkdir '//adjustl(trim(OutputPath)))
 
     ! Field data
-    if (WakeGridOutFlag > 0) then
-        call system('mkdir '//WakeGridOutputPath)
+    if (FieldOutFlag > 0) then
+        call system('mkdir '//FieldOutputPath)
     end if
 
     ! Wake element data
@@ -463,18 +463,18 @@ program CACTUS
                 end if
             end if
 
-            if (WakeGridOutFlag > 0) then
-                ! Write wake grid data
-                if ((NT >= WakeGridOutStartTimestep) .AND. (NT < WakeGridOutEndTimestep .OR. WakeGridOutEndTimestep == -1)) then
-                    if (MOD(NT-1, WakeGridOutIntervalTimesteps) == 0) then
-                        Call WriteWakeGridData()
+            if (FieldOutFlag > 0) then
+                ! Write field data
+                if ((NT >= FieldOutStartTimestep) .AND. (NT < FieldOutEndTimestep .OR. FieldOutEndTimestep == -1)) then
+                    if (MOD(NT-1, FieldOutIntervalTimesteps) == 0) then
+                        Call WriteFieldData()
                     end if
                 end if
             end if
 
             ! Write wall system/ground plane data
             if (WallOutFlag > 0) then
-                ! Write wake grid data
+                ! Write wall data
                 if ((NT >= WallOutStartTimestep) .AND. (NT < WallOutEndTimestep .OR. WallOutEndTimestep == -1)) then
                     if (MOD(NT-1, WallOutIntervalTimesteps) == 0) then
                         Call WriteWallData()
@@ -484,7 +484,7 @@ program CACTUS
 
             ! Write probe data
             if (ProbeFlag > 0) then
-                ! Write wake grid data
+                ! Write probe data
                 if ((NT >= ProbeOutStartTimestep) .AND. (NT < ProbeOutEndTimestep .OR. ProbeOutEndTimestep == -1)) then
                     if (MOD(NT-1, ProbeOutIntervalTimesteps) == 0) then
                         call write_probes(ProbeOutputPath) ! in probesystem module

@@ -1,6 +1,6 @@
-subroutine WriteWakeGridData()
+subroutine WriteFieldData()
 
-    ! Write wake grid data
+    ! Write field data
 
     use wakedata
     use blade
@@ -17,9 +17,9 @@ subroutine WriteWakeGridData()
 
     ! Open file for writing - a new file at each timestep
     write(nt_str,'(I5.5)') nt
-    WakeDefOutputFN=adjustl(trim(WakeGridOutputPath))//path_separator//trim(FNBase)//'_WakeDefData_'//trim(nt_str)//'.csv'
-    OPEN(13, FILE=WakeDefOutputFN)
-    write(13,'(A)') trim(GridVelOutHead)
+    FieldOutputFN=adjustl(trim(FieldOutputPath))//path_separator//trim(FNBase)//'_FieldData_'//trim(nt_str)//'.csv'
+    OPEN(13, FILE=FieldOutputFN)
+    write(13,'(A)') trim(FieldOutHead)
 
     !! Compute wake data on specified cartesian grid
     ! Compute blade, wake, and wall induced streamwise velocity deficit
@@ -70,4 +70,4 @@ subroutine WriteWakeGridData()
     CLOSE(13)
 
     return
-end subroutine WriteWakeGridData
+end subroutine WriteFieldData

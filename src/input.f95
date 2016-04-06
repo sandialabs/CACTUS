@@ -62,7 +62,7 @@ subroutine input(ErrFlag)
 
     NAMELIST/ConfigOutputs/OutputPath,Output_ELFlag,Output_DSFlag,WallOutFlag,DiagOutFlag, &
         WakeElementOutFlag,WakeElementOutIntervalTimesteps,WakeElementOutStartTimestep,WakeElementOutEndTimestep, &
-        WakeGridOutFlag,WakeGridOutIntervalTimesteps,WakeGridOutStartTimestep,WakeGridOutEndTimestep, &
+        FieldOutFlag,FieldOutIntervalTimesteps,FieldOutStartTimestep,FieldOutEndTimestep, &
         nxgrid,nygrid,nzgrid,xgridL,ygridL,zgridL,xgridU,ygridU,zgridU, &
         WallOutIntervalTimesteps,WallOutStartTimestep,WallOutEndTimestep, &
         ProbeFlag,ProbeOutIntervalTimesteps,ProbeOutStartTimestep,ProbeOutEndTimestep,ProbeSpecPath
@@ -124,11 +124,11 @@ subroutine input(ErrFlag)
     Output_DSFlag      = 0
     DiagOutFlag        = 0
     WakeElementOutFlag = 0
-    WakeGridOutFlag    = 0
+    FieldOutFlag    = 0
     WallOutFlag        = 0
     ProbeFlag          = 0
 
-    ! wake grid output default parameters
+    ! field output default parameters
     nxgrid =    1
     nygrid =  100
     nzgrid =  100
@@ -145,9 +145,9 @@ subroutine input(ErrFlag)
     WakeElementOutStartTimestep     =  1       ! write wake element data starting at first timestep
     WakeElementOutEndTimestep       = -1       ! stop writing wake element data at the last timestep
 
-    WakeGridOutIntervalTimesteps    =  5       ! write wake grid data every 5 timesteps
-    WakeGridOutStartTimestep        =  1       ! write wake grid data starting at first timestep
-    WakeGridOutEndTimestep          = -1       ! stop writing wake grid data at the last timestep
+    FieldOutIntervalTimesteps    =  5       ! write field data every 5 timesteps
+    FieldOutStartTimestep        =  1       ! write field data starting at first timestep
+    FieldOutEndTimestep          = -1       ! stop writing field data at the last timestep
 
     ! Wall Output Frequency
     WallOutIntervalTimesteps        =  5       ! write wall data every 5 timesteps
