@@ -61,7 +61,7 @@ subroutine input(ErrFlag)
         Itower,tower_Npts,tower_x,tower_ybot,tower_ytop,tower_D,tower_CD, &
         WallMeshPath
 
-    NAMELIST/ConfigOutputs/OutputPath,Output_ELFlag,Output_DSFlag,WallOutFlag,DiagOutFlag, &
+    NAMELIST/ConfigOutputs/OutputPath,BladeElemOutFlag,DynStallOutFlag,WallOutFlag,DiagOutFlag, &
         WakeElementOutFlag,WakeElementOutIntervalTimesteps,WakeElementOutStartTimestep,WakeElementOutEndTimestep, &
         FieldOutFlag,FieldOutIntervalTimesteps,FieldOutStartTimestep,FieldOutEndTimestep, &
         nxgrid,nygrid,nzgrid,xgridL,ygridL,zgridL,xgridU,ygridU,zgridU, &
@@ -121,8 +121,8 @@ subroutine input(ErrFlag)
 
     ! output options
     OutputPath         = 'output'
-    Output_ELFlag      = 0
-    Output_DSFlag      = 0
+    BladeElemOutFlag      = 0
+    DynStallOutFlag      = 0
     DiagOutFlag        = 0
     WakeElementOutFlag = 0
     FieldOutFlag    = 0

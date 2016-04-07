@@ -106,8 +106,8 @@ Variable name & Description \\ \midrule
 Variable name & Description \\ \midrule
 \path{OutputPath}                     & String specifying path (absolute or relative to run directory) where output files will be written. \\
 \path{DiagOutFlag}                     & 1 to output diagnostic info to standard output device each iteration, 0 to omit this output (default). \\
-\path{Output_ELFlag}                  & 1 to output full detail element loads .csv file, 0 to omit this output (default) \\
-\path{Output_DSFlag}                  & 1 to output dynamic stall data, 0 to omit this output (default). \\
+\path{BladeElemOutFlag}                  & 1 to output full detail element loads .csv file, 0 to omit this output (default) \\
+\path{DynStallOutFlag}                  & 1 to output dynamic stall data, 0 to omit this output (default). \\
 \path{WakeElementOutFlag}              & 1 to output wake element locations, 0 to omit this output (default). \\
 \path{WakeElementOutIntervalTimesteps} & Number of timesteps in between wake element outputs. 5 by default. \\
 \path{WakeElementOutStartTimestep}     & Start timestep for wake element output. 1 for first timestep (default). \\
@@ -168,7 +168,7 @@ AFDPath = '../../Airfoil_Section_Data/NACA_0015.dat'
 
 &ConfigOutputs 
     DiagOutFlag=1
-    Output_ELFlag=1
+    BladeElemOutFlag=1
     WakeElementOutFlag = 1
     FieldOutFlag = 1
 

@@ -210,9 +210,9 @@ program CACTUS
     OPEN(10, FILE=TSOutputFN)
 
     ! Write headers on standard output files
-    Call csvwrite(8,Output_SFHead,Output_SFData,1,0)
-    Call csvwrite(9,Output_RevHead,Output_RevData,1,0)
-    Call csvwrite(10,Output_TSHead,Output_TSData,1,0)
+    Call csvwrite(8,ParamsOutHead,ParamsOutData,1,0)
+    Call csvwrite(9,RevOutHead,RevOutData,1,0)
+    Call csvwrite(10,TSOutHead,TSOutData,1,0)
 
     ! Simple output for regression testing
     if (RegTFlag == 1) then
@@ -221,9 +221,9 @@ program CACTUS
     end if
 
     ! Optional element load output
-    if (Output_ELFlag == 1) then
+    if (BladeElemOutFlag == 1) then
         OPEN(11, FILE=ELOutputFN)
-        Call csvwrite(11,Output_ELHead,Output_ELData,1,0)
+        Call csvwrite(11,BladeElemOutHead,BladeElemOutData,1,0)
     end if
 
     ! Optional free surface output
@@ -235,12 +235,12 @@ program CACTUS
     end if
 
     ! Optional dynamic stall diagnostic output
-    if (Output_DSFlag == 1) then
+    if (DynStallOutFlag == 1) then
         OPEN(16, FILE=DSOutputFN)
-        if (Output_DSType == 1) then
-            Call csvwrite(16,Output_BVHead,Output_BVData,1,0)
-        else if (Output_DSType == 2) then
-            Call csvwrite(16,Output_LBHead,Output_LBData,1,0)
+        if (DynStallOutType == 1) then
+            Call csvwrite(16,DynStallOutBVHead,DynStallOutBVData,1,0)
+        else if (DynStallOutType == 2) then
+            Call csvwrite(16,DynStallOutLBHead,DynStallOutLBData,1,0)
         end if
     end if
 
@@ -325,18 +325,18 @@ program CACTUS
     powerc=rho/2.0*areat*romega**3*0.7457/550.      ! normalization for power coeff using tip speed (kp), with conversion from lb-ft/s to kW. (Used to write output)
 
     ! Write flow properties output
-    Output_SFData(1,1)=Rmax         ! length scale
-    Output_SFData(1,2)=areat        ! frontal area
-    Output_SFData(1,3)=rpm          ! turbine RPM
-    Output_SFData(1,4)=Uinf         ! freestream U
-    Output_SFData(1,5)=rho          ! density
-    Output_SFData(1,6)=tempr        ! temperature
-    Output_SFData(1,7)=vis          ! viscosity
-    Output_SFData(1,8)=dynpress     ! dynamic pressure
-    Output_SFData(1,9)=ut           ! tip speed ratio
-    Output_SFData(1,10)=rem         ! machine Reynolds number based on U and Rmax
-    Output_SFData(1,11)=FnR         ! Froude number based on radius
-    Call csvwrite(8,Output_SFHead,Output_SFData,0,1)
+    ParamsOutData(1,1)=Rmax         ! length scale
+    ParamsOutData(1,2)=areat        ! frontal area
+    ParamsOutData(1,3)=rpm          ! turbine RPM
+    ParamsOutData(1,4)=Uinf         ! freestream U
+    ParamsOutData(1,5)=rho          ! density
+    ParamsOutData(1,6)=tempr        ! temperature
+    ParamsOutData(1,7)=vis          ! viscosity
+    ParamsOutData(1,8)=dynpress     ! dynamic pressure
+    ParamsOutData(1,9)=ut           ! tip speed ratio
+    ParamsOutData(1,10)=rem         ! machine Reynolds number based on U and Rmax
+    ParamsOutData(1,11)=FnR         ! Froude number based on radius
+    Call csvwrite(8,ParamsOutHead,ParamsOutData,0,1)
 
     ! close parameter file for writing
     CLOSE(8)
@@ -451,7 +451,7 @@ program CACTUS
             if (DiagOutFlag == 1) then
                 ! Use machine level time step output (norm. time, revolution, torque coeff., power coeff.)
                 write(6,'(A)') 'Norm. Time, Theta (rad), Revolution, Torque Coeff., Power Coeff.'
-                write(6,'(2E13.5,F8.0,2E13.5)') Output_TSData(1,1),Output_TSData(1,2),Output_TSData(1,3),Output_TSData(1,4),Output_TSData(1,5)
+                write(6,'(2E13.5,F8.0,2E13.5)') TSOutData(1,1),TSOutData(1,2),TSOutData(1,3),TSOutData(1,4),TSOutData(1,5)
             end if
 
             ! Write current wake data
