@@ -1,4 +1,4 @@
-subroutine WriteWakeElementData()
+subroutine WriteWakeElemData()
 
     ! Write wake element positions and velocity
 
@@ -17,7 +17,7 @@ subroutine WriteWakeElementData()
 
     ! Optional wake element data output
     write(nt_str,'(I5.5)') nt
-    WakeOutputFN=adjustl(trim(WakeElementOutputPath))//path_separator//trim(FNBase)//'_WakeData_'//trim(nt_str)//'.csv'
+    WakeOutputFN=adjustl(trim(WakeElemOutputPath))//path_separator//trim(FNBase)//'_WakeData_'//trim(nt_str)//'.csv'
     OPEN(12, FILE=WakeOutputFN)
     write(12,'(A)') trim(WakeOutHead)
 
@@ -45,4 +45,4 @@ subroutine WriteWakeElementData()
     CLOSE(12)
 
     return
-end subroutine WriteWakeElementData
+end subroutine WriteWakeElemData

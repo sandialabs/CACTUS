@@ -46,7 +46,7 @@
 
     DiagOutFlag        = 1
     BladeElemOutFlag   = 1
-    WakeElementOutFlag = 1
+    WakeElemOutFlag = 1
     FieldOutFlag       = 0
 
 /End

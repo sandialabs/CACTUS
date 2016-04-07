@@ -62,7 +62,7 @@ subroutine input(ErrFlag)
         WallMeshPath
 
     NAMELIST/ConfigOutputs/OutputPath,BladeElemOutFlag,DynStallOutFlag,WallOutFlag,DiagOutFlag, &
-        WakeElementOutFlag,WakeElementOutIntervalTimesteps,WakeElementOutStartTimestep,WakeElementOutEndTimestep, &
+        WakeElemOutFlag,WakeElemOutIntervalTimesteps,WakeElemOutStartTimestep,WakeElemOutEndTimestep, &
         FieldOutFlag,FieldOutIntervalTimesteps,FieldOutStartTimestep,FieldOutEndTimestep, &
         nxgrid,nygrid,nzgrid,xgridL,ygridL,zgridL,xgridU,ygridU,zgridU, &
         WallOutIntervalTimesteps,WallOutStartTimestep,WallOutEndTimestep, &
@@ -124,7 +124,7 @@ subroutine input(ErrFlag)
     BladeElemOutFlag      = 0
     DynStallOutFlag      = 0
     DiagOutFlag        = 0
-    WakeElementOutFlag = 0
+    WakeElemOutFlag = 0
     FieldOutFlag    = 0
     WallOutFlag        = 0
     ProbeFlag          = 0
@@ -142,9 +142,9 @@ subroutine input(ErrFlag)
     zgridU =  2.0
 
     ! Wake Output Frequency
-    WakeElementOutIntervalTimesteps =  5       ! write wake element data every 5 timesteps
-    WakeElementOutStartTimestep     =  1       ! write wake element data starting at first timestep
-    WakeElementOutEndTimestep       = -1       ! stop writing wake element data at the last timestep
+    WakeElemOutIntervalTimesteps =  5       ! write wake element data every 5 timesteps
+    WakeElemOutStartTimestep     =  1       ! write wake element data starting at first timestep
+    WakeElemOutEndTimestep       = -1       ! stop writing wake element data at the last timestep
 
     ! Field Output Frequency
     FieldOutIntervalTimesteps    =  5       ! write field data every 5 timesteps

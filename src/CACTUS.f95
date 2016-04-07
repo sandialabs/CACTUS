@@ -176,7 +176,7 @@ program CACTUS
 
     ! set pathnames for files with dynamically-named output files
     FieldOutputPath    = adjustl(trim(OutputPath))//path_separator//'field'
-    WakeElementOutputPath = adjustl(trim(OutputPath))//path_separator//'element'
+    WakeElemOutputPath = adjustl(trim(OutputPath))//path_separator//'element'
     WallOutputPath        = adjustl(trim(OutputPath))//path_separator//'wall'
     ProbeOutputPath       = adjustl(trim(OutputPath))//path_separator//'probe'
 
@@ -190,8 +190,8 @@ program CACTUS
     end if
 
     ! Wake element data
-    if (WakeElementOutFlag > 0) then
-        call system('mkdir '//adjustl(trim(WakeElementOutputPath)))
+    if (WakeElemOutFlag > 0) then
+        call system('mkdir '//adjustl(trim(WakeElemOutputPath)))
     end if
 
     ! Wall data
@@ -455,11 +455,11 @@ program CACTUS
             end if
 
             ! Write current wake data
-            if (WakeElementOutFlag > 0) then
+            if (WakeElemOutFlag > 0) then
                 ! Write wake element data
-                if ((NT >= WakeElementOutStartTimestep) .AND. (NT < WakeElementOutEndTimestep .OR. WakeElementOutEndTimestep == -1)) then
-                    if (MOD(NT-1, WakeElementOutIntervalTimesteps) == 0) then
-                        Call WriteWakeElementData()
+                if ((NT >= WakeElemOutStartTimestep) .AND. (NT < WakeElemOutEndTimestep .OR. WakeElemOutEndTimestep == -1)) then
+                    if (MOD(NT-1, WakeElemOutIntervalTimesteps) == 0) then
+                        Call WriteWakeElemData()
                     end if
                 end if
             end if
