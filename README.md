@@ -25,13 +25,13 @@ environments using GCC Fortran.
 
 ### Directory Structure
 
-- `bin`: Executables are placed here.
-- `DAKOTA`: Contains DAKOTA Drivers and examples
-- `doc`: Documentation: User's Manual, Install instructions, DAKOTA-CACTUS Manual, Papers
-- `make`: Contains Makefiles for different compilers
-- `mod`: Source Code -- modules & utilities
-- `src`: Source Code
-- `test`: Contains several test cases
+- `bin`: Compiled executables
+- `DAKOTA`: DAKOTA drivers (by Jon Murray) and examples
+- `doc`: Documentation -- user's manual, install instructions, DAKOTA drivers manual, relevant publications
+- `make`: Makefiles for various compilers and platforms
+- `mod`: Source code -- modules & utilities
+- `src`: Source code
+- `test`: Test cases (regression tests, example HAWT/VAWT input files, airfoil files)
 
 
 ### Post-processing
