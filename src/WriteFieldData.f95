@@ -1,8 +1,8 @@
-subroutine WriteWakeGridData()
+subroutine WriteFieldData()
 
-    ! Write wake grid data
+    ! Write field data
 
-    use wakedata
+    use fielddata
     use blade
     use wake
     use wallsoln
@@ -17,12 +17,12 @@ subroutine WriteWakeGridData()
 
     ! Open file for writing - a new file at each timestep
     write(nt_str,'(I5.5)') nt
-    WakeDefOutputFN=adjustl(trim(WakeGridOutputPath))//path_separator//trim(FNBase)//'_WakeDefData_'//trim(nt_str)//'.csv'
-    OPEN(13, FILE=WakeDefOutputFN)
-    write(13,'(A)') trim(GridVelOutHead)
+    FieldOutputFN=adjustl(trim(FieldOutputPath))//path_separator//trim(FNBase)//'_FieldData_'//trim(nt_str)//'.csv'
+    OPEN(13, FILE=FieldOutputFN)
+    write(13,'(A)') trim(FieldOutHead)
 
     !! Compute wake data on specified cartesian grid
-    ! Compute blade, wake, and wall induced streamwise velocity deficit
+    ! Compute blade, wake, and wall induced velocity
     do zcount=1,nzgrid
 !$omp parallel do private(xcount,xnode,ynode,znode)
         do ycount=1,nygrid
@@ -47,7 +47,7 @@ subroutine WriteWakeGridData()
     end do
 
 
-    ! Output blade, wake, and wall induced streamwise velocity deficit
+    ! Output blade, wake, and wall induced velocity
     do zcount=1,nzgrid
         do ycount=1,nygrid
             do xcount=1,nxgrid
@@ -70,4 +70,4 @@ subroutine WriteWakeGridData()
     CLOSE(13)
 
     return
-end subroutine WriteWakeGridData
+end subroutine WriteFieldData

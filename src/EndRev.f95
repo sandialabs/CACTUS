@@ -28,19 +28,19 @@ subroutine EndRev()
     PowerAve=KPave*PowerC
 
     ! Set revolution average output
-    Output_RevData(1,1)=irev
-    Output_RevData(1,2)=CPAve
-    Output_RevData(1,3)=KPAve
-    Output_RevData(1,4)=CTRAve
-    Output_RevData(1,5)=CFxAve
-    Output_RevData(1,6)=CFyAve
-    Output_RevData(1,7)=CFzAve
-    Output_RevData(1,8)=PowerAve
-    Output_RevData(1,9)=TorqueAve
+    RevOutData(1,1)=irev
+    RevOutData(1,2)=CPAve
+    RevOutData(1,3)=KPAve
+    RevOutData(1,4)=CTRAve
+    RevOutData(1,5)=CFxAve
+    RevOutData(1,6)=CFyAve
+    RevOutData(1,7)=CFzAve
+    RevOutData(1,8)=PowerAve
+    RevOutData(1,9)=TorqueAve
 
     ! Write to revolution average data csv file
     OPEN(9, FILE=RevOutputFN, POSITION='append')
-    Call csvwrite(9,Output_RevHead,Output_RevData,0,1)
+    Call csvwrite(9,RevOutHead,RevOutData,0,1)
     CLOSE(9)
 
     ! Reset rev average sums

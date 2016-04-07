@@ -45,9 +45,9 @@
 &ConfigOutputs
 
     DiagOutFlag        = 1
-    Output_ELFlag      = 1
-    WakeElementOutFlag = 1
-    WakeGridOutFlag    = 0
+    BladeElemOutFlag   = 1
+    WakeElemOutFlag = 1
+    FieldOutFlag       = 0
 
 /End
 

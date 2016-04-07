@@ -15,6 +15,7 @@ subroutine input(ErrFlag)
     use pidef
     use vortex
     use wakedata
+    use fielddata
     use time
     use wallgeom
     use wallsoln
@@ -60,9 +61,9 @@ subroutine input(ErrFlag)
         Itower,tower_Npts,tower_x,tower_ybot,tower_ytop,tower_D,tower_CD, &
         WallMeshPath
 
-    NAMELIST/ConfigOutputs/OutputPath,Output_ELFlag,Output_DSFlag,WallOutFlag,DiagOutFlag, &
-        WakeElementOutFlag,WakeElementOutIntervalTimesteps,WakeElementOutStartTimestep,WakeElementOutEndTimestep, &
-        WakeGridOutFlag,WakeGridOutIntervalTimesteps,WakeGridOutStartTimestep,WakeGridOutEndTimestep, &
+    NAMELIST/ConfigOutputs/OutputPath,BladeElemOutFlag,DynStallOutFlag,WallOutFlag,DiagOutFlag, &
+        WakeElemOutFlag,WakeElemOutIntervalTimesteps,WakeElemOutStartTimestep,WakeElemOutEndTimestep, &
+        FieldOutFlag,FieldOutIntervalTimesteps,FieldOutStartTimestep,FieldOutEndTimestep, &
         nxgrid,nygrid,nzgrid,xgridL,ygridL,zgridL,xgridU,ygridU,zgridU, &
         WallOutIntervalTimesteps,WallOutStartTimestep,WallOutEndTimestep, &
         ProbeFlag,ProbeOutIntervalTimesteps,ProbeOutStartTimestep,ProbeOutEndTimestep,ProbeSpecPath
@@ -120,15 +121,15 @@ subroutine input(ErrFlag)
 
     ! output options
     OutputPath         = 'output'
-    Output_ELFlag      = 0
-    Output_DSFlag      = 0
+    BladeElemOutFlag      = 0
+    DynStallOutFlag      = 0
     DiagOutFlag        = 0
-    WakeElementOutFlag = 0
-    WakeGridOutFlag    = 0
+    WakeElemOutFlag = 0
+    FieldOutFlag    = 0
     WallOutFlag        = 0
     ProbeFlag          = 0
 
-    ! wake grid output default parameters
+    ! field output default parameters
     nxgrid =    1
     nygrid =  100
     nzgrid =  100
@@ -141,13 +142,14 @@ subroutine input(ErrFlag)
     zgridU =  2.0
 
     ! Wake Output Frequency
-    WakeElementOutIntervalTimesteps =  5       ! write wake element data every 5 timesteps
-    WakeElementOutStartTimestep     =  1       ! write wake element data starting at first timestep
-    WakeElementOutEndTimestep       = -1       ! stop writing wake element data at the last timestep
+    WakeElemOutIntervalTimesteps =  5       ! write wake element data every 5 timesteps
+    WakeElemOutStartTimestep     =  1       ! write wake element data starting at first timestep
+    WakeElemOutEndTimestep       = -1       ! stop writing wake element data at the last timestep
 
-    WakeGridOutIntervalTimesteps    =  5       ! write wake grid data every 5 timesteps
-    WakeGridOutStartTimestep        =  1       ! write wake grid data starting at first timestep
-    WakeGridOutEndTimestep          = -1       ! stop writing wake grid data at the last timestep
+    ! Field Output Frequency
+    FieldOutIntervalTimesteps    =  5       ! write field data every 5 timesteps
+    FieldOutStartTimestep        =  1       ! write field data starting at first timestep
+    FieldOutEndTimestep          = -1       ! stop writing field data at the last timestep
 
     ! Wall Output Frequency
     WallOutIntervalTimesteps        =  5       ! write wall data every 5 timesteps
@@ -213,6 +215,7 @@ subroutine input(ErrFlag)
     CALL element_cns(MaxSegEnds,MaxSegEndPerBlade)
     CALL airfoil_cns(MaxAOAVals,MaxReVals,MaxAirfoilSect)
     CALL wakedata_cns()
+    CALL fielddata_cns()
     CALL dystl_cns(MaxAirfoilSect,MaxReVals,MaxSegEnds)
     CALL output_cns(MaxSeg,MaxBlades,MaxStruts,DSFlag)
 

@@ -106,22 +106,22 @@ Variable name & Description \\ \midrule
 Variable name & Description \\ \midrule
 \path{OutputPath}                     & String specifying path (absolute or relative to run directory) where output files will be written. \\
 \path{DiagOutFlag}                     & 1 to output diagnostic info to standard output device each iteration, 0 to omit this output (default). \\
-\path{Output_ELFlag}                  & 1 to output full detail element loads .csv file, 0 to omit this output (default) \\
-\path{Output_DSFlag}                  & 1 to output dynamic stall data, 0 to omit this output (default). \\
-\path{WakeElementOutFlag}              & 1 to output wake element locations, 0 to omit this output (default). \\
-\path{WakeElementOutIntervalTimesteps} & Number of timesteps in between wake element outputs. 5 by default. \\
-\path{WakeElementOutStartTimestep}     & Start timestep for wake element output. 1 for first timestep (default). \\
-\path{WakeElementOutEndTimestep}       & End timestep for wake element output, -1 to output until last timestep (default) \\
-\path{WakeGridOutFlag}                 & 1 to output induced velocity on a 3-D Cartesian grid, 0 to omit this output (default). \\
-\path{WakeGridOutIntervalTimesteps}    & Number of timesteps in between wake grid outputs. 5 by default. \\
-\path{WakeGridOutStartTimestep}        & Start timestep for wake grid output. 1 for first timestep (default). \\
-\path{WakeGridOutEndTimestep}          & End timestep for wake grid output, -1 to output until last timestep (default) \\
+\path{BladeElemOutFlag}                  & 1 to output full detail element loads .csv file, 0 to omit this output (default) \\
+\path{DynStallOutFlag}                  & 1 to output dynamic stall data, 0 to omit this output (default). \\
+\path{WakeElemOutFlag}              & 1 to output wake element locations, 0 to omit this output (default). \\
+\path{WakeElemOutIntervalTimesteps} & Number of timesteps in between wake element outputs. 5 by default. \\
+\path{WakeElemOutStartTimestep}     & Start timestep for wake element output. 1 for first timestep (default). \\
+\path{WakeElemOutEndTimestep}       & End timestep for wake element output, -1 to output until last timestep (default) \\
+\path{FieldOutFlag}                 & 1 to output induced velocity on a 3-D Cartesian grid, 0 to omit this output (default). \\
+\path{FieldOutIntervalTimesteps}    & Number of timesteps in between field outputs. 5 by default. \\
+\path{FieldOutStartTimestep}        & Start timestep for field output. 1 for first timestep (default). \\
+\path{FieldOutEndTimestep}          & End timestep for field output, -1 to output until last timestep (default) \\
 \path{nxgrid, nygrid, nzgrid}          & Number of grid elements in each (x,y,z-) direction. (1, 100, 100) by default. \\
 \path{xgridL, xgridU, ygridL, ygridU, zgridL, zgridU}                 & Extents of Cartesian grid to calculate induced velocity on. Defaults are: (-0.0, 0.0), (-2.0, 2.0), (-2.0, 2.0) \\
 \path{WallOutFlag}                     & 1 to output ground plane/wall panel strengths, 2 to also output velocities at panel centers. 0 for no output (default). \\
-\path{WallOutIntervalTimesteps}        & Number of timesteps in between wake grid outputs. 1 by default. \\
-\path{WallOutStartTimestep}            & Start timestep for wake grid output. 1 for first timestep (default). \\
-\path{WallOutEndTimestep}              & End timestep for wake grid output, -1 to output until last timestep (default) \\
+\path{WallOutIntervalTimesteps}        & Number of timesteps in between wall outputs. 1 by default. \\
+\path{WallOutStartTimestep}            & Start timestep for wall output. 1 for first timestep (default). \\
+\path{WallOutEndTimestep}              & End timestep for wall output, -1 to output until last timestep (default) \\
 \bottomrule
 \end{longtable}
 
@@ -168,18 +168,18 @@ AFDPath = '../../Airfoil_Section_Data/NACA_0015.dat'
 
 &ConfigOutputs 
     DiagOutFlag=1
-    Output_ELFlag=1
-    WakeElementOutFlag = 1
-    WakeGridOutFlag = 1
+    BladeElemOutFlag=1
+    WakeElemOutFlag = 1
+    FieldOutFlag = 1
 
     ! Start output at the 100th timestep
-    WakeGridOutStartTimestep = 100
+    FieldOutStartTimestep = 100
 
     ! Stop output at the last timestep  
-    WakeGridOutStartTimestep = -1
+    FieldOutStartTimestep = -1
     
     ! Output wake velocities on every timestep
-    WakeGridOutIntervalTimesteps = 1
+    FieldOutIntervalTimesteps = 1
 
     ! Output a 12x40x40 grid
     ! (12 y-z planes at every 1.0 x, from -1.0 to 10.0 
@@ -419,7 +419,7 @@ Airfoil data is split into a header section, described in \Cref{tbl:airfoil_inpu
 \centering
 \caption{Header block for airfoil input files}
 \label{tbl:airfoil_input_header_parameters}
-\begin{tabular}{p{0.20\textwidth}p{0.70\textwidth}}
+\begin{tabular}{p{0.4\textwidth}p{0.6\textwidth}}
 \toprule
 Variable name & Description \\ \midrule
 \path{Title}                    & Title for this foil data table. For reference only; not used internally in CACTUS. \\
@@ -436,7 +436,7 @@ Variable name & Description \\ \midrule
 \centering
 \caption{Reynolds number data block for airfoil input files}
 \label{tbl:airfoil_input_re_block_parameters}
-\begin{tabular}{p{0.20\textwidth}p{0.70\textwidth}}
+\begin{tabular}{p{0.4\textwidth}p{0.6\textwidth}}
 \toprule
 Variable name & Description \\ \midrule
 \path{BV Dyn. Stall Model}           &  The Boeing-Vertol dynamic stall model uses reference angle of attack values to switch from a steady attached flow state to a dynamic stalled state. While these are denoted as ``stall'' AOA values, they should be set back from the foil stall AOA such that the lift coefficient is still fairly linear with AOA at this point. Generally, a value 50 - 75\% of the way between the zero lift AOA and the stall AOA works well. \\

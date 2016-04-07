@@ -26,7 +26,7 @@ Variable name & Description \\ \midrule
 \end{table}
 
 \section{Blade-integrated loads}
-If \path{Output_ELFlag} = 1, blade-integrated loads are written at each to the comma delimited file \path{_TimeData.csv}. The output columns of this file are described in \Cref{tbl:output_vars_time}.
+If \path{BladeElemOutFlag} = 1, blade-integrated loads are written at each to the comma delimited file \path{_TimeData.csv}. The output columns of this file are described in \Cref{tbl:output_vars_time}.
 
 \begin{table}[!htbp]
 \centering
@@ -56,7 +56,7 @@ Variable name & Description \\ \midrule
 \end{table}
 
 \section{Blade element loads}
-If \path{Output_ELFlag} = 1, loads on the individual blade elements at each time step are written to the comma delimited file \path{_ElementData.csv}. The output columns of this file are described in \Cref{tbl:output_vars_blade}.
+If \path{BladeElemOutFlag} = 1, loads on the individual blade elements at each time step are written to the comma delimited file \path{_ElementData.csv}. The output columns of this file are described in \Cref{tbl:output_vars_blade}.
 
 \begin{table}[!htbp]
 \centering
@@ -144,7 +144,7 @@ Variable name & Description \\ \midrule
 \end{table}
 
 \section{Field velocities}
-If \path{WakeGridOutFlag = 1}, the induced velocity field on a Cartesian grid is computed and written to a file. This output data is split into multiple files, each file containing the field data at a single timestep.
+If \path{FieldOutFlag = 1}, the induced velocity field on a Cartesian grid is computed and written to a file. This output data is split into multiple files, each file containing the field data at a single timestep.
 
 This can add considerable time to the simulation, since the induced velocity due to every wake node must be calculated at every point in the specified Cartesian grid.
 
@@ -173,7 +173,7 @@ Variable name & Description \\ \midrule
 \end{table}
 
 \section{Vortex filament data}
-If \path{WakeElementOutFlag} = 1, information about each vortex filament is written to a file. This output data is split into multiple files, each file containing the filament data at a single timestep. Output data is defined at the endpoints of the vortex filaments.
+If \path{WakeElemOutFlag} = 1, information about each vortex filament is written to a file. This output data is split into multiple files, each file containing the filament data at a single timestep. Output data is defined at the endpoints of the vortex filaments.
 
 The output filenames have the format \path{[run name]_WakeData_[timestep number].csv}.
 

@@ -65,6 +65,7 @@ program CACTUS
     use configr
     use pidef
     use vortex
+    use fielddata
     use wakedata
     use time
     use wallsoln
@@ -174,8 +175,8 @@ program CACTUS
     DSOutputFN  = adjustl(trim(OutputPath))//path_separator//trim(FNBase)//'_DSData.csv'
 
     ! set pathnames for files with dynamically-named output files
-    WakeGridOutputPath    = adjustl(trim(OutputPath))//path_separator//'field'
-    WakeElementOutputPath = adjustl(trim(OutputPath))//path_separator//'element'
+    FieldOutputPath    = adjustl(trim(OutputPath))//path_separator//'field'
+    WakeElemOutputPath = adjustl(trim(OutputPath))//path_separator//'element'
     WallOutputPath        = adjustl(trim(OutputPath))//path_separator//'wall'
     ProbeOutputPath       = adjustl(trim(OutputPath))//path_separator//'probe'
 
@@ -184,13 +185,13 @@ program CACTUS
     call system('mkdir '//adjustl(trim(OutputPath)))
 
     ! Field data
-    if (WakeGridOutFlag > 0) then
-        call system('mkdir '//WakeGridOutputPath)
+    if (FieldOutFlag > 0) then
+        call system('mkdir '//FieldOutputPath)
     end if
 
     ! Wake element data
-    if (WakeElementOutFlag > 0) then
-        call system('mkdir '//adjustl(trim(WakeElementOutputPath)))
+    if (WakeElemOutFlag > 0) then
+        call system('mkdir '//adjustl(trim(WakeElemOutputPath)))
     end if
 
     ! Wall data
@@ -209,9 +210,9 @@ program CACTUS
     OPEN(10, FILE=TSOutputFN)
 
     ! Write headers on standard output files
-    Call csvwrite(8,Output_SFHead,Output_SFData,1,0)
-    Call csvwrite(9,Output_RevHead,Output_RevData,1,0)
-    Call csvwrite(10,Output_TSHead,Output_TSData,1,0)
+    Call csvwrite(8,ParamsOutHead,ParamsOutData,1,0)
+    Call csvwrite(9,RevOutHead,RevOutData,1,0)
+    Call csvwrite(10,TSOutHead,TSOutData,1,0)
 
     ! Simple output for regression testing
     if (RegTFlag == 1) then
@@ -220,9 +221,9 @@ program CACTUS
     end if
 
     ! Optional element load output
-    if (Output_ELFlag == 1) then
+    if (BladeElemOutFlag == 1) then
         OPEN(11, FILE=ELOutputFN)
-        Call csvwrite(11,Output_ELHead,Output_ELData,1,0)
+        Call csvwrite(11,BladeElemOutHead,BladeElemOutData,1,0)
     end if
 
     ! Optional free surface output
@@ -234,12 +235,12 @@ program CACTUS
     end if
 
     ! Optional dynamic stall diagnostic output
-    if (Output_DSFlag == 1) then
+    if (DynStallOutFlag == 1) then
         OPEN(16, FILE=DSOutputFN)
-        if (Output_DSType == 1) then
-            Call csvwrite(16,Output_BVHead,Output_BVData,1,0)
-        else if (Output_DSType == 2) then
-            Call csvwrite(16,Output_LBHead,Output_LBData,1,0)
+        if (DynStallOutType == 1) then
+            Call csvwrite(16,DynStallOutBVHead,DynStallOutBVData,1,0)
+        else if (DynStallOutType == 2) then
+            Call csvwrite(16,DynStallOutLBHead,DynStallOutLBData,1,0)
         end if
     end if
 
@@ -324,18 +325,18 @@ program CACTUS
     powerc=rho/2.0*areat*romega**3*0.7457/550.      ! normalization for power coeff using tip speed (kp), with conversion from lb-ft/s to kW. (Used to write output)
 
     ! Write flow properties output
-    Output_SFData(1,1)=Rmax         ! length scale
-    Output_SFData(1,2)=areat        ! frontal area
-    Output_SFData(1,3)=rpm          ! turbine RPM
-    Output_SFData(1,4)=Uinf         ! freestream U
-    Output_SFData(1,5)=rho          ! density
-    Output_SFData(1,6)=tempr        ! temperature
-    Output_SFData(1,7)=vis          ! viscosity
-    Output_SFData(1,8)=dynpress     ! dynamic pressure
-    Output_SFData(1,9)=ut           ! tip speed ratio
-    Output_SFData(1,10)=rem         ! machine Reynolds number based on U and Rmax
-    Output_SFData(1,11)=FnR         ! Froude number based on radius
-    Call csvwrite(8,Output_SFHead,Output_SFData,0,1)
+    ParamsOutData(1,1)=Rmax         ! length scale
+    ParamsOutData(1,2)=areat        ! frontal area
+    ParamsOutData(1,3)=rpm          ! turbine RPM
+    ParamsOutData(1,4)=Uinf         ! freestream U
+    ParamsOutData(1,5)=rho          ! density
+    ParamsOutData(1,6)=tempr        ! temperature
+    ParamsOutData(1,7)=vis          ! viscosity
+    ParamsOutData(1,8)=dynpress     ! dynamic pressure
+    ParamsOutData(1,9)=ut           ! tip speed ratio
+    ParamsOutData(1,10)=rem         ! machine Reynolds number based on U and Rmax
+    ParamsOutData(1,11)=FnR         ! Froude number based on radius
+    Call csvwrite(8,ParamsOutHead,ParamsOutData,0,1)
 
     ! close parameter file for writing
     CLOSE(8)
@@ -450,31 +451,31 @@ program CACTUS
             if (DiagOutFlag == 1) then
                 ! Use machine level time step output (norm. time, revolution, torque coeff., power coeff.)
                 write(6,'(A)') 'Norm. Time, Theta (rad), Revolution, Torque Coeff., Power Coeff.'
-                write(6,'(2E13.5,F8.0,2E13.5)') Output_TSData(1,1),Output_TSData(1,2),Output_TSData(1,3),Output_TSData(1,4),Output_TSData(1,5)
+                write(6,'(2E13.5,F8.0,2E13.5)') TSOutData(1,1),TSOutData(1,2),TSOutData(1,3),TSOutData(1,4),TSOutData(1,5)
             end if
 
             ! Write current wake data
-            if (WakeElementOutFlag > 0) then
+            if (WakeElemOutFlag > 0) then
                 ! Write wake element data
-                if ((NT >= WakeElementOutStartTimestep) .AND. (NT < WakeElementOutEndTimestep .OR. WakeElementOutEndTimestep == -1)) then
-                    if (MOD(NT-1, WakeElementOutIntervalTimesteps) == 0) then
-                        Call WriteWakeElementData()
+                if ((NT >= WakeElemOutStartTimestep) .AND. (NT < WakeElemOutEndTimestep .OR. WakeElemOutEndTimestep == -1)) then
+                    if (MOD(NT-1, WakeElemOutIntervalTimesteps) == 0) then
+                        Call WriteWakeElemData()
                     end if
                 end if
             end if
 
-            if (WakeGridOutFlag > 0) then
-                ! Write wake grid data
-                if ((NT >= WakeGridOutStartTimestep) .AND. (NT < WakeGridOutEndTimestep .OR. WakeGridOutEndTimestep == -1)) then
-                    if (MOD(NT-1, WakeGridOutIntervalTimesteps) == 0) then
-                        Call WriteWakeGridData()
+            if (FieldOutFlag > 0) then
+                ! Write field data
+                if ((NT >= FieldOutStartTimestep) .AND. (NT < FieldOutEndTimestep .OR. FieldOutEndTimestep == -1)) then
+                    if (MOD(NT-1, FieldOutIntervalTimesteps) == 0) then
+                        Call WriteFieldData()
                     end if
                 end if
             end if
 
             ! Write wall system/ground plane data
             if (WallOutFlag > 0) then
-                ! Write wake grid data
+                ! Write wall data
                 if ((NT >= WallOutStartTimestep) .AND. (NT < WallOutEndTimestep .OR. WallOutEndTimestep == -1)) then
                     if (MOD(NT-1, WallOutIntervalTimesteps) == 0) then
                         Call WriteWallData()
@@ -484,7 +485,7 @@ program CACTUS
 
             ! Write probe data
             if (ProbeFlag > 0) then
-                ! Write wake grid data
+                ! Write probe data
                 if ((NT >= ProbeOutStartTimestep) .AND. (NT < ProbeOutEndTimestep .OR. ProbeOutEndTimestep == -1)) then
                     if (MOD(NT-1, ProbeOutIntervalTimesteps) == 0) then
                         call write_probes(ProbeOutputPath) ! in probesystem module
