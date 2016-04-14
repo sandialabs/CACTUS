@@ -175,7 +175,7 @@ Variable name & Description \\ \midrule
 \section{Vortex filament data}
 If \path{WakeElemOutFlag} = 1, information about each vortex filament is written to a file. This output data is split into multiple files, each file containing the filament data at a single timestep. Output data is defined at the endpoints of the vortex filaments.
 
-The output filenames have the format \path{[run name]_WakeData_[timestep number].csv}.
+The output filenames have the format \path{[run name]_WakeData_[timestep number].csv}. The columns are described in \Cref{tbl:output_vortex_filaments}.
 
 \begin{table}
 \centering
@@ -193,6 +193,46 @@ Variable name & Description \\ \midrule
 \path{U/Uinf (-)}          & $x$-component of induced velocity              \\
 \path{V/Uinf (-)}          & $y$-component of induced velocity              \\
 \path{W/Uinf (-)}          & $z$-component of induced velocity              \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Probe Output}
+If \path{ProbeFlag} = 1, the velocities at the probes specified in the file at \path{ProbeSpecPath} will be computed and written to a file. Each probe output file has the format \path{probe_[probe number].csv}.
+
+The columns are described in \Cref{tbl:output_probe_file}.
+
+Each probe file has a header, described in \Cref{tbl:output_probe_file_header}, containing the location of the probe. This header is followed by the probe time series data, which is described in \Cref{tbl:output_probe_file}.
+
+\begin{table}
+\centering
+\caption{Probe output data header.}
+\label{tbl:output_probe_file_header}
+\begin{tabular}{p{0.3\textwidth}p{0.6\textwidth}}
+\toprule
+Variable name & Description \\ \midrule
+\path{x/R (-)}             & $x$-coordinate of the data point normalized by $R$ \\
+\path{y/R (-)}             & $y$-coordinate of the data point normalized by $R$ \\
+\path{z/R (-)}             & $z$-coordinate of the data point normalized by $R$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}
+\centering
+\caption{Probe output data.}
+\label{tbl:output_probe_file}
+\begin{tabular}{p{0.3\textwidth}p{0.6\textwidth}}
+\toprule
+Variable name & Description \\ \midrule
+\path{Normalized Time (-)} & Normalized simulation time, $t_N=t U_\infty/R$ \\
+\path{U/Uinf (-)}          & $x$-component of induced velocity              \\
+\path{V/Uinf (-)}          & $y$-component of induced velocity              \\
+\path{W/Uinf (-)}          & $z$-component of induced velocity              \\
+\path{Ufs/Uinf (-)}        & $x$-component of free-stream velocity              \\
+\path{Vfs/Uinf (-)}        & $y$-component of free-stream velocity              \\
+\path{Wfs/Uinf (-)}        & $z$-component of free-stream velocity              \\
+
 \bottomrule
 \end{tabular}
 \end{table}

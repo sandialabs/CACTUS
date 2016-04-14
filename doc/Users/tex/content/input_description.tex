@@ -129,6 +129,11 @@ Variable name & Description \\ \midrule
 \path{WallOutIntervalTimesteps}        & Number of timesteps in between wall outputs. 1 by default. \\
 \path{WallOutStartTimestep}            & Start timestep for wall output. 1 for first timestep (default). \\
 \path{WallOutEndTimestep}              & End timestep for wall output, -1 to output until last timestep (default) \\
+\path{ProbeFlag} & 1 to output velocity at probe locations, 0 for no probe output (default). \\
+\path{ProbeOutIntervalTimesteps} & Number of timesteps in between probe outputs. 5 by default. \\
+\path{ProbeOutStartTimestep} & Start timestep for probe output. 1 for first timestep (default). \\
+\path{ProbeOutEndTimestep} & End timestep for probe output, -1 to output until last timestep (default) \\
+\path{ProbeSpecPath} & (string in single quotes) Path to probe spec file. Only read if \path{ProbeFlag} = 1. \\
 \bottomrule
 \end{longtable}
 
@@ -481,7 +486,7 @@ If \path{WPFlag} = 1, CACTUS will include the influence of a specified wall geom
 
 The wall mesh file is a multi-block, formatted (ASCII), Plot3d structured mesh. More details on the Plot3d file format can be found at \path{http://www.grc.nasa.gov/WWW/wind/valid/plot3d.html}. Each block contains one structured mesh, and thus complex wall geometries can be specified with a single mesh file. The normals of each cell defined by the node locations must face inward toward the domain in which the wake elements lie. The format of this file is demonstrated in \Cref{listing:plot3d_file_example}. For inspection, this file format may easily be read in by ParaView.
 
-\begin{lstlisting}[label=listing:plot3d_file_example,caption=Example file format for a multi-block Plot3d mesh file.]
+\begin{lstlisting}[label=listing:plot3d_file_example,caption=Format for a multi-block Plot3d mesh file.]
 [nblocks]
 [nx] [ny] [nz]
 [x_1]
@@ -496,5 +501,17 @@ The wall mesh file is a multi-block, formatted (ASCII), Plot3d structured mesh. 
 [z_2]
 ...
 [z_nz]
+EOF
+\end{lstlisting}
+
+\section{Probe specification file}
+If \path{ProbeFlag} = 1, CACTUS will compute and write to file the velocities at a number of specified "probe" locations. The probe locations are specified in a file whose path is given with the \path{ProbeSpecPath} namelist variable. The probe specification file contains the number of probes and the coordinates of each probe; an example of this file is shown in \Cref{listing:probespec_file_example}.
+
+\begin{lstlisting}[label=listing:probespec_file_example,caption=Format for the probe specification file.]
+[nprobes]
+[x_1] [y_1] [z_1]
+[x_2] [y_2] [z_2]
+...
+[x_nprobes] [y_nprobes] [z_nprobes]
 EOF
 \end{lstlisting}
