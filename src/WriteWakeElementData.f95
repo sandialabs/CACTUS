@@ -17,7 +17,7 @@ subroutine WriteWakeElemData()
 
     ! Optional wake element data output
     write(nt_str,'(I5.5)') nt
-    WakeOutputFN=adjustl(trim(WakeElemOutputPath))//path_separator//trim(FNBase)//'_WakeData_'//trim(nt_str)//'.csv'
+    WakeOutputFN=adjustl(trim(WakeElemOutputPath))//path_separator//trim(FNBase)//'_WakeElemData_'//trim(nt_str)//'.csv'
     OPEN(12, FILE=WakeOutputFN)
     write(12,'(A)') trim(WakeOutHead)
 

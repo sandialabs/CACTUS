@@ -3,7 +3,7 @@
 By default, CACTUS will output rotor-integrated loads to a text file. CACTUS is capable of saving much more information, such as blade-integrated loads, blade element loads, wall panel data, field velocities, and the complete state of vortex filaments describing the wake. These outputs can be enabled through the appropriate input file flags, described in \Cref{tbl:configoutputs}. This section describes the format of the various output files.
 
 \section{Revolution-averaged rotor-integrated loads}
-CACTUS writes revolution-averaged rotor-integrated loads for each revolution to the comma delimited file \path{_RevData.csv}. The output columns of this file are described in \Cref{tbl:output_vars_rev}.
+CACTUS writes revolution-averaged rotor-integrated loads for each revolution to the comma delimited file \path{[run name]_RevData.csv}. The output columns of this file are described in \Cref{tbl:output_vars_rev}.
 
 \begin{table}[!htbp]
 \centering
@@ -93,8 +93,10 @@ Variable name & Description \\ \midrule
 
 \section{Ground plane, wall, and free surface output}
 
-\subsection{Ground plane data}
-If either a ground plane calculation or wall calculation is being performed (\path{GPFlag} = 1 or \path{WPFlag} = 1), information about the wall may optionally be written to file. The verbosity of this output file is specified with the \path{WallOutFlag} namelist variable. If \path{WallOutFlag} = 1, the source panel strength is written to file. If \path{WallOutFlag} = 2, the induced velocities at each panel center are also computed and written to file.
+\subsection{Ground plane and wall data}
+If either a ground plane calculation or wall calculation is being performed (\path{GPFlag} = 1 or \path{WPFlag} = 1), information about the wall may optionally be written to file (\path{[run name]_WPData_[timestep number].tp}). The files use a TecPlot file format (finite-element structured mesh, cell-centered field data). The output fields are described in \Cref{tbl:output_wall,tbl:output_free_surface}. These files may be easily read in to ParaView for post-processing.
+
+The verbosity of this output file is specified with the \path{WallOutFlag} namelist variable. If \path{WallOutFlag} = 1, the source panel strength is written to file. If \path{WallOutFlag} = 2, the induced velocities at each panel center are also computed and written to file.
 
 The interval of ground plane/wall data output may be controlled via the variables described in \Cref{tbl:configoutputs}.
 \begin{itemize}
@@ -102,8 +104,6 @@ The interval of ground plane/wall data output may be controlled via the variable
 \item \path{WallOutStartTimestep}, and
 \item \path{WallOutEndTimestep}
 \end{itemize}
-
-The ground plane/wall data output filenames have the format \path{[run name]_WPData_[timestep number].tp}. The files themselves use a TecPlot file format (finite-element structured mesh, cell-centered field data). The output fields are described in \Cref{tbl:output_wall,tbl:output_free_surface}. These files may be easily read in to ParaView for post-processing.
 
 \begin{table}[!htbp]
 \centering
@@ -125,7 +125,7 @@ Variable name & Description \\ \midrule
 
 
 \subsection{Free surface data}
-If a free surface calculation is being performed (\path{FSFlag} = 1), information about the free surface is automatically written to file. A single comma delimited file is written which contains the information described in \Cref{tbl:output_free_surface} \emph{averaged over the final revolution}.
+If a free surface calculation is being performed (\path{FSFlag} = 1), information about the free surface is automatically written to file. A single comma delimited file (\path{[run name]_FSData.csv}) is written which contains the information described in \Cref{tbl:output_free_surface} \emph{averaged over the final revolution}.
 
 \begin{table}[!htbp]
 \centering
@@ -144,12 +144,10 @@ Variable name & Description \\ \midrule
 \end{table}
 
 \section{Field velocities}
-If \path{FieldOutFlag = 1}, the induced velocity field on a Cartesian grid is computed and written to a file. This output data is split into multiple files, each file containing the field data at a single timestep.
+If \path{FieldOutFlag = 1}, the induced velocity field on a Cartesian grid is computed and written to file (\path{[run name]_FieldData_[timestep number].csv}).
+Each file contains the field data at a single timestep. The columns are described in \Cref{tbl:output_cartesian_velocity}.
 
-This can add considerable time to the simulation, since the induced velocity due to every wake node must be calculated at every point in the specified Cartesian grid.
-
-The output filenames have the format \path{[run name]_WallData_[timestep number].csv}.
-
+Enabling this output can add considerable time to the simulation, since the induced velocity due to every wake node must be calculated at every point in the specified Cartesian grid.
 
 \begin{table}[!htbp]
 \centering
@@ -172,10 +170,8 @@ Variable name & Description \\ \midrule
 \end{tabular}
 \end{table}
 
-\section{Vortex filament data}
-If \path{WakeElemOutFlag} = 1, information about each vortex filament is written to a file. This output data is split into multiple files, each file containing the filament data at a single timestep. Output data is defined at the endpoints of the vortex filaments.
-
-The output filenames have the format \path{[run name]_WakeData_[timestep number].csv}. The columns are described in \Cref{tbl:output_vortex_filaments}.
+\section{Wake element (vortex filament) data}
+If \path{WakeElemOutFlag} = 1, information about the vortex filament comprising the wake is written to file (\path{[run name]_WakeData_[timestep number].csv}). Each file contains the wake element data at a single timestep. Output data is defined at the endpoints of the vortex filaments. The columns are described in \Cref{tbl:output_vortex_filaments}.
 
 \begin{table}
 \centering
@@ -198,11 +194,7 @@ Variable name & Description \\ \midrule
 \end{table}
 
 \section{Probe Output}
-If \path{ProbeFlag} = 1, the velocities at the probes specified in the file at \path{ProbeSpecPath} will be computed and written to a file. Each probe output file has the format \path{probe_[probe number].csv}.
-
-The columns are described in \Cref{tbl:output_probe_file}.
-
-Each probe file has a header, described in \Cref{tbl:output_probe_file_header}, containing the location of the probe. This header is followed by the probe time series data, which is described in \Cref{tbl:output_probe_file}.
+If \path{ProbeFlag} = 1, the velocities at the probes specified in the file at \path{ProbeSpecPath} will be computed and written to file(\path{probe_[probe number].csv}). Each file contains the time-series velocity data at an individual probe location. Each probe file has a header, described in \Cref{tbl:output_probe_file_header}, containing the location of the probe. This header is followed by the probe time series data, whose columns are described in \Cref{tbl:output_probe_file}.
 
 \begin{table}
 \centering
