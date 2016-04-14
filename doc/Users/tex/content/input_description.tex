@@ -116,8 +116,15 @@ Variable name & Description \\ \midrule
 \path{FieldOutIntervalTimesteps}    & Number of timesteps in between field outputs. 5 by default. \\
 \path{FieldOutStartTimestep}        & Start timestep for field output. 1 for first timestep (default). \\
 \path{FieldOutEndTimestep}          & End timestep for field output, -1 to output until last timestep (default) \\
-\path{nxgrid, nygrid, nzgrid}          & Number of grid elements in each (x,y,z-) direction. (1, 100, 100) by default. \\
-\path{xgridL, xgridU, ygridL, ygridU, zgridL, zgridU}                 & Extents of Cartesian grid to calculate induced velocity on. Defaults are: (-0.0, 0.0), (-2.0, 2.0), (-2.0, 2.0) \\
+\path{nxgrid},
+\path{nygrid},
+\path{nzgrid}          & Number of grid elements in each (x,y,z-) direction. (1, 100, 100) by default. \\
+\path{xgridL},
+\path{xgridU},
+\path{ygridL},
+\path{ygridU},
+\path{zgridL},
+\path{zgridU}                 & Extents of Cartesian grid to calculate induced velocity on. Defaults are: (-0.0, 0.0), (-2.0, 2.0), (-2.0, 2.0) \\
 \path{WallOutFlag}                     & 1 to output ground plane/wall panel strengths, 2 to also output velocities at panel centers. 0 for no output (default). \\
 \path{WallOutIntervalTimesteps}        & Number of timesteps in between wall outputs. 1 by default. \\
 \path{WallOutStartTimestep}            & Start timestep for wall output. 1 for first timestep (default). \\
