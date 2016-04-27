@@ -27,18 +27,18 @@ Variable name & Description \\ \midrule
 Variable name & Description \\ \midrule
 \path{nr}                   & Number of revolutions to perform (default 10) \\ 
 \path{nti}                  & Number of time steps per revolution (default 20) \\ 
-\path{convrg}               & Convergence level for the revolution average power coefficient. Iteration will finish before nr revs if this level is hit. Input -1 to skip convergence check (default). \\ 
+\path{convrg}               & Convergence level for the revolution average power coefficient. Iteration will finish before \path{nr} revs if this level is hit. Input -1 to skip convergence check (default). \\ 
 \path{iut}                  & Number of iterations between wake convection velocity updates. If set to zero, the interval will be calculated automatically. If negative, wake convection velocities will be left at the values calculated at the time the wake element is created (no wake convection velocity updates). \\ 
 \path{iWall}                & Number of iterations between wall model updates (if wall calculation is active). \\ 
-\path{TSFilFlag}            & Flag to enable timestep filtering. Set to 1 to enable filtering of the blade bound vorticity smooth over ntsf timesteps (often needed for stability when blade chord to radius ratio is high). Set to 0 for no filtering (default). \\ 
+\path{TSFilFlag}            & Flag to enable timestep filtering. Set to 1 to enable filtering of the blade bound vorticity smooth over \path{ntsf} timesteps (often needed for stability when blade chord to radius ratio is high). Set to 0 for no filtering (default). \\ 
 \path{ntsf}                 & Number of timesteps over which the blade bound vorticity is filtered smooth when \path{TSFilFlag} = 1 (default 3). \\ 
 \path{ivtxcor}              & Flag to specify the finite vortex core model to use. Input 1 for constant vorticity in the core (default). Input 2 to use linear radial vorticity distribution in core. Input 0 to turn off core model. \\ 
 \path{vcrfb}                & Factor on nominal bound vortex core radius used if \path{ivtxcor = 1} (default 1). Nominal bound vortex core radius is specified by the maximum blade chord value input in the turbine geometry specification. \\ 
 \path{vcrft}                & Factor on nominal trailing wake vortex core radius used if \path{ivtxcor = 1} (default 1). Nominal trailing wake vortex core radius is specified by the maximum blade element span value input in the turbine geometry specification. \\ 
 \path{vcrfs}                & Factor on nominal spanwise wake vortex core radius used if \path{ivtxcor = 1} (default 1). Nominal spanwise wake vortex core radius is calculated from a reference distance between spanwise wake lines given the temporal discretization level used. \\ 
 \path{vcutoffrad}           & Cutoff radius used for vortex induced velocity calculation (default \num{1.0e-7}). \\ 
-\path{Incompr}              & 1 to ignore any compressibility effects in models, 0 to include compressibility effects (default). \\ 
-\path{ifc}                  & 1 to use final convergence step, 0 to not (default). If selected, the temporal discretization level is refined once/if initial convergence is reached before nr revolutions have been performed. \\ 
+\path{Incompr}              & 1 to ignore any compressibility effects in dynamic stall models, 0 to include compressibility effects (default). \\
+\path{ifc}                  & 1 to use final convergence step, 0 to not (default). If selected, the temporal discretization level is refined once/if initial convergence is reached before \path{nr} revolutions have been performed. \\ 
 \path{nric}                 & Revolution number after which to switch to final convergence, if initial convergence level has not yet been achieved. Input -1 to skip this check (default). \\ 
 \path{ntif}                 & Final number of time steps per revolution. This value will replace \path{nti} during final convergence. Input -1 to leave \path{ntif = nti} (default). \\ 
 \path{convrgf}              & Final convergence level. This level will replace \path{convrg} during final convergence. Input -1 to skip final convergence check (default). \\ 
