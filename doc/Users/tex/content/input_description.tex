@@ -85,8 +85,8 @@ Variable name & Description \\ \midrule
 Variable name & Description \\ \midrule
 \path{GeomFilePath} & (string in single quotes) Path to turbine geometry input file. \\
 \path{nSect}        & Number of airfoil section data tables to use (default 1). \\
-\path{AFDPath}      & (string in single quotes) Array (comma separated) of section data file path strings (size=nsect). \\
-\path{AFDPath}      & (string in single quotes) Array (comma separated) of section data file path strings (size=nsect). \\
+\path{AFDPath}      & (string in single quotes) Array (comma separated) of section data file path strings with length \path{nSect}). \\
+\path{AFDPath}      & (string in single quotes) Array (comma separated) of section data file path strings with length \path{nSect}). \\
 \path{WallMeshPath} & (string in single quotes) Path to wall mesh file in Plot3D format. Only read if \path{WallFlag} = 1. \\
 \bottomrule
 \\
@@ -94,7 +94,7 @@ Variable name & Description \\ \midrule
 Variable name & Description \\ \midrule
 \path{Jbtitle}     & (string in single quotes) Job title. \\
 \path{CDPar}       & Additional parasitic interference drag coefficient based on ``chord area'' (chord squared) to be applied to the blade/strut interference drag calculation (default 0). \\
-\path{CTExcrM}     & Additional machine level excrescence torque coefficient, specified by $C_{T,\textrm{ExcrM}} = T_\textrm{ExcrM}/\frac{1}{rho} U_\textrm{tip}^2 R^3$ (default 0). \\
+\path{CTExcrM}     & Additional machine level excrescence torque coefficient, specified by $C_{T,\textrm{ExcrM}} = T_\textrm{ExcrM}/\frac{1}{2}\rho U_\textrm{tip}^2 R^3$ (default 0). \\
 
 \bottomrule
 \end{longtable}
