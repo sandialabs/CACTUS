@@ -150,7 +150,7 @@ program CACTUS
     ! Namelist input file
     OPEN(4, FILE=InputFN)
 
-    ! Read inputs 
+    ! Read inputs
     ErrFlag = 0
     CALL input(ErrFlag)
     if (ErrFlag == 1) then
@@ -511,7 +511,7 @@ program CACTUS
 
             ! Update states for the LB dynamic stall model, if used
             if (DSFlag == 2) then
-                Call LB_UpdateStates(nb,nbe)
+                Call LB_UpdateStates(nb,nbe,LBDynStallTp)
             end if
 
             ! Update last AOA values

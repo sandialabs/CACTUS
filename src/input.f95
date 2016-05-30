@@ -52,7 +52,7 @@ subroutine input(ErrFlag)
 
     ! Namelist input file declaration
     NAMELIST/ConfigInputs/RegTFlag,GPFlag,WPFlag,FSFlag,nr,convrg,nti,iut,iWall,ivtxcor,VCRFB,VCRFT,VCRFS,vCutOffRad,ifc,convrgf,nric,ntif,iutf,ixterm,xstop, &
-        Incompr,DSFlag,PRFlag, &
+        Incompr,DSFlag,LBDynStallTp,PRFlag, &
         k1pos,k1neg,GPGridSF,GPGridExtent,FSGridSF,TSFilFlag,ntsf
 
     NAMELIST/CaseInputs/jbtitle,GeomFilePath,RPM,Ut,nSect,AFDPath, &
@@ -101,6 +101,7 @@ subroutine input(ErrFlag)
     Cdpar      = 0.0
     CTExcrM    = 0.0
     DSFlag     = 1
+    LBDynStallTp = 1.7
     PRFlag     = 1
     k1pos      = 1.0
     k1neg      = 0.5
@@ -471,7 +472,3 @@ subroutine input(ErrFlag)
     return
 601 format(' ','***airfoil section specified for blade segment ',i2,' is illegal. set to airfoil section 1***')
 end subroutine input
-
-
-
-
