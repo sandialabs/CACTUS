@@ -3,7 +3,7 @@
 This section describes the namelist, geometry, and airfoil data input files required by CACTUS. CACTUS is run from the command line with the path to the namelist input file passed as the only argument. The geometry input file and the airfoil data table files are referenced in the namelist input file.
 
 \section{CACTUS namelist input}
-This section describes the FORTRAN namelist input file for CACTUS. There are two namelist groups in the input file, \path{\&ConfigInputs} and \path{\&CaseInputs}. The parameters that can be input in each group are given in the tables below. Parameters not specified in the namelist input are left at the indicated default values. The parameters listed in bold font below are the parameters most commonly specified in an input file (with the rest being left at default values). 
+This section describes the FORTRAN namelist input file for CACTUS. There are two namelist groups in the input file, \path{\&ConfigInputs} and \path{\&CaseInputs}. The parameters that can be input in each group are given in the tables below. Parameters not specified in the namelist input are left at the indicated default values. The parameters listed in bold font below are the parameters most commonly specified in an input file (with the rest being left at default values).
 \subsection{Input configuration}
 
 \begin{longtable}{p{0.20\textwidth}p{0.70\textwidth}}
@@ -15,41 +15,42 @@ Variable name & Description \\ \midrule
 \\
 \multicolumn{2}{c} {\emph{Wall calculation}}  \\ \toprule
 Variable name & Description \\ \midrule
-\path{GPFlag}               & Set to 1 to use a ground plane, 0 otherwise (default 0). \\ 
-\path{FSFlag}               & Set to 1 to use a free surface, 0 otherwise (default 0). \\ 
-\path{GPGridSF}             & Factor on default ground plane grid spacing (default 1). \\ 
-\path{FSGridSF}             & Factor on default free surface near-field grid spacing (default 1). \\ 
-\path{GPGridExtent}         & Distance the ground plane will extend from the turbine location. Measured in rotor radii. (default 10.0) \\ 
+\path{GPFlag}               & Set to 1 to use a ground plane, 0 otherwise (default 0). \\
+\path{FSFlag}               & Set to 1 to use a free surface, 0 otherwise (default 0). \\
+\path{GPGridSF}             & Factor on default ground plane grid spacing (default 1). \\
+\path{FSGridSF}             & Factor on default free surface near-field grid spacing (default 1). \\
+\path{GPGridExtent}         & Distance the ground plane will extend from the turbine location. Measured in rotor radii. (default 10.0) \\
 \path{WPFlag}               & Set to 1 to use a wall geometry read in from file, 0 otherwise (default 0). \\
 \bottomrule
 \\
 \multicolumn{2}{c} {\emph{Calculation inputs}}  \\ \toprule
 Variable name & Description \\ \midrule
-\path{nr}                   & Number of revolutions to perform (default 10) \\ 
-\path{nti}                  & Number of time steps per revolution (default 20) \\ 
-\path{convrg}               & Convergence level for the revolution average power coefficient. Iteration will finish before \path{nr} revs if this level is hit. Input -1 to skip convergence check (default). \\ 
-\path{iut}                  & Number of iterations between wake convection velocity updates. If set to zero, the interval will be calculated automatically. If negative, wake convection velocities will be left at the values calculated at the time the wake element is created (no wake convection velocity updates). \\ 
-\path{iWall}                & Number of iterations between wall model updates (if wall calculation is active). \\ 
-\path{TSFilFlag}            & Flag to enable timestep filtering. Set to 1 to enable filtering of the blade bound vorticity smooth over \path{ntsf} timesteps (often needed for stability when blade chord to radius ratio is high). Set to 0 for no filtering (default). \\ 
-\path{ntsf}                 & Number of timesteps over which the blade bound vorticity is filtered smooth when \path{TSFilFlag} = 1 (default 3). \\ 
-\path{ivtxcor}              & Flag to specify the finite vortex core model to use. Input 1 for constant vorticity in the core (default). Input 2 to use linear radial vorticity distribution in core. Input 0 to turn off core model. \\ 
-\path{vcrfb}                & Factor on nominal bound vortex core radius used if \path{ivtxcor = 1} (default 1). Nominal bound vortex core radius is specified by the maximum blade chord value input in the turbine geometry specification. \\ 
-\path{vcrft}                & Factor on nominal trailing wake vortex core radius used if \path{ivtxcor = 1} (default 1). Nominal trailing wake vortex core radius is specified by the maximum blade element span value input in the turbine geometry specification. \\ 
-\path{vcrfs}                & Factor on nominal spanwise wake vortex core radius used if \path{ivtxcor = 1} (default 1). Nominal spanwise wake vortex core radius is calculated from a reference distance between spanwise wake lines given the temporal discretization level used. \\ 
-\path{vcutoffrad}           & Cutoff radius used for vortex induced velocity calculation (default \num{1.0e-7}). \\ 
+\path{nr}                   & Number of revolutions to perform (default 10) \\
+\path{nti}                  & Number of time steps per revolution (default 20) \\
+\path{convrg}               & Convergence level for the revolution average power coefficient. Iteration will finish before \path{nr} revs if this level is hit. Input -1 to skip convergence check (default). \\
+\path{iut}                  & Number of iterations between wake convection velocity updates. If set to zero, the interval will be calculated automatically. If negative, wake convection velocities will be left at the values calculated at the time the wake element is created (no wake convection velocity updates). \\
+\path{iWall}                & Number of iterations between wall model updates (if wall calculation is active). \\
+\path{TSFilFlag}            & Flag to enable timestep filtering. Set to 1 to enable filtering of the blade bound vorticity smooth over \path{ntsf} timesteps (often needed for stability when blade chord to radius ratio is high). Set to 0 for no filtering (default). \\
+\path{ntsf}                 & Number of timesteps over which the blade bound vorticity is filtered smooth when \path{TSFilFlag} = 1 (default 3). \\
+\path{ivtxcor}              & Flag to specify the finite vortex core model to use. Input 1 for constant vorticity in the core (default). Input 2 to use linear radial vorticity distribution in core. Input 0 to turn off core model. \\
+\path{vcrfb}                & Factor on nominal bound vortex core radius used if \path{ivtxcor = 1} (default 1). Nominal bound vortex core radius is specified by the maximum blade chord value input in the turbine geometry specification. \\
+\path{vcrft}                & Factor on nominal trailing wake vortex core radius used if \path{ivtxcor = 1} (default 1). Nominal trailing wake vortex core radius is specified by the maximum blade element span value input in the turbine geometry specification. \\
+\path{vcrfs}                & Factor on nominal spanwise wake vortex core radius used if \path{ivtxcor = 1} (default 1). Nominal spanwise wake vortex core radius is calculated from a reference distance between spanwise wake lines given the temporal discretization level used. \\
+\path{vcutoffrad}           & Cutoff radius used for vortex induced velocity calculation (default \num{1.0e-7}). \\
 \path{Incompr}              & 1 to ignore any compressibility effects in dynamic stall models, 0 to include compressibility effects (default). \\
-\path{ifc}                  & 1 to use final convergence step, 0 to not (default). If selected, the temporal discretization level is refined once/if initial convergence is reached before \path{nr} revolutions have been performed. \\ 
-\path{nric}                 & Revolution number after which to switch to final convergence, if initial convergence level has not yet been achieved. Input -1 to skip this check (default). \\ 
-\path{ntif}                 & Final number of time steps per revolution. This value will replace \path{nti} during final convergence. Input -1 to leave \path{ntif = nti} (default). \\ 
-\path{convrgf}              & Final convergence level. This level will replace \path{convrg} during final convergence. Input -1 to skip final convergence check (default). \\ 
-\path{iutf}                 & Final number of iterations between wake updates. This value will replace \path{iut} during final convergence. Default behavior is the same as \path{iut}. \\ 
-\path{ixterm}               & 1 to ignore wake points beyond $x/R =$ \path{xstop}, 0 to use all wake points (default). \\ 
-\path{xstop}                & If \path{ixterm = 1}, defines $x/R$ beyond which wake points are ignored (default 5) \\ 
+\path{ifc}                  & 1 to use final convergence step, 0 to not (default). If selected, the temporal discretization level is refined once/if initial convergence is reached before \path{nr} revolutions have been performed. \\
+\path{nric}                 & Revolution number after which to switch to final convergence, if initial convergence level has not yet been achieved. Input -1 to skip this check (default). \\
+\path{ntif}                 & Final number of time steps per revolution. This value will replace \path{nti} during final convergence. Input -1 to leave \path{ntif = nti} (default). \\
+\path{convrgf}              & Final convergence level. This level will replace \path{convrg} during final convergence. Input -1 to skip final convergence check (default). \\
+\path{iutf}                 & Final number of iterations between wake updates. This value will replace \path{iut} during final convergence. Default behavior is the same as \path{iut}. \\
+\path{ixterm}               & 1 to ignore wake points beyond $x/R =$ \path{xstop}, 0 to use all wake points (default). \\
+\path{xstop}                & If \path{ixterm = 1}, defines $x/R$ beyond which wake points are ignored (default 5) \\
 \bottomrule
 \\
 \multicolumn{2}{c} {\emph{Unsteady aerodynamics}}  \\ \midrule Variable name & Description \\ \midrule
-\path{DSFlag}               & 0 for no dynamic stall, 1 for Modified Boeing-Vertol model (default), 2 for Leishman-Beddoes model. \\ 
-\path{PRFlag}               & 0 for no element pitch rate aerodynamic effects, 1 to include these effects (default). \\ 
+\path{DSFlag}               & 0 for no dynamic stall, 1 for Modified Boeing-Vertol model (default), 2 for Leishman-Beddoes model. \\
+\path{LBDynStallTp}         & $T_p$ time constant for Leishman-Beddoes model (default = 1.7). \\
+\path{PRFlag}               & 0 for no element pitch rate aerodynamic effects, 1 to include these effects (default). \\
 \bottomrule
 \end{longtable}
 
@@ -147,7 +148,7 @@ A file format example is given below. This example can also be found in \path{./
     nti     = 16
     convrg  = .0001
     iut = 0
-    
+
     ifc = 0
     ixterm  = 0
 
@@ -158,27 +159,27 @@ A file format example is given below. This example can also be found in \path{./
 /End
 
 &CaseInputs
-    jbtitle = 'Test VAWT'  
+    jbtitle = 'Test VAWT'
 
-    rho     = .002378  
-    vis     = .3739E-6                                   
-        tempr   = 60.0 
+    rho     = .002378
+    vis     = .3739E-6
+        tempr   = 60.0
     hBLRef  = 56.57
     slex    = 0.0
     hAG     = 15.0
-                                            
+
     RPM     = 52.0
-    Ut  = 5.0   
+    Ut  = 5.0
 
     ! Turbine geometry
     GeomFilePath='../TestGeom/TestVAWT.geom'
 
     ! Airfoil section data
     nSect   = 1
-AFDPath = '../../Airfoil_Section_Data/NACA_0015.dat' 
+AFDPath = '../../Airfoil_Section_Data/NACA_0015.dat'
 /End
 
-&ConfigOutputs 
+&ConfigOutputs
     DiagOutFlag=1
     BladeElemOutFlag=1
     WakeElemOutFlag = 1
@@ -187,14 +188,14 @@ AFDPath = '../../Airfoil_Section_Data/NACA_0015.dat'
     ! Start output at the 100th timestep
     FieldOutStartTimestep = 100
 
-    ! Stop output at the last timestep  
+    ! Stop output at the last timestep
     FieldOutStartTimestep = -1
-    
+
     ! Output wake velocities on every timestep
     FieldOutIntervalTimesteps = 1
 
     ! Output a 12x40x40 grid
-    ! (12 y-z planes at every 1.0 x, from -1.0 to 10.0 
+    ! (12 y-z planes at every 1.0 x, from -1.0 to 10.0
     nxgrid = 12
     nygrid = 40
     nzgrid = 40
@@ -214,7 +215,7 @@ This section describes the CACTUS turbine geometry input file format, and the to
 
 When generating geometry, it should be noted that the nominal freestream flow direction in CACTUS is the $+x$ direction. If a ground plane or free surface calculation is being performed, these surfaces are oriented with their normal vectors in the $+y$ direction.
 
-The CACTUS geometry input file is comprised of a header section and individual sections for each of the blades and struts. Each blade and strut section contains the details of the element decomposition at the initial time in the turbine simulation. In general, the blade and strut geometry is specified by the user at the element end points. The element specific geometry maintained in the geometry input file can be calculated consistent with the element end geometry using the geometry creation tools described in \Cref{sec:geomery_creation_tools}. 
+The CACTUS geometry input file is comprised of a header section and individual sections for each of the blades and struts. Each blade and strut section contains the details of the element decomposition at the initial time in the turbine simulation. In general, the blade and strut geometry is specified by the user at the element end points. The element specific geometry maintained in the geometry input file can be calculated consistent with the element end geometry using the geometry creation tools described in \Cref{sec:geomery_creation_tools}.
 
 The parameters and file format are described below. Note that each parameter occupies one line in the geometry file and array valued parameters are input as component values separated by spaces.
 
@@ -273,7 +274,7 @@ Variable name & Description \\ \midrule
 \path{ECtoR}   & Element chord to turbine reference radius ratio (\path{NElem}  values). \\
 \path{EAreaR}  & Element area divided by turbine reference radius squared (\path{NElem} values). \\
 \path{iSect}   & Index of the foil section data to be applied to each element (\path{NElem} values). This index corresponds to the order in which the foil section data table files are supplied in the namelist input file. \\ \bottomrule
- 
+
 \end{longtable}
 
 \subsection{Strut parameters}
@@ -311,100 +312,100 @@ Variable name & Description \\ \midrule
 An example rotor for a three-bladed two-strut rotor is shown below. This geometry file can be found in \path{./Test/TestGeom/TestVAWT.geom}.
 
 \begin{lstlisting}
-NBlade:   2 
-NStrut:   2 
-RotN:   0.00000e+00   1.00000e+00   0.00000e+00 
-RotP:   0.00000e+00   0.00000e+00   0.00000e+00 
-RefAR:   3.52000e+00 
-RefR:   3.15000e+01 
+NBlade:   2
+NStrut:   2
+RotN:   0.00000e+00   1.00000e+00   0.00000e+00
+RotP:   0.00000e+00   0.00000e+00   0.00000e+00
+RefAR:   3.52000e+00
+RefR:   3.15000e+01
 Type: VAWT
-Blade 1: 
-    NElem:   5 
-    FlipN:   0 
-    QCx:  -1.25936e-02  -1.25936e-02  -1.25936e-02  -1.25936e-02  -1.25936e-02  -1.25936e-02 
-    QCy:   0.00000e+00   5.28000e-01   1.05600e+00   1.58400e+00   2.11200e+00   2.64000e+00 
-    QCz:  -0.00000e+00  -6.40000e-01  -9.60000e-01  -9.60000e-01  -6.40000e-01  -0.00000e+00 
-    tx:   1.00000e+00   1.00000e+00   1.00000e+00   1.00000e+00   1.00000e+00   1.00000e+00 
-    ty:   0.00000e+00   0.00000e+00   0.00000e+00   0.00000e+00   0.00000e+00   0.00000e+00 
-    tz:   0.00000e+00   0.00000e+00   0.00000e+00   0.00000e+00   0.00000e+00   0.00000e+00 
-    CtoR:   7.40800e-02   7.40800e-02   7.40800e-02   7.40800e-02   7.40800e-02   7.40800e-02 
-    PEx:  -1.25936e-02  -1.25936e-02  -1.25936e-02  -1.25936e-02  -1.25936e-02 
-    PEy:   2.64000e-01   7.92000e-01   1.32000e+00   1.84800e+00   2.37600e+00 
-    PEz:  -3.20000e-01  -8.00000e-01  -9.60000e-01  -8.00000e-01  -3.20000e-01 
-    tEx:   1.00000e+00   1.00000e+00   1.00000e+00   1.00000e+00   1.00000e+00 
-    tEy:   0.00000e+00   0.00000e+00   0.00000e+00   0.00000e+00   0.00000e+00 
-    tEz:   0.00000e+00   0.00000e+00   0.00000e+00   0.00000e+00   0.00000e+00 
-    nEx:  -0.00000e+00  -0.00000e+00   0.00000e+00   0.00000e+00   0.00000e+00 
-    nEy:   7.71373e-01   5.18302e-01   0.00000e+00  -5.18302e-01  -7.71373e-01 
-    nEz:   6.36383e-01   8.55198e-01   1.00000e+00   8.55198e-01   6.36383e-01 
-    sEx:  -0.00000e+00  -0.00000e+00  -0.00000e+00  -0.00000e+00  -0.00000e+00 
-    sEy:  -6.36383e-01  -8.55198e-01  -1.00000e+00  -8.55198e-01  -6.36383e-01 
-    sEz:   7.71373e-01   5.18302e-01  -0.00000e+00  -5.18302e-01  -7.71373e-01 
-    ECtoR:   7.40800e-02   7.40800e-02   7.40800e-02   7.40800e-02   7.40800e-02 
-    EAreaR:   6.14634e-02   4.57371e-02   3.91142e-02   4.57371e-02   6.14634e-02 
-    iSect:   1   1   1   1   1 
-Blade 2: 
-    NElem:   5 
-    FlipN:   0 
-    QCx:   1.25936e-02   1.25936e-02   1.25936e-02   1.25936e-02   1.25936e-02   1.25936e-02 
-    QCy:   0.00000e+00   5.28000e-01   1.05600e+00   1.58400e+00   2.11200e+00   2.64000e+00 
-    QCz:   1.54227e-18   6.40000e-01   9.60000e-01   9.60000e-01   6.40000e-01   1.54227e-18 
-    tx:  -1.00000e+00  -1.00000e+00  -1.00000e+00  -1.00000e+00  -1.00000e+00  -1.00000e+00 
-    ty:   0.00000e+00   0.00000e+00   0.00000e+00   0.00000e+00   0.00000e+00   0.00000e+00 
-    tz:  -1.22465e-16  -1.22465e-16  -1.22465e-16  -1.22465e-16  -1.22465e-16  -1.22465e-16 
-    CtoR:   7.40800e-02   7.40800e-02   7.40800e-02   7.40800e-02   7.40800e-02   7.40800e-02 
-    PEx:   1.25936e-02   1.25936e-02   1.25936e-02   1.25936e-02   1.25936e-02 
-    PEy:   2.64000e-01   7.92000e-01   1.32000e+00   1.84800e+00   2.37600e+00 
-    PEz:   3.20000e-01   8.00000e-01   9.60000e-01   8.00000e-01   3.20000e-01 
-    tEx:  -1.00000e+00  -1.00000e+00  -1.00000e+00  -1.00000e+00  -1.00000e+00 
-    tEy:   2.41486e-19  -9.83382e-19   0.00000e+00   9.83382e-19  -2.41486e-19 
-    tEz:  -1.22172e-16  -1.23061e-16  -1.22465e-16  -1.23061e-16  -1.22172e-16 
-    nEx:   7.79344e-17   1.04732e-16   1.22465e-16   1.04732e-16   7.79344e-17 
-    nEy:   7.71373e-01   5.18302e-01   0.00000e+00  -5.18302e-01  -7.71373e-01 
-    nEz:  -6.36383e-01  -8.55198e-01  -1.00000e+00  -8.55198e-01  -6.36383e-01 
-    sEx:   9.40865e-17   6.46235e-17  -0.00000e+00  -6.46235e-17  -9.40865e-17 
-    sEy:  -6.36383e-01  -8.55198e-01  -1.00000e+00  -8.55198e-01  -6.36383e-01 
-    sEz:  -7.71373e-01  -5.18302e-01  -0.00000e+00   5.18302e-01   7.71373e-01 
-    ECtoR:   7.40800e-02   7.40800e-02   7.40800e-02   7.40800e-02   7.40800e-02 
-    EAreaR:   6.14634e-02   4.57371e-02   3.91142e-02   4.57371e-02   6.14634e-02 
-    iSect:   1   1   1   1   1 
-Strut 1: 
-    NElem:   5 
-    TtoC:   1.50000e-01 
-    MCx:   0.00000e+00   0.00000e+00   0.00000e+00   0.00000e+00   0.00000e+00   0.00000e+00 
-    MCy:   1.32000e+00   1.32000e+00   1.32000e+00   1.32000e+00   1.32000e+00   1.32000e+00 
-    MCz:  -0.00000e+00  -1.92000e-01  -3.84000e-01  -5.76000e-01  -7.68000e-01  -9.60000e-01 
-    CtoR:   7.40800e-02   7.40800e-02   7.40800e-02   7.40800e-02   7.40800e-02   7.40800e-02 
-    PEx:   0.00000e+00   0.00000e+00   0.00000e+00   0.00000e+00   0.00000e+00 
-    PEy:   1.32000e+00   1.32000e+00   1.32000e+00   1.32000e+00   1.32000e+00 
-    PEz:  -9.60000e-02  -2.88000e-01  -4.80000e-01  -6.72000e-01  -8.64000e-01 
-    sEx:   0.00000e+00   0.00000e+00   0.00000e+00   0.00000e+00   0.00000e+00 
-    sEy:   0.00000e+00   0.00000e+00   0.00000e+00   0.00000e+00   0.00000e+00 
-    sEz:  -1.00000e+00  -1.00000e+00  -1.00000e+00  -1.00000e+00  -1.00000e+00 
-    ECtoR:   7.40800e-02   7.40800e-02   7.40800e-02   7.40800e-02   7.40800e-02 
-    EAreaR:   1.42234e-02   1.42234e-02   1.42234e-02   1.42234e-02   1.42234e-02 
-    BIndS:   0 
-    EIndS:   0 
-    BIndE:   1 
-    EIndE:   3 
-Strut 2: 
-    NElem:   5 
-    TtoC:   1.50000e-01 
-    MCx:   0.00000e+00  -2.35132e-17  -4.70264e-17  -7.05397e-17  -9.40529e-17  -1.17566e-16 
-    MCy:   1.32000e+00   1.32000e+00   1.32000e+00   1.32000e+00   1.32000e+00   1.32000e+00 
-    MCz:   0.00000e+00   1.92000e-01   3.84000e-01   5.76000e-01   7.68000e-01   9.60000e-01 
-    CtoR:   7.40800e-02   7.40800e-02   7.40800e-02   7.40800e-02   7.40800e-02   7.40800e-02 
-    PEx:  -1.17566e-17  -3.52698e-17  -5.87830e-17  -8.22963e-17  -1.05809e-16 
-    PEy:   1.32000e+00   1.32000e+00   1.32000e+00   1.32000e+00   1.32000e+00 
-    PEz:   9.60000e-02   2.88000e-01   4.80000e-01   6.72000e-01   8.64000e-01 
-    sEx:  -1.22465e-16  -1.22465e-16  -1.22465e-16  -1.22465e-16  -1.22465e-16 
-    sEy:   0.00000e+00   0.00000e+00   0.00000e+00   0.00000e+00   0.00000e+00 
-    sEz:   1.00000e+00   1.00000e+00   1.00000e+00   1.00000e+00   1.00000e+00 
-    ECtoR:   7.40800e-02   7.40800e-02   7.40800e-02   7.40800e-02   7.40800e-02 
-    EAreaR:   1.42234e-02   1.42234e-02   1.42234e-02   1.42234e-02   1.42234e-02 
-    BIndS:   0 
-    EIndS:   0 
-    BIndE:   2 
+Blade 1:
+    NElem:   5
+    FlipN:   0
+    QCx:  -1.25936e-02  -1.25936e-02  -1.25936e-02  -1.25936e-02  -1.25936e-02  -1.25936e-02
+    QCy:   0.00000e+00   5.28000e-01   1.05600e+00   1.58400e+00   2.11200e+00   2.64000e+00
+    QCz:  -0.00000e+00  -6.40000e-01  -9.60000e-01  -9.60000e-01  -6.40000e-01  -0.00000e+00
+    tx:   1.00000e+00   1.00000e+00   1.00000e+00   1.00000e+00   1.00000e+00   1.00000e+00
+    ty:   0.00000e+00   0.00000e+00   0.00000e+00   0.00000e+00   0.00000e+00   0.00000e+00
+    tz:   0.00000e+00   0.00000e+00   0.00000e+00   0.00000e+00   0.00000e+00   0.00000e+00
+    CtoR:   7.40800e-02   7.40800e-02   7.40800e-02   7.40800e-02   7.40800e-02   7.40800e-02
+    PEx:  -1.25936e-02  -1.25936e-02  -1.25936e-02  -1.25936e-02  -1.25936e-02
+    PEy:   2.64000e-01   7.92000e-01   1.32000e+00   1.84800e+00   2.37600e+00
+    PEz:  -3.20000e-01  -8.00000e-01  -9.60000e-01  -8.00000e-01  -3.20000e-01
+    tEx:   1.00000e+00   1.00000e+00   1.00000e+00   1.00000e+00   1.00000e+00
+    tEy:   0.00000e+00   0.00000e+00   0.00000e+00   0.00000e+00   0.00000e+00
+    tEz:   0.00000e+00   0.00000e+00   0.00000e+00   0.00000e+00   0.00000e+00
+    nEx:  -0.00000e+00  -0.00000e+00   0.00000e+00   0.00000e+00   0.00000e+00
+    nEy:   7.71373e-01   5.18302e-01   0.00000e+00  -5.18302e-01  -7.71373e-01
+    nEz:   6.36383e-01   8.55198e-01   1.00000e+00   8.55198e-01   6.36383e-01
+    sEx:  -0.00000e+00  -0.00000e+00  -0.00000e+00  -0.00000e+00  -0.00000e+00
+    sEy:  -6.36383e-01  -8.55198e-01  -1.00000e+00  -8.55198e-01  -6.36383e-01
+    sEz:   7.71373e-01   5.18302e-01  -0.00000e+00  -5.18302e-01  -7.71373e-01
+    ECtoR:   7.40800e-02   7.40800e-02   7.40800e-02   7.40800e-02   7.40800e-02
+    EAreaR:   6.14634e-02   4.57371e-02   3.91142e-02   4.57371e-02   6.14634e-02
+    iSect:   1   1   1   1   1
+Blade 2:
+    NElem:   5
+    FlipN:   0
+    QCx:   1.25936e-02   1.25936e-02   1.25936e-02   1.25936e-02   1.25936e-02   1.25936e-02
+    QCy:   0.00000e+00   5.28000e-01   1.05600e+00   1.58400e+00   2.11200e+00   2.64000e+00
+    QCz:   1.54227e-18   6.40000e-01   9.60000e-01   9.60000e-01   6.40000e-01   1.54227e-18
+    tx:  -1.00000e+00  -1.00000e+00  -1.00000e+00  -1.00000e+00  -1.00000e+00  -1.00000e+00
+    ty:   0.00000e+00   0.00000e+00   0.00000e+00   0.00000e+00   0.00000e+00   0.00000e+00
+    tz:  -1.22465e-16  -1.22465e-16  -1.22465e-16  -1.22465e-16  -1.22465e-16  -1.22465e-16
+    CtoR:   7.40800e-02   7.40800e-02   7.40800e-02   7.40800e-02   7.40800e-02   7.40800e-02
+    PEx:   1.25936e-02   1.25936e-02   1.25936e-02   1.25936e-02   1.25936e-02
+    PEy:   2.64000e-01   7.92000e-01   1.32000e+00   1.84800e+00   2.37600e+00
+    PEz:   3.20000e-01   8.00000e-01   9.60000e-01   8.00000e-01   3.20000e-01
+    tEx:  -1.00000e+00  -1.00000e+00  -1.00000e+00  -1.00000e+00  -1.00000e+00
+    tEy:   2.41486e-19  -9.83382e-19   0.00000e+00   9.83382e-19  -2.41486e-19
+    tEz:  -1.22172e-16  -1.23061e-16  -1.22465e-16  -1.23061e-16  -1.22172e-16
+    nEx:   7.79344e-17   1.04732e-16   1.22465e-16   1.04732e-16   7.79344e-17
+    nEy:   7.71373e-01   5.18302e-01   0.00000e+00  -5.18302e-01  -7.71373e-01
+    nEz:  -6.36383e-01  -8.55198e-01  -1.00000e+00  -8.55198e-01  -6.36383e-01
+    sEx:   9.40865e-17   6.46235e-17  -0.00000e+00  -6.46235e-17  -9.40865e-17
+    sEy:  -6.36383e-01  -8.55198e-01  -1.00000e+00  -8.55198e-01  -6.36383e-01
+    sEz:  -7.71373e-01  -5.18302e-01  -0.00000e+00   5.18302e-01   7.71373e-01
+    ECtoR:   7.40800e-02   7.40800e-02   7.40800e-02   7.40800e-02   7.40800e-02
+    EAreaR:   6.14634e-02   4.57371e-02   3.91142e-02   4.57371e-02   6.14634e-02
+    iSect:   1   1   1   1   1
+Strut 1:
+    NElem:   5
+    TtoC:   1.50000e-01
+    MCx:   0.00000e+00   0.00000e+00   0.00000e+00   0.00000e+00   0.00000e+00   0.00000e+00
+    MCy:   1.32000e+00   1.32000e+00   1.32000e+00   1.32000e+00   1.32000e+00   1.32000e+00
+    MCz:  -0.00000e+00  -1.92000e-01  -3.84000e-01  -5.76000e-01  -7.68000e-01  -9.60000e-01
+    CtoR:   7.40800e-02   7.40800e-02   7.40800e-02   7.40800e-02   7.40800e-02   7.40800e-02
+    PEx:   0.00000e+00   0.00000e+00   0.00000e+00   0.00000e+00   0.00000e+00
+    PEy:   1.32000e+00   1.32000e+00   1.32000e+00   1.32000e+00   1.32000e+00
+    PEz:  -9.60000e-02  -2.88000e-01  -4.80000e-01  -6.72000e-01  -8.64000e-01
+    sEx:   0.00000e+00   0.00000e+00   0.00000e+00   0.00000e+00   0.00000e+00
+    sEy:   0.00000e+00   0.00000e+00   0.00000e+00   0.00000e+00   0.00000e+00
+    sEz:  -1.00000e+00  -1.00000e+00  -1.00000e+00  -1.00000e+00  -1.00000e+00
+    ECtoR:   7.40800e-02   7.40800e-02   7.40800e-02   7.40800e-02   7.40800e-02
+    EAreaR:   1.42234e-02   1.42234e-02   1.42234e-02   1.42234e-02   1.42234e-02
+    BIndS:   0
+    EIndS:   0
+    BIndE:   1
+    EIndE:   3
+Strut 2:
+    NElem:   5
+    TtoC:   1.50000e-01
+    MCx:   0.00000e+00  -2.35132e-17  -4.70264e-17  -7.05397e-17  -9.40529e-17  -1.17566e-16
+    MCy:   1.32000e+00   1.32000e+00   1.32000e+00   1.32000e+00   1.32000e+00   1.32000e+00
+    MCz:   0.00000e+00   1.92000e-01   3.84000e-01   5.76000e-01   7.68000e-01   9.60000e-01
+    CtoR:   7.40800e-02   7.40800e-02   7.40800e-02   7.40800e-02   7.40800e-02   7.40800e-02
+    PEx:  -1.17566e-17  -3.52698e-17  -5.87830e-17  -8.22963e-17  -1.05809e-16
+    PEy:   1.32000e+00   1.32000e+00   1.32000e+00   1.32000e+00   1.32000e+00
+    PEz:   9.60000e-02   2.88000e-01   4.80000e-01   6.72000e-01   8.64000e-01
+    sEx:  -1.22465e-16  -1.22465e-16  -1.22465e-16  -1.22465e-16  -1.22465e-16
+    sEy:   0.00000e+00   0.00000e+00   0.00000e+00   0.00000e+00   0.00000e+00
+    sEz:   1.00000e+00   1.00000e+00   1.00000e+00   1.00000e+00   1.00000e+00
+    ECtoR:   7.40800e-02   7.40800e-02   7.40800e-02   7.40800e-02   7.40800e-02
+    EAreaR:   1.42234e-02   1.42234e-02   1.42234e-02   1.42234e-02   1.42234e-02
+    BIndS:   0
+    EIndS:   0
+    BIndE:   2
     EIndE:   3
 \end{lstlisting}
 
@@ -423,7 +424,7 @@ An example script that creates and plots turbine rotor geometry for a vertical a
 \section{Airfoil input file}
 Foil data table files contain the force coefficient data and dynamic stall parameters for a foil to be used in the calculation. The user can specify multiple foil data table files in the CACTUS namelist input file and they are indexed in the order they appear in the namelist input file. The iSect parameter in the geometry input file identifies the index of the foil data table to be applied to each blade element section.
 
-The foil coefficients are input as lift, drag, and pitching moment (about the 25\% chord point) coefficients (per span) as a function of angle of attack (AOA) and Reynolds number. A maximum of 20 Reynolds number values are allowed. A maximum of 1000 AOA values for each Reynolds number are allowed. The AOA data must go from -180 \si{\deg} to 180 \si{\deg}. The sign convention for AOA is such that positive AOA on a blade element is generated by positive relative flow velocity in the positive element normal direction. Note that the cross-flow turbine geometry generator provided with CACTUS creates element normal vectors in the machine inward direction. The axial flow turbine geometry generator creates element normal vectors in the machine rearward (downwind) direction at zero blade incidence angle. 
+The foil coefficients are input as lift, drag, and pitching moment (about the 25\% chord point) coefficients (per span) as a function of angle of attack (AOA) and Reynolds number. A maximum of 20 Reynolds number values are allowed. A maximum of 1000 AOA values for each Reynolds number are allowed. The AOA data must go from -180 \si{\deg} to 180 \si{\deg}. The sign convention for AOA is such that positive AOA on a blade element is generated by positive relative flow velocity in the positive element normal direction. Note that the cross-flow turbine geometry generator provided with CACTUS creates element normal vectors in the machine inward direction. The axial flow turbine geometry generator creates element normal vectors in the machine rearward (downwind) direction at zero blade incidence angle.
 Airfoil data is split into a header section, described in \Cref{tbl:airfoil_input_header_parameters}, and a number of data blocks, described in \Cref{tbl:airfoil_input_header_parameters}, each corresponding to a different Reynolds number. An example airfoil data file is shown in \Cref{listing:example_airfoil_data_file}. A number of foil data table files are provided in the \path{.Test/Airfoil_Section_Data/} folder in the CACTUS source code directory.
 
 
@@ -477,7 +478,7 @@ AOA (deg) CL CD Cm25
 180.0 0.0 1.0 0.0
 
 Reynolds Number: 5e6
-... 
+...
 \end{lstlisting}
 
 

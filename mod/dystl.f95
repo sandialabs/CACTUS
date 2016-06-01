@@ -24,6 +24,7 @@ module dystl
 
 
     ! Leishman-Beddoes model
+    real :: LBDynStallTp ! Leading edge pressure response time constant
 
     ! Time step normalized as ds = 2*U*dt/c where U is the relative velocity and c is the chord (note: at the same t, s is different on each element)
     real, allocatable :: ds(:)
@@ -180,11 +181,13 @@ contains
 
     end subroutine Force180
 
-    subroutine LB_UpdateStates(nb,nbe)
+    subroutine LB_UpdateStates(nb,nbe,Tp)
 
         ! Update states for the LB model
         ! Note dynstall should be included eventually in an expanded blade module, at which point it would have
         ! access to the geometry info it needs...
+
+        ! Tp: time constant on LE pressure response to change in CL
 
         integer :: nb, nbe
 
@@ -192,7 +195,6 @@ contains
 
         ! Set model parameters. All of these are potentially a function of Mach
         ! and are set to low mach values...
-        Tp=1.7                  ! time constant on LE pressure response to change in CL
         TfRef=3.0               ! time constant on TE separation point travel
         TvRef=6.0               ! time constant on LE vortex lift indicial function
         TvL=11.0                ! Characteristic LE vortex travel time
