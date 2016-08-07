@@ -1,18 +1,23 @@
-subroutine WGeomSetup() 
+subroutine WGeomSetup()
 
-    use wallsoln 
-    use pidef      
-    use util  
+    use util
+    use vecutils
+    use wallgeom
+    use wallsystem
+    use wallsoln
+    use pidef
 
     real :: PlaneExtent, dsMinFS, dsMaxFS, dsMinW, dsMaxW, dsC, dsOut, GCS, yPanFS, yPan
     real :: RC, C1, C2, dB, RU, C1U, C2U, dBU, RD, C1D, C2D, dBD, RW, C1W, C2W, dBW, B
     real :: P1(3), P2(3), P3(3), P4(3)
     real, allocatable :: xPanGP(:), zPanGP(:)
-    real, allocatable :: xPanFS(:), zPanFS(:)       
-    integer :: Ind, NU, ND, NW      
+    real, allocatable :: xPanFS(:), zPanFS(:)
+    integer :: Ind, NU, ND, NW
+
+    type(WallType) :: Wall
 
     ! Plane extent (over radius). To be applied in every direction around the turbine location...
-    PlaneExtent=10.0 
+    PlaneExtent=GPGridExtent
 
     ! Min and max panel size limits (Note: user can override these with scale factor input...)
     dsMinFS=.25 ! min grid size for free surface grid (to keep problem from getting too large)
@@ -24,28 +29,42 @@ subroutine WGeomSetup()
 
         ! Setup ground plane grid, clustered in the center of the plane
 
-        ! Set near-field grid scale (panel dimension over radius in the center). If h>R use h, else use R. User can modify 
+        ! Set near-field grid scale (panel dimension over radius in the center). If h>R use h, else use R. User can modify
         ! the default scale level with the GPGridSF parameter.
         if (abs(GPy)<1) then
-            dsN=.1      
+            dsN=.1
         else
-            dsN=.1*abs(GPy) 
+            dsN=.1*abs(GPy)
         end if
         dsC=max(dsMinW,min(dsMaxW,dsN))
+
         ! Apply user specified grid scale factor
         dsC=dsC*GPGridSF
 
-        RC=30.0 ! Clustering ratio, must be >= 1 (Ex: 10 for 10x density at center of plane)
-        C1=1.0/(1.0+3.0/RC)
-        C2=3.0/RC*C1
-        dB=dsC/C2
-        NumWPx=ceiling(2.0*PlaneExtent/dB)
-        NumWPz=NumWPx
-        NumWP=NumWPx*NumWPz
+        RC     = 30.0                             ! Clustering ratio, must be >= 1 (Ex: 10 for 10x density at center of plane)
+        C1     = 1.0/(1.0+3.0/RC)
+        C2     = 3.0/RC*C1
+        dB     = dsC/C2
+
+        ! count number of panels
+        NumWPx = ceiling(2.0*PlaneExtent/dB)
+        NumWPz = NumWPx
+        NumWP  = NumWPx*NumWPz
+
+        ! allocate storage for a single wall
+        allocate(Walls(1))
+
+        ! define some of the parameters of the wall
+        Wall%NumWP      = NumWP
+        Wall%NumWP1     = NumWPx
+        Wall%NumWP2     = NumWPz
+        Wall%NumWPNodes = (NumWPx+1)*(NumWPz+1)
+
+        ! call constructor for wall geometry
+        call wall_cns(Wall)
 
         ! Allocate local and global arrays
         allocate(xPanGP(NumWPx+1),zPanGP(NumWPz+1))
-        Call wallsoln_gp_cns()
 
         dB=2.0/real(NumWPx)
         do i=1,NumWPx+1
@@ -57,54 +76,78 @@ subroutine WGeomSetup()
 
         ! Ordered list of panels going through x, then stepping y, repeat
         Ind=1
-        do i=1,NumWPz
-            do j=1,NumWPx
-                P1=[xPanGP(j),yPan,zPanGP(i)]   	! lower panel x, lower panel y corner point
-                P2=[xPanGP(j+1),yPan,zPanGP(i)] 	! pos panel x neighbor point
-                P3=[xPanGP(j),yPan,zPanGP(i+1)]	! pos panel y neighbor point
-                P4=[xPanGP(j+1),yPan,zPanGP(i+1)]  	! pos panel x, pos panel y neighbor point
-                WCPoints(Ind,1:3)=0.25*(P1+P2+P3+P4) 	! panel center
-                WXVec(Ind,1:3)=P2-P1		! panel x tangential vector
-                WPL(Ind)=sqrt(sum(WXVec(Ind,1:3)**2))		! panel x length
-                WXVec(Ind,1:3)=WXVec(Ind,1:3)/WPL(Ind)		! normalize
-                WYVec(Ind,1:3)=P1-P3		! panel y tangential vector, set so that panel normal will be in the domain inward direction
-                WPW(Ind)=sqrt(sum(WYVec(Ind,1:3)**2))		! panel y length
-                WYVec(Ind,1:3)=WYVec(Ind,1:3)/WPW(Ind)		! normalize
-                Call cross(WXVec(Ind,1),WXVec(Ind,2),WXVec(Ind,3),WYVec(Ind,1),WYVec(Ind,2),WYVec(Ind,3),WZVec(Ind,1),WZVec(Ind,2),WZVec(Ind,3))	! panel normal vector	
-                WZVec(Ind,1:3)=WZVec(Ind,1:3)/sqrt(sum(WZVec(Ind,1:3)**2))		! normalize	
+        do j=1,NumWPx
+            do i=1,NumWPz
+
+                ! get cell corners (ordered clockwise from lowest i,j when viewed from behind panel
+                P1=[xPanGP(j  ),yPan,zPanGP(i  )]              ! lower panel x, lower panel y corner point
+                P2=[xPanGP(j  ),yPan,zPanGP(i+1)]              ! pos panel x neighbor point
+                P3=[xPanGP(j+1),yPan,zPanGP(i+1)]              ! pos panel y neighbor point
+                P4=[xPanGP(j+1),yPan,zPanGP(i  )]              ! pos panel x, pos panel y neighbor point
+
+                Wall%WCPoints(Ind,1:3)=0.25*(P1+P2+P3+P4)      ! panel center
+
+                Wall%W1Vec(Ind,1:3)=(P2-P1)/mag3(P2-P1)        ! panel x tangential unit vector
+                Wall%W2Vec(Ind,1:3)=(P4-P1)/mag3(P4-P1)        ! panel y tangential unit vector, set so that panel normal will be in the domain inward direction
+
+                Call cross(Wall%W1Vec(Ind,1),Wall%W1Vec(Ind,2),Wall%W1Vec(Ind,3), &
+                           Wall%W2Vec(Ind,1),Wall%W2Vec(Ind,2),Wall%W2Vec(Ind,3), &
+                           Wall%W3Vec(Ind,1),Wall%W3Vec(Ind,2),Wall%W3Vec(Ind,3))    ! panel unit normal vector
+
+                Ind=Ind+1
+
+            end do
+        end do
+
+        ! set the wall point node locations
+        Ind=1
+        do j=1,NumWPx+1
+            do i=1,NumWPz+1
+                Wall%pnodes(Ind,1:3) = [xPanGP(j),yPan,zPanGP(i)]
                 Ind=Ind+1
             end do
         end do
 
-        ! Panel edge tolerance (needs to be less than 1/2 of the min panel dimension)
-        WEdgeTol=min(minval(WPL),minval(WPW))/10.0
+        ! get the wall
+        Walls(1) = Wall
+
+        ! build the concatenated wall system
+        call wallsystem_cns()
+
+    end if
+
+
+    if (WPFlag == 1) then
+
+        ! build the concatenated wall system
+        call wallsystem_cns()
 
     end if
 
 
     if (FSFlag==1) then
 
-        ! Setup free surface grid. 
+        ! Setup free surface grid.
         ! Set near field grid scale based on depth when d/R > 1 or based on radius when d/R < 1.
         ! Set far-field grid scale based on far-field deep water transverse wavelength for given inflow conditions (Froude number).
         ! At low Froude number, the far-field grid scale will drop below the near field scale, at which point, the free surface
-        ! boundary condition is de-activated and replaced with a wall boundary condition. Note that as Froude -> 0, the free 
+        ! boundary condition is de-activated and replaced with a wall boundary condition. Note that as Froude -> 0, the free
         ! surface boundary condition becomes equivalent to the wall boundary condition...
 
-        ! Set near-field grid scale (panel dimension over radius in the center). If d>R use d, else use R. User can modify 
+        ! Set near-field grid scale (panel dimension over radius in the center). If d>R use d, else use R. User can modify
         ! the default scale level with the FSGridSF parameter.
         if (abs(FSy)<1) then
-            dsN=.1    
+            dsN=.1
         else
-            dsN=.1*abs(FSy)  
+            dsN=.1*abs(FSy)
         end if
         dsC=max(dsMinFS,min(dsMaxFS,dsN))
         ! Apply user specified grid scale factor
-        dsC=dsC*FSGridSF 
+        dsC=dsC*FSGridSF
 
         ! Calc far field length scale (scaled by deep water transverse wavelength)
         GCS=1.0/6.0
-        dsOut=GCS*2*pi*FnR**2  ! outer ds required to capture wave train 
+        dsOut=GCS*2*pi*FnR**2  ! outer ds required to capture wave train
         dsOut=min(dsMaxFS,dsOut)
 
         ! If dsOut is less than dsC, use wall solution instead of free surface. The
@@ -115,7 +158,7 @@ subroutine WGeomSetup()
         if (dsOut<dsC) then
             UseFSWall=.TRUE.
             ! Reset grid level
-            dsC=max(dsMinW,min(dsMaxW,dsN)) 
+            dsC=max(dsMinW,min(dsMaxW,dsN))
         end if
 
         ! Setup geometry
@@ -164,9 +207,9 @@ subroutine WGeomSetup()
                     FSPW(Ind)=sqrt(sum(FSYVec(Ind,1:3)**2))               ! panel y length
                     FSYVec(Ind,1:3)=FSYVec(Ind,1:3)/FSPW(Ind)              ! normalize
                     FSCYVec(Ind,1:3)=FSYVec(Ind,1:3)   ! colocation on panel
-                    Call cross(FSXVec(Ind,1),FSXVec(Ind,2),FSXVec(Ind,3),FSYVec(Ind,1),FSYVec(Ind,2),FSYVec(Ind,3),FSZVec(Ind,1),FSZVec(Ind,2),FSZVec(Ind,3))    ! panel normal vector   
-                    FSZVec(Ind,1:3)=FSZVec(Ind,1:3)/sqrt(sum(FSZVec(Ind,1:3)**2))          ! normalize    
-                    FSCZVec(Ind,1:3)=FSZVec(Ind,1:3)   ! colocation on panel    
+                    Call cross(FSXVec(Ind,1),FSXVec(Ind,2),FSXVec(Ind,3),FSYVec(Ind,1),FSYVec(Ind,2),FSYVec(Ind,3),FSZVec(Ind,1),FSZVec(Ind,2),FSZVec(Ind,3))    ! panel normal vector
+                    FSZVec(Ind,1:3)=FSZVec(Ind,1:3)/sqrt(sum(FSZVec(Ind,1:3)**2))          ! normalize
+                    FSCZVec(Ind,1:3)=FSZVec(Ind,1:3)   ! colocation on panel
                     Ind=Ind+1
                 end do
             end do
@@ -200,7 +243,7 @@ subroutine WGeomSetup()
             NumFSPx=NumFSCPx+1 ! add extra panel for BC application
             NumFSPz=NumFSCPz
             NumFSP=NumFSPz*NumFSPx
-            NumFSCP=NumFSCPz*NumFSCPx         
+            NumFSCP=NumFSCPz*NumFSCPx
 
             ! Allocate local and global arrays
             allocate(xPanFS(NumFSPx+1),zPanFS(NumFSPz+1))
@@ -249,8 +292,8 @@ subroutine WGeomSetup()
                     FSYVec(Ind,1:3)=P3-P1                ! panel y tangential vector, set so that panel normal will be in the domain inward direction
                     FSPW(Ind)=sqrt(sum(FSYVec(Ind,1:3)**2))               ! panel y length
                     FSYVec(Ind,1:3)=FSYVec(Ind,1:3)/FSPW(Ind)              ! normalize
-                    Call cross(FSXVec(Ind,1),FSXVec(Ind,2),FSXVec(Ind,3),FSYVec(Ind,1),FSYVec(Ind,2),FSYVec(Ind,3),FSZVec(Ind,1),FSZVec(Ind,2),FSZVec(Ind,3))    ! panel normal vector   
-                    FSZVec(Ind,1:3)=FSZVec(Ind,1:3)/sqrt(sum(FSZVec(Ind,1:3)**2))          ! normalize    
+                    Call cross(FSXVec(Ind,1),FSXVec(Ind,2),FSXVec(Ind,3),FSYVec(Ind,1),FSYVec(Ind,2),FSYVec(Ind,3),FSZVec(Ind,1),FSZVec(Ind,2),FSZVec(Ind,3))    ! panel normal vector
+                    FSZVec(Ind,1:3)=FSZVec(Ind,1:3)/sqrt(sum(FSZVec(Ind,1:3)**2))          ! normalize
                     Ind=Ind+1
                 end do
             end do
@@ -266,8 +309,8 @@ subroutine WGeomSetup()
                     FSCPPoints(Ind,1:3)=0.25*(P1+P2+P3+P4)        ! colocation points (on panel)
                     FSCXVec(Ind,1:3)=(P2-P1)/sqrt(sum((P2-P1)**2))                 ! panel x tangential vector
                     FSCYVec(Ind,1:3)=(P3-P1)/sqrt(sum((P1-P3)**2))                ! panel y tangential vector, set so that panel normal will be in the domain inward direction
-                    Call cross(FSCXVec(Ind,1),FSCXVec(Ind,2),FSCXVec(Ind,3),FSCYVec(Ind,1),FSCYVec(Ind,2),FSCYVec(Ind,3),FSCZVec(Ind,1),FSCZVec(Ind,2),FSCZVec(Ind,3))    ! panel normal vector   
-                    FSCZVec(Ind,1:3)=FSCZVec(Ind,1:3)/sqrt(sum(FSCZVec(Ind,1:3)**2))          ! normalize    
+                    Call cross(FSCXVec(Ind,1),FSCXVec(Ind,2),FSCXVec(Ind,3),FSCYVec(Ind,1),FSCYVec(Ind,2),FSCYVec(Ind,3),FSCZVec(Ind,1),FSCZVec(Ind,2),FSCZVec(Ind,3))    ! panel normal vector
+                    FSCZVec(Ind,1:3)=FSCZVec(Ind,1:3)/sqrt(sum(FSCZVec(Ind,1:3)**2))          ! normalize
                     Ind=Ind+1
                 end do
             end do

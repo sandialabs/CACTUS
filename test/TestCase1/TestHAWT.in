@@ -1,0 +1,52 @@
+&ConfigInputs
+
+	GPFlag  = 0
+	
+	nr 	= 10
+	nti 	= 2
+	convrg	= .0001
+	iut	= 0
+	
+	ifc	= 0
+	ixterm 	= 0
+
+	ntif	= 30
+	iutf	= 1
+	nric 	= 9
+	convrgf	= .0001
+
+/End
+
+
+&CaseInputs
+
+	jbtitle = 'Test HAWT'
+
+	rho 	= .002378  
+	vis 	= .3739E-6                                   
+    tempr 	= 60.0 
+	hBLRef 	= 56.57
+	slex 	= 0.0
+	hAG 	= 30.0
+
+	RPM 	= 70
+	Ut 	= 4
+
+	! Turbine geometry
+	GeomFilePath='../TestGeom/TestHAWT.geom'
+
+	! Airfoil section data
+	nSect 	= 1
+	AFDPath	= '../Airfoil_Section_Data/NACA_0015.dat'
+		
+/End
+
+
+&ConfigOutputs
+
+    DiagOutFlag        = 1
+    BladeElemOutFlag   = 1
+    WakeElemOutFlag = 1
+    FieldOutFlag       = 0
+
+/End
