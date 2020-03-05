@@ -10,6 +10,17 @@ Installation and compilation instructions for Linux and Windows operating
 systems can be found in `doc/Install`. CACTUS may also be compiled on Mac OS
 environments using GCC Fortran.
 
+#### Tests
+After compiling, navigate to `test/RegTest/` and run:
+
+```
+python runreg.py ../../bin/cactus
+```
+
+or, if you are using Python 3
+```
+python runreg_p3.py ../../bin/cactus
+```
 
 ### Directory Structure
 
