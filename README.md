@@ -1,19 +1,7 @@
 # CACTUS
 
 CACTUS (**C**ode for **A**xial and **C**ross-flow **TU**rbine **S**imulations),
-developed at Sandia National Laboratories, is a turbine simulation code based on
-a free wake vortex method. This repository is a fork of the original CACTUS
-repository which includes a number of additional features and improvements,
-including:
-
-- Output of wake data (Cartesian and filament data)
-- Modeling of general wall geometries
-- OpenMP acceleration of induced velocity calculations
-
-Major contributors to this fork:
-
-- Phillip Chiu (pchiu@sandia.gov)
-- Christopher Kelley (clkelley@sandia.gov) - original wake output contributions
+developed at Sandia National Laboratories, is a turbine simulation code based on a free wake vortex method. 
 
 
 ### Installation & Compilation
@@ -37,7 +25,7 @@ environments using GCC Fortran.
 ### Post-processing
 
 Tools for post-processing data from CACTUS simulations are available in the
-[CACTUS-tools](https://github.com/whophil/CACTUS-tools) repository.
+[CACTUS-tools](https://github.com/SNL-WaterPower/CACTUS-tools) repository.
 
 
 ### References
