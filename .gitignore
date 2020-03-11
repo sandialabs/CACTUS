@@ -4,3 +4,6 @@ CM/
 *~
 *.u2d
 *.suo
+*.DS_Store
+Thumbs.db
+~*.docx

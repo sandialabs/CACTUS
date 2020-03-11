@@ -1,4 +1,4 @@
-MODULE tower
+module tower
 
   implicit none
 
@@ -12,16 +12,16 @@ MODULE tower
 
   real, allocatable, dimension(:) :: tower_y, tower_Vx
 
-CONTAINS
+contains
 
-  SUBROUTINE setup_tower
+  subroutine setup_tower
 
     implicit none
-    
+
     integer :: i
 
     Allocate(tower_y(tower_Npts), tower_Vx(tower_Npts))
-    
+
 
     If (tower_Npts .LE. 1) Then
        Write(*,'(''Inadequate number of tower points.'')')
@@ -35,7 +35,7 @@ CONTAINS
 
     theta0 = 0.5 * tower_CD * tower_D
 
-  END SUBROUTINE setup_tower
+  end subroutine setup_tower
 
 
   FUNCTION interp_tower_Vx(y)
@@ -55,7 +55,7 @@ CONTAINS
        End If
     End Do
 
-    Return
+    return
 
   END FUNCTION interp_tower_Vx
 
@@ -63,18 +63,18 @@ CONTAINS
   FUNCTION wake_defect_velocity(x,y,z)
 
     implicit none
-    
+
     real :: x, y, z, wake_defect_velocity
     real :: W, xi, Vx_tow, u0, f_wake
 
     If (x .LE. tower_x) Then
        wake_defect_velocity = 0.0
-       Return
+       return
     End If
 
     If ((y .LT. tower_ybot) .OR. (y .GT. tower_ytop)) Then
        wake_defect_velocity = 0.0
-       Return
+       return
     End If
 
 
@@ -85,15 +85,15 @@ CONTAINS
     !Write(20,'(F20.12)') Vx_tow
     u0 = W0_wake * sqrt(theta0/(x-tower_x )) * Vx_tow ! max velocity
     !  defect at this x location
-    f_wake = exp(-alpha_wake * xi * xi) ! non-dimensional velocity defect    
+    f_wake = exp(-alpha_wake * xi * xi) ! non-dimensional velocity defect
     wake_defect_velocity = u0 * f_wake ! dimensional velocity defect
 
     if (wake_defect_velocity .GT. 0.9 * Vx_tow) then
        wake_defect_velocity = 0.9 * Vx_tow
     end if
-    
-    Return
+
+    return
 
   END FUNCTION wake_defect_velocity
 
-END MODULE tower
+end module tower

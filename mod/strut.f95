@@ -1,6 +1,6 @@
-MODULE strut
+module strut
 
-	! Strut geometry and loads outputs
+    ! Strut geometry and loads outputs
 
     use util
 
@@ -30,7 +30,7 @@ MODULE strut
         ! Blade and element indicies to which the strut connects (for interference drag calc)
         ! For struts that are attached to the rotor shaft at one end (not to another blade), set the appropriate BInd and EInd values to zero.
         ! BIndS, EIndS : first strut element
-        ! BIndE, EIndE : last strut element 
+        ! BIndE, EIndE : last strut element
         integer :: BIndS
         integer :: EIndS
         integer :: BIndE
@@ -42,7 +42,7 @@ MODULE strut
         real :: tcE      ! Thickness to chord of the blade element at the strut-blade junction (last strut element)
 
         ! Current flow quantities at each element center
-        real, allocatable :: ReStrut(:) 
+        real, allocatable :: ReStrut(:)
         real, allocatable :: u(:) ! u velocity over Uinf
         real, allocatable :: v(:) ! v velocity over Uinf
         real, allocatable :: w(:) ! w velocity over Uinf
@@ -60,7 +60,7 @@ MODULE strut
 
     end type StrutType
 
-    type(StrutType), allocatable :: Struts(:)   
+    type(StrutType), allocatable :: Struts(:)
 
     integer :: NStrut ! number of struts
 
@@ -75,10 +75,10 @@ MODULE strut
     real :: CFz_S ! Fz coefficient due to all struts
 
 
-CONTAINS
+contains
 
 
-    SUBROUTINE strut_comp_cns(SInd,NElem)
+    subroutine strut_comp_cns(SInd,NElem)
 
         implicit none
 
@@ -99,17 +99,17 @@ CONTAINS
         allocate(Struts(SInd)%sEz(NElem))
         allocate(Struts(SInd)%ECtoR(NElem))
         allocate(Struts(SInd)%EAreaR(NElem))
-        allocate(Struts(SInd)%ReStrut(NElem)) 
+        allocate(Struts(SInd)%ReStrut(NElem))
         allocate(Struts(SInd)%u(NElem))
         allocate(Struts(SInd)%v(NElem))
         allocate(Struts(SInd)%w(NElem))
         allocate(Struts(SInd)%ur(NElem))
-        allocate(Struts(SInd)%Cd0(NElem))         
+        allocate(Struts(SInd)%Cd0(NElem))
 
-    End SUBROUTINE strut_comp_cns
+    end subroutine strut_comp_cns
 
 
-    SUBROUTINE RotateStrut(SNum,delt,nrx,nry,nrz,px,py,pz)
+    subroutine RotateStrut(SNum,delt,nrx,nry,nrz,px,py,pz)
 
         implicit none
 
@@ -133,10 +133,10 @@ CONTAINS
         Call CalcSEGeom(SNum)
 
 
-    End SUBROUTINE RotateStrut
+    end subroutine RotateStrut
 
 
-    SUBROUTINE CalcSEGeom(SNum)
+    subroutine CalcSEGeom(SNum)
 
         implicit none
 
@@ -163,17 +163,17 @@ CONTAINS
             Struts(SNum)%sEy(j)=sE(2)
             Struts(SNum)%sEz(j)=sE(3)
 
-		    ! Calc element area and chord
-		    Struts(SNum)%ECtoR(j)=0.5*(Struts(SNum)%CtoR(j+1)+Struts(SNum)%CtoR(j))
-		    Struts(SNum)%EAreaR(j)=sEM*Struts(SNum)%ECtoR(j)
+            ! Calc element area and chord
+            Struts(SNum)%ECtoR(j)=0.5*(Struts(SNum)%CtoR(j+1)+Struts(SNum)%CtoR(j))
+            Struts(SNum)%EAreaR(j)=sEM*Struts(SNum)%ECtoR(j)
 
         end do
 
 
-    End SUBROUTINE CalcSEGeom
+    end subroutine CalcSEGeom
 
 
-    SUBROUTINE StrutElemCoeffs(SInd,EInd)
+    subroutine StrutElemCoeffs(SInd,EInd)
 
         implicit none
 
@@ -185,7 +185,7 @@ CONTAINS
 
         ! Calc sideslip angle
         vs=Struts(SInd)%u(EInd)*Struts(SInd)%sEx(EInd)+Struts(SInd)%v(EInd)*Struts(SInd)%sEy(EInd)+Struts(SInd)%w(EInd)*Struts(SInd)%sEz(EInd)
-        AOS=asin(vs/Struts(SInd)%ur(EInd)) 
+        AOS=asin(vs/Struts(SInd)%ur(EInd))
 
         ! Effective section thickness and Re referenced to nominal flow path length rather than chord (p/c = 1/cos(AOS))
         ! Allows estimation at high element sideslip (azimuthal struts).
@@ -199,10 +199,10 @@ CONTAINS
         Cdlam = 2.0 * Cflam * (1 + st) + st**2 ! Laminar drag coefficient
         Cfturb = 0.044 / ReS**(1.0/6.0) ! Turbulent friction drag coefficient
         Cdturb = 2.0 * Cfturb * (1.0 + 2.0*st + 60.0*st**4) ! Turbulent drag coefficient
-        Fblend = 0.5 * (1.0 + TANH((LOG10(ReS)-LOG10(ReCrit))/0.2)) ! Blending function for transition between laminar and turbulent drag 
+        Fblend = 0.5 * (1.0 + TANH((LOG10(ReS)-LOG10(ReCrit))/0.2)) ! Blending function for transition between laminar and turbulent drag
         Struts(SInd)%Cd0(EInd) = (1.0-Fblend) * Cdlam + Fblend * Cdturb ! Profile drag coefficient
 
 
-    End SUBROUTINE StrutElemCoeffs
+    end subroutine StrutElemCoeffs
 
-End MODULE strut
+end module strut

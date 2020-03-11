@@ -1,11 +1,12 @@
-SUBROUTINE UpdateBladeVel(IFLG)   
+subroutine UpdateBladeVel(IFLG)
 
     use configr
     use blade
-    use wallsoln  
+    use wake
+    use wallsoln
 
     integer :: i,ygcErr
-    real :: Point(3), dVel(3), dUdX                                                       
+    real :: Point(3), dVel(3), dUdX
 
     ! Calculate the velocity induced on the blades by wake, wall, and freestream
 
@@ -18,11 +19,11 @@ SUBROUTINE UpdateBladeVel(IFLG)
     end if
 
 
-    do I=1,NE                                                      
+    do I=1,NE
 
         ! If flag is set, just recompute the velocity contiribution due to the bound vorticies on the blades.
-        ! Otherwise, calculate all wake, wall and freestream induced velocity.                                                                              
-        if (IFLG .eq. 0) then 
+        ! Otherwise, calculate all wake, wall and freestream induced velocity.
+        if (IFLG .eq. 0) then
 
             !  Calculate freestream velocity at blade elements
             CALL CalcFreestream(X(NT,I),Y(NT,I),Z(NT,I),UFSB(I),VFSB(I),WFSB(I),ygcErr)
@@ -33,15 +34,15 @@ SUBROUTINE UpdateBladeVel(IFLG)
             WFS(NT,I)=WFSB(I)
 
 
-            USUM=0.0                                                          
-            VSUM=0.0                                                          
-            WSUM=0.0                                                                                                                                                         
-            if (NT > 1) then                                         
+            USUM=0.0
+            VSUM=0.0
+            WSUM=0.0
+            if (NT > 1) then
 
                 ! Calculate wake velocity at blade elements (excluding bound vorticity component)
                 Call BladeIndVel(NT,ntTerm,NBE,NB,NE,X(NT,I),Y(NT,I),Z(NT,I),USUM,VSUM,WSUM,dUdX,2,0)
 
-                ! Calculate wall induced velocities at blade locations   
+                ! Calculate wall induced velocities at blade locations
                 Point=[X(NT,I),Y(NT,I),Z(NT,I)]
                 Call WallIndVel(Point,dVel)
                 USUM=USUM+dVel(1)
@@ -50,16 +51,16 @@ SUBROUTINE UpdateBladeVel(IFLG)
 
             end if
 
-            uiwake(I)=USUM                                                     
-            viwake(I)=VSUM                                                     
-            wiwake(I)=WSUM                                                     
-        else                                                         
-            USUM=uiwake(I)                                                     
-            VSUM=viwake(I)                                                     
-            WSUM=wiwake(I)                                                     
+            uiwake(I)=USUM
+            viwake(I)=VSUM
+            wiwake(I)=WSUM
+        else
+            USUM=uiwake(I)
+            VSUM=viwake(I)
+            WSUM=wiwake(I)
         end if
 
-        ! CALCULATE THE VELOCITY CONTRIBUTIONS DUE TO JUST THE BOUND VORTICIES ON THE BLADES ( GS(NT,:) ) 
+        ! CALCULATE THE VELOCITY CONTRIBUTIONS DUE TO JUST THE BOUND VORTICIES ON THE BLADES ( GS(NT,:) )
         Call BladeIndVel(NT,ntTerm,NBE,NB,NE,X(NT,I),Y(NT,I),Z(NT,I),UP,VP,WP,dUdX,1,0)
 
         ! Set wake and wall velocities on blade
@@ -81,5 +82,5 @@ SUBROUTINE UpdateBladeVel(IFLG)
 
     end do
 
-    RETURN                                                            
-END SUBROUTINE UpdateBladeVel
+    return
+end subroutine UpdateBladeVel

@@ -66,7 +66,7 @@ def tail(fname, window):
     """Read last N lines from file fname."""
     try:
         f = open(fname, 'r')
-    except IOError as err:
+    except IOError, err:
         if err.errno == errno.ENOENT:
             return []
         else:
@@ -222,12 +222,11 @@ def GetScalar(FileLines,FileTag):
 #########################
 
 # Read input and output filenames from the command line
-
 if len(sys.argv) is 3:
     DAKInFN=sys.argv[1]   
     DAKOutFN=sys.argv[2] 
 else:
-    print('No files given...')
+    print 'No files given...'
     sys.exit(1)
 #endif
 
@@ -272,7 +271,7 @@ NumACs,Tag=string.split(fDAKInput.readline())
 NumACs=int(NumACs)
 ACs=[ACClass(None,None) for i in range(NumACs)]
 for i in range(NumACs):
-	ACs[i].Code,ACs[i].Tag=string.split(fDAKInput.readline(),None,1)
+    ACs[i].Code,ACs[i].Tag=string.split(fDAKInput.readline())
 #endfor    
     
 fDAKInput.close()  
@@ -547,8 +546,7 @@ if UseGeom:
 
 # Run CACTUS and send output to file
 CLOutFN= 'CACTUS_CL_Output.' + DAKOutExt
-#CCommand=CACTUSExe + ' ' + CACTUSProbFN + ' ' + '&> ' + CLOutFN
-CCommand=CACTUSExe + ' ' + CACTUSProbFN + ' ' + '>' + CLOutFN + ' 2>&1'
+CCommand=CACTUSExe + ' ' + CACTUSProbFN + ' ' + '&> ' + CLOutFN
 os.system(CCommand)
 
 # Get CACTUS rev data
@@ -556,7 +554,6 @@ SIMFailFlag=False
 fCACTUSDOut=open(CACTUSRevDataFN,'r')
 
 RevHeader=fCACTUSDOut.readline().split(',')
-
 RevData=[]
 for line in fCACTUSDOut:
     DL=line.split(',')

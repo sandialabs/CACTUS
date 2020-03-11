@@ -1,4 +1,4 @@
-SUBROUTINE LB_DynStall(nElem,CLstat,CDstat,alphaL,alpha5,umach,Re,SectInd,CL,CD)
+subroutine LB_DynStall(nElem,CLstat,CDstat,alphaL,alpha5,umach,Re,SectInd,CL,CD)
 
     use airfoil
     use dystl
@@ -100,7 +100,7 @@ SUBROUTINE LB_DynStall(nElem,CLstat,CDstat,alphaL,alpha5,umach,Re,SectInd,CL,CD)
     ! difference between the ideal lift and the lift including dynamic separation effects.
     cv(nElem)=CLID-CLF
     dcv(nElem)=cv(nElem)-cv_Last(nElem)
-    ! If the sign of dcv is opposite the reference LE CL, set to zero to disallow negative vorticity from shedding from the leading edge. Also, limit the model 
+    ! If the sign of dcv is opposite the reference LE CL, set to zero to disallow negative vorticity from shedding from the leading edge. Also, limit the model
     ! at AOA>acut or if the magnitude of the reference CL is decreasing...
     acut=50.0*conrad
     if (sign(1.0,dcv(nElem)*CLRefLE(nElem))<0 .OR. abs(alphaL-AOA0)>acut .OR. CLRateFlag(nElem)<0) then
@@ -114,5 +114,5 @@ SUBROUTINE LB_DynStall(nElem,CLstat,CDstat,alphaL,alpha5,umach,Re,SectInd,CL,CD)
     CL=CLF+dCLv
     CD=CDstat+dCDF+dCDv
 
-    Return
-End SUBROUTINE LB_DynStall
+    return
+end subroutine LB_DynStall

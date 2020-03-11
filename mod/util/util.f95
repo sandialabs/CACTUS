@@ -1,18 +1,18 @@
-MODULE util
+module util
 
-	! Utilities used in other modules and elsewhere in the code
+    ! Utilities used in other modules and elsewhere in the code
 
-CONTAINS
+contains
 
-    SUBROUTINE cross(ax,ay,az,bx,by,bz,cx,cy,cz) 
+    subroutine cross(ax,ay,az,bx,by,bz,cx,cy,cz)
 
-        real ax,ay,az,bx,by,bz,cx,cy,cz 
+        real ax,ay,az,bx,by,bz,cx,cy,cz
 
         cx = ay*bz - az*by
         cy = az*bx - ax*bz
         cz = ax*by - ay*bx
 
-    End SUBROUTINE cross
+    end subroutine cross
 
 
     subroutine QuatRot(vx,vy,vz,Theta,nRx,nRy,nRz,Ox,Oy,Oz,vRx,vRy,vRz)
@@ -26,7 +26,7 @@ CONTAINS
         ! %
         ! % vR: Rotated vector
 
-        real :: vx,vy,vz,Theta,nRx,nRy,nRz,Ox,Oy,Oz,vRx,vRy,vRz     
+        real :: vx,vy,vz,Theta,nRx,nRy,nRz,Ox,Oy,Oz,vRx,vRy,vRz
 
         real :: p(4,1), pR(4,1), q(4), qbar(4), nRMag, vOx, vOy, vOz
         real :: QL(4,4), QbarR(4,4)
@@ -66,7 +66,7 @@ CONTAINS
     end subroutine QuatRot
 
 
-    SUBROUTINE csvwrite(FID,Header,Data,WriteHead,NRows)
+    subroutine csvwrite(FID,Header,Data,WriteHead,NRows)
 
         integer :: FID, WriteHead, NRows
         character(10000) :: Header
@@ -80,7 +80,7 @@ CONTAINS
 
         ! Write header
         if (WriteHead>0) then
-            write (FID,'(a)') trim(Header)
+            write (FID,'(A)') trim(Header)
         end if
 
         ! Write data
@@ -100,9 +100,73 @@ CONTAINS
             end do
         end do
 
-        Return
-10      format(E13.7,',',$) 
-    End SUBROUTINE Csvwrite
+        return
+10      format(E13.7,',',$)
+    end subroutine Csvwrite
+
+    subroutine file_to_stdout(filename)
+    ! file_to_stdout() : Read a file in and write it's output to stdout.
+    !   (Useful for appending input files to the output)
+
+    integer, parameter :: max_linewidth = 1000
+    character(80) :: filename
+    integer :: reason
+
+    character(max_linewidth) :: readline
+
+    ! open file for reading
+    open(30, file=filename)
+
+    ! read in line by line
+    do
+        read(30, '(A)', iostat=reason) readline
+
+        ! if end of file is reached, break out
+        if (reason < 0) then
+            exit
+        else
+            write(*,*) trim(readline)
+        end if
+    end do
+
+    ! close file
+    close(30)
+
+    end subroutine file_to_stdout
 
 
-End MODULE Util
+    ! DEBUGGING FUNCTIONS !
+    subroutine print_matrix_file(matrix,filename)
+        real, allocatable :: matrix(:,:)
+        character(80) :: filename
+
+        open(27,file=filename)
+        do i=1,size(matrix,dim=1)
+            write(27,*) matrix(i,:)
+        end do
+        close(27)
+    end subroutine print_matrix_file
+
+
+    subroutine print_matrix_stdout(matrix)
+        real, allocatable :: matrix(:,:)
+        integer :: iounit
+
+        do i=1,size(matrix,dim=1)
+            write(*,*) matrix(i,:)
+        end do
+    end subroutine print_matrix_stdout
+
+
+    subroutine print_vec3array(vec3array)
+        real, allocatable :: vec3array(:,:)
+        integer :: i
+
+        do i=1,size(vec3array,dim=1)
+            write(*,*) vec3array(i,:3)
+        end do
+
+    end subroutine print_vec3array
+
+
+end module Util

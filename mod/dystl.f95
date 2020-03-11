@@ -1,4 +1,4 @@
-MODULE dystl
+module dystl
 
     ! Dynamic stall data
 
@@ -13,52 +13,53 @@ MODULE dystl
     integer :: DSFlag                               ! 0 for no dynamic stall, 1 for BV model, 2 for LB model
 
 
-    ! Modified Boeing-Vertol (Gormont) model      
+    ! Modified Boeing-Vertol (Gormont) model
     real :: K1Pos                                   ! lagged AOA magnitude tweak for CL increasing
     real :: K1Neg                                   ! lagged AOA magnitude tweak for CL decreasing
     integer, allocatable :: BV_DynamicFlagL(:)      ! Dynamic stall active flags
     integer, allocatable :: BV_DynamicFlagD(:)      ! Dynamic stall active flags
 
-    ! Additional BV diagnostic output     
-    real :: BV_alpha, BV_adotnorm, BV_alrefL, BV_alrefD     
+    ! Additional BV diagnostic output
+    real :: BV_alpha, BV_adotnorm, BV_alrefL, BV_alrefD
 
 
     ! Leishman-Beddoes model
+    real :: LBDynStallTp ! Leading edge pressure response time constant
 
     ! Time step normalized as ds = 2*U*dt/c where U is the relative velocity and c is the chord (note: at the same t, s is different on each element)
-    real, allocatable :: ds(:)                      
+    real, allocatable :: ds(:)
 
     ! Temporally updated state variables (held for each element)
     real, allocatable :: dp(:)
     real, allocatable :: dF(:)
     real, allocatable :: dCNv(:)
-    real, allocatable :: sLEv(:) 
+    real, allocatable :: sLEv(:)
     integer, allocatable :: LESepState(:)
 
     ! Other states needed at the program level and discrete lagged values used in the state update process (held for each element)
-    real, allocatable :: CLRef(:) 
-    real, allocatable :: CLRefLE(:) 
+    real, allocatable :: CLRef(:)
+    real, allocatable :: CLRefLE(:)
     real, allocatable :: CLCritP(:)
     real, allocatable :: CLCritN(:)
     integer, allocatable :: CLRateFlag(:)
     real, allocatable :: Fstat(:)
     real, allocatable :: F(:)
     real, allocatable :: cv(:)
-    real, allocatable :: dcv(:)      
-    real, allocatable :: CLRef_Last(:) 
-    real, allocatable :: CLRefLE_Last(:) 
+    real, allocatable :: dcv(:)
+    real, allocatable :: CLRef_Last(:)
+    real, allocatable :: CLRefLE_Last(:)
     real, allocatable :: Fstat_Last(:)
     real, allocatable :: cv_Last(:)
 
     ! Additional LB diagnostic output
     integer, parameter :: NLBL = 9
-    integer, allocatable :: LB_LogicOutputs(:,:) 
-    integer :: Logic_W(NLBL) = [1,1,1,1,1,3,2,1,1]             ! Logic weights for logic checksum  
+    integer, allocatable :: LB_LogicOutputs(:,:)
+    integer :: Logic_W(NLBL) = [1,1,1,1,1,3,2,1,1]             ! Logic weights for logic checksum
 
 
-CONTAINS
+contains
 
-    SUBROUTINE dystl_cns(MaxAirfoilSect, MaxReVals, MaxSegEnds)
+    subroutine dystl_cns(MaxAirfoilSect, MaxReVals, MaxSegEnds)
 
         ! Constructor for the arrays in this module
 
@@ -66,8 +67,8 @@ CONTAINS
 
         ! Pi definition
         pi = 4.0*atan(1.0)
-        conrad = pi/180.0                                                  
-        condeg = 180.0/pi         
+        conrad = pi/180.0
+        condeg = 180.0/pi
 
         ! Boeing-Vertol
         allocate(BV_DynamicFlagL(MaxSegEnds))
@@ -89,18 +90,18 @@ CONTAINS
         allocate(Fstat(MaxSegEnds))
         allocate(F(MaxSegEnds))
         allocate(cv(MaxSegEnds))
-        allocate(dcv(MaxSegEnds))      
+        allocate(dcv(MaxSegEnds))
         allocate(CLRef_Last(MaxSegEnds))
-        allocate(CLRefLE_Last(MaxSegEnds)) 
+        allocate(CLRefLE_Last(MaxSegEnds))
         allocate(Fstat_Last(MaxSegEnds))
         allocate(cv_Last(MaxSegEnds))
 
         allocate(LB_LogicOutputs(MaxSegEnds,NLBL))
         LB_LogicOutputs(:,:)=0!CM
 
-    End SUBROUTINE dystl_cns
+    end subroutine dystl_cns
 
-    SUBROUTINE dystl_init_LB()
+    subroutine dystl_init_LB()
 
         ! Initialize LB model
         dp(:) = 0.0
@@ -115,16 +116,16 @@ CONTAINS
 
         LB_LogicOutputs(:,:)=0
 
-    End SUBROUTINE dystl_init_LB
+    end subroutine dystl_init_LB
 
-    SUBROUTINE dystl_init_BV()
+    subroutine dystl_init_BV()
 
         BV_DynamicFlagL(:)=0
         BV_DynamicFlagD(:)=0
 
-    End SUBROUTINE dystl_init_BV
+    end subroutine dystl_init_BV
 
-    SUBROUTINE LB_EvalIdealCL(AOA,AOA0,CLa,RefFlag,CLID)
+    subroutine LB_EvalIdealCL(AOA,AOA0,CLa,RefFlag,CLID)
 
         ! AOA inputs in radians
         ! AOA0 is zero lift AOA
@@ -165,9 +166,9 @@ CONTAINS
             end if
         end if
 
-    End SUBROUTINE LB_EvalIdealCL
+    end subroutine LB_EvalIdealCL
 
-    SUBROUTINE Force180(a)
+    subroutine Force180(a)
 
         real :: a
 
@@ -178,32 +179,33 @@ CONTAINS
             a=a+2.0*pi
         end if
 
-    End SUBROUTINE Force180
+    end subroutine Force180
 
-    SUBROUTINE LB_UpdateStates(nb,nbe)
+    subroutine LB_UpdateStates(nb,nbe,Tp)
 
-        ! Update states for the LB model 
-        ! Note dynstall should be included eventually in an expanded blade module, at which point it would have 
+        ! Update states for the LB model
+        ! Note dynstall should be included eventually in an expanded blade module, at which point it would have
         ! access to the geometry info it needs...
 
-        integer :: nb, nbe      
+        ! Tp: time constant on LE pressure response to change in CL
+
+        integer :: nb, nbe
 
         integer :: i, nei, j, nElem, IsBE
 
         ! Set model parameters. All of these are potentially a function of Mach
         ! and are set to low mach values...
-        Tp=1.7                  ! time constant on LE pressure response to change in CL
         TfRef=3.0               ! time constant on TE separation point travel
         TvRef=6.0               ! time constant on LE vortex lift indicial function
         TvL=11.0                ! Characteristic LE vortex travel time
 
         ! Update states for each blade element
-        do i=1,nb                                                                                                     
-            nei=1+(i-1)*(nbe+1)                                               
-            do j=1,nbe  
+        do i=1,nb
+            nei=1+(i-1)*(nbe+1)
+            do j=1,nbe
 
-                ! Blade element is referenced by its upper end location                                           
-                nElem=nei+j                                                         
+                ! Blade element is referenced by its upper end location
+                nElem=nei+j
 
                 IsBE=0
                 if (j==1 .OR. j==nbe) then
@@ -256,7 +258,7 @@ CONTAINS
                             LB_LogicOutputs(nElem,7)=1
                         else if (sLEv(nElem)<2.0*TvL) then
                             if (CLRateFlag(nElem)>0) then
-                                ! orig 
+                                ! orig
                                 !Tf=1.0/3.0*TfRef
                                 !Tv=1.0/4.0*TvRef
                                 Tf=2.0*TfRef
@@ -269,11 +271,11 @@ CONTAINS
                                 Tv=1.0/2.0*TvRef
 
                                 ! Set logic state flags (for model diagnosis output)
-                                LB_LogicOutputs(nElem,8)=4                                                        
+                                LB_LogicOutputs(nElem,8)=4
                             end if
 
                             ! Set logic state flags (for model diagnosis output)
-                            LB_LogicOutputs(nElem,7)=2                                                
+                            LB_LogicOutputs(nElem,7)=2
                         else
                             ! orig
                             !Tf=4.0*TfRef
@@ -329,9 +331,9 @@ CONTAINS
 
         end do
 
-    End SUBROUTINE LB_UpdateStates
+    end subroutine LB_UpdateStates
 
-    SUBROUTINE LB_LogicChecksum(nElem,LBCheck)
+    subroutine LB_LogicChecksum(nElem,LBCheck)
 
         integer :: LBCheck, nElem
         integer :: Loop
@@ -343,6 +345,6 @@ CONTAINS
             LBCheck=LBCheck+LB_LogicOutputs(nElem,Loop)*Logic_W(Loop)
         end do
 
-    End SUBROUTINE LB_LogicChecksum
+    end subroutine LB_LogicChecksum
 
-End MODULE dystl
+end module dystl

@@ -1,4 +1,4 @@
-SUBROUTINE AeroCoeffs(nElem,alpha75,alpha5,Re,wPNorm,adotnorm,umach,SectInd,IsBE,CL,CD,CN,CT,CLCirc,CM25) 
+subroutine AeroCoeffs(nElem,alpha75,alpha5,Re,wPNorm,adotnorm,umach,SectInd,IsBE,CL,CD,CN,CT,CLCirc,CM25)
 
     use airfoil
     use dystl
@@ -13,7 +13,7 @@ SUBROUTINE AeroCoeffs(nElem,alpha75,alpha5,Re,wPNorm,adotnorm,umach,SectInd,IsBE
 
 
     ! Calc static characteristics
-    CALL intp(Re,alpha75*condeg,CLstat75,CDstat75,CM25stat,SectInd) 
+    CALL intp(Re,alpha75*condeg,CLstat75,CDstat75,CM25stat,SectInd)
     CALL intp(Re,alpha5*condeg,CLstat5,C,C1,SectInd)
 
     ! Apply pitch rate effects by analogy to pitching flat plate potential flow theory (SAND report)
@@ -27,29 +27,29 @@ SUBROUTINE AeroCoeffs(nElem,alpha75,alpha5,Re,wPNorm,adotnorm,umach,SectInd,IsBE
     if (DSFlag/=0) then
 
         if (DSFlag==1) then
-            ! Modified Boeing-Vertol approach  
-            Call BV_DynStall(nElem,CL5,CD5,alphaL,adotnorm,umach,Re,SectInd,CLdyn5,CDdyn5)   
+            ! Modified Boeing-Vertol approach
+            Call BV_DynStall(nElem,CL5,CD5,alphaL,adotnorm,umach,Re,SectInd,CLdyn5,CDdyn5)
         else
             ! Leishman-Beddoes model
             Call LB_DynStall(nElem,CL5,CD5,alphaL,alpha5,umach,Re,SectInd,CLdyn5,CDdyn5)
         end if
 
         CL5=CLdyn5
-        CD5=CDdyn5  
-        CLCirc=CLdyn5  
+        CD5=CDdyn5
+        CLCirc=CLdyn5
 
     end if
 
     ! Tangential and normal coeffs
-    CN=CL5*cos(alpha5)+CD5*sin(alpha5)                                   
-    CT=-CL5*sin(alpha5)+CD5*cos(alpha5) 
+    CN=CL5*cos(alpha5)+CD5*sin(alpha5)
+    CT=-CL5*sin(alpha5)+CD5*cos(alpha5)
 
-    ! Calc tangential added mass increment by analogy to pitching flat plate potential flow theory (SAND report) 
+    ! Calc tangential added mass increment by analogy to pitching flat plate potential flow theory (SAND report)
     dCTAM=2.0/cos(alpha5)*wPNorm*CM25stat-CLstat5/2.0*wPNorm
     ! Add in alphadot added mass effects (Theodorsen flat plate approx., Katz ch. 13)
     dCLAD=pi*adotnorm
     dCTAM=dCTAM-dCLAD*sin(alpha5)
-    dCNAM=dCLAD*cos(alpha5)       
+    dCNAM=dCLAD*cos(alpha5)
 
     ! Add in added mass effects at low AOA (models not accurate at high AOA)
     Fac=1.0
@@ -64,5 +64,5 @@ SUBROUTINE AeroCoeffs(nElem,alpha75,alpha5,Re,wPNorm,adotnorm,umach,SectInd,IsBE
     CL=CN*cos(alpha5)-CT*sin(alpha5)
     CD=CN*sin(alpha5)+CT*cos(alpha5)
 
-    Return
-End SUBROUTINE AeroCoeffs
+    return
+end subroutine AeroCoeffs
