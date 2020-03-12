@@ -8,10 +8,17 @@ jobs:
       osx_image: xcode10.2  # nasty hack to get Python 3 (see https://blog.travis-ci.com/2019-08-07-extensive-python-testing-on-travis-ci)
       env: LIBLAPACK_DIR=/usr/lib LIBATLAS_DIR=/usr/lib
 
-install:
-  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then brew update; fi
-  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then brew install gfortran openblas lapack; fi
-  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then sudo apt-get install gfortran libblas-dev libopenblas-dev python3; fi
+addons:
+  apt:
+    - gfortran
+    - openblas
+    - lapack
+  homebrew:
+    casks:
+      - gfortran
+    packages:
+      - openblas
+      - lapack
 
 script:
   - cd make
