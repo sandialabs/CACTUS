@@ -1,4 +1,5 @@
-# CACTUS
+![](media/CACTUS.png) 
+# CACTUS (Code for Axial and Cross-flow TUrbine Simulation)
 
 CACTUS (**C**ode for **A**xial and **C**ross-flow **TU**rbine **S**imulations),
 developed at Sandia National Laboratories, is a turbine simulation code based on a free wake vortex method. 
