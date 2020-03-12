@@ -1,7 +1,7 @@
 language: c
 sudo: required
 before_install:
-  - sudo apt-get install gfortran
+  - sudo apt-get install gfortran libblas-dev libopenblas-dev
 
 script:
   - cd make
