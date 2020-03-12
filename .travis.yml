@@ -11,8 +11,8 @@ jobs:
 addons:
   apt:
     - gfortran
-    - openblas
-    - lapack
+    - libblas-dev
+    - libopenblas-dev
   homebrew:
     casks:
       - gfortran
