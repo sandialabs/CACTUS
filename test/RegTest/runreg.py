@@ -3,145 +3,64 @@
 # This python script runs a number of single iteration regression tests and diffs output with the expected output...
 # Run the RegTest folder and pass the path to the relevant cactus executable as an argument on the command line (ex. runreg.py ../../../cactus)
 # Note: if no differences exist, the regression test output file is deleted for convenience.
+#
+# The cactus binary must exist on your path.
+
+import pytest
 
 import os
-import subprocess
 import sys
+import filecmp
 import difflib
-
-# Note: To debug, call the python debugger module, pdb, as a script with this script as the argument (python -m pdb script.py)
-# or insert: import pdb; pdb.set_trace() above, and call from terminal as usual
-
-def file_cmp(filename1,filename2):
-    """ Compares file line by line. Uses Python "universal line ending mode" to neglect 
-        platform differences in line endings. Returns True if files are same, False if different."""
-
-    with open(filename1,'rU') as f1:
-        with open(filename2,'rU') as f2:
-            for line_left, line_right in zip(f1.readlines(),f2.readlines()):
-                if line_left.strip() != line_right.strip():
-                    return False
-
-    return True
+import subprocess
 
 
-# Get exe path from command line
-if len(sys.argv) > 1:
-    CACTUSExe=sys.argv[1].strip()
-else:
-    sys.exit('Error: Call runreg.py with the path to the cactus executable on the command line (ex. runreg.py ../../../cactus)')
-#endif
-print 'Running runreg.py with ' + CACTUSExe
-print ''
+def _print_file_comparison(fn1, fn2):
+    same = filecmp.cmp(fn1, fn2)
 
-# set up log files
-logfile = open('regtest.log','w')
-errfile = open('regtest.err','w')
+    if not same:
+        print('Summary of differences between ' + fn1 + ' and ' + fn2 + ':')
+        
+        f = open(fn1,'r');
+        f1 = f.readlines()
+        f.close()
+        
+        f = open(fn2,'r');
+        f2 = f.readlines()
+        f.close()
+        
+        diff_out = difflib.unified_diff(f1, f2, fromfile=fn1, tofile=fn2)
+        for line in diff_out:
+            sys.stdout.write(line)
 
-# Run regression test 1
-print 'Running regression test 1'
-IFN='RegTest1.in'
-CCommand=[CACTUSExe, IFN]
-subprocess.call(CCommand, stdout=logfile, stderr=errfile)
+    else:
+        print('No differences')
+        os.remove(fn1)
 
-# clean up standard output files which are meaningless for this calculation
-os.remove('RegTest1_Param.csv')
-os.remove('RegTest1_RevData.csv')
-os.remove('RegTest1_TimeData.csv')
-
-# diff output
-FN1='RegTest1_RegData.out'
-FN2='RegTest1_RegData_Ex.out'
-print file_cmp(FN1,FN2)
-if not file_cmp(FN1,FN2):
-    print 'Summary of differences between ' + FN1 + ' and ' + FN2 + ':'
-    
-    f=open(FN1,'r');
-    F1=f.readlines()
-    f.close()
-    
-    f=open(FN2,'r');
-    F2=f.readlines()
-    f.close()
-    
-    DOut=difflib.unified_diff(F1,F2,fromfile=FN1,tofile=FN2)
-    for line in DOut:
-        sys.stdout.write(line)
-    #endfor
-else:
-    print 'No differences'
-    os.remove(FN1)
-#endif
-print ''
+    return same
 
 
-# Run regression test 2
-print 'Running regression test 2'
-IFN='RegTest2.in'
-CCommand=[CACTUSExe, IFN]
-subprocess.call(CCommand, stdout=logfile, stderr=errfile)
+@pytest.mark.parametrize("regression_name", ["RegTest1", "RegTest2", "RegTest3"])
+def test_regtest(regression_name):
 
-# clean up standard output files which are meaningless for this calculation
-os.remove('RegTest2_Param.csv')
-os.remove('RegTest2_RevData.csv')
-os.remove('RegTest2_TimeData.csv')
+    # Run regression test
+    print('Running regression test %s' % regression_name)
+    command = ['cactus', regression_name + '.in']
 
-# diff output
-FN1='RegTest2_RegData.out'
-FN2='RegTest2_RegData_Ex.out'
-if not file_cmp(FN1,FN2):
-    print 'Summary of differences between ' + FN1 + ' and ' + FN2 + ':'
-    
-    f=open(FN1,'r');
-    F1=f.readlines()
-    f.close()
-    
-    f=open(FN2,'r');
-    F2=f.readlines()
-    f.close()
-    
-    DOut=difflib.unified_diff(F1,F2,fromfile=FN1,tofile=FN2)
-    for line in DOut:
-        sys.stdout.write(line)
-    #endfor
-else:
-    print 'No differences'
-    os.remove(FN1)
-#endif
-print ''
+    try:
+        subprocess.check_output(command)
+    except subprocess.CalledProcessError as e:
+        raise RuntimeError(e.output)
 
+    # clean up standard output files which are meaningless for this calculation
+    os.remove('%s_Param.csv' % regression_name)
+    os.remove('%s_RevData.csv' % regression_name)
+    os.remove('%s_TimeData.csv' % regression_name)
 
-# Run regression test 3
-print 'Running regression test 3'
-IFN='RegTest3.in'
-CCommand=[CACTUSExe, IFN]
-subprocess.call(CCommand, stdout=logfile, stderr=errfile)
+    # diff output
+    fn1 = '%s_RegData.out' % regression_name
+    fn2 = '%s_RegData_Ex.out' % regression_name
 
-# clean up standard output files which are meaningless for this calculation
-os.remove('RegTest3_Param.csv')
-os.remove('RegTest3_RevData.csv')
-os.remove('RegTest3_TimeData.csv')
+    same = _print_file_comparison(fn1, fn2)
 
-# diff output
-FN1='RegTest3_RegData.out'
-FN2='RegTest3_RegData_Ex.out'
-if not file_cmp(FN1,FN2):
-    print 'Summary of differences between ' + FN1 + ' and ' + FN2 + ':'
-    
-    f=open(FN1,'r');
-    F1=f.readlines()
-    f.close()
-    
-    f=open(FN2,'r');
-    F2=f.readlines()
-    f.close()
-    
-    DOut=difflib.unified_diff(F1,F2,fromfile=FN1,tofile=FN2)
-    for line in DOut:
-        sys.stdout.write(line)
-    #endfor
-else:
-    print 'No differences'
-    os.remove(FN1)
-#endif
-print ''
+    assert same, 'Differences between param output and gold standard.'

@@ -1,0 +1,32 @@
+language: c
+
+jobs:
+  include:
+    - os: linux
+      env: LIBLAPACK_DIR=/usr/lib64 LIBATLAS_DIR=/usr/lib64
+    - os: osx
+      osx_image: xcode10.2  # nasty hack to get Python 3 (see https://blog.travis-ci.com/2019-08-07-extensive-python-testing-on-travis-ci)
+      env: LIBLAPACK_DIR=/usr/lib LIBATLAS_DIR=/usr/lib
+
+addons:
+  apt:
+    - gfortran
+    - libblas-dev
+    - libopenblas-dev
+  homebrew:
+    casks:
+      - gfortran
+    packages:
+      - openblas
+      - lapack
+
+install:
+  - sudo pip install pytest
+  
+script:
+  - cd make
+  - make LIBLAPACK_DIR=$LIBLAPACK_DIR LIBATLAS_DIR=$LIBATLAS_DIR -f Makefile.gfortran
+  - cd ..
+  - bin/cactus
+  - cd test/RegTest
+  - PATH=$PATH:../../bin/ pytest runreg.py
