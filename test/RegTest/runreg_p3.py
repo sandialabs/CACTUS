@@ -23,6 +23,7 @@ else:
 print('Running runreg.py with ' + CACTUSExe)
 print('')
 
+failure = False
 
 # Run regression test 1
 print('Running regression test 1')
@@ -53,6 +54,8 @@ if not filecmp.cmp(FN1,FN2):
     for line in DOut:
         sys.stdout.write(line)
     #endfor
+
+    failure = True
 else:
     print('No differences')
     os.remove(FN1)
@@ -89,6 +92,8 @@ if not filecmp.cmp(FN1,FN2):
     for line in DOut:
         sys.stdout.write(line)
     #endfor
+
+    failure = True
 else:
     print('No differences')
     os.remove(FN1)
@@ -125,8 +130,13 @@ if not filecmp.cmp(FN1,FN2):
     for line in DOut:
         sys.stdout.write(line)
     #endfor
+
+    failure = True
 else:
     print('No differences')
     os.remove(FN1)
 #endif
 print('')
+
+if failure:
+    sys.exit(1)
