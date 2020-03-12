@@ -20,10 +20,13 @@ addons:
       - openblas
       - lapack
 
+install:
+  - pip install pytest
+  
 script:
   - cd make
   - make LIBLAPACK_DIR=$LIBLAPACK_DIR LIBATLAS_DIR=$LIBATLAS_DIR -f Makefile.gfortran
   - cd ..
   - bin/cactus
   - cd test/RegTest
-  - python runreg_p3.py ../../bin/cactus
+  - PATH=../../bin/:$PATH pytest runreg.py
