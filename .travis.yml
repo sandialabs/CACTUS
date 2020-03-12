@@ -8,4 +8,5 @@ script:
   - make -f Makefile.gfortran
   - cd ..
   - bin/cactus
-  - python test/RegTest/runreg_p3.py bin/cactus
+  - cd test/RegTest
+  - python runreg_p3.py ../../bin/cactus
