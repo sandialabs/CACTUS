@@ -21,7 +21,7 @@ addons:
       - lapack
 
 install:
-  - pip install pytest
+  - sudo pip install pytest
   
 script:
   - cd make
