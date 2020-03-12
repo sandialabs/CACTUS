@@ -1,19 +1,17 @@
 language: c
-sudo: required
 
 jobs:
   include:
     - os: linux
-      env: LIBLAPACK_DIR=/usr/lib64 LIBATLAS_DIR=/usr/lib64 -f Makefile.gfortran
+      env: LIBLAPACK_DIR=/usr/lib64 LIBATLAS_DIR=/usr/lib64
     - os: osx
       osx_image: xcode10.2  # nasty hack to get Python 3 (see https://blog.travis-ci.com/2019-08-07-extensive-python-testing-on-travis-ci)
-      env: LIBLAPACK_DIR=/usr/lib LIBATLAS_DIR=/usr/lib -f Makefile.gfortran
+      env: LIBLAPACK_DIR=/usr/lib LIBATLAS_DIR=/usr/lib
 
 install:
   - if [ "$TRAVIS_OS_NAME" = "osx" ]; then brew update; fi
-  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then brew install openblas lapack pyenv; fi
-  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then brew install openblas lapack pyenv; fi
-  - if [ "$TRAVIS_OS_NAME" = "linux" ]; sudo apt-get install gfortran libblas-dev libopenblas-dev python3; fi
+  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then brew install gfortran openblas lapack; fi
+  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then sudo apt-get install gfortran libblas-dev libopenblas-dev python3; fi
 
 script:
   - cd make
@@ -21,5 +19,4 @@ script:
   - cd ..
   - bin/cactus
   - cd test/RegTest
-  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then brew update; fi
   - python runreg_p3.py ../../bin/cactus
