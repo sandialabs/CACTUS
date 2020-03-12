@@ -50,7 +50,7 @@ def test_regtest(regression_name):
     try:
         subprocess.check_output(command)
     except subprocess.CalledProcessError as e:
-        print(e.output)
+        raise RuntimeError(e.output)
 
     # clean up standard output files which are meaningless for this calculation
     os.remove('%s_Param.csv' % regression_name)
