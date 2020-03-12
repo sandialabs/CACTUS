@@ -29,4 +29,4 @@ script:
   - cd ..
   - bin/cactus
   - cd test/RegTest
-  - PATH=../../bin/:$PATH pytest runreg.py
+  - PATH=$PATH:../../bin/ pytest runreg.py
