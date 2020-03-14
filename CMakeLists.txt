@@ -21,6 +21,11 @@ if(CMAKE_Fortran_COMPILER_ID MATCHES "PGI")
     set(bounds "-C -Mbounds")
 endif()
 
+# find LAPACK, OpenMP
+find_package(LAPACK)
+find_package(OpenMP)
+
+string(APPEND dialect " ${OpenMP_Fortran_FLAGS}")
 list(APPEND CMAKE_Fortran_FLAGS_DEBUG ${bounds})
 list(APPEND CMAKE_Fortran_FLAGS ${dialect})
 
