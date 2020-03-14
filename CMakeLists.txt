@@ -22,11 +22,8 @@ if(CMAKE_Fortran_COMPILER_ID MATCHES "PGI")
 endif()
 
 # find LAPACK, OpenMP
+enable_language(C)  # For compatibility, some systems complain about this
 find_package(LAPACK)
-if(NOT LAPACK_FOUND)
-    enable_language(C)  # Some libraries need a C compiler to find
-    find_package(LAPACK REQUIRED)
-endif()
 
 option(OPENMP "Compile with OpenMP enabled?" ON)
 if(OPENMP MATCHES ON)
