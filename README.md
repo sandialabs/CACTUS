@@ -5,34 +5,30 @@ CACTUS (**C**ode for **A**xial and **C**ross-flow **TU**rbine **S**imulations),
 developed at Sandia National Laboratories, is a turbine simulation code based on a free wake vortex method. 
 
 
-### Installation & Compilation
+### Compiling
 
-Installation and compilation instructions for Linux and Windows operating
-systems can be found in `doc/Install`. CACTUS may also be compiled on Mac OS
-environments using GCC Fortran.
+Compilation instructions for Linux, Mac, and Windows can be found in `doc/install/`.
+
+- [Linux/Mac](doc/install/install-linux-osx.md)
+- Windows
+    - [Cygwin](doc/install/install-windows-cygwin.docx)
+    - [Visual Studio](doc/install/install-windows-intel-compiler.docx)
 
 #### Tests
-After compiling, navigate to `test/RegTest/` and run:
+Simple regression tests are included. After compiling, navigate to `test/RegTest/` and run:
 
 ```
-python runreg.py ../../bin/cactus
-```
-
-or, if you are using Python 3
-```
-python runreg_p3.py ../../bin/cactus
+PATH=$PATH:../../bin pytest runreg.py
 ```
 
 ### Directory Structure
 
-- `bin`: Compiled executables
+- `bin`: Default target for compiled executables
 - `DAKOTA`: DAKOTA drivers (by Jon Murray) and examples
 - `doc`: Documentation -- user's manual, install instructions, DAKOTA drivers manual, relevant publications
 - `make`: Makefiles for various compilers and platforms
-- `mod`: Source code -- modules & utilities
 - `src`: Source code
 - `test`: Test cases (regression tests, example HAWT/VAWT input files, airfoil files)
-
 
 ### Post-processing
 
