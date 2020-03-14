@@ -38,7 +38,22 @@ list(APPEND CMAKE_Fortran_FLAGS_DEBUG ${bounds})
 list(APPEND CMAKE_Fortran_FLAGS ${dialect})
 
 # add VERSION variable
-add_definitions(-DVERSION="SNAPSHOT")
+# see https://cmake.org/pipermail/cmake/2018-October/068389.html
+find_package(Git QUIET REQUIRED)
+
+execute_process(
+    COMMAND "${GIT_EXECUTABLE}" describe --abbrev=4 --dirty --always --tags
+    WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
+    RESULT_VARIABLE res
+    OUTPUT_VARIABLE CACTUS_VERSION
+    # ERROR_QUIET
+    OUTPUT_STRIP_TRAILING_WHITESPACE)
+
+set_property(GLOBAL APPEND
+    PROPERTY CMAKE_CONFIGURE_DEPENDS
+    "${CMAKE_SOURCE_DIR}/.git/index")
+
+add_definitions(-DVERSION="${CACTUS_VERSION}")
 
 # create source lists
 file(GLOB_RECURSE mod_sources ${PROJECT_SOURCE_DIR}/mod/**.f95)
