@@ -14,7 +14,7 @@ endif()
 if(CMAKE_Fortran_COMPILER_ID MATCHES "Intel")
     set(dialect "-r8 -mkl -fpp")
     set(bounds "-O2 -check bounds")
-	set(BLA_VENDOR Intel10_64lp)  # force use of MKL BLAS
+    set(BLA_VENDOR Intel10_64lp)  # force use of MKL BLAS
 endif()
 if(CMAKE_Fortran_COMPILER_ID MATCHES "PGI")
     set(dialect "-r8 -O -Mvect=sse -Mcache_align -Mpre -Mnoframe -Mlre -Mflushz -Mautoinline")
@@ -23,15 +23,17 @@ endif()
 
 # find LAPACK, OpenMP
 find_package(LAPACK)
-find_package(OpenMP)
+option(OPENMP "Compile with OpenMP enabled?" ON)
+if(OPENMP MATCHES ON)
+    find_package(OPENMP)
+    if (NOT OpenMP_Fortran_FOUND)
+        message(FATAL_ERROR "OPENMP option was set to true (default), but no OpenMP was found. Install OpenMP, or try again with -DOPENMP=OFF. Exiting.")
+    endif()
+    string(APPEND dialect " ${OpenMP_Fortran_FLAGS}")
+endif()
 
-string(APPEND dialect " ${OpenMP_Fortran_FLAGS}")
 list(APPEND CMAKE_Fortran_FLAGS_DEBUG ${bounds})
 list(APPEND CMAKE_Fortran_FLAGS ${dialect})
-
-# find LAPACK
-# (this sets LAPACK_LINKER_FLAGS, LAPACK_LIBARIES, among others)
-find_package(LAPACK)
 
 # add VERSION variable
 add_definitions(-DVERSION="SNAPSHOT")
