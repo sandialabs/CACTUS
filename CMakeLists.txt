@@ -23,6 +23,11 @@ endif()
 
 # find LAPACK, OpenMP
 find_package(LAPACK)
+if(NOT LAPACK_FOUND)
+    enable_language(C)  # Some libraries need a C compiler to find
+    find_package(LAPACK REQUIRED)
+endif()
+
 option(OPENMP "Compile with OpenMP enabled?" ON)
 if(OPENMP MATCHES ON)
     find_package(OPENMP)
