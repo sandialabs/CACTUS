@@ -17,7 +17,7 @@ if(CMAKE_Fortran_COMPILER_ID MATCHES "Intel")
     set(BLA_VENDOR Intel10_64lp)  # force use of MKL BLAS
 endif()
 if(CMAKE_Fortran_COMPILER_ID MATCHES "PGI")
-    set(dialect "-r8 -O -Mvect=sse -Mcache_align -Mpre -Mnoframe -Mlre -Mflushz -Mautoinline")
+    set(dialect "-O -r8 -Mpreprocess -Mvect=sse -Mcache_align -Mpre -Mnoframe -Mlre -Mflushz -Mautoinline")
     set(bounds "-C -Mbounds")
 endif()
 
