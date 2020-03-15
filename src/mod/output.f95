@@ -22,7 +22,8 @@ module output
     real, allocatable :: TSOutData(:,:)                 ! Timestep data for each timestep
 
     ! Element loads data
-    character(10000) :: BladeElemOutHead = 'Normalized Time (-),Theta (rad),Blade,Element,Rev,x/R (-),y/R (-),z/R (-),AOA25 (deg),AOA50 (deg),AOA75 (deg),AdotNorm (-),Re (-),Mach (-),Ur (-),IndU (-),IndV (-),IndW (-),GB (?),CL (-),CD (-),CM25 (-),CLCirc (-),CN (-),CT (-),Fx (-),Fy (-),Fz (-),te (-)'
+    character(10000) :: BladeElemOutHead = 'Normalized Time (-),Theta (rad),Blade,Element,Rev,x/R (-),y/R (-),z/R (-),AOA25 (deg),AOA50 (deg),AOA75 (deg),AdotNorm (-),Re (-),Mach (-),Ur (-),IndU (-),IndV (-),IndW (-),GB (?),CL (-),CD (-),CM25 (-),&
+&CLCirc (-),CN (-),CT (-),Fx (-),Fy (-),Fz (-),te (-)'
     integer :: BladeElemOutNCols = 29                           ! Number of element loads outputs
     integer :: BladeElemOutRow                                 ! Rows of element row output
     real, allocatable :: BladeElemOutData(:,:)                 ! Element loads data for each timestep
