@@ -7,6 +7,7 @@ module wallsystem
     use plot3d, only: read_p3d_multiblock
     use wallgeom
     use quadsourcepanel
+    use ieee_arithmetic, only: ieee_is_nan
 
     implicit none
 
@@ -235,7 +236,7 @@ contains
             vel = vel + dvel_global
 
             ! check for problems in dvel
-            if (isnan(dvel(1)) .or. isnan(dvel(2)) .or. isnan(dvel(3))) then
+            if (ieee_is_nan(dvel(1)) .or. ieee_is_nan(dvel(2)) .or. ieee_is_nan(dvel(3))) then
                 quad(1,:) = p1_plane(1:3)
                 quad(2,:) = p2_plane(1:3)
                 quad(3,:) = p3_plane(1:3)
