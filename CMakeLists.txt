@@ -39,8 +39,9 @@ list(APPEND CMAKE_Fortran_FLAGS ${dialect})
 
 # add VERSION variable
 # see https://cmake.org/pipermail/cmake/2018-October/068389.html
-find_package(Git QUIET REQUIRED)
+find_package(Git QUIET)
 
+if(GIT_EXECUTABLE)
 execute_process(
     COMMAND "${GIT_EXECUTABLE}" describe --abbrev=4 --dirty --always --tags
     WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
@@ -49,9 +50,13 @@ execute_process(
     # ERROR_QUIET
     OUTPUT_STRIP_TRAILING_WHITESPACE)
 
-set_property(GLOBAL APPEND
-    PROPERTY CMAKE_CONFIGURE_DEPENDS
-    "${CMAKE_SOURCE_DIR}/.git/index")
+    set_property(GLOBAL APPEND
+        PROPERTY CMAKE_CONFIGURE_DEPENDS
+        "${CMAKE_SOURCE_DIR}/.git/index")
+else(NOT GIT_EXECUTABLE)
+    # no git found
+    set(CACTUS_VERSION "no-git")
+endif()
 
 add_definitions(-DVERSION="${CACTUS_VERSION}")
 
