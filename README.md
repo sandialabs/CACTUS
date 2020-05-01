@@ -7,12 +7,7 @@ developed at Sandia National Laboratories, is a turbine simulation code based on
 
 ### Compiling
 
-Compilation instructions for Linux, Mac, and Windows can be found in `doc/install/`.
-
-- [Linux/Mac](doc/install/install-linux-osx.md)
-- Windows
-    - [Cygwin](doc/install/install-windows-cygwin.docx)
-    - [Visual Studio](doc/install/install-windows-intel-compiler.docx)
+CACTUS can be compiled via CMake. For details, see [doc/compile.md](doc/compile.md)
 
 #### Tests
 Simple regression tests are included. After compiling, navigate to `test/RegTest/` and run:
