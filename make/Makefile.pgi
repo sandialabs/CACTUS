@@ -1,8 +1,8 @@
 # This makefile is constructed for GNU make - 4/00.
 # Meant for use with a project using modules (with module code in MODDIR)
 SRCDIR = ../src
-MODDIR = ../mod
-MODUTILDIR = ../mod/util
+MODDIR = ../src/mod
+MODUTILDIR = ../src/mod/util
 BINDIR = ../bin
 
 # split f95, and module lists... Modules need to be compiled first

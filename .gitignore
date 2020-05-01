@@ -7,3 +7,4 @@ CM/
 *.DS_Store
 Thumbs.db
 ~*.docx
+test/RegTest/__pycache__
