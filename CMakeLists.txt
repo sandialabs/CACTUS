@@ -27,7 +27,7 @@ find_package(LAPACK)
 
 option(OPENMP "Compile with OpenMP enabled?" ON)
 if(OPENMP MATCHES ON)
-    find_package(OPENMP)
+    find_package(OpenMP)
     if (NOT OpenMP_Fortran_FOUND)
         message(FATAL_ERROR "OPENMP option was set to true (default), but no OpenMP was found. Install OpenMP, or try again with -DOPENMP=OFF. Exiting.")
     endif()
