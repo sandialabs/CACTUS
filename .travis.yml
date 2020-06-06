@@ -67,9 +67,13 @@ addons:
       - openblas
       - lapack
   
+compiler:
+  - gcc
+
 script:
   - cd ${TRAVIS_BUILD_DIR}
   - mkdir -p build && cd build
+  - if [ "$TRAVIS_OS_NAME" = "windows" ]; then $mingw64 printenv; fi
   - if [ "$TRAVIS_OS_NAME" = "windows" ]; then $mingw64 cmake -DOPENMP=OFF ../ && make install; fi
   - if [ "$TRAVIS_OS_NAME" != "windows" ]; then cmake -DOPENMP=OFF ../ && make install; fi
   - cd ..
