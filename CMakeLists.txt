@@ -58,7 +58,16 @@ else(NOT GIT_EXECUTABLE)
     set(CACTUS_VERSION "no-git")
 endif()
 
+# get appropriate path separator
+if("${CMAKE_HOST_SYSTEM}" MATCHES ".*Windows.*")
+  set(SEP "\\;")
+else() # e.g. Linux
+  set(SEP "/")
+endif()
+
+# add definitions
 add_definitions(-DVERSION="${CACTUS_VERSION}")
+add_definitions(-DPATHSEP="${SEP}")
 
 # create source lists
 file(GLOB_RECURSE mod_sources ${PROJECT_SOURCE_DIR}/mod/**.f95)
