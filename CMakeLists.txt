@@ -58,7 +58,16 @@ else(NOT GIT_EXECUTABLE)
     set(CACTUS_VERSION "no-git")
 endif()
 
+# get appropriate path separator
+if(MINGW OR WIN32 OR MSYS)
+  set(SEP "\\")
+else() # e.g. Linux
+  set(SEP "/")
+endif()
+
+# add definitions
 add_definitions(-DVERSION="${CACTUS_VERSION}")
+add_definitions(-DPATHSEP="${SEP}")
 
 # create source lists
 file(GLOB_RECURSE mod_sources ${PROJECT_SOURCE_DIR}/mod/**.f95)
@@ -66,7 +75,7 @@ file(GLOB_RECURSE prog_sources ${PROJECT_SOURCE_DIR}/src/*.f95)
 
 add_executable(cactus ${prog_sources} ${mod_sources})
 target_compile_options(cactus PUBLIC ${LAPACK_LINKER_FLAGS})
-if(MINGW)
+if(MINGW OR WIN32 OR MSYS)
     target_link_libraries(cactus ${LAPACK_LIBRARIES} -static)
 else()
     target_link_libraries(cactus ${LAPACK_LIBRARIES})
