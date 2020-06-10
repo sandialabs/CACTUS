@@ -10,6 +10,7 @@ import pytest
 
 import os
 import sys
+import platform
 import filecmp
 import difflib
 import subprocess
@@ -53,14 +54,22 @@ def test_regtest(regression_name):
         raise RuntimeError(e.output)
 
     # clean up standard output files which are meaningless for this calculation
-    os.remove('%s_Param.csv' % regression_name)
-    os.remove('%s_RevData.csv' % regression_name)
-    os.remove('%s_TimeData.csv' % regression_name)
+    try:
+        os.remove('%s_Param.csv' % regression_name)
+        os.remove('%s_RevData.csv' % regression_name)
+        os.remove('%s_TimeData.csv' % regression_name)
+    except: 
+        os.remove('C%s_Param.csv' % regression_name)
+        os.remove('C%s_RevData.csv' % regression_name)
+        os.remove('C%s_TimeData.csv' % regression_name)
 
     # diff output
-    fn1 = '%s_RegData.out' % regression_name
+    if platform.system() == "Windows":
+        fn1 = 'C%s_RegData.out' % regression_name
+    else:
+        fn1 = '%s_RegData.out' % regression_name
     fn2 = '%s_RegData_Ex.out' % regression_name
-
+        
     same = _print_file_comparison(fn1, fn2)
 
     assert same, 'Differences between param output and gold standard.'
