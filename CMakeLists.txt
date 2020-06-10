@@ -66,7 +66,11 @@ file(GLOB_RECURSE prog_sources ${PROJECT_SOURCE_DIR}/src/*.f95)
 
 add_executable(cactus ${prog_sources} ${mod_sources})
 target_compile_options(cactus PUBLIC ${LAPACK_LINKER_FLAGS})
-target_link_libraries(cactus ${LAPACK_LIBRARIES})
+if(MINGW)
+    target_link_libraries(cactus ${LAPACK_LIBRARIES} -static)
+else()
+    target_link_libraries(cactus ${LAPACK_LIBRARIES})
+endif()
 
 # install
 install(TARGETS cactus
