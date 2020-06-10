@@ -98,7 +98,9 @@ program CACTUS
     call print_compiler_info()
     write(*,*) ''
 
-
+    call get_path_separator()
+    write(*,*) 'PATH SEPARATOR IS: '//path_separator
+    
     ! Alert the user if OpenMP is enabled.
 !$  write(*,*) 'OpenMP is Enabled.'
 
