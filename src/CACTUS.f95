@@ -188,7 +188,7 @@ program CACTUS
 
     ! Field data
     if (FieldOutFlag > 0) then
-        call system('mkdir "'//FieldOutputPath//path_separator//'"')
+        call system('mkdir "'//adjustl(trim(FieldOutputPath))//path_separator//'"')
     end if
 
     ! Wake element data
