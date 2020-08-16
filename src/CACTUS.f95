@@ -184,26 +184,26 @@ program CACTUS
 
     ! Create output directories
     ! Create the main output directory
-    call system('mkdir '//adjustl(trim(OutputPath)))
+    call system('mkdir "'//adjustl(trim(OutputPath))//path_separator//'"')
 
     ! Field data
     if (FieldOutFlag > 0) then
-        call system('mkdir '//FieldOutputPath)
+        call system('mkdir "'//adjustl(trim(FieldOutputPath))//path_separator//'"')
     end if
 
     ! Wake element data
     if (WakeElemOutFlag > 0) then
-        call system('mkdir '//adjustl(trim(WakeElemOutputPath)))
+        call system('mkdir "'//adjustl(trim(WakeElemOutputPath))//path_separator//'"')
     end if
 
     ! Wall data
     if (WallOutFlag > 0) then
-        call system('mkdir '//adjustl(trim(WallOutputPath)))
+        call system('mkdir "'//adjustl(trim(WallOutputPath))//path_separator//'"')
     end if
 
     ! Probe data
     if (ProbeFlag > 0) then
-        call system('mkdir '//adjustl(trim(ProbeOutputPath)))
+        call system('mkdir "'//adjustl(trim(ProbeOutputPath))//path_separator//'"')
     end if
 
     ! Open output files

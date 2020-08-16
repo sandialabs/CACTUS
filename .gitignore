@@ -8,3 +8,4 @@ CM/
 Thumbs.db
 ~*.docx
 test/RegTest/__pycache__
+build/
