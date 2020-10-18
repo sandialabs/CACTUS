@@ -5,7 +5,7 @@ Module fnames
     implicit none
 
     integer :: nargin, FNLength, status, DecInd
-    character(80) :: InputFN, SFOutputFN, RevOutputFN, TSOutputFN, ELOutputFN, RegOutputFN, WakeOutputFN, FieldOutputFN, GPOutputFN, FSOutputFN, DSOutputFN, FNBase
+    character(255) :: InputFN, SFOutputFN, RevOutputFN, TSOutputFN, ELOutputFN, RegOutputFN, WakeOutputFN, FieldOutputFN, GPOutputFN, FSOutputFN, DSOutputFN, FNBase
     character(255) :: OutputPath,WakeElemOutputPath,WallOutputPath,FieldOutputPath,ProbeOutputPath
 
 contains
