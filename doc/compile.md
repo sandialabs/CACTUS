@@ -11,7 +11,8 @@ Compilation requires CMake, which can be installed by your OS package manager, o
    cd build
    cmake ../ 
    make
-	```
+   ```
+   This will produce a `cactus` executable in the `bin/` folder.  
    Support for OpenMP may be disabled by adding the `DOPENMP=OFF` flag to the `cmake` call, as below.
    ```
    cmake -DOPENMP=OFF ../ 

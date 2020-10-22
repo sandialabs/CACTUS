@@ -81,7 +81,7 @@ else()
     target_link_libraries(cactus ${LAPACK_LIBRARIES})
 endif()
 
-# install
-install(TARGETS cactus
-        RUNTIME DESTINATION ${PROJECT_SOURCE_DIR}/bin/
-        )
+# build to ./bin
+set_target_properties(cactus
+    PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/bin/")
