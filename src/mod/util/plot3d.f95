@@ -15,23 +15,6 @@ contains
         ! read_p3d_multiblock() : Read a formatted (ASCII) Plot3D multi-block mesh file.
         !   Coordinates must be specified one number per line.
         !
-        !   Format Example:
-        !   [nblocks]
-        !   [nx] [ny] [nz]
-        !   [x_1]
-        !   [x_2]
-        !   ...
-        !   [x_nx]
-        !   [y_1]
-        !   [y_2]
-        !   ...
-        !   [y_ny]
-        !   [z_1]
-        !   [z_2]
-        !   ...
-        !   [z_nz]
-        !   EOF
-        !
         !   Inputs
         !   ======
         !   xyz_filename : Plot3d mesh filename (*.xyz)
@@ -79,33 +62,12 @@ contains
         allocate(z(nimax,njmax,nkmax,nblocks))
 
         ! read in data for each block
-        do  m=1,nblocks
-            do k=1,nk(m)
-                do j=1,nj(m)
-                    do i=1,ni(m)
-                        read(IOunit,*) x(i,j,k,m)
-                    end do
-                end do
-            end do
-
-            do k=1,nk(m)
-                do j=1,nj(m)
-                    do i=1,ni(m)
-                        read(IOunit,*) y(i,j,k,m)
-                    end do
-                end do
-            end do
-
-            do k=1,nk(m)
-                do j=1,nj(m)
-                    do i=1,ni(m)
-                        read(IOunit,*) z(i,j,k,m)
-                    end do
-                end do
-            end do
-        enddo
-
-        return
+        do  m = 1, nblocks
+            read(IOunit,*) &
+            ((( x(i,j,k,m), i=1,ni(m)), j=1,nj(m)), k=1,nk(m)), &
+            ((( y(i,j,k,m), i=1,ni(m)), j=1,nj(m)), k=1,nk(m)), &
+            ((( z(i,j,k,m), i=1,ni(m)), j=1,nj(m)), k=1,nk(m))
+         enddo
 
         ! close file
         close(IOunit)
