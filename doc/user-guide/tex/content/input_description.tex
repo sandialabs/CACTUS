@@ -485,25 +485,7 @@ Reynolds Number: 5e6
 \section{Wall input file}
 If \path{WPFlag} = 1, CACTUS will include the influence of a specified wall geometry. The wall geometry must be generated externally; the path to this wall geometry is specified with the \path{WallMeshPath} namelist variable.
 
-The wall mesh file is a multi-block, formatted (ASCII), Plot3d structured mesh. More details on the Plot3d file format can be found at \path{http://www.grc.nasa.gov/WWW/wind/valid/plot3d.html}. Each block contains one structured mesh, and thus complex wall geometries can be specified with a single mesh file. The normals of each cell defined by the node locations must face inward toward the domain in which the wake elements lie. The format of this file is demonstrated in \Cref{listing:plot3d_file_example}. For inspection, this file format may easily be read in by ParaView.
-
-\begin{lstlisting}[label=listing:plot3d_file_example,caption=Format for a multi-block Plot3d mesh file.]
-[nblocks]
-[nx] [ny] [nz]
-[x_1]
-[x_2]
-...
-[x_nx]
-[y_1]
-[y_2]
-...
-[y_ny]
-[z_1]
-[z_2]
-...
-[z_nz]
-EOF
-\end{lstlisting}
+The wall mesh file is a multi-block, formatted (ASCII), Plot3d structured mesh. More details on the Plot3d file format can be found at \path{http://www.grc.nasa.gov/WWW/wind/valid/plot3d.html}. Each block contains one structured mesh, and thus complex wall geometries can be specified with a single mesh file. The normals of each cell defined by the node locations must face inward toward the domain in which the wake elements lie. For inspection, this file format may easily be read in by ParaView.
 
 \section{Probe specification file}
 If \path{ProbeFlag} = 1, CACTUS will compute and write to file the velocities at a number of specified "probe" locations. The probe locations are specified in a file whose path is given with the \path{ProbeSpecPath} namelist variable. The probe specification file contains the number of probes and the coordinates of each probe; an example of this file is shown in \Cref{listing:probespec_file_example}.
