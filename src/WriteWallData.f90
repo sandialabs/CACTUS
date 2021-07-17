@@ -67,7 +67,7 @@ subroutine WriteWallData()
             end if
 
             ! write each wall as a zone, specifying cellcentered data for sigma
-            write(17,'(A,I0,A,I0,A,I0,A,E13.7,A,A)') 'ZONE I=', Walls(iw)%NumWP1+1, &
+            write(17,'(A,I0,A,I0,A,I0,A,E14.7,A,A)') 'ZONE I=', Walls(iw)%NumWP1+1, &
                                                       ', J=', Walls(iw)%NumWP2+1, &
                                                       ', K=1, T="WP', iw, '", SOLUTIONTIME=', TimeN, ', DATAPACKING=BLOCK, ', var_string
 
@@ -83,25 +83,25 @@ subroutine WriteWallData()
 
             ! write x of nodes
             do i=1,Walls(iw)%NumWPNodes
-                write(17,'(E13.7, " ",$)') Walls(iw)%pnodes(i,1)
+                write(17,'(E14.7, " ",$)') Walls(iw)%pnodes(i,1)
             end do
             write(17,*) ""
 
             ! write y of nodes
             do i=1,Walls(iw)%NumWPNodes
-                write(17,'(E13.7, " ",$)') Walls(iw)%pnodes(i,2)
+                write(17,'(E14.7, " ",$)') Walls(iw)%pnodes(i,2)
             end do
             write(17,*) ""
 
             ! write z of nodes
             do i=1,Walls(iw)%NumWPNodes
-                write(17,'(E13.7, " ",$)') Walls(iw)%pnodes(i,3)
+                write(17,'(E14.7, " ",$)') Walls(iw)%pnodes(i,3)
             end do
             write(17,*) ""
 
             ! write wall source strengths
             do ip=ip_global,ip_global + Walls(iw)%NumWP - 1
-                write(17,'(E13.7, " ",$)') WSource(ip, 1)
+                write(17,'(E14.7, " ",$)') WSource(ip, 1)
             end do
             write(17,*) ""
 
@@ -109,20 +109,20 @@ subroutine WriteWallData()
             if (WallOutFlag == 2) then
                 ! u
                 do i=1,Walls(iw)%NumWP
-                    write(17,'(E13.7, " ",$)') Walls(iw)%vel_centers(i,1)
+                    write(17,'(E14.7, " ",$)') Walls(iw)%vel_centers(i,1)
                 end do
                 write(17,*) ""
 
 
                 ! v
                 do i=1,Walls(iw)%NumWP
-                    write(17,'(E13.7, " ",$)') Walls(iw)%vel_centers(i,2)
+                    write(17,'(E14.7, " ",$)') Walls(iw)%vel_centers(i,2)
                 end do
                 write(17,*) ""
 
                 ! w
                 do i=1,Walls(iw)%NumWP
-                    write(17,'(E13.7, " ",$)') Walls(iw)%vel_centers(i,3)
+                    write(17,'(E14.7, " ",$)') Walls(iw)%vel_centers(i,3)
                 end do
                 write(17,*) ""
             end if
@@ -145,29 +145,29 @@ subroutine WriteWallData()
         ! do iw=1,Nwalls
 
         !     !! write each wall as a zone, specifying cellcentered data for sigma
-        !     write(17,'(A,I0,A,E13.7,A,I0,A,I0,A)') 'ZONE T="WP', iw, '", SOLUTIONTIME=', TimeN, ', N=', Walls(iw)%NumWPNodes, ', E=', Walls(iw)%NumWP, ', ET=QUADRILATERAL, F=FEBLOCK, VARLOCATION=([4]=CELLCENTERED) '
+        !     write(17,'(A,I0,A,E14.7,A,I0,A,I0,A)') 'ZONE T="WP', iw, '", SOLUTIONTIME=', TimeN, ', N=', Walls(iw)%NumWPNodes, ', E=', Walls(iw)%NumWP, ', ET=QUADRILATERAL, F=FEBLOCK, VARLOCATION=([4]=CELLCENTERED) '
 
         !     ! write x of nodes
         !     do i=1,Walls(iw)%NumWPNodes
-        !         write(17,'(E13.7, " ",$)') Walls(iw)%pnodes(i,1)
+        !         write(17,'(E14.7, " ",$)') Walls(iw)%pnodes(i,1)
         !     end do
         !     write(17,*) ""
 
         !     ! write y of nodes
         !     do i=1,Walls(iw)%NumWPNodes
-        !         write(17,'(E13.7, " ",$)') Walls(iw)%pnodes(i,2)
+        !         write(17,'(E14.7, " ",$)') Walls(iw)%pnodes(i,2)
         !     end do
         !     write(17,*) ""
 
         !     ! write z of nodes
         !     do i=1,Walls(iw)%NumWPNodes
-        !         write(17,'(E13.7, " ",$)') Walls(iw)%pnodes(i,3)
+        !         write(17,'(E14.7, " ",$)') Walls(iw)%pnodes(i,3)
         !     end do
         !     write(17,*) ""
 
         !     ! write wall source strengths
         !     do ip=ip_global,ip_global + Walls(iw)%NumWP - 1
-        !         write(17,'(E13.7, " ",$)') WSource(ip, 1)
+        !         write(17,'(E14.7, " ",$)') WSource(ip, 1)
         !     end do
         !     write(17,*) ""
 
@@ -211,12 +211,12 @@ subroutine WriteWallData()
                     dH=0.5*FnR**2*(1-TVel**2)
 
                     ! Write
-                    write(15,'(E13.7,",",$)') FSCPPoints(i,1)
-                    write(15,'(E13.7,",",$)') FSCPPoints(i,2)
-                    write(15,'(E13.7,",",$)') FSCPPoints(i,3)
-                    write(15,'(E13.7,",",$)') TVel
+                    write(15,'(E14.7,",",$)') FSCPPoints(i,1)
+                    write(15,'(E14.7,",",$)') FSCPPoints(i,2)
+                    write(15,'(E14.7,",",$)') FSCPPoints(i,3)
+                    write(15,'(E14.7,",",$)') TVel
                     ! Dont suppress carriage return on last column
-                    write(15,'(E13.7)') dH
+                    write(15,'(E14.7)') dH
 
                 end do
 

@@ -92,8 +92,8 @@ contains
         !   probe_output_path
 
         integer                     :: probe_num
-        character(10000), parameter :: probe_file_header='X/R (-),Y/R (-),Z/R (-)'
-        character(10000), parameter :: probe_data_header='Normalized Time (-),U/Uinf (-),V/Uinf (-),W/Uinf (-),Ufs/Uinf (-),Vfs/Uinf (-),Wfs/Uinf (-)'
+        character(7198), parameter :: probe_file_header='X/R (-),Y/R (-),Z/R (-)'
+        character(7198), parameter :: probe_data_header='Normalized Time (-),U/Uinf (-),V/Uinf (-),W/Uinf (-),Ufs/Uinf (-),Vfs/Uinf (-),Wfs/Uinf (-)'
         character(80)               :: probe_num_str
         character(80)               :: probe_output_path
 
