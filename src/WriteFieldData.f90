@@ -52,16 +52,16 @@ subroutine WriteFieldData()
         do ycount=1,nygrid
             do xcount=1,nxgrid
                 ! Write to file
-                write(13,'(E13.7,",",$)') TimeN                            ! Normalized simulation time (t*Uinf/Rmax)
-                write(13,'(E13.7,",",$)') XGrid(xcount,ycount,zcount)
-                write(13,'(E13.7,",",$)') YGrid(xcount,ycount,zcount)      ! grid node locations
-                write(13,'(E13.7,",",$)') ZGrid(xcount,ycount,zcount)
-                write(13,'(E13.7,",",$)') VXInd(xcount,ycount,zcount)
-                write(13,'(E13.7,",",$)') VYInd(xcount,ycount,zcount)      ! induced velocities
-                write(13,'(E13.7,",",$)') VZInd(xcount,ycount,zcount)
-                write(13,'(E13.7,",",$)') UfsGrid(xcount,ycount,zcount)
-                write(13,'(E13.7,",",$)') VfsGrid(xcount,ycount,zcount)    ! freestream velocities
-                write(13,'(E13.7)'      ) WfsGrid(xcount,ycount,zcount)    ! Dont suppress carriage return on last column
+                write(13,'(E14.7,",",$)') TimeN                            ! Normalized simulation time (t*Uinf/Rmax)
+                write(13,'(E14.7,",",$)') XGrid(xcount,ycount,zcount)
+                write(13,'(E14.7,",",$)') YGrid(xcount,ycount,zcount)      ! grid node locations
+                write(13,'(E14.7,",",$)') ZGrid(xcount,ycount,zcount)
+                write(13,'(E14.7,",",$)') VXInd(xcount,ycount,zcount)
+                write(13,'(E14.7,",",$)') VYInd(xcount,ycount,zcount)      ! induced velocities
+                write(13,'(E14.7,",",$)') VZInd(xcount,ycount,zcount)
+                write(13,'(E14.7,",",$)') UfsGrid(xcount,ycount,zcount)
+                write(13,'(E14.7,",",$)') VfsGrid(xcount,ycount,zcount)    ! freestream velocities
+                write(13,'(E14.7)'      ) WfsGrid(xcount,ycount,zcount)    ! Dont suppress carriage return on last column
             end do
         end do
     end do

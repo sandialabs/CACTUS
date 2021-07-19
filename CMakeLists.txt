@@ -70,8 +70,8 @@ add_definitions(-DVERSION="${CACTUS_VERSION}")
 add_definitions(-DPATHSEP="${SEP}")
 
 # create source lists
-file(GLOB_RECURSE mod_sources ${PROJECT_SOURCE_DIR}/mod/**.f95)
-file(GLOB_RECURSE prog_sources ${PROJECT_SOURCE_DIR}/src/*.f95)
+file(GLOB_RECURSE mod_sources ${PROJECT_SOURCE_DIR}/mod/**.f90)
+file(GLOB_RECURSE prog_sources ${PROJECT_SOURCE_DIR}/src/*.f90)
 
 add_executable(cactus ${prog_sources} ${mod_sources})
 target_compile_options(cactus PUBLIC ${LAPACK_LINKER_FLAGS})

@@ -95,13 +95,13 @@ contains
                 if (j<nCol) then
                     write(FID,10) Data(i,j)
                 else
-                    write(FID,'(E13.7)') Data(i,j)
+                    write(FID,'(E14.7)') Data(i,j)
                 end if
             end do
         end do
 
         return
-10      format(E13.7,',',$)
+10      format(E14.7,',',$)
     end subroutine Csvwrite
 
     subroutine file_to_stdout(filename)
